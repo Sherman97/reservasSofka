@@ -42,7 +42,16 @@ jobs:
         run: npm run lint --if-present
 
       - name: Test
-        run: npm test --if-present
+        run: |
+          if [ -f package.json ] && grep -q '"test"' package.json; then
+            if grep -q 'no test specified' package.json; then
+              echo "Placeholder test script detected, skipping"
+              exit 0
+            fi
+            npm test
+          else
+            echo "No test script, skipping"
+          fi
 
   frontend:
     name: Frontend
@@ -73,4 +82,13 @@ jobs:
         run: npm run lint --if-present
 
       - name: Test
-        run: npm test --if-present
+        run: |
+          if [ -f package.json ] && grep -q '"test"' package.json; then
+            if grep -q 'no test specified' package.json; then
+              echo "Placeholder test script detected, skipping"
+              exit 0
+            fi
+            npm test
+          else
+            echo "No test script, skipping"
+          fi
