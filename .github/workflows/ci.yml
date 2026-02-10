@@ -8,16 +8,18 @@ on:
 
 jobs:
   backend:
-    name: Backend
+    name: Backend (${{ matrix.service }})
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
+        service: [auth-service, bookings-service, api-gateway, inventory-service, locations-service]
         node-version: [20]
 
     defaults:
       run:
-        working-directory: Backend
+        working-directory: Backend/services/${{ matrix.service }}
 
     steps:
       - name: Checkout
@@ -31,7 +33,7 @@ jobs:
       - name: Install
         run: |
           if [ ! -f package.json ]; then
-            echo "No package.json in Backend/ - skipping"
+            echo "No package.json in Backend/services/${{ matrix.service }} - skipping"
             exit 0
           fi
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
@@ -46,10 +48,6 @@ jobs:
     name: Frontend
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [20]
-
     defaults:
       run:
         working-directory: Frontend
@@ -61,7 +59,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 20
 
       - name: Install
         run: |
