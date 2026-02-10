@@ -6,18 +6,30 @@ on:
   push:
     branches: [ develop ]
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   backend:
-    name: Backend
+    name: Backend (${{ matrix.service }})
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         node-version: [20]
+        service:
+          - auth-service
+          - bookings-service
+          - api-gateway
+          - inventory-service
+          - locations-service
 
     defaults:
       run:
-        working-directory: Backend
+        shell: bash
+        working-directory: Backend/services/${{ matrix.service }}
 
     steps:
       - name: Checkout
@@ -28,30 +40,53 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Install
+      - name: Detect service
         run: |
+          echo "Working dir: $(pwd)"
           if [ ! -f package.json ]; then
-            echo "No package.json in Backend/ - skipping"
-            exit 0
+            echo "No package.json in Backend/services/${{ matrix.service }}. Skipping this service."
+            echo "SKIP=true" >> $GITHUB_ENV
+          else
+            echo "SKIP=false" >> $GITHUB_ENV
           fi
-          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+      - name: Install
+        if: env.SKIP != 'true'
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
 
       - name: Lint
+        if: env.SKIP != 'true'
         run: npm run lint --if-present
 
       - name: Test
-        run: npm test --if-present
+        if: env.SKIP != 'true'
+        run: |
+          # Si no hay script test, no corremos nada
+          if ! node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts.test ? 0 : 1)"; then
+            echo "No test script, skipping"
+            exit 0
+          fi
+
+          # Si el test es el placeholder típico, no fallar el CI
+          if node -e "const p=require('./package.json'); const t=(p.scripts&&p.scripts.test)||''; process.exit(t.includes('no test specified') ? 0 : 1)"; then
+            echo "Placeholder test script detected (no test specified). Skipping"
+            exit 0
+          fi
+
+          npm test
 
   frontend:
     name: Frontend
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [20]
-
     defaults:
       run:
+        shell: bash
         working-directory: Frontend
 
     steps:
@@ -61,18 +96,42 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 20
+
+      - name: Detect frontend
+        run: |
+          echo "Working dir: $(pwd)"
+          if [ ! -f package.json ]; then
+            echo "No package.json in Frontend/. Skipping frontend."
+            echo "SKIP=true" >> $GITHUB_ENV
+          else
+            echo "SKIP=false" >> $GITHUB_ENV
+          fi
 
       - name: Install
+        if: env.SKIP != 'true'
         run: |
-          if [ ! -f package.json ]; then
-            echo "No package.json in Frontend/ - skipping"
-            exit 0
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
           fi
-          if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
       - name: Lint
+        if: env.SKIP != 'true'
         run: npm run lint --if-present
 
       - name: Test
-        run: npm test --if-present
+        if: env.SKIP != 'true'
+        run: |
+          if ! node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts.test ? 0 : 1)"; then
+            echo "No test script, skipping"
+            exit 0
+          fi
+
+          if node -e "const p=require('./package.json'); const t=(p.scripts&&p.scripts.test)||''; process.exit(t.includes('no test specified') ? 0 : 1)"; then
+            echo "Placeholder test script detected (no test specified). Skipping"
+            exit 0
+          fi
+
+          npm test
