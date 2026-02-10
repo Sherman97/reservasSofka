@@ -30,6 +30,10 @@ jobs:
 
       - name: Install
         run: |
+          if [ ! -f package.json ]; then
+            echo "No package.json in Backend/ - skipping"
+            exit 0
+          fi
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
       - name: Lint
@@ -61,6 +65,10 @@ jobs:
 
       - name: Install
         run: |
+          if [ ! -f package.json ]; then
+            echo "No package.json in Frontend/ - skipping"
+            exit 0
+          fi
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
       - name: Lint
