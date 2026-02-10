@@ -6,6 +6,10 @@ on:
   push:
     branches: [ develop ]
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   backend:
     name: Backend (${{ matrix.service }})
@@ -14,11 +18,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        service: [auth-service, bookings-service, api-gateway, inventory-service, locations-service]
         node-version: [20]
+        service:
+          - auth-service
+          - bookings-service
+          - api-gateway
+          - inventory-service
+          - locations-service
 
     defaults:
       run:
+        shell: bash
         working-directory: Backend/services/${{ matrix.service }}
 
     steps:
@@ -30,28 +40,45 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Install
+      - name: Detect service
         run: |
+          echo "Working dir: $(pwd)"
           if [ ! -f package.json ]; then
-            echo "No package.json in Backend/services/${{ matrix.service }} - skipping"
-            exit 0
+            echo "No package.json in Backend/services/${{ matrix.service }}. Skipping this service."
+            echo "SKIP=true" >> $GITHUB_ENV
+          else
+            echo "SKIP=false" >> $GITHUB_ENV
           fi
-          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+      - name: Install
+        if: env.SKIP != 'true'
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
 
       - name: Lint
+        if: env.SKIP != 'true'
         run: npm run lint --if-present
 
       - name: Test
+        if: env.SKIP != 'true'
         run: |
-          if [ -f package.json ] && grep -q '"test"' package.json; then
-            if grep -q 'no test specified' package.json; then
-              echo "Placeholder test script detected, skipping"
-              exit 0
-            fi
-            npm test
-          else
+          # Si no hay script test, no corremos nada
+          if ! node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts.test ? 0 : 1)"; then
             echo "No test script, skipping"
+            exit 0
           fi
+
+          # Si el test es el placeholder típico, no fallar el CI
+          if node -e "const p=require('./package.json'); const t=(p.scripts&&p.scripts.test)||''; process.exit(t.includes('no test specified') ? 0 : 1)"; then
+            echo "Placeholder test script detected (no test specified). Skipping"
+            exit 0
+          fi
+
+          npm test
 
   frontend:
     name: Frontend
@@ -59,6 +86,7 @@ jobs:
 
     defaults:
       run:
+        shell: bash
         working-directory: Frontend
 
     steps:
@@ -70,25 +98,40 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install
+      - name: Detect frontend
         run: |
+          echo "Working dir: $(pwd)"
           if [ ! -f package.json ]; then
-            echo "No package.json in Frontend/ - skipping"
-            exit 0
+            echo "No package.json in Frontend/. Skipping frontend."
+            echo "SKIP=true" >> $GITHUB_ENV
+          else
+            echo "SKIP=false" >> $GITHUB_ENV
           fi
-          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+      - name: Install
+        if: env.SKIP != 'true'
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
 
       - name: Lint
+        if: env.SKIP != 'true'
         run: npm run lint --if-present
 
       - name: Test
+        if: env.SKIP != 'true'
         run: |
-          if [ -f package.json ] && grep -q '"test"' package.json; then
-            if grep -q 'no test specified' package.json; then
-              echo "Placeholder test script detected, skipping"
-              exit 0
-            fi
-            npm test
-          else
+          if ! node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts.test ? 0 : 1)"; then
             echo "No test script, skipping"
+            exit 0
           fi
+
+          if node -e "const p=require('./package.json'); const t=(p.scripts&&p.scripts.test)||''; process.exit(t.includes('no test specified') ? 0 : 1)"; then
+            echo "Placeholder test script detected (no test specified). Skipping"
+            exit 0
+          fi
+
+          npm test
