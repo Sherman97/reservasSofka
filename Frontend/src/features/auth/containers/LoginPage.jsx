@@ -4,7 +4,6 @@ import { LoginForm } from '../components/LoginForm';
 import '../styles/Login.css';
 
 const LoginPage = () => {
-    const { theme, toggleTheme } = useTheme();
 
     return (
         <div className="login-container">
@@ -16,16 +15,10 @@ const LoginPage = () => {
             </div>
 
             <div className="login-right">
-                <div className="theme-toggle-container">
-                    <button onClick={toggleTheme} className="theme-toggle" aria-label="Toggle theme">
-                        {theme === 'light' ? '🌙' : '☀️'}
-                    </button>
-                </div>
-
                 <div className="login-form-wrapper">
                     <div className="logo-container">
                         <div className="logo-icon">📅</div>
-                        <span className="logo-text">ReservaPro</span>
+                        <span className="logo-text">Reservas Sofka</span>
                     </div>
 
                     <h2>Bienvenido de nuevo</h2>

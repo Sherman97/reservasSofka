@@ -39,25 +39,6 @@ export const SignupForm = () => {
                 </div>
             </div>
 
-            <div className="form-group">
-                <label htmlFor="department">Departamento</label>
-                <div className="input-wrapper">
-                    <span className="input-icon">🏢</span>
-                    <select
-                        id="department"
-                        name="department"
-                        value={formData.department}
-                        onChange={handleChange}
-                        required
-                    >
-                        <option value="">Selecciona tu departamento</option>
-                        <option value="IT">Tecnología</option>
-                        <option value="HR">Recursos Humanos</option>
-                        <option value="Sales">Ventas</option>
-                        <option value="Marketing">Marketing</option>
-                    </select>
-                </div>
-            </div>
 
             <div className="form-group">
                 <label htmlFor="password">Contraseña</label>

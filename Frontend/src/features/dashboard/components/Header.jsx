@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../../context/ThemeContext';
+import { logout } from '../../auth/services/authService';
 import logoLight from '../../../assets/LogoSofka_FondoBlanco_peq.png';
 import logoDark from '../../../assets/LogoSofka_FondoNegro_peq.png';
 
@@ -10,7 +11,11 @@ export const Header = () => {
     const [showUserMenu, setShowUserMenu] = useState(false);
     const menuRef = useRef(null);
 
+    // Get user from localStorage
+    const user = JSON.parse(localStorage.getItem('user')) || { name: 'Usuario' };
+
     const handleLogout = () => {
+        logout();
         navigate('/login');
     };
 
@@ -63,9 +68,11 @@ export const Header = () => {
                             onClick={toggleMenu}
                         >
                             <div className="user-info">
-                                <span className="user-name">Juan Pérez</span>
+                                <span className="user-name">{user.name}</span>
                             </div>
-                            <div className="user-avatar">JP</div>
+                            <div className="user-avatar">
+                                {user.name.charAt(0).toUpperCase()}
+                            </div>
                             <span className="dropdown-chevron">▾</span>
                         </div>
                         {/*La IA dejo el contenido del dropdown oculto y dicha funcionalidad se ejecutaba solo con pulsar el nombre del usuario*/}

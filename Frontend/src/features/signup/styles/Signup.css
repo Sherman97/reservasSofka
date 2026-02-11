@@ -132,6 +132,7 @@
 .signup-form-wrapper {
     width: 100%;
     max-width: 480px;
+    margin-top: 5rem;
 }
 
 .signup-right h2 {

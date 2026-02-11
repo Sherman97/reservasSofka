@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { register } from '../../auth/services/authService';
 
 export const useSignup = () => {
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
-        department: '',
         password: '',
         confirmPassword: '',
         termsAccepted: false
@@ -41,10 +41,21 @@ export const useSignup = () => {
         }
 
         try {
-            // TODO: Implement actual signup logic
-            console.log('Signup attempt:', formData);
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            navigate('/dashboard');
+            // Map UI fullName to backend name
+            const registrationData = {
+                name: formData.fullName,
+                email: formData.email,
+                password: formData.password
+            };
+
+            const response = await register(registrationData);
+
+            if (response.ok) {
+                // Success - redirect to login
+                navigate('/login', { state: { message: 'Registro exitoso. Por favor inicia sesión.' } });
+            } else {
+                setError(response.message || 'Error en el registro');
+            }
         } catch (err) {
             setError(err.message || 'Error occurred during signup');
         } finally {

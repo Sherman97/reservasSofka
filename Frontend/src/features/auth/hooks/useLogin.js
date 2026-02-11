@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { login } from '../services/authService';
 
 export const useLogin = () => {
     const [email, setEmail] = useState('');
@@ -14,11 +15,14 @@ export const useLogin = () => {
         setLoading(true);
         setError(null);
         try {
-            // TODO: Implement actual login logic with authService
-            console.log('Login attempt:', { email, password });
-            // Simulate API delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            navigate('/dashboard');
+            const response = await login({ email, password });
+
+            // Check for both success flag and token presence
+            if (response.ok && response.data.token) {
+                navigate('/dashboard');
+            } else {
+                setError('No se pudo completar el inicio de sesión');
+            }
         } catch (err) {
             setError(err.message || 'Error occurred during login');
         } finally {

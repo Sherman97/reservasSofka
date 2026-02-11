@@ -16,15 +16,15 @@ async function initializeDatabase() {
     let conn;
     try {
         // 1. Connect without database to create it if needed
-        conn = await mysql.createConnection(dbConfig);
+        const { database, ...configWithoutDb } = dbConfig;
+        conn = await mysql.createConnection(configWithoutDb);
         console.log("🔌 Connected to MariaDB server (via mysql2)");
 
-        // const dbName = process.env.DB_NAME || 'reservas_db';
-        // await conn.query(`CREATE DATABASE IF NOT EXISTS ${dbName}`);
-        // console.log(`✅ Database '${dbName}' checked/created`);
+        await conn.query(`CREATE DATABASE IF NOT EXISTS \`${database}\``);
+        console.log(`✅ Database '${database}' checked/created`);
 
-        // // 2. Switch to the database
-        // await conn.query(`USE ${dbName}`);
+        // 2. Switch to the database
+        await conn.query(`USE \`${database}\``);
 
         // 3. Read and execute schema
         const schemaPath = path.join(__dirname, 'schema.sql');

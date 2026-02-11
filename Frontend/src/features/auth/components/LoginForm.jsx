@@ -40,10 +40,6 @@ export const LoginForm = () => {
 
             {error && <div className="error-message">{error}</div>}
 
-            <div className="form-check">
-                <input type="checkbox" id="remember" />
-                <label htmlFor="remember">Recordarme</label>
-            </div>
 
             <button type="submit" className="btn-primary" disabled={loading}>
                 {loading ? 'Cargando...' : 'Iniciar Sesión'}
