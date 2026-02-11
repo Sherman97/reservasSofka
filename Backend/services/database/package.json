@@ -4,9 +4,10 @@
     "description": "Database handling for Reservas Sofka",
     "main": "src/init.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "seed:001": "node seeds/seed-001.js"
     },
     "dependencies": {
+        "bcrypt": "^6.0.0",
         "dotenv": "^16.6.1",
         "mariadb": "^3.3.0",
         "mysql2": "^3.17.0"
