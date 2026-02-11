@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { availableEquipment } from '../services/reservationService';
+import { availableEquipment } from '../../services/reservationService';
 
 export const EquipmentSelector = ({ selectedEquipment, onEquipmentToggle }) => {
     const [isOpen, setIsOpen] = useState(false);

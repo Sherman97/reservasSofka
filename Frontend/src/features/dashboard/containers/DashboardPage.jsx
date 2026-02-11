@@ -1,6 +1,5 @@
 import React from 'react';
 import { useDashboard } from '../hooks/useDashboard';
-import { Header } from '../components/Header';
 import { SearchBar } from '../components/SearchBar';
 import { FilterSidebar } from '../components/FilterSidebar';
 import { ItemCard } from '../components/ItemCard';
@@ -12,7 +11,6 @@ const DashboardPage = () => {
 
     return (
         <div className="dashboard-container">
-            <Header />
             <main className="dashboard-main">
                 <SearchBar searchQuery={searchQuery} handleSearch={handleSearch} />
 
