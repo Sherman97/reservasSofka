@@ -1,9 +1,9 @@
 const locationItemsService = require("../services/locationItems.service");
 
-function assignItem(req, res) {
+async function assignItem(req, res) {
     try {
         const { locationId } = req.params;
-        const record = locationItemsService.assignItemToLocation({
+        const record = await locationItemsService.assignItemToLocation({
             locationId,
             itemId: req.body.itemId,
             qty: req.body.qty,
@@ -14,20 +14,20 @@ function assignItem(req, res) {
     }
 }
 
-function listLocationItems(req, res) {
+async function listLocationItems(req, res) {
     try {
         const { locationId } = req.params;
-        const list = locationItemsService.listItemsByLocation(locationId);
+        const list = await locationItemsService.listItemsByLocation(locationId);
         return res.json({ ok: true, data: list });
     } catch (err) {
         return handleError(err, res);
     }
 }
 
-function getLocationItem(req, res) {
+async function getLocationItem(req, res) {
     try {
         const { locationId, itemId } = req.params;
-        const record = locationItemsService.getLocationItem(locationId, itemId);
+        const record = await locationItemsService.getLocationItem(locationId, itemId);
         return res.json({ ok: true, data: record });
     } catch (err) {
         return handleError(err, res);

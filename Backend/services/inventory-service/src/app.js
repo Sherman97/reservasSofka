@@ -16,7 +16,7 @@ app.use(express.json());
 app.get("/health", (req, res) => res.json({ ok: true, service: "inventory-service" }));
 
 app.use("/items", itemsRoutes);
-app.use("/locations", locationItemsRoutes); // /locations/:locationId/items
+app.use("/locations", locationItemsRoutes);
 
 app.use((req, res) => res.status(404).json({ ok: false, message: "Route not found" }));
 
