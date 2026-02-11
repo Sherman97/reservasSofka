@@ -41,7 +41,7 @@ export const ReservationModal = ({
                 alert(`¡Reserva confirmada! ID: ${result.id}`);
                 onClose();
             }
-        } catch (error) {
+        } catch {
             alert('Error al crear la reserva. Por favor intenta de nuevo.');
         }
     };

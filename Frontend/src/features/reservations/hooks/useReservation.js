@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { getAvailabilityForMonth } from '../services/reservationService';
 
 export const useReservation = (item) => {
@@ -8,14 +8,11 @@ export const useReservation = (item) => {
     const [selectedEquipment, setSelectedEquipment] = useState([]);
     const [startTime, setStartTime] = useState('08:00');
     const [endTime, setEndTime] = useState('18:00');
-    const [availability, setAvailability] = useState({});
-
-    useEffect(() => {
-        if (isOpen) {
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
-            setAvailability(getAvailabilityForMonth(year, month));
-        }
+    const availability = useMemo(() => {
+        if (!isOpen) return {};
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        return getAvailabilityForMonth(year, month);
     }, [isOpen, currentDate]);
 
     const openModal = () => setIsOpen(true);
