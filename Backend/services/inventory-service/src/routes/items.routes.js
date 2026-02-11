@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { requireAuth } = require("../middlewares/auth.middleware");
 
 const {
     createItem,
@@ -9,10 +10,10 @@ const {
     deleteItem
 } = require("../controllers/items.controller");
 
-router.post("/", createItem);
-router.get("/", listItems);
-router.get("/:id", getItemById);
-router.put("/:id", updateItem);
-router.delete("/:id", deleteItem);
+router.post("/", requireAuth, createItem);
+router.get("/", requireAuth, listItems);
+router.get("/:id", requireAuth, getItemById);
+router.put("/:id", requireAuth, updateItem);
+router.delete("/:id", requireAuth, deleteItem);
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { requireAuth } = require("../middlewares/auth.middleware");
 
 const {
     assignItem,
@@ -8,12 +9,12 @@ const {
 } = require("../controllers/locationItems.controller");
 
 // POST /locations/:locationId/items
-router.post("/:locationId/items", assignItem);
+router.post("/:locationId/items", requireAuth, assignItem);
 
 // GET /locations/:locationId/items
-router.get("/:locationId/items", listLocationItems);
+router.get("/:locationId/items", requireAuth, listLocationItems);
 
 // GET /locations/:locationId/items/:itemId
-router.get("/:locationId/items/:itemId", getLocationItem);
+router.get("/:locationId/items/:itemId", requireAuth, getLocationItem);
 
 module.exports = router;
