@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import { useTheme } from '../../../context/ThemeContext';
 
 export const Header = () => {
@@ -10,13 +11,15 @@ export const Header = () => {
                 <div className="logo-icon">📦</div>
                 <h1 className="logo-text">Explorador de Inventario</h1>
                 <nav className="header-nav">
-                    <a href="#" className="active">Explorar</a>
-                    <a href="#">Mis Reservas</a>
-                    <a href="#">Soporte</a>
+                    <NavLink to="/dashboard" className={({ isActive }) => isActive ? "active" : ""}>
+                        Explorar
+                    </NavLink>
+                    <NavLink to="/my-reservations" className={({ isActive }) => isActive ? "active" : ""}>
+                        Mis Reservas
+                    </NavLink>
                 </nav>
             </div>
             <div className="header-right">
-                <button className="icon-btn">🔔</button>
                 <button onClick={toggleTheme} className="icon-btn">
                     {theme === 'light' ? '🌙' : '☀️'}
                 </button>

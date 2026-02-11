@@ -15,5 +15,18 @@ app.get("/health", (req, res) => res.json({ ok: true, service: "gateway" }));
 app.use("/auth", createProxyMiddleware({ target: process.env.AUTH_URL, changeOrigin: true }));
 app.use("/bookings", createProxyMiddleware({ target: process.env.BOOKINGS_URL, changeOrigin: true }));
 
+const { initializeDatabase } = require("../../database/src/init");
+
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚪 Gateway on http://localhost:${PORT}`));
+
+const startServer = async () => {
+    try {
+        await initializeDatabase();
+        app.listen(PORT, () => console.log(`🚪 Gateway on http://localhost:${PORT}`));
+    } catch (error) {
+        console.error("❌ Failed to start server due to DB init error:", error);
+        process.exit(1);
+    }
+};
+
+startServer();

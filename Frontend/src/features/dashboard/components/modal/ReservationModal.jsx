@@ -2,8 +2,8 @@ import React from 'react';
 import { Calendar } from './Calendar';
 import { EquipmentSelector } from './EquipmentSelector';
 import { DurationSelector } from './DurationSelector';
-import { createReservation } from '../services/reservationService';
-import '../styles/ReservationModal.css';
+import { createReservation } from '../../services/reservationService';
+import '../../styles/ReservationModal.css';
 
 export const ReservationModal = ({
     isOpen,

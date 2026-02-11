@@ -1,6 +1,6 @@
 import React from 'react';
-import { useReservation } from '../../reservations/hooks/useReservation';
-import { ReservationModal } from '../../reservations/components/ReservationModal';
+import { useReservation } from '../hooks/useReservation';
+import { ReservationModal } from './modal/ReservationModal';
 
 export const ItemCard = ({ item }) => {
     const reservation = useReservation(item);
