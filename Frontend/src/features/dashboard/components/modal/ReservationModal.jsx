@@ -57,9 +57,6 @@ export const ReservationModal = ({
                         <div className="modal-item-details">
                             <h2>{item.name}</h2>
                             <p className="modal-item-location">📍 {item.location}</p>
-                            {item.capacity && (
-                                <p className="modal-item-capacity">👥 Capacidad: {item.capacity} personas</p>
-                            )}
                         </div>
                     </div>
                 </div>

@@ -12,7 +12,10 @@ export const ReservationCard = ({ reservation, onDelete }) => {
             default: return '';
         }
     };
-
+{/**
+ * La IA duplico el status del reservationCard dejando una en el header y otra en el body, 
+    dicho error se corrigio manualmente.
+ */}
     const getStatusText = (status) => {
         switch (status) {
             case 'active': return 'En curso';
@@ -22,8 +25,6 @@ export const ReservationCard = ({ reservation, onDelete }) => {
         }
     };
 
-    // Determine icon based on some logic or prop. 
-    // Using title keywords for now as mock data doesn't have strict types
     let icon = '📅';
     if (reservation.title.includes('Sala')) icon = '🏢'; // Door/Room
     if (reservation.title.includes('MacBook') || reservation.title.includes('Laptop')) icon = '💻';

@@ -26,5 +26,7 @@ En este documento se detallan las instrucciones para el uso del AI en el proyect
 ![afterMockupModal](image-4.png)
 12. Se verifica la implementacón y cumple con lo asignado.
 13. Mediante Google stitch genero el mockup de la page de la las reservas asignadas y ya que divaga en el diseño tomo solo la seccion que requiero.
-14. Comparto dicha seccion y solicito que cree el la estructura de carpetas siguiendo con los mismo estilos.![pageReseervations](image-5.png)
-15. 
+14. Comparto dicha seccion y solicito que cree la estructura de carpetas siguiendo con los mismo estilos.[pageReseervations](image-5.png)
+15. La estructura generada no cumplio con lo requerido ya que ocultaba el header, para corregir dicho issue se soluciona con 2 prompts mas.
+16. Mediaante un prompt se crea el componente de paginación y su respectiva logica, en este caso se cumplio con lo asignado.
+17. Se le pide a la IA que haga uso de los assets (logos) para que sea consumido en el header.

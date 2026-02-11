@@ -22,13 +22,6 @@ export const SearchBar = ({ searchQuery, handleSearch }) => {
                 <span className="filter-label">RANGO DE FECHAS</span>
                 <span className="filter-value">Oct 24 - Oct 26, 2023</span>
             </div>
-            <div className="capacity-filter">
-                <span className="filter-label">CAPACIDAD</span>
-                <div className="filter-dropdown">
-                    <span>4 - 8 Personas</span>
-                    <span className="dropdown-arrow">▼</span>
-                </div>
-            </div>
         </div>
     );
 };

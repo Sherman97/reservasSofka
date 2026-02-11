@@ -1,7 +1,15 @@
 /* Dashboard Layout */
+.container {
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 2rem;
+    box-sizing: border-box;
+}
+/*LA IA hardcodeo el backgroundColor directamente en la clase, no utilizo la declaracion de la variable en "theme.css"*/
 .dashboard-container {
     min-height: 100vh;
-    background-color: #f8f9fa;
+    background-color: var(--bg-color);
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -10,19 +18,28 @@
     box-sizing: border-box;
 }
 
+/* LA IA genero el codigo pero se equivoco y agrego un backgroud que no se le solicito, tambien 
+modifico el ancho del header y lo dejo dinamico,lo cual hacia que se ajustara 
+al ancho del contenido a visualizar y no al ancho de la pantalla */
 .dashboard-header {
-    background-color: white;
-    padding: 1rem 2rem;
+    padding: 1rem 0;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #e9ecef;
+    justify-content: center;
     position: sticky;
     top: 10px;
     z-index: 100;
-    border-radius: 12px;
     width: 100%;
     box-sizing: border-box;
+}
+
+.dashboard-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--card-bg);
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 .header-left,
@@ -32,27 +49,21 @@
     gap: 1.5rem;
 }
 
-.logo-icon {
-    font-size: 1.5rem;
-    background-color: #0d6efd;
-    color: white;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 8px;
+.header-logo {
+    height: 48px;
+    width: auto;
+    object-fit: contain;
 }
 
 .logo-text {
     font-size: 1.25rem;
     font-weight: 700;
-    color: #212529;
+    color: var(--text-color);
     margin: 0;
 }
 
 .header-nav a {
-    color: #6c757d;
+    color: var(--text-color);
     text-decoration: none;
     font-weight: 500;
     padding: 0.5rem 1rem;
@@ -81,12 +92,125 @@
     color: #212529;
 }
 
+.user-profile-wrapper {
+    position: relative;
+}
+
 .user-profile {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding-left: 1rem;
+    padding: 0.25rem 0.75rem;
     border-left: 1px solid #dee2e6;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border-radius: 8px;
+    user-select: none;
+}
+
+.user-profile:hover,
+.user-profile.active {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+[data-theme='dark'] .user-profile {
+    border-left-color: #404040;
+}
+
+[data-theme='dark'] .user-profile:hover,
+[data-theme='dark'] .user-profile.active {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dropdown-chevron {
+    font-size: 0.8rem;
+    color: #adb5bd;
+    transition: transform 0.2s;
+}
+
+.user-profile.active .dropdown-chevron {
+    transform: rotate(180deg);
+}
+
+.user-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    background-color: rgb(255, 106, 106);
+    min-width: 180px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e9ecef;
+    padding: 0.5rem;
+    z-index: 1000;
+    animation: fadeInScale 0.2s ease-out;
+}
+
+.dropdown-item logout-btn {
+    color: white;
+}
+
+[data-theme='dark'] .user-dropdown {
+    background-color: #1e1e1e;
+    border-color: #333;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.dropdown-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border: none;
+    background: none;
+    border-radius: 8px;
+    color: #495057;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+}
+
+[data-theme='dark'] .dropdown-item {
+    color: #e0e0e0;
+}
+
+.dropdown-item:hover {
+    background-color: var(--bg-color);
+    color: var(--primary-color);
+}
+
+[data-theme='dark'] .dropdown-item:hover {
+    background-color: #2d2d2d;
+    color: var(--primary-color);
+}
+
+.logout-btn:hover {
+    color: #dc3545;
+    background-color: #fff5f5;
+}
+
+[data-theme='dark'] .logout-btn:hover {
+    color: #ff8787;
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+.dropdown-icon {
+    font-size: 1.1rem;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }
 
 .user-info {
@@ -97,13 +221,13 @@
     display: block;
     font-weight: 600;
     font-size: 0.9rem;
-    color: #212529;
+    color: var(--text-color);
 }
 
 .user-role {
     display: block;
     font-size: 0.75rem;
-    color: #6c757d;
+    color: var(--text-color);
 }
 
 .user-avatar {
@@ -120,9 +244,7 @@
 
 /* Dashboard Main Content */
 .dashboard-main {
-    padding: 2rem;
-    max-width: 1400px;
-    margin: 0 auto;
+    padding: 2rem 0;
     width: 100%;
     box-sizing: border-box;
 }
@@ -183,8 +305,8 @@
 }
 
 .filter-btn.active {
-    background-color: white;
-    color: #0d6efd;
+    background-color: var(--primary-color);
+    color: white;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -345,7 +467,7 @@
 .btn-book {
     width: 100%;
     padding: 0.75rem;
-    background-color: #0d6efd;
+    background-color: var(--primary-color);
     color: white;
     border: none;
     border-radius: 8px;
@@ -355,7 +477,7 @@
 }
 
 .btn-book:hover {
-    background-color: #0b5ed7;
+    background-color: var(--primary-hover);
 }
 
 /* Sidebar Components */

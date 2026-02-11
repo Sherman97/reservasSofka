@@ -40,9 +40,11 @@ export const ReservationFilterBar = ({
                         onChange={(e) => onSearchChange(e.target.value)}
                     />
                 </div>
-                <button className="type-filter-btn">
-                    Tipo: Todos
-                </button>
+                <div className="top-filters">
+                    <button className="filter-btn active">Todos</button>
+                    <button className="filter-btn">Salas</button>
+                    <button className="filter-btn">Equipos</button>
+                </div>
             </div>
         </div>
     );

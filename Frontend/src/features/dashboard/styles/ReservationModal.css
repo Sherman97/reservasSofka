@@ -15,7 +15,8 @@
 }
 
 .modal-content {
-    background-color: white;
+    background-color: var(--card-bg);
+    color: var(--text-color);
     border-radius: 16px;
     max-width: 900px;
     width: 100%;
@@ -85,14 +86,14 @@
 .modal-item-details h2 {
     margin: 0 0 0.5rem 0;
     font-size: 1.75rem;
-    color: #1a1e23;
+    color: var(--text-color);
     font-weight: 700;
 }
 
 .modal-item-location,
 .modal-item-capacity {
     margin: 0.25rem 0;
-    color: #5f6671;
+    color:var(--text-color);
     font-size: 1rem;
     display: flex;
     align-items: center;
@@ -118,13 +119,13 @@
 .modal-section:last-child {
     margin-bottom: 0;
 }
-
+/*La IA no hizo uso de la variable global del color de texto, se corrigio dicha implementación*/
 .modal-section h3 {
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 1.5rem;
-    color: #5f6671;
+    color: var(--text-color);
     font-weight: 600;
 }
 
@@ -141,13 +142,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 2rem;
-    margin-bottom: 2rem;
+    gap: 1rem;
+    margin-bottom: 1rem;
 }
 
+/*La IA modifico el tamaño del texto sin haberlo pedido*/
 .calendar-header h3 {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1rem;
     color: #1a1e23;
     font-weight: 800;
     text-transform: uppercase;
@@ -166,9 +168,9 @@
 }
 
 .calendar-nav-btn:hover {
-    background-color: #0d6efd;
+    background-color: var(--primary-color);
     color: white;
-    border-color: #0d6efd;
+    border-color: var(--primary-color);
 }
 
 .calendar-weekdays {
@@ -246,9 +248,9 @@
 }
 
 .calendar-day.selected {
-    background-color: #2563eb;
+    background-color: var(--primary-color);
     color: white;
-    border-color: #2563eb;
+    border-color: var(--primary-color);
     font-weight: 700;
 }
 
@@ -291,7 +293,7 @@
 }
 
 .legend-box.selected {
-    background-color: #2563eb;
+    background-color: var(--primary-color);
 }
 
 /* Duration Selector Styles */
@@ -332,13 +334,13 @@
 
 .time-input-group input[type="time"]:focus {
     outline: none;
-    border-color: #0d6efd;
-    background-color: white;
+    border-color: var(--primary-color);
+    background-color: var(--card-bg);
 }
 
 .time-separator {
     font-size: 1.5rem;
-    color: #0d6efd;
+    color: var(--primary-color);
     margin-top: 1.5rem;
     font-weight: 600;
 }
@@ -348,10 +350,10 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.75rem;
-    background-color: #e7f3ff;
+    background-color: rgba(255, 140, 3, 0.1);
     border-radius: 8px;
     font-size: 0.85rem;
-    color: #0d6efd;
+    color: var(--primary-color);
 }
 
 .info-icon {
@@ -376,8 +378,8 @@
 }
 
 .time-input-group:focus-within {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(255, 140, 3, 0.1);
 }
 
 .time-input-group label {
@@ -425,7 +427,7 @@
 .custom-select {
     width: 100%;
     min-height: 64px;
-    padding: 0.75rem 1rem;
+    padding: 0.5rem;
     border: 1px solid #e9ecef;
     border-radius: 12px;
     background-color: white;
@@ -438,12 +440,12 @@
 }
 
 .custom-select:hover {
-    border-color: #3b82f6;
+    border-color: var(--primary-color);
 }
 
 .custom-select.open {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(255, 140, 3, 0.1);
 }
 
 .select-inner {
@@ -487,8 +489,8 @@
 }
 
 .selected-tag {
-    background-color: #eff6ff;
-    color: #2563eb;
+    background-color: rgba(255, 140, 3, 0.1);
+    color: var(--primary-color);
     padding: 0.2rem 0.6rem;
     border-radius: 6px;
     font-size: 0.8rem;
@@ -566,8 +568,8 @@
 }
 
 .option-item.selected {
-    background-color: #eff6ff;
-    color: #2563eb;
+    background-color: rgba(255, 140, 3, 0.1);
+    color: var(--primary-color);
     font-weight: 600;
 }
 
@@ -636,7 +638,7 @@
 }
 
 .btn-confirm {
-    background-color: #2563eb;
+    background-color: var(--primary-color);
     color: white;
     padding: 0.85rem 2rem;
     border-radius: 10px;
@@ -645,11 +647,11 @@
     cursor: pointer;
     font-size: 1rem;
     transition: all 0.2s;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    box-shadow: 0 4px 12px rgba(255, 140, 3, 0.2);
 }
 
 .btn-confirm:hover:not(:disabled) {
-    background-color: #1d4ed8;
+    background-color: var(--primary-hover);
     transform: translateY(-1px);
 }
 

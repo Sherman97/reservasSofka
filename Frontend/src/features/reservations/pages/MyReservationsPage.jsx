@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ReservationFilterBar } from '../components/ReservationFilterBar';
 import { ReservationList } from '../components/ReservationList';
 import { getUserReservations } from '../services/userReservationsService';
+import { Pagination } from '../../../components/common/Pagination';
 import '../styles/MyReservations.css';
 
 export const MyReservationsPage = () => {
@@ -9,14 +10,16 @@ export const MyReservationsPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [reservations, setReservations] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
 
     useEffect(() => {
         const fetchReservations = async () => {
             setIsLoading(true);
             try {
-                // In a real app, we might debounce search or pass filters to API
                 const data = await getUserReservations(activeTab, searchTerm);
                 setReservations(data);
+                setCurrentPage(1); // Reset to first page on filter change
             } catch (error) {
                 console.error("Error fetching reservations:", error);
             } finally {
@@ -27,6 +30,16 @@ export const MyReservationsPage = () => {
         fetchReservations();
     }, [activeTab, searchTerm]);
 
+    // Pagination logic
+    const totalPages = Math.ceil(reservations.length / itemsPerPage);
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentReservations = reservations.slice(indexOfFirstItem, indexOfLastItem);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     const handleDelete = (id) => {
         if (window.confirm('¿Estás seguro de cancelar esta reserva?')) {
@@ -49,19 +62,15 @@ export const MyReservationsPage = () => {
             ) : (
                 <>
                     <ReservationList
-                        reservations={reservations}
+                        reservations={currentReservations}
                         onDelete={handleDelete}
                     />
 
-                    <div className="pagination-container">
-                        <span>Mostrando {reservations.length} reservas activas</span>
-                        <div className="pagination-controls">
-                            <button className="page-btn">{'<'}</button>
-                            <button className="page-btn active">1</button>
-                            <button className="page-btn">2</button>
-                            <button className="page-btn">{'>'}</button>
-                        </div>
-                    </div>
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={handlePageChange}
+                    />
                 </>
             )}
         </div>
