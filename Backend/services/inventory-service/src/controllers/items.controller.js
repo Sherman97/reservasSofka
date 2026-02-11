@@ -1,44 +1,44 @@
 const itemsService = require("../services/items.service");
 
-async function createItem(req, res) {
+function createItem(req, res) {
     try {
-        const item = await itemsService.createItem(req.body);
+        const item = itemsService.createItem(req.body);
         return res.status(201).json({ ok: true, data: item });
     } catch (err) {
         return handleError(err, res);
     }
 }
 
-async function listItems(req, res) {
+function listItems(req, res) {
     try {
-        const items = await itemsService.listItems(req.query);
+        const items = itemsService.listItems(req.query);
         return res.json({ ok: true, data: items });
     } catch (err) {
         return handleError(err, res);
     }
 }
 
-async function getItemById(req, res) {
+function getItemById(req, res) {
     try {
-        const item = await itemsService.getItemById(req.params.id);
+        const item = itemsService.getItemById(req.params.id);
         return res.json({ ok: true, data: item });
     } catch (err) {
         return handleError(err, res);
     }
 }
 
-async function updateItem(req, res) {
+function updateItem(req, res) {
     try {
-        const item = await itemsService.updateItem(req.params.id, req.body);
+        const item = itemsService.updateItem(req.params.id, req.body);
         return res.json({ ok: true, data: item });
     } catch (err) {
         return handleError(err, res);
     }
 }
 
-async function deleteItem(req, res) {
+function deleteItem(req, res) {
     try {
-        const deleted = await itemsService.deleteItem(req.params.id);
+        const deleted = itemsService.deleteItem(req.params.id);
         return res.json({ ok: true, data: deleted });
     } catch (err) {
         return handleError(err, res);
