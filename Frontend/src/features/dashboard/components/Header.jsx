@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../../context/ThemeContext';
 import logoLight from '../../../assets/LogoSofka_FondoBlanco_peq.png';
-import logoDark from '../../../assets/LogoSofka_FondoBco_peq_Naranja.png';
+import logoDark from '../../../assets/LogoSofka_FondoNegro_peq.png';
 
 export const Header = () => {
     const { theme, toggleTheme } = useTheme();
@@ -64,7 +64,6 @@ export const Header = () => {
                         >
                             <div className="user-info">
                                 <span className="user-name">Juan Pérez</span>
-                                <span className="user-role">Administrador</span>
                             </div>
                             <div className="user-avatar">JP</div>
                             <span className="dropdown-chevron">▾</span>

@@ -1,76 +1,45 @@
-export const getUserReservations = (filter = 'all', searchTerm = '') => {
-    const reservations = [
-        {
-            id: 1,
-            title: "Sala de Conferencias B",
-            location: "PLANTA 3 • SALA GRANDE",
-            date: "24 Oct, 2023",
-            time: "09:00 - 11:00",
-            status: "active", // En curso
-            statusLabel: "En curso",
-            image: "door-icon", // Placeholder for icon logic
-            category: "room"
-        },
-        {
-            id: 2,
-            title: 'MacBook Pro 16"',
-            location: "EQUIPAMIENTO IT • ID-4522",
-            date: "26 Oct, 2023",
-            time: "Todo el día",
-            status: "confirmed",
-            statusLabel: "Confirmada",
-            image: "laptop-icon",
-            category: "equipment"
-        },
-        {
-            id: 3,
-            title: "Sala Creativa A1",
-            location: "PLANTA 1 • PIZARRAS TÁCTILES",
-            date: "30 Oct, 2023",
-            time: "14:00 - 15:30",
-            status: "confirmed",
-            statusLabel: "Confirmada",
-            image: "people-icon",
-            category: "room"
-        },
-        {
-            id: 4,
-            title: "Kit Streaming Pro",
-            location: "AUDIO & VIDEO • REF-001",
-            date: "02 Nov, 2023",
-            time: "10:00 - 18:00",
-            status: "pending",
-            statusLabel: "Pendiente",
-            image: "video-icon",
-            category: "equipment"
+import api from '../../../services/api';
+
+export const getUserReservations = async (filter = 'all', searchTerm = '') => {
+    try {
+        const response = await api.get('/bookings');
+        const reservations = response.data.data.map(repo => ({
+            id: repo.id,
+            title: `Reserva: ${repo.locationId}`,
+            location: repo.locationId,
+            date: new Date(repo.startAt).toLocaleDateString(),
+            time: `${new Date(repo.startAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(repo.endAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
+            status: repo.status.toLowerCase(),
+            statusLabel: repo.status === 'CONFIRMED' ? 'Confirmada' : (repo.status === 'CANCELLED' ? 'Cancelada' : repo.status),
+            category: 'room' // Defaulting to room as bookings don't specify type clearly yet
+        }));
+
+        let filtered = reservations;
+
+        // Filter by Status Tab
+        if (filter === 'upcoming') {
+            const now = new Date();
+            filtered = reservations.filter(r => new Date(r.date) >= now && r.status !== 'cancelled');
+        } else if (filter === 'past') {
+            const now = new Date();
+            filtered = reservations.filter(r => new Date(r.date) < now);
+        } else if (filter === 'cancelled') {
+            filtered = reservations.filter(r => r.status === 'cancelled');
         }
-    ];
 
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            let filtered = reservations;
+        // Filter by Search
+        if (searchTerm) {
+            const term = searchTerm.toLowerCase();
+            filtered = filtered.filter(item =>
+                item.title.toLowerCase().includes(term) ||
+                item.location.toLowerCase().includes(term)
+            );
+        }
 
-            // Filter by Status Tab
-            if (filter === 'upcoming') {
-                // For mock, let's just return all for 'Proximas' except cancelled or past if we had them
-                // In real app, date comparison needed.
-                filtered = reservations;
-            } else if (filter === 'past') {
-                filtered = []; // Empty for now
-            } else if (filter === 'cancelled') {
-                filtered = []; // Empty for now
-            }
-
-            // Filter by Search
-            if (searchTerm) {
-                const term = searchTerm.toLowerCase();
-                filtered = filtered.filter(item =>
-                    item.title.toLowerCase().includes(term) ||
-                    item.location.toLowerCase().includes(term)
-                );
-            }
-
-            resolve(filtered);
-        }, 500);
-    });
+        return filtered;
+    } catch (error) {
+        console.error('Error fetching reservations:', error);
+        throw error.response?.data || { message: 'Error al obtener las reservas' };
+    }
 };
+

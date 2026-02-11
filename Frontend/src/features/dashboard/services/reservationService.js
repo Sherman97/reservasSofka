@@ -1,3 +1,14 @@
+import api from '../../../services/api';
+
+export const createReservation = async (reservationData) => {
+    try {
+        const response = await api.post('/bookings', reservationData);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || { message: 'Error al crear la reserva' };
+    }
+};
+
 export const availableEquipment = [
     { id: 1, name: "Proyector 4K", available: true, icon: "📽️" },
     { id: 2, name: "Cámara 4K para Streaming", available: true, icon: "📹" },
@@ -31,9 +42,3 @@ export const getAvailabilityForMonth = (year, month) => {
     return availability;
 };
 
-export const createReservation = async (reservationData) => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log('Reservation created:', reservationData);
-    return { success: true, id: Math.random().toString(36).substr(2, 9) };
-};
