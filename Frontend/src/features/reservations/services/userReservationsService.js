@@ -1,17 +1,21 @@
-import api from '../../../services/api';
+import bookingsApi from '../../../services/bookingsApi';
 
 export const getUserReservations = async (filter = 'all', searchTerm = '') => {
     try {
-        const response = await api.get('/bookings');
-        const reservations = response.data.data.map(repo => ({
+        const response = await bookingsApi.get('/bookings/getBookings');
+        console.log("response", response);
+        // Backend returns { ok: true, data: [...] }
+        const rawData = response.data.data || [];
+
+        const reservations = rawData.map(repo => ({
             id: repo.id,
-            title: `Reserva: ${repo.locationId}`,
-            location: repo.locationId,
-            date: new Date(repo.startAt).toLocaleDateString(),
-            time: `${new Date(repo.startAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(repo.endAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
-            status: repo.status.toLowerCase(),
-            statusLabel: repo.status === 'CONFIRMED' ? 'Confirmada' : (repo.status === 'CANCELLED' ? 'Cancelada' : repo.status),
-            category: 'room' // Defaulting to room as bookings don't specify type clearly yet
+            title: `Reserva: ${repo.location_id || repo.locationId}`,
+            location: repo.location_id || repo.locationId,
+            date: new Date(repo.start_at || repo.startAt).toLocaleDateString(),
+            time: `${new Date(repo.start_at || repo.startAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(repo.end_at || repo.endAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
+            status: (repo.status || 'PENDING').toLowerCase(),
+            statusLabel: repo.status === 'CONFIRMED' ? 'Confirmada' : (repo.status === 'CANCELLED' ? 'Cancelada' : 'Pendiente'),
+            category: 'room'
         }));
 
         let filtered = reservations;

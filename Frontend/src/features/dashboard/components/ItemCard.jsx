@@ -15,9 +15,6 @@ export const ItemCard = ({ item }) => {
                 <div className="item-content">
                     <div className="item-header">
                         <h3>{item.name}</h3>
-                        {item.capacity && (
-                            <span className="item-capacity">👥 {item.capacity} pax</span>
-                        )}
                         {item.category && (
                             <span className="item-category">🎧 {item.category}</span>
                         )}
