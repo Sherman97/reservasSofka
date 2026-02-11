@@ -20,9 +20,9 @@ export const Header = () => {
                 </nav>
             </div>
             <div className="header-right">
-                {/* <button onClick={toggleTheme} className="icon-btn">
+                <button onClick={toggleTheme} className="icon-btn">
                     {theme === 'light' ? '🌙' : '☀️'}
-                </button> */}
+                </button>
                 <div className="user-profile">
                     <div className="user-info">
                         <span className="user-name">Juan Pérez</span>

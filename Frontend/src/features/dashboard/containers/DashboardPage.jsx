@@ -3,7 +3,6 @@ import { useDashboard } from '../hooks/useDashboard';
 import { SearchBar } from '../components/SearchBar';
 import { FilterSidebar } from '../components/FilterSidebar';
 import { ItemCard } from '../components/ItemCard';
-import { HelpBanner } from '../components/HelpBanner';
 import '../styles/Dashboard.css';
 
 const DashboardPage = () => {
