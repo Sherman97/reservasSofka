@@ -14,9 +14,17 @@ En este documento se detallan las instrucciones para el uso del AI en el proyect
     4.1 La IA divagar en la estructuracion del mockup ya que crea otra estructura de carpetas que no cumple con la arquitectura propuesta.
     4.2 Se le pide a la IA que verifique la arquitectura propuesta y que siga la misma en la implementacion del mockup.
     4.3 La IA no realiza aplica un diseño responsive y se le solicita que lo implemente.
-5.  Al terminar la implementacion y verificación del login/signup 
-5. Mediante Google stitch genero un modal para la asignacion de reservas.
-6. Dicho mockup del modal se lo comparto a la IA para que implemente dicho modal siguiendo la arquitectura propuesta.
-7. En la implementacion del modal la IA falla en el diseño de la ui del calendario, se corrigue solo con un prompt.
-8. En Google stitch genero la page de la las reservas asignadas.
-9. 
+5. Se verifica que la implementacion sea correcta con la arquitectura propuesta.
+6. Nuevamente desde Google stitch creo el mockup del dashboard de reservas.
+![MockupDashboard](image-2.png)
+7. Le comparto dicho mockup de dashboard y le pido que implemente dicho mockup siguiendo la arquitectura propuesta.
+8. Se verifica que la implementacion sea correcta con la arquitectura propuesta y esta vez cumple con la arquitectura asignado y esperado, solo con un prompt.
+9. Mediante Google stitch genero un modal para la asignacion de reservas.
+10. Dicho mockup del modal se lo comparto a la IA para que implemente dicho modal siguiendo la arquitectura propuesta.
+11. En la implementacion del modal la IA falla en el diseño de la ui del calendario, se corrigue solo con un prompt.
+![beforeMockupModal](image-3.png)
+![afterMockupModal](image-4.png)
+12. Se verifica la implementacón y cumple con lo asignado.
+13. Mediante Google stitch genero el mockup de la page de la las reservas asignadas y ya que divaga en el diseño tomo solo la seccion que requiero.
+14. Comparto dicha seccion y solicito que cree el la estructura de carpetas siguiendo con los mismo estilos.![pageReseervations](image-5.png)
+15. 

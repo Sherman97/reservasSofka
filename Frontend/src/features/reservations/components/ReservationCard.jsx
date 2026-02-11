@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/MyReservations.css';
 
-export const ReservationCard = ({ reservation, onEdit, onDelete }) => {
+export const ReservationCard = ({ reservation, onDelete }) => {
 
 
     const getStatusClass = (status) => {

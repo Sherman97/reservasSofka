@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const FilterSidebar = ({ filters, handleFilterChange }) => {
+export const FilterSidebar = () => {
     return (
         <aside className="filter-sidebar">
             <div className="filter-section">

@@ -37,7 +37,6 @@ const DashboardPage = () => {
 
                     <aside className="dashboard-sidebar">
                         <FilterSidebar filters={filters} handleFilterChange={handleFilterChange} />
-                        <HelpBanner />
                     </aside>
                 </div>
             </main>

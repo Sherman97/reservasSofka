@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getAvailabilityForMonth } from '../services/reservationService';
 
-export const useReservation = (item) => {
+export const useReservation = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(null);
