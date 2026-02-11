@@ -1,7 +1,4 @@
-if (process.env.NODE_ENV !== "production") {
-    require("dotenv").config();
-}
-
+require("dotenv").config();
 const express = require("express");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 const cors = require("cors");
@@ -17,15 +14,7 @@ app.get("/health", (req, res) => res.json({ ok: true, service: "gateway" }));
 
 app.use("/auth", createProxyMiddleware({ target: process.env.AUTH_URL, changeOrigin: true }));
 app.use("/bookings", createProxyMiddleware({ target: process.env.BOOKINGS_URL, changeOrigin: true }));
-app.use("/inventory", createProxyMiddleware({ target: process.env.INVENTORY_URL, changeOrigin: true }));
-app.use("/locations", createProxyMiddleware({ target: process.env.LOCATIONS_URL, changeOrigin: true }));
 
-
-// ✅ IMPORTANTE: si mantienes esto, el gateway también necesita DB_*
-const { initializeDatabase } = require("../../database/src/init");
-
-
-// ✅ IMPORTANTE: si mantienes esto, el gateway también necesita DB_*
 const { initializeDatabase } = require("../../database/src/init");
 
 const PORT = process.env.PORT || 3000;
@@ -33,9 +22,7 @@ const PORT = process.env.PORT || 3000;
 const startServer = async () => {
     try {
         await initializeDatabase();
-        app.listen(PORT, "0.0.0.0", () =>
-            console.log(`🚪 Gateway on port ${PORT}`)
-        );
+        app.listen(PORT, () => console.log(`🚪 Gateway on http://localhost:${PORT}`));
     } catch (error) {
         console.error("❌ Failed to start server due to DB init error:", error);
         process.exit(1);
