@@ -20,7 +20,7 @@ async function login(req, res) {
 
 async function me(req, res) {
     try {
-        const user = authService.getMe(req.user.id);
+        const user = await authService.getMe(req.user.id);
         res.json({ ok: true, data: user });
     } catch (err) {
         res.status(err.statusCode || 500).json({ ok: false, message: err.message || "Error" });
