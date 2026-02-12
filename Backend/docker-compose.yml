@@ -99,11 +99,17 @@ services:
       BOOKINGS_URL: http://bookings-service:3003
       INVENTORY_URL: http://inventory-service:3005
       # LOCATIONS_URL: http://locations-service:3004   # cuando lo agregues
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
     ports:
       - "3000:3000"
     volumes:
       - ./services/api-gateway:/app
       - /app/node_modules
+      - ./services/database:/database
     networks:
       - reservas_net
     depends_on:

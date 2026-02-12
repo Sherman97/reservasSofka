@@ -54,6 +54,7 @@ services:
       DB_USER: app
       DB_PASSWORD: app123
       DB_NAME: reservas_db
+      DOTENV_FILE: .env.docker
     ports:
       - "3003:3003"
     volumes:
