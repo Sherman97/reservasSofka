@@ -1,4 +1,4 @@
-﻿FROM gradle:8.14.4-jdk17-alpine AS builder
+FROM gradle:8.14.4-jdk17-alpine AS builder
 WORKDIR /app
 
 COPY build.gradle settings.gradle gradlew gradlew.bat ./
