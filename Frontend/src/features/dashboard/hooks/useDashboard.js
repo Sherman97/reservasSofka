@@ -6,7 +6,7 @@ export const useDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [filters, setFilters] = useState({
-        room: false,
+        room: true,
         equipment: false,
         capacity: 0
     });

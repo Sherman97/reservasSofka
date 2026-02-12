@@ -1,15 +1,14 @@
-
 import axios from 'axios';
 
-const inventoryApi = axios.create({
-    baseURL: import.meta.env.VITE_INVENTORY_URL || 'http://localhost:3003',
+const locationsApi = axios.create({
+    baseURL: import.meta.env.VITE_LOCATIONS_URL || 'http://localhost:3004',
     headers: {
         'Content-Type': 'application/json',
     },
 });
 
 // Interceptors for request/response handling (auth tokens)
-inventoryApi.interceptors.request.use(
+locationsApi.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
         if (token) {
@@ -20,4 +19,4 @@ inventoryApi.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
-export default inventoryApi;
+export default locationsApi;

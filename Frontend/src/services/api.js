@@ -3,7 +3,7 @@ import axios from 'axios';
  * La IA hardcodea la URL directamente en el archivo de la peticion a la API, se corrige manualmente.
  */
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL, // Base URL for the API
+  baseURL: import.meta.env.VITE_BOOKINGS_URL, // Base URL for the API
   headers: {
     'Content-Type': 'application/json',
   },

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useDashboard } from '../hooks/useDashboard';
 import { SearchBar } from '../components/SearchBar';
-import { FilterSidebar } from '../components/FilterSidebar';
 import { ItemCard } from '../components/ItemCard';
 import { Pagination } from '../../../components/common/Pagination';
 import '../styles/Dashboard.css';
@@ -26,7 +25,12 @@ const DashboardPage = () => {
         <div className="dashboard-container">
             <main className="dashboard-main">
                 <div className="container">
-                    <SearchBar searchQuery={searchQuery} handleSearch={handleSearch} />
+                    <SearchBar
+                        searchQuery={searchQuery}
+                        handleSearch={handleSearch}
+                        filters={filters}
+                        onFilterChange={handleFilterChange}
+                    />
 
                     <div className="dashboard-content">
                         <div className="dashboard-results-section">
@@ -51,10 +55,6 @@ const DashboardPage = () => {
                                 </>
                             )}
                         </div>
-
-                        <aside className="dashboard-sidebar">
-                            <FilterSidebar filters={filters} handleFilterChange={handleFilterChange} />
-                        </aside>
                     </div>
                 </div>
             </main>

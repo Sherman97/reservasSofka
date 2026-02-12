@@ -26,22 +26,38 @@ export const ReservationModal = ({
     if (!isOpen) return null;
 
     const handleConfirm = async () => {
+        // Format the date properly
+        const bookingDate = new Date(
+            currentDate.getFullYear(),
+            currentDate.getMonth(),
+            selectedDate
+        );
+
+        const year = bookingDate.getFullYear();
+        const month = String(bookingDate.getMonth() + 1).padStart(2, '0');
+        const day = String(bookingDate.getDate()).padStart(2, '0');
+        const dateStr = `${year}-${month}-${day}`;
+
+        // Format booking data for backend
         const reservationData = {
-            itemId: item.id,
-            itemName: item.name,
-            date: new Date(currentDate.getFullYear(), currentDate.getMonth(), selectedDate),
-            equipment: selectedEquipment,
+            locationId: item.isLocation ? item.backendId : null,
+            itemId: !item.isLocation ? item.backendId : null,
+            date: dateStr,
             startTime,
-            endTime
+            endTime,
+            items: selectedEquipment // Array of { itemId, name, qty }
         };
 
         try {
             const result = await createReservation(reservationData);
-            if (result.success) {
-                alert(`¡Reserva confirmada! ID: ${result.id}`);
+            if (result.ok) {
+                alert(`¡Reserva confirmada exitosamente!`);
                 onClose();
+            } else {
+                alert(result.message || 'Error al crear la reserva');
             }
-        } catch {
+        } catch (error) {
+            console.error('Error creating reservation:', error);
             alert('Error al crear la reserva. Por favor intenta de nuevo.');
         }
     };
@@ -57,6 +73,9 @@ export const ReservationModal = ({
                         <div className="modal-item-details">
                             <h2>{item.name}</h2>
                             <p className="modal-item-location">📍 {item.location}</p>
+                            {item.isLocation && (
+                                <p className="modal-item-type">🏢 Locación</p>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -93,6 +112,7 @@ export const ReservationModal = ({
                                 <EquipmentSelector
                                     selectedEquipment={selectedEquipment}
                                     onEquipmentToggle={onEquipmentToggle}
+                                    item={item}
                                 />
                             </div>
                         </div>

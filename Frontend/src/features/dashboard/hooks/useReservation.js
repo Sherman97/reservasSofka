@@ -30,12 +30,18 @@ export const useReservation = () => {
         }
     };
 
-    const handleEquipmentToggle = (equipmentId) => {
-        setSelectedEquipment(prev =>
-            prev.includes(equipmentId)
-                ? prev.filter(id => id !== equipmentId)
-                : [...prev, equipmentId]
-        );
+    const handleEquipmentToggle = (equipmentId, equipmentName) => {
+        setSelectedEquipment(prev => {
+            const existingIndex = prev.findIndex(item => item.itemId === equipmentId);
+
+            if (existingIndex !== -1) {
+                // If already selected, remove it
+                return prev.filter(item => item.itemId !== equipmentId);
+            } else {
+                // If not selected, add it with qty 1
+                return [...prev, { itemId: equipmentId, name: equipmentName, qty: 1 }];
+            }
+        });
     };
 
     const handleStartTimeChange = (time) => {

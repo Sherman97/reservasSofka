@@ -61,32 +61,56 @@ export const mockItems = [
     }
 ];
 
+
 import inventoryApi from '../../../services/inventoryApi';
+import locationsApi from '../../../services/locationsApi';
 
 export const getItems = async () => {
     try {
-        const response = await inventoryApi.get('/listItems');
-        // Backend returns { ok: true, data: [...] }
-        const rawItems = response.data.data || [];
+        // Fetch locations (rooms/spaces) and inventory (equipment) in parallel
+        const [locationsResponse, inventoryResponse] = await Promise.all([
+            locationsApi.get('/locations'),
+            inventoryApi.get('/items/listItems')
+        ]);
 
-        return rawItems.map(item => ({
-            id: item.id,
-            name: item.name,
-            type: item.category === 'Room' ? 'Room' : 'Equipment', // Map backend category to frontend type
-            category: item.category || 'General',
-            // Default values for missing backend fields
-            location: 'Ubicación General',
-            capacity: item.category === 'Room' ? 5 : 1,
-            tags: item.category === 'Room' ? ['General'] : ['Tech'],
-            image: item.category === 'Room'
-                ? 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80'
-                : 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&q=80',
-            available: item.isReservable
+        const rawLocations = locationsResponse.data.data || [];
+        const rawInventory = inventoryResponse.data.data || [];
+
+        // Map locations to frontend format (Rooms)
+        const locations = rawLocations.map(location => ({
+            id: `location-${location.id}`,
+            backendId: location.id,
+            name: location.name,
+            type: 'Room',
+            category: 'Room',
+            location: location.location || 'Sin ubicación',
+            capacity: 8, // Default capacity
+            tags: location.tags || [],
+            inventory: location.inventory || [],
+            image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80',
+            available: true,
+            isLocation: true
         }));
+
+        // Map inventory to frontend format (Equipment)
+        const inventory = rawInventory.map(item => ({
+            id: `item-${item.id}`,
+            backendId: item.id,
+            name: item.name,
+            type: 'Equipment',
+            category: item.type || 'General',
+            location: 'Almacén Central',
+            tags: [item.type || 'General'],
+            image: 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&q=80',
+            available: item.isReservable,
+            isLocation: false
+        }));
+
+        // Combine both arrays (locations first, then equipment)
+        return [...locations, ...inventory];
     } catch (error) {
-        console.error('Error fetching inventory items:', error);
-        // Fallback to mock data if API fails (optional, but good for dev)
-        // return mockItems; 
-        throw error;
+        console.error('Error fetching items:', error);
+        // Fallback to mock data if API fails
+        return mockItems;
     }
 };

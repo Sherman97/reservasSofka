@@ -25,9 +25,12 @@ export const ItemCard = ({ item }) => {
                             <span key={index} className="tag">{tag}</span>
                         ))}
                     </div>
-                    <button className="btn-book" onClick={reservation.openModal}>
-                        📅 Ver Calendario
-                    </button>
+
+                    <div className="item-actions">
+                        <button className="btn-book" onClick={reservation.openModal}>
+                            📅 Ver Calendario
+                        </button>
+                    </div>
                 </div>
             </div>
 

@@ -93,7 +93,7 @@
 .modal-item-location,
 .modal-item-capacity {
     margin: 0.25rem 0;
-    color:var(--text-color);
+    color: var(--text-color);
     font-size: 1rem;
     display: flex;
     align-items: center;
@@ -119,6 +119,7 @@
 .modal-section:last-child {
     margin-bottom: 0;
 }
+
 /*La IA no hizo uso de la variable global del color de texto, se corrigio dicha implementación*/
 .modal-section h3 {
     font-size: 0.9rem;
@@ -603,6 +604,28 @@
     font-style: italic;
     margin-left: 0.5rem;
 }
+
+/* Inventory Management Option */
+.inventory-management-option {
+    background-color: rgba(255, 140, 3, 0.05);
+    border: 1px solid rgba(255, 140, 3, 0.2);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.inventory-management-option:hover {
+    background-color: rgba(255, 140, 3, 0.1);
+    border-color: rgba(255, 140, 3, 0.3);
+}
+
+.inventory-management-option .option-icon {
+    font-size: 1.1rem;
+}
+
+.inventory-management-option .option-content {
+    color: var(--primary-color);
+}
+
 
 .equipment-label {
     display: block;

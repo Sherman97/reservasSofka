@@ -2,9 +2,30 @@ import api from '../../../services/api';
 
 export const createReservation = async (reservationData) => {
     try {
-        const response = await api.post('/bookings', reservationData);
+        // Format data for backend
+        // Combine date and time into ISO strings for backend (local time aware)
+        const [year, month, day] = reservationData.date.split('-').map(Number);
+        const [startHours, startMinutes] = reservationData.startTime.split(':').map(Number);
+        const [endHours, endMinutes] = reservationData.endTime.split(':').map(Number);
+
+        const startAt = new Date(year, month - 1, day, startHours, startMinutes).toISOString();
+        const endAt = new Date(year, month - 1, day, endHours, endMinutes).toISOString();
+
+        const payload = {
+            locationId: reservationData.locationId,
+            startAt,
+            endAt,
+            items: (reservationData.items || []).map(it => ({
+                itemId: it.itemId || it.id, // Support both formats
+                qty: it.qty || 1
+            }))
+        };
+
+        const response = await api.post('/bookings/createBooking', payload);
+        console.log(response.data);
         return response.data;
     } catch (error) {
+        console.error('Error creating reservation:', error);
         throw error.response?.data || { message: 'Error al crear la reserva' };
     }
 };
