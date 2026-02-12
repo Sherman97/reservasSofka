@@ -7,6 +7,7 @@ const {
     createBooking,
     listBookings,
     getBookingById,
+    availability,
     cancelBooking
 } = require("../controllers/bookings.controller");
 
@@ -14,9 +15,10 @@ const {
 // se debe agregar el requireAuth a todas las rutas y verificar que el token sea valido
 
 
-router.post("/", requireAuth, createBooking);
-router.get("/", requireAuth, listBookings);
-router.get("/:id", requireAuth, getBookingById);
-router.patch("/:id/cancel", requireAuth, cancelBooking);
+router.get("/availability", requireAuth, availability);
+router.post("/createBooking", requireAuth, createBooking);
+router.get("/listBookings", requireAuth, listBookings);
+router.get("/getBookingById/:id", requireAuth, getBookingById);
+router.post("/:id/cancel", requireAuth, cancelBooking);
 
 module.exports = router;
