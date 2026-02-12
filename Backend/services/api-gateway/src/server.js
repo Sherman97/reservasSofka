@@ -23,8 +23,6 @@ app.use("/locations", createProxyMiddleware({ target: process.env.LOCATIONS_URL 
 // ✅ IMPORTANTE: si mantienes esto, el gateway también necesita DB_*
 const { initializeDatabase } = require("../../database/src/init");
 
-const { initializeDatabase } = require("../../database/src/init");
-
 const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {

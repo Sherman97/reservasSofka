@@ -28,9 +28,9 @@ services:
       PORT: 3001
       DB_HOST: mariadb
       DB_PORT: 3306
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER:-app}
+      DB_PASSWORD: ${DB_PASSWORD:-app123}
+      DB_NAME: ${DB_NAME:-reservas_db}
     ports:
       - "3001:3001"
     volumes:
@@ -51,9 +51,9 @@ services:
       PORT: 3003
       DB_HOST: mariadb
       DB_PORT: 3306
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER:-app}
+      DB_PASSWORD: ${DB_PASSWORD:-app123}
+      DB_NAME: ${DB_NAME:-reservas_db}
     ports:
       - "3003:3003"
     volumes:
@@ -74,9 +74,9 @@ services:
       PORT: 3005
       DB_HOST: mariadb
       DB_PORT: 3306
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER:-app}
+      DB_PASSWORD: ${DB_PASSWORD:-app123}
+      DB_NAME: ${DB_NAME:-reservas_db}
     ports:
       - "3005:3005"
     volumes:
@@ -101,9 +101,9 @@ services:
       # LOCATIONS_URL: http://locations-service:3004   # cuando lo agregues
       DB_HOST: mariadb
       DB_PORT: 3306
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER:-app}
+      DB_PASSWORD: ${DB_PASSWORD:-app123}
+      DB_NAME: ${DB_NAME:-reservas_db}
     ports:
       - "3000:3000"
     volumes:
@@ -117,9 +117,29 @@ services:
       - bookings-service
       - inventory-service
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: reservas_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - reservas_net
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
 networks:
   reservas_net:
 
 
 volumes:
   mariadb_data:
+  rabbitmq_data:
