@@ -1,4 +1,4 @@
-import api from '../../../services/api';
+import bookingsApi from '../../../services/bookingsApi';
 
 export const createReservation = async (reservationData) => {
     try {
@@ -21,7 +21,7 @@ export const createReservation = async (reservationData) => {
             }))
         };
 
-        const response = await api.post('/bookings/createBooking', payload);
+        const response = await bookingsApi.post('/bookings/createBooking', payload);
         console.log(response.data);
         return response.data;
     } catch (error) {
