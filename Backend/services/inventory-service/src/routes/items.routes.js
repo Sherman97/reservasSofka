@@ -10,10 +10,10 @@ const {
     deleteItem
 } = require("../controllers/items.controller");
 
-router.post("/", requireAuth, createItem);
-router.get("/", requireAuth, listItems);
-router.get("/:id", requireAuth, getItemById);
-router.put("/:id", requireAuth, updateItem);
-router.delete("/:id", requireAuth, deleteItem);
+router.post("/createItem", requireAuth, createItem);
+router.get("/listItems", requireAuth, listItems);
+router.get("/getItemById/:id", requireAuth, getItemById);
+router.put("/updateItem/:id", requireAuth, updateItem);
+router.delete("/deleteItem/:id", requireAuth, deleteItem);
 
 module.exports = router;
