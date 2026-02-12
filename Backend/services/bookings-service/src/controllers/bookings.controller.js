@@ -1,10 +1,10 @@
 const bookingsService = require("../services/bookings.service");
 
-function createBooking(req, res) {
+async function createBooking(req, res) {
     try {
-        const booking = bookingsService.createBooking({
+        const booking = await bookingsService.createBooking({
             ...req.body,
-            userId: req.user.id
+            userId: req.user.id, // del token
         });
         return res.status(201).json({ ok: true, data: booking });
     } catch (err) {
@@ -12,28 +12,53 @@ function createBooking(req, res) {
     }
 }
 
-function listBookings(req, res) {
+async function listBookings(req, res) {
     try {
-        const bookings = bookingsService.listBookings(req.query);
+        const bookings = await bookingsService.listBookings(req.query);
         return res.json({ ok: true, data: bookings });
     } catch (err) {
         return handleError(err, res);
     }
 }
 
-function getBookingById(req, res) {
+async function getBookingById(req, res) {
     try {
-        const booking = bookingsService.getBookingById(req.params.id);
+        const booking = await bookingsService.getBookingById(req.params.id);
         return res.json({ ok: true, data: booking });
     } catch (err) {
         return handleError(err, res);
     }
 }
 
-function cancelBooking(req, res) {
+async function cancelBooking(req, res) {
     try {
-        const booking = bookingsService.cancelBooking(req.params.id);
+        const booking = await bookingsService.cancelBooking(req.params.id);
         return res.json({ ok: true, data: booking });
+    } catch (err) {
+        return handleError(err, res);
+    }
+}
+
+// ✅ NUEVO: disponibilidad de un item en un rango
+async function availability(req, res) {
+    try {
+        const { locationId, itemId, startAt, endAt } = req.query;
+
+        const data = await bookingsService.getItemAvailability({
+            locationId,
+            itemId,
+            startAt,
+            endAt,
+        });
+
+        // opcional: respuesta “bonita”
+        return res.json({
+            ok: true,
+            data: {
+                ...data,
+                available: data.availableQty > 0,
+            },
+        });
     } catch (err) {
         return handleError(err, res);
     }
@@ -51,5 +76,6 @@ module.exports = {
     createBooking,
     listBookings,
     getBookingById,
-    cancelBooking
+    cancelBooking,
+    availability,
 };
