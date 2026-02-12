@@ -22,10 +22,6 @@ export const LoginForm = () => {
             </div>
 
             <div className="form-group">
-                <div className="label-row">
-                    <label htmlFor="password">Contraseña</label>
-                    <a href="#" className="forgot-password">¿Olvidaste tu contraseña?</a>
-                </div>
                 <div className="input-wrapper">
                     <input
                         type="password"
