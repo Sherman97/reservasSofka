@@ -61,8 +61,32 @@ export const mockItems = [
     }
 ];
 
+import inventoryApi from '../../../services/inventoryApi';
+
 export const getItems = async () => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    return mockItems;
+    try {
+        const response = await inventoryApi.get('/listItems');
+        // Backend returns { ok: true, data: [...] }
+        const rawItems = response.data.data || [];
+
+        return rawItems.map(item => ({
+            id: item.id,
+            name: item.name,
+            type: item.category === 'Room' ? 'Room' : 'Equipment', // Map backend category to frontend type
+            category: item.category || 'General',
+            // Default values for missing backend fields
+            location: 'Ubicación General',
+            capacity: item.category === 'Room' ? 5 : 1,
+            tags: item.category === 'Room' ? ['General'] : ['Tech'],
+            image: item.category === 'Room'
+                ? 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80'
+                : 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&q=80',
+            available: item.isReservable
+        }));
+    } catch (error) {
+        console.error('Error fetching inventory items:', error);
+        // Fallback to mock data if API fails (optional, but good for dev)
+        // return mockItems; 
+        throw error;
+    }
 };

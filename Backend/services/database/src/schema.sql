@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS inventory (
     name VARCHAR(100) NOT NULL,
     type VARCHAR(50) NOT NULL,
     status ENUM('available', 'maintenance') DEFAULT 'available',
+    is_reservable TINYINT(1) NOT NULL DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
