@@ -1,4 +1,4 @@
-﻿FROM gradle:8.14.4-jdk17-alpine
+FROM gradle:8.14.4-jdk17-alpine
 WORKDIR /app
 
 COPY . .
