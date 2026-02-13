@@ -301,18 +301,122 @@ docker compose -f compose.yml up
 
 
 
-## 🎯 RESUMEN PUNTUACIÓN RÚBRICA
+## 🎯 RESUMEN PUNTUACIÓN RÚBRICA - Evaluación AI-First Oficial Sofka
 
-| Criterio | Puntuación | Resultado | Severidad |
+| Categoría | Puntuación | Nivel | Análisis Detallado |
 |---|---|---|---|
-| Estrategia IA (AI_WORKFLOW.md) | 1.5/5 | 📝 Deficiente | 🔴 CRÍTICO |
-| Calidad Código & Human Check | 1/5 | 🔴 Deficiente | 🔴 CRÍTICO |
-| Transparencia (Alucinaciones) | 0/5 | 🔴 Inexistente | 🔴 CRÍTICO |
-| Arquitectura & Docker | 1.5/5 | 🔴 Deficiente | 🔴 CRÍTICO |
-| Docker Compose (Modernización) | 0.5/5 | 🔴 Obsoleto | 🔴 CRÍTICO |
-| **Frontend-Backend Integration** | **0/5** | **🔴 NO INTEGRADO** | **🔴 CRÍTICO** |
-| Git Flow & Colaboración | N/A | ❓ No evaluable | - |
-| **PROMEDIO** | **0.75/5** | **🔴 CRÍTICO** | **🔴 CRÍTICO** |
+| **Estrategia de IA (AI_WORKFLOW.md)** | **2/5** 🟠 | Aceptable (Parcial) | ⚠️ **REVISADO**: Existen DOS AI_WORKFLOW.md (Backend + Frontend). **Frontend AI_WORKFLOW.md** DOCUMENTA iteraciones: "4.1 La IA divagar...", "4.2 Se le pide...", "4.3 IA no aplica responsive...". **PERO**: Backend AI_WORKFLOW.md es descriptivo no iterativo. **CRÍTICO**: Ninguno documenta que RabbitMQ fue omitido. **Falta metodología de prompting explícita**. No explica "por qué" cada decisión. **Calificación ajustada a 2/5**: Documentan herramientas e iteraciones básicas, pero sin profundidad de metodología IA-First. |
+| **Calidad Código & HUMAN CHECK** | **1/5** 🔴 | Deficiente | ❌ Código sucio: TODO comments en componentes críticos (login, signup). Frontend completamente mockeado. Backend tiene credenciales hardcodeadas en .env. **CERO "Human Check" comments** en puntos críticos (autenticación, persistencia, async). Los "Human Check" requeridos no existen en código. Aunque documentan iteraciones en AI_WORKFLOW.md, NO pusieron HUMAN CHECK markers en los archivos. |
+| **Transparencia ("Lo que la IA hizo mal")** | **2/5** 🟠 | Aceptable (Parcial) | ⚠️ **REVISADO**: Frontend AI_WORKFLOW.md EXPONE errores de IA: "La IA divagar en la estructuracion", "IA no realiza aplica diseño responsive", "IA falla en el diseño de la ui del calendario". **PERO**: Estos son errores MENORES (UI responsive, estructura carpetas). **NUNCA menciona alucinaciones CRÍTICAS**: RabbitMQ omitido, data mockeada, autenticación fake. AI_WORKFLOW.md critica detalles UI pero silencia arquitectura. **Calificación 2/5**: Menciona errores genéricos (UI) sin profundidad en alucinaciones críticas. |
+| **Arquitectura & Docker** | **1/5** 🔴 | Deficiente | ❌ **BLOCKER**: RabbitMQ (requisito principal del taller) NO EXISTE en compose.yml. Docker-compose usa campo "version: 3.8" deprecated (genera warnings). Sin Producers, Consumers, DLQ. Backend REST ≠ arquitetura async requerida. **Frontend no integrado** = sistema incompleto. AI_WORKFLOW.md documenta servicios pero omite que Async fue completamente dejado de lado. |
+| **Git Flow & Colaboración** | **1/5** 🔴 | Deficiente | ❌ Commits genéricos ("Update code", "conection api" con typo). Ramas feature/* aisladas (Backend + Frontend sin integración). **Trabajo en silos evidente**: Backend commits ≠ Frontend commits. Mensajes no semánticos. Sin evidencia de células de trabajo (QA, Backend, Frontend). Aunque habrá AI_WORKFLOW.md en ambos, no hay evidencia en Git de trabajo coordinado. |
+| | | | |
+| **PROMEDIO OFICIAL** | **1.4/5** 🔴 | **DEFICIENTE** | **PROYECTO MEJORA LIGERAMENTE al considerar Frontend AI_WORKFLOW.md, pero sigue siendo REPROBADO (< 3/5 requerido). Falta: HUMAN CHECK en código, profundidad en alucinaciones arquitectónicas, integración Frontend-Backend, eliminación de mocks.**  |
+
+---
+
+### 📊 Matriz de Cumplimiento Detallada (REVISADA)
+
+#### ✅ Estrategia IA - Rubric 2/5 (Aceptable Parcial) - **AJUSTADO**
+
+**Lo que debería tener (Rubric 5):**
+- ✅ "Documento vivo y detallado"
+- ✅ "Define protocolos claros, roles de la IA"
+- ✅ Explicación de iteraciones con IA
+
+**Lo que tiene:**
+- ✅ **NUEVO**: Frontend AI_WORKFLOW.md documenta 15 pasos iterativos
+  - "4.1 La ía divagar en la estructuracion"
+  - "4.2 Se le pide que verifique"
+  - "4.3 IA no realiza responsive"
+  - "11. IA falla en la ui del calendario"
+- ✅ Backend AI_WORKFLOW.md describe arquitectura
+- ❌ PERO: Ninguno explica POR QUÉ se eligió arquitectura sync (vs async RabbitMQ)
+- ❌ No define roles IA vs Humano de forma explícita
+- ❌ No explica "Prompt enviado a IA" con detalles
+- ❌ **Conclusión**: Aceptable parcial (2/5) - Mejor que 1/5 por iteraciones documentadas, pero aún deficiente
+
+---
+
+#### ✅ Calidad Código & HUMAN CHECK - Rubric 1/5 (Deficiente) - **SIN CAMBIOS**
+
+**Problema**: Aunque AI_WORKFLOW.md documenta iteraciones, el código NO tiene HUMAN CHECK comments
+
+**Lo que tiene:**
+- ❌ CERO "Human Check" markers en archivos (useLogin.js, dashboardService.js, etc.)
+- ❌ Código sucio: `// TODO: Implement actual login logic`
+- ❌ Frontend 100% mockeado
+- ❌ AI_WORKFLOW.md dice "Se verifica que...", pero código no tiene evidencia
+- ❌ **Conclusión**: Deficiente (1/5) - Sin cambios
+
+---
+
+#### ✅ Transparencia - Rubric 2/5 (Aceptable Parcial) - **AJUSTADO**
+
+**Lo que documenta Frontend AI_WORKFLOW.md:**
+- ✅ "La IA divagar en la estructuracion"
+- ✅ "IA no realiza aplica diseño responsive"
+- ✅ "IA falla en el diseño de la ui del calendario"
+- ✅ TODO se corrigió y se verificó
+
+**PERO el problema:**
+- ❌ Estos son errores MENORES (UI/UX)
+- ❌ **NUNCA expone alucinaciones CRÍTICAS**:
+  - RabbitMQ omitido (requisito principal)
+  - Frontend 100% mockeado (integración fallida)
+  - Autenticación fake (seguridad comprometida)
+  - Data hardcodeada (persistencia fallida)
+- ❌ AI_WORKFLOW.md critica detalles UI pero silencia arquitectura rota
+- ❌ **Conclusión**: Aceptable parcial (2/5) - Expone errores pero no alucinaciones críticas
+
+---
+
+#### ✅ Arquitectura & Docker - Rubric 1/5 (Deficiente) - **SIN CAMBIOS**
+
+**Lo que tiene:**
+- ❌ Docker-compose SÍ levanta (parcialmente)
+- ❌ **PERO: RabbitMQ NO EXISTE** (requisito principal omitido)
+- ❌ compose.yml sin campo "name"
+- ❌ version: "3.8" deprecated
+- ❌ Frontend no conecta Backend (mockeado)
+- ❌ Sistema architecture: sync instead of async (CRÍTICO)
+- ❌ AI_WORKFLOW.md describe arquitectura REST pero omite COMPLETAMENTE por qué no es async
+- ❌ **Conclusión**: Deficiente (1/5) - Sin cambios
+
+---
+
+#### ✅ Git Flow & Colaboración - Rubric 1/5 (Deficiente) - **SIN CAMBIOS**
+
+**Lo que tiene:**
+- ❌ Commits: "conection api" (typo), "Update code"
+- ❌ Ramas: feature/docker-configuration (solo Backend)
+- ❌ NO hay evidencia de trabajo en células (QA, Backend, Frontend paralelo)
+- ❌ Commits backend ≠ commits frontend (silos)
+- ❌ Mensajes no semánticos
+- ❌ AI_WORKFLOW.md en ambos lados pero Git no refleja trabajo coordinado
+- ❌ **Conclusión**: Deficiente (1/5) - Sin cambios
+
+---
+
+### 🔴 DIAGNÓSTICO FINAL (REVISADO)
+
+```
+┌────────────────────────────────────────────┐
+│  CUMPLIMIENTO RÚBRICA SOFKA AI-FIRST       │
+├────────────────────────────────────────────┤
+│ Nivel requerido: 3/5 (Aceptable)           │
+│ Nivel actual: 1.4/5 (Deficiente)           │
+│ Déficit: -1.6 puntos (53% por debajo)      │
+│                                            │
+│ ESTADO: 🔴 REPROBADO (mejoró de 0.75→1.4) │
+│ ACCIÓN: Refactor crítico requerido         │
+│                                            │
+│ PROGRESO al considerar Frontend docs: +0.65│
+│ PERO: Aún INSUFICIENTE para pasar          │
+└────────────────────────────────────────────┘
+```
+
+**El proyecto MEJORA marginalmente por AI_WORKFLOW.md en Frontend, pero SIGUE SIENDO REPROBADO en todas las categorías.**
 
 ---
 
