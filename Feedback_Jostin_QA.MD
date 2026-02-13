@@ -310,8 +310,9 @@ docker compose -f compose.yml up
 | Transparencia (Alucinaciones) | 0/5 | 🔴 Inexistente | 🔴 CRÍTICO |
 | Arquitectura & Docker | 1.5/5 | 🔴 Deficiente | 🔴 CRÍTICO |
 | Docker Compose (Modernización) | 0.5/5 | 🔴 Obsoleto | 🔴 CRÍTICO |
+| **Frontend-Backend Integration** | **0/5** | **🔴 NO INTEGRADO** | **🔴 CRÍTICO** |
 | Git Flow & Colaboración | N/A | ❓ No evaluable | - |
-| **PROMEDIO** | **0.9/5** | **🔴 CRÍTICO** | **🔴 CRÍTICO** |
+| **PROMEDIO** | **0.75/5** | **🔴 CRÍTICO** | **🔴 CRÍTICO** |
 
 ---
 
@@ -765,6 +766,99 @@ const createBooking = async (payload) => {
 
 ---
 
+### 🔴 ALUCINACIÓN #3: "Frontend Desconectado - Data 100% Mockeada"
+
+**Tipo**: Frontend-Backend Integration Failure
+
+**Descripción**:
+Backend tiene 5 servicios REST funcionales (Auth, Bookings, Inventory, Locations, Items)
+Frontend tiene data COMPLETAMENTE HARDCODEADA y NO consume APIs del Backend
+
+**Hallazgos Críticos**:
+```
+✅ Backend: Servicios REST listos
+❌ Frontend: TODO comments en hooks críticos
+❌ Frontend: mockItems en dashboardService (6 items fake)
+❌ Frontend: mockReservations en userReservationsService (4 items fake)
+❌ Frontend: No hay llamadas http://localhost:3000/api/*
+
+Archivos mockeados encontrados:
+1. useLogin.js (línea 17): TODO: Implement actual login logic
+   - Simula delay 1000ms sin validar credenciales
+   - Usuario puede entrar SIN PASSWORD REAL
+
+2. useSignup.js (línea 44): TODO: Implement actual signup logic
+   - Crea usuario ficticio sin guardar en BD
+   - Sign-up no persiste
+
+3. dashboardService.js: mockItems hardcodeado
+   - 6 items fake (Salas, Equipamiento)
+   - setTimeout(..., 500) simula delay de red
+
+4. userReservationsService.js: hardcodeado
+   - 4 reservaciones fake
+   - Comentarios: "For mock, let's just return all"
+   - Placeholder icons sin lógica real
+```
+
+**Comparación Login**:
+```javascript
+// ❌ Lo que el Frontend DICE que hace (TODO comment)
+const handleLogin = async (e) => {
+    // TODO: Implement actual login logic with authService
+    console.log('Login attempt:', { email, password });
+    await new Promise(resolve => setTimeout(resolve, 1000));  // Fake delay
+    navigate('/dashboard');  // Navega SIN validar credenciales
+};
+
+// ✅ Lo que DEBERÍA hacer
+const handleLogin = async (e) => {
+    const response = await api.post('/auth/login', { email, password });
+    // Si respuesta no tiene token = rechazo
+    localStorage.setItem('token', response.data.token);
+    navigate('/dashboard');
+};
+
+// 🔴 IMPACTO: Usuario puede poner cualquier email/password y entra
+```
+
+**Impacto Crítico**:
+- 🔴 BLOCKER: No hay autenticación real (mock permite cualquier usuario)
+- 🔴 BLOCKER: Dashboard muestra datos fake, no del backend
+- 🔴 BLOCKER: Reservations muestra datos hardcodeados 2023
+- 🔴 BLOCKER: Sign-up no persiste usuarios en BD
+- 🔴 BLOCKER: Cambios en BD no se reflejan en ningún lado
+- ⚠️ ALTO: No hay integración Frontend ↔ Backend
+
+**Root Cause**:
+La IA generó componentes Frontend desconectados del Backend:
+1. Backend REST real ≠ Frontend Mock
+2. Nunca se forzó integración real
+3. Mock data hizo parecer "completo" lo que es un esqueleto
+
+**Evidencia de Git**:
+```bash
+# Commits muestran desarrollo separado:
+- Backend: "feat: implement temporary data storage"
+- Frontend: "conection api reservations" (typo + nunca se completó)
+- No hay commits de "Frontend-Backend Integration"
+- Branches feature/* aisladas por componente
+```
+
+**Impacto en RTM QA** (Actualizado):
+
+| Requisito | Frontend | Backend | Integrado |
+|-----------|----------|---------|-----------|
+| Autenticación | ❌ Mock | ✅ Real | ❌ NO |
+| Ver Reservaciones | ❌ Mock | ✅ Real | ❌ NO |
+| Crear Reserva | ❌ Mock | ✅ Real | ❌ NO |
+| Listar Inventario | ❌ Mock | ✅ Real | ❌ NO |
+| Dashboard | ❌ Mock | ✅ Real | ❌ NO |
+
+**Incumplimiento**: 100% de features Frontend no integradas
+
+---
+
 ## 🏆 BONUS: OPTIMIZACIÓN AI-FIRST
 
 ### Bloque 1: Implementar RabbitMQ Producer
@@ -929,22 +1023,36 @@ Inventory Consumer consume
 
 ### BLOQUER (No puede ir a producción):
 1. ❌ **Falta RabbitMQ** - Agregar a compose.yml
-2. ❌ **Sin producers** - Modificar Bookings Service
-3. ❌ **Sin consumers** - Crear servicio de eventos
-4. ❌ **Sin Human Check** - Agregar comentarios de validación
+2. ❌ **Sin producers/consumers** - Implementar patrón async
+3. ❌ **Frontend sin integración** - 100% data mockeada (TODO comments)
+   - [ ] `useLogin.js`: Conectar a `/auth/login` real
+   - [ ] `useSignup.js`: Conectar a `/auth/signup` real
+   - [ ] `dashboardService.js`: Reemplazar mockItems con `/inventory/items`
+   - [ ] `userReservationsService.js`: Reemplazar mock data con `/bookings/list`
+4. ❌ **Autenticación no existe en Frontend** - Usuario puede entrar SIN validar
 5. ❌ **Docker Compose obsoleto** - Migrar a `compose.yml` sin campo `version`
-6. ❌ **Warnings en build** - Eliminar deprecated directives y usar healthchecks modernos
+6. ❌ **Warnings en build** - Eliminar deprecated directives
+7. ❌ **Sin Human Check** - Agregar comentarios de validación en puntos críticos
+
+### IMPORTANTE (Esta Sprint):
+- Integración completa Frontend ↔ Backend (Remove ALL mocks desde services/)
+- Implementar JWT token handling en Frontend (localStorage + interceptors)
+- Validar que login real rechaza credenciales inválidas
+- Agregar RTM checklist PRE-IA para nuevos features
+- Crear test cases para login, signup, dashboard
 
 ### IMPORTANTE (Próxima iteración):
+- Implementar RabbitMQ + Producers + Consumers
 - Completar AI_WORKFLOW.md con metodología de prompting
 - Documentar alucinaciones detectadas
 - Implementar Dead Letter Queues
-- Agregar test de resiliencia
+- Agregar test de resiliencia async
 
 ### MEJORA (Nice-to-have):
 - Agregar sección de auditoría a logs
 - Implementar tracing distribuido (Jaeger)
 - Monitoreo de colas RabbitMQ
+- E2E tests con Cypress para flujo completo
 
 ---
 
@@ -958,20 +1066,34 @@ Inventory Consumer consume
 - La IA tiende a preferir REST HTTP como "patrón estándar"
 - El humano debería haber validado: *"¿Dónde está RabbitMQ?"*
 
-**Validación Sofka AI-First**: El sistema funcionalmente completo pero arquitectónicalmente incorrecto = **ALUCINACIÓN SILENCIOSA** (lo más peligroso)
+**Validación Sofka AI-First**: El sistema funcionalmente completo pero arquitectónicalmente incorrecto = **ALUCINACIÓN SILENCIOSA TRIPLE**:
 
-#### 🚨 Extensión de la Alucinación Silenciosa
+1. **RabbitMQ desapareció**: Sistema debería ser async, es sync
+2. **Docker Compose obsoleto**: Pattern deprecated que genera warnings
+3. **Frontend disconnected**: Backend funciona, Frontend mockeado (100% TODO/mock)
 
-Además de la ausencia de RabbitMQ, la IA también generó:
-- ❌ `docker-compose.yml` con campo `version` (deprecated desde Docker 20.10)
-- ❌ Comandos `docker-compose` en scripts (obsoletos)
-- ❌ Estructura antigua sin nombre de proyecto explícito
-- ❌ Sin soporte nativo moderno de `depends_on` conditions
+#### 🚨 Alucinaciones Silenciosas Detectadas
 
-**Impacto**: Código que "funciona" pero con warnings y patrones desactualizados, creando "deuda técnica silenciosa"
+La IA generó:
+- ❌ Backend completo SIN RabbitMQ (requisito principal omitido)
+- ❌ `docker-compose.yml` con campo `version` deprecated
+- ❌ Frontend con TODO comments en componentes críticos (login, signup, dashboard)
+- ❌ Data completamente hardcodeada (mockItems, mockReservations)
+- ❌ Autenticación que no valida (usuario entra sin password verificado)
+- ❌ Sign-up que no persiste usuarios
+- ❌ Sin integración Frontend ↔ Backend (desarrollo en silos)
+
+**El resultado**: Código que "funciona localmente" pero es un **esqueleto no funcional**
+- Parece completo: tiene UI, tiene componentes, tiene servicios
+- Pero es vacío: TODO comments ocultos, mockeado, no integrado, no persistente
+
+**Validación QA**: RTM incumplimiento = 65% (9 de 14 requisitos críticos fallan)
 
 ---
 
-**Auditoría realizada por**: AI-Assisted Code Review  
-**Metodología**: Rúbrica Sofka AI-First + Detección de Alucinaciones  
-**Recomendación Final**: 🔴 **NO APTO para producción. REQUIERE refactor crítico para agregar RabbitMQ**
+**Auditoría realizada por**: AI-Assisted Code Review + QA Perspective
+**Metodología**: Rúbrica Sofka AI-First + Detección de Alucinaciones + Testing Requirements
+**Recomendación Final**: 🔴 **NO APTO para producción. Requiere refactor crítico:**
+   1. **URGENTE**: Eliminar TODOs y mocks - Integrar Frontend real con Backend
+   2. **URGENTE**: Implementar RabbitMQ asincrónico
+   3. **URGENTE**: Validar RTM 100% antes de siguiente iteración
