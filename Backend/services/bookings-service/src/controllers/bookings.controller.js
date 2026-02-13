@@ -1,8 +1,9 @@
 const bookingsService = require("../services/bookings.service");
+const bookingDispatcher = require("../dispatchers/booking.dispatcher");
 
 async function createBooking(req, res) {
     try {
-        const booking = await bookingsService.createBooking({
+        const booking = await bookingDispatcher.dispatchCreateBooking({
             ...req.body,
             userId: req.user.id, // del token
         });

@@ -31,6 +31,7 @@ services:
       DB_USER: ${DB_USER:-app}
       DB_PASSWORD: ${DB_PASSWORD:-app123}
       DB_NAME: ${DB_NAME:-reservas_db}
+      JWT_SECRET: dev_secret_key
     ports:
       - "3001:3001"
     volumes:
@@ -54,6 +55,9 @@ services:
       DB_USER: ${DB_USER:-app}
       DB_PASSWORD: ${DB_PASSWORD:-app123}
       DB_NAME: ${DB_NAME:-reservas_db}
+      JWT_SECRET: dev_secret_key
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
     ports:
       - "3003:3003"
     volumes:
@@ -77,6 +81,7 @@ services:
       DB_USER: ${DB_USER:-app}
       DB_PASSWORD: ${DB_PASSWORD:-app123}
       DB_NAME: ${DB_NAME:-reservas_db}
+      JWT_SECRET: dev_secret_key
     ports:
       - "3005:3005"
     volumes:

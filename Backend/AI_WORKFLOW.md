@@ -64,6 +64,13 @@ El sistema está compuesto por los siguientes contenedores Docker interconectado
     -   Volumen persistente `mariadb_data` para seguridad de datos.
     -   Healthchecks configurados para asegurar disponibilidad antes de arrancar los servicios dependientes.
 
+## 7. 🐰 RabbitMQ (Infraestructura)
+**Puertos**: 5672 (AMQP), 15672 (Management UI)
+-   **Función**: Broker de mensajería para infraestructura (no integrado aún con los servicios).
+-   **Acceso**:
+    -   Management UI: `http://localhost:15672`
+    -   Credenciales dev: `guest` / `guest`
+
 ------------------------------------------------------------------------
 
 # 🔄 Flujo de Comunicación (Docker)
