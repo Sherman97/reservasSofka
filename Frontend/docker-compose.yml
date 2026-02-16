@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Ajusta esto si tu API está en otro lado o si usas Docker network externa
+        VITE_API_URL: http://localhost:3000
+    container_name: reservas_frontend
+    restart: always
+    ports:
+      - "80:80"

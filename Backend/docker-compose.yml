@@ -54,6 +54,7 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
+      RABBITMQ_URL: amqp://rabbitmq:5672
     ports:
       - "3003:3003"
     volumes:
@@ -63,6 +64,8 @@ services:
       - reservas_net
     depends_on:
       mariadb:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
 
   inventory-service:
@@ -77,6 +80,7 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
+      RABBITMQ_URL: amqp://rabbitmq:5672
     ports:
       - "3005:3005"
     volumes:
@@ -86,6 +90,8 @@ services:
       - reservas_net
     depends_on:
       mariadb:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
 
   api-gateway:
@@ -117,9 +123,26 @@ services:
       - bookings-service
       - inventory-service
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - reservas_net
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 networks:
   reservas_net:
 
 
 volumes:
   mariadb_data:
+  rabbitmq_data:
