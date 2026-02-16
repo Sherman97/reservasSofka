@@ -9,7 +9,7 @@
 /* Left components (Image side) */
 .login-left {
     flex: 1;
-    background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80');
+    background-image: url('../../../assets/FondoSofka_13.jpg');
     /* Placeholder office image */
     background-size: cover;
     background-position: center;
@@ -19,6 +19,7 @@
     justify-content: flex-end;
     padding: 4rem;
     color: white;
+    background-position-x: 486px
 }
 
 .login-left::before {
@@ -28,7 +29,6 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(180deg, rgba(13, 110, 253, 0.4) 0%, rgba(13, 110, 253, 0.8) 100%);
 }
 
 .login-left .overlay {

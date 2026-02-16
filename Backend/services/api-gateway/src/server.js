@@ -14,6 +14,8 @@ app.get("/health", (req, res) => res.json({ ok: true, service: "gateway" }));
 
 app.use("/auth", createProxyMiddleware({ target: process.env.AUTH_URL, changeOrigin: true }));
 app.use("/bookings", createProxyMiddleware({ target: process.env.BOOKINGS_URL, changeOrigin: true }));
+app.use("/inventory", createProxyMiddleware({ target: process.env.INVENTORY_URL, changeOrigin: true }));
+app.use("/locations", createProxyMiddleware({ target: process.env.LOCATIONS_URL, changeOrigin: true }));
 
 const { initializeDatabase } = require("../../database/src/init");
 
