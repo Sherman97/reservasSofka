@@ -8,112 +8,213 @@ services:
       MARIADB_USER: ${DB_USER:-app}
       MARIADB_PASSWORD: ${DB_PASSWORD:-app123}
     ports:
-      - "3307:3306" # cambia a 3306:3306 si NO tienes MariaDB local ocupando 3306
+      - "3307:3306"
     volumes:
       - mariadb_data:/var/lib/mysql
     networks:
       - reservas_net
     healthcheck:
-      test: [ "CMD", "mariadb-admin", "ping", "-h", "127.0.0.1", "-p${DB_ROOT_PASSWORD:-root}" ]
+      test: ["CMD", "mariadb-admin", "ping", "-h", "127.0.0.1", "-p${DB_ROOT_PASSWORD:-root}"]
       interval: 5s
       timeout: 3s
       retries: 20
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: RabbitMQ
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - reservas_net
+    restart: unless-stopped
+
+  database:
+    image: liquibase/liquibase:4.30
+    container_name: LiquibaseMigrator
+    command:
+      - --url=jdbc:mariadb://mariadb:3306/${DB_NAME:-reservas_db}
+      - --username=${DB_USER:-app}
+      - --password=${DB_PASSWORD:-app123}
+      - --changelog-file=/liquibase/changelog/db.changelog-master.yaml
+      - update
+    volumes:
+      - ./services/database/liquibase:/liquibase/changelog:ro
+    networks:
+      - reservas_net
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    restart: "no"
 
   auth-service:
     build:
       context: ./services/auth-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     environment:
-      NODE_ENV: production
       PORT: 3001
       DB_HOST: mariadb
       DB_PORT: 3306
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER:-app}
+      DB_PASSWORD: ${DB_PASSWORD:-app123}
+      DB_NAME: ${DB_NAME:-reservas_db}
+      JWT_SECRET: ${JWT_SECRET:-5c8b8f7a1b6e2c5c2d570e5a2777bef3ceb6ab9ddb6e242bcc04120dee8cd698a73617717a36aedfebd4330e27482eaa7361205472e27c1590a39d2a823fe131}
+      RABBITMQ_ENABLED: ${RABBITMQ_ENABLED:-true}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
     ports:
       - "3001:3001"
-    volumes:
-      - ./services/auth-service:/app
-      - /app/node_modules
     networks:
       - reservas_net
     depends_on:
-      mariadb:
-        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+      database:
+        condition: service_completed_successfully
+    restart: unless-stopped
 
   bookings-service:
     build:
       context: ./services/bookings-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     environment:
-      NODE_ENV: production
       PORT: 3003
       DB_HOST: mariadb
       DB_PORT: 3306
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER:-app}
+      DB_PASSWORD: ${DB_PASSWORD:-app123}
+      DB_NAME: ${DB_NAME:-reservas_db}
+      JWT_SECRET: ${JWT_SECRET:-5c8b8f7a1b6e2c5c2d570e5a2777bef3ceb6ab9ddb6e242bcc04120dee8cd698a73617717a36aedfebd4330e27482eaa7361205472e27c1590a39d2a823fe131}
+      RABBITMQ_ENABLED: ${RABBITMQ_ENABLED:-true}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
     ports:
       - "3003:3003"
-    volumes:
-      - ./services/bookings-service:/app
-      - /app/node_modules
     networks:
       - reservas_net
     depends_on:
-      mariadb:
-        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+      database:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  locations-service:
+    build:
+      context: ./services/locations-service
+      dockerfile: Dockerfile
+    environment:
+      PORT: 3004
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_USER: ${DB_USER:-app}
+      DB_PASSWORD: ${DB_PASSWORD:-app123}
+      DB_NAME: ${DB_NAME:-reservas_db}
+      JWT_SECRET: ${JWT_SECRET:-5c8b8f7a1b6e2c5c2d570e5a2777bef3ceb6ab9ddb6e242bcc04120dee8cd698a73617717a36aedfebd4330e27482eaa7361205472e27c1590a39d2a823fe131}
+      RABBITMQ_ENABLED: ${RABBITMQ_ENABLED:-true}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+    ports:
+      - "3004:3004"
+    networks:
+      - reservas_net
+    depends_on:
+      rabbitmq:
+        condition: service_started
+      database:
+        condition: service_completed_successfully
+    restart: unless-stopped
 
   inventory-service:
     build:
       context: ./services/inventory-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     environment:
-      NODE_ENV: production
       PORT: 3005
       DB_HOST: mariadb
       DB_PORT: 3306
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER:-app}
+      DB_PASSWORD: ${DB_PASSWORD:-app123}
+      DB_NAME: ${DB_NAME:-reservas_db}
+      JWT_SECRET: ${JWT_SECRET:-5c8b8f7a1b6e2c5c2d570e5a2777bef3ceb6ab9ddb6e242bcc04120dee8cd698a73617717a36aedfebd4330e27482eaa7361205472e27c1590a39d2a823fe131}
+      RABBITMQ_ENABLED: ${RABBITMQ_ENABLED:-true}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
     ports:
       - "3005:3005"
-    volumes:
-      - ./services/inventory-service:/app
-      - /app/node_modules
     networks:
       - reservas_net
     depends_on:
-      mariadb:
-        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+      database:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  notifications-service:
+    build:
+      context: ./services/notifications-service
+      dockerfile: Dockerfile
+    environment:
+      PORT: 3006
+      WEBSOCKET_ALLOWED_ORIGINS: ${WEBSOCKET_ALLOWED_ORIGINS:-*}
+      RABBITMQ_ENABLED: true
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+      RABBITMQ_EXCHANGE: ${RABBITMQ_EXCHANGE:-reservas.events}
+      RABBITMQ_QUEUE: ${RABBITMQ_QUEUE:-notifications.events.q}
+      RABBITMQ_ROUTING_KEYS: ${RABBITMQ_ROUTING_KEYS:-auth.user.created,bookings.reservation.created,bookings.reservation.cancelled,inventory.equipment.created,inventory.equipment.updated,inventory.equipment.deleted,locations.city.created,locations.city.updated,locations.city.deleted,locations.space.created,locations.space.updated,locations.space.deleted}
+    ports:
+      - "3006:3006"
+    networks:
+      - reservas_net
+    depends_on:
+      rabbitmq:
+        condition: service_started
+      database:
+        condition: service_completed_successfully
+    restart: unless-stopped
 
   api-gateway:
     build:
       context: ./services/api-gateway
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     environment:
-      NODE_ENV: production
       PORT: 3000
       AUTH_URL: http://auth-service:3001
       BOOKINGS_URL: http://bookings-service:3003
       INVENTORY_URL: http://inventory-service:3005
-      # LOCATIONS_URL: http://locations-service:3004   # cuando lo agregues
+      LOCATIONS_URL: http://locations-service:3004
+      NOTIFICATIONS_URL: http://notifications-service:3006
+      NOTIFICATIONS_WS_URL: ws://notifications-service:3006
     ports:
       - "3000:3000"
-    volumes:
-      - ./services/api-gateway:/app
-      - /app/node_modules
     networks:
       - reservas_net
     depends_on:
       - auth-service
       - bookings-service
       - inventory-service
+      - locations-service
+      - notifications-service
+    restart: unless-stopped
 
 networks:
   reservas_net:
-
 
 volumes:
   mariadb_data:

@@ -1,4 +1,4 @@
-services:
+﻿services:
   mariadb:
     image: mariadb:11
     container_name: BdMaria
@@ -34,7 +34,6 @@ services:
       - "3005:3005"
     volumes:
       - ./services/inventory-service:/app
-      - /app/node_modules
     networks:
       - reservas_net
     depends_on:
@@ -47,3 +46,10 @@ networks:
 
 volumes:
   mariadb_data:
+
+
+
+
+
+
+

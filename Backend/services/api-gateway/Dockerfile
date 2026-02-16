@@ -1,20 +1,23 @@
-FROM node:20-alpine
-
+﻿FROM gradle:8.14.4-jdk17-alpine AS builder
 WORKDIR /app
 
-# Copy shared database module
-COPY services/database services/database
+COPY build.gradle settings.gradle gradlew gradlew.bat ./
+COPY gradle ./gradle
+COPY src ./src
 
-# Install database dependencies if any (we assume they are needed)
-WORKDIR /app/services/database
-RUN if [ -f package.json ]; then npm install --production; fi
+RUN chmod +x ./gradlew && ./gradlew clean bootJar --no-daemon
 
-# Copy api-gateway
-COPY services/api-gateway services/api-gateway
-
-WORKDIR /app/services/api-gateway
-RUN npm ci --only=production
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+COPY --from=builder /app/build/libs/*.jar app.jar
 
 EXPOSE 3000
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 
-CMD ["npm", "start"]
+
+
+
+
+
+
+

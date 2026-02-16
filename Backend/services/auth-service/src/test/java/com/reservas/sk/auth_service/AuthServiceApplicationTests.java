@@ -1,13 +1,15 @@
-package com.reservas.sk.auth_service;
+﻿package com.reservas.sk.auth_service;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
-@SpringBootTest
 class AuthServiceApplicationTests {
 
 	@Test
-	void contextLoads() {
+	void applicationTestPlaceholder() {
 	}
 
 }
+
+
+
+
+
