@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const pool = require("../db");
+const { publishEvent } = require("./rabbitmq.publisher");
 
 function throwError(statusCode, message) {
     const e = new Error(message);
@@ -156,6 +157,16 @@ async function createBooking(payload) {
         }
 
         await conn.commit();
+
+        // Publicar evento de dominio
+        await publishEvent("booking.created", {
+            bookingId,
+            userId,
+            locationId: locId,
+            items: cleanItems,
+            startAt: start.toISOString(),
+            endAt: end.toISOString()
+        });
 
         return {
             id: bookingId,

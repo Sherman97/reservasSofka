@@ -10,10 +10,8 @@ async function createItem(req, res) {
 }
 
 async function listItems(req, res) {
-    console.log("listItems");
     try {
         const items = await itemsService.listItems(req.query);
-        console.log(items);
         return res.json({ ok: true, data: items });
     } catch (err) {
         return handleError(err, res);

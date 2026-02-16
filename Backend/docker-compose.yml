@@ -1,0 +1,148 @@
+services:
+  mariadb:
+    image: mariadb:11
+    container_name: BdMaria
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+      MARIADB_DATABASE: ${DB_NAME:-reservas_db}
+      MARIADB_USER: ${DB_USER:-app}
+      MARIADB_PASSWORD: ${DB_PASSWORD:-app123}
+    ports:
+      - "3307:3306" # cambia a 3306:3306 si NO tienes MariaDB local ocupando 3306
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - reservas_net
+    healthcheck:
+      test: [ "CMD", "mariadb-admin", "ping", "-h", "127.0.0.1", "-p${DB_ROOT_PASSWORD:-root}" ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile.dev
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./services/auth-service:/app
+      - /app/node_modules
+    networks:
+      - reservas_net
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+  bookings-service:
+    build:
+      context: ./services/bookings-service
+      dockerfile: Dockerfile.dev
+    environment:
+      NODE_ENV: production
+      PORT: 3003
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      RABBITMQ_URL: amqp://rabbitmq:5672
+    ports:
+      - "3003:3003"
+    volumes:
+      - ./services/bookings-service:/app
+      - /app/node_modules
+    networks:
+      - reservas_net
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  inventory-service:
+    build:
+      context: ./services/inventory-service
+      dockerfile: Dockerfile.dev
+    environment:
+      NODE_ENV: production
+      PORT: 3005
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      RABBITMQ_URL: amqp://rabbitmq:5672
+    ports:
+      - "3005:3005"
+    volumes:
+      - ./services/inventory-service:/app
+      - /app/node_modules
+    networks:
+      - reservas_net
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile.dev
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      AUTH_URL: http://auth-service:3001
+      BOOKINGS_URL: http://bookings-service:3003
+      INVENTORY_URL: http://inventory-service:3005
+      # LOCATIONS_URL: http://locations-service:3004   # cuando lo agregues
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./services/api-gateway:/app
+      - /app/node_modules
+      - ./services/database:/database
+    networks:
+      - reservas_net
+    depends_on:
+      - auth-service
+      - bookings-service
+      - inventory-service
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - reservas_net
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  reservas_net:
+
+
+volumes:
+  mariadb_data:
+  rabbitmq_data:

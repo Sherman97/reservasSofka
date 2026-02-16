@@ -1,0 +1,144 @@
+services:
+  mariadb:
+    image: mariadb:11
+    container_name: BdMaria
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: reservas_db
+      MARIADB_USER: app
+      MARIADB_PASSWORD: app123
+    ports:
+      - "3307:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - reservas_net
+    healthcheck:
+      test: [ "CMD", "mariadb-admin", "ping", "-h", "127.0.0.1", "-proot" ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  auth-service:
+    build:
+      context: ../auth-service
+      dockerfile: Dockerfile.dev
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_USER: app
+      DB_PASSWORD: app123
+      DB_NAME: reservas_db
+    ports:
+      - "3001:3001"
+    volumes:
+      - ../auth-service:/app
+      - /app/node_modules
+    networks:
+      - reservas_net
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+  bookings-service:
+    build:
+      context: ../bookings-service
+      dockerfile: Dockerfile.dev
+    environment:
+      NODE_ENV: production
+      PORT: 3003
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_USER: app
+      DB_PASSWORD: app123
+      DB_NAME: reservas_db
+      DOTENV_FILE: .env.docker
+    ports:
+      - "3003:3003"
+    volumes:
+      - ../bookings-service:/app
+      - /app/node_modules
+    networks:
+      - reservas_net
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+  locations-service:
+    build:
+      context: ../locations-service
+      dockerfile: Dockerfile.dev
+    environment:
+      NODE_ENV: production
+      PORT: 3004
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_USER: app
+      DB_PASSWORD: app123
+      DB_NAME: reservas_db
+    ports:
+      - "3004:3004"
+    volumes:
+      - ../locations-service:/app
+      - /app/node_modules
+    networks:
+      - reservas_net
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+  inventory-service:
+    build:
+      context: ../inventory-service
+      dockerfile: Dockerfile.dev
+    environment:
+      NODE_ENV: production
+      PORT: 3005
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_USER: app
+      DB_PASSWORD: app123
+      DB_NAME: reservas_db
+    ports:
+      - "3005:3005"
+    volumes:
+      - ../inventory-service:/app
+      - /app/node_modules
+    networks:
+      - reservas_net
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      AUTH_URL: http://auth-service:3001
+      BOOKINGS_URL: http://bookings-service:3003
+      LOCATIONS_URL: http://locations-service:3004
+      INVENTORY_URL: http://inventory-service:3005
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    networks:
+      - reservas_net
+    depends_on:
+      - auth-service
+      - bookings-service
+      - locations-service
+      - inventory-service
+
+networks:
+  reservas_net:
+
+
+volumes:
+  mariadb_data:
