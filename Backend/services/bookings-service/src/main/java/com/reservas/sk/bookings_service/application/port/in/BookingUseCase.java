@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.bookings_service.application.port.in;
+package com.reservas.sk.bookings_service.application.port.in;
 
 import com.reservas.sk.bookings_service.application.usecase.CheckSpaceAvailabilityQuery;
 import com.reservas.sk.bookings_service.application.usecase.CreateReservationCommand;

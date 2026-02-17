@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.locations_service.adapters.out.messaging;
+package com.reservas.sk.locations_service.adapters.out.messaging;
 
 import com.reservas.sk.locations_service.application.port.out.LocationEventPublisherPort;
 import com.reservas.sk.locations_service.application.usecase.CityCreatedEvent;

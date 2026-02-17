@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.locations_service.application.service;
+package com.reservas.sk.locations_service.application.service;
 
 import com.reservas.sk.locations_service.application.port.in.LocationsUseCase;
 import com.reservas.sk.locations_service.application.port.out.LocationEventPublisherPort;

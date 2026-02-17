@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.api_gateway.infrastructure.config;
+package com.reservas.sk.api_gateway.infrastructure.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

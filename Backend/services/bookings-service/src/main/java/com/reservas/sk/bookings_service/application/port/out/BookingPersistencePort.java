@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.bookings_service.application.port.out;
+package com.reservas.sk.bookings_service.application.port.out;
 
 import com.reservas.sk.bookings_service.domain.model.Reservation;
 import com.reservas.sk.bookings_service.domain.model.ReservationEquipment;

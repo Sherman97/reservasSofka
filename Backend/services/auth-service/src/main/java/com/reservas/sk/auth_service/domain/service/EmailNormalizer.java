@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.auth_service.domain.service;
+package com.reservas.sk.auth_service.domain.service;
 
 import java.util.Locale;
 

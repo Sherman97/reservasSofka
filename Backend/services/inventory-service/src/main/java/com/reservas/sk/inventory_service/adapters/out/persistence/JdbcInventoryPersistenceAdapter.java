@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.inventory_service.adapters.out.persistence;
+package com.reservas.sk.inventory_service.adapters.out.persistence;
 
 import com.reservas.sk.inventory_service.application.port.out.InventoryPersistencePort;
 import com.reservas.sk.inventory_service.domain.model.Equipment;

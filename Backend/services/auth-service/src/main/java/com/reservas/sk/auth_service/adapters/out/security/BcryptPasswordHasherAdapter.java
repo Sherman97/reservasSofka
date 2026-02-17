@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.auth_service.adapters.out.security;
+package com.reservas.sk.auth_service.adapters.out.security;
 
 import com.reservas.sk.auth_service.application.port.out.PasswordHasherPort;
 import org.springframework.security.crypto.password.PasswordEncoder;

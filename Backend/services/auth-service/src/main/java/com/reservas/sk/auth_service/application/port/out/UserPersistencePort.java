@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.auth_service.application.port.out;
+package com.reservas.sk.auth_service.application.port.out;
 
 import com.reservas.sk.auth_service.domain.model.User;
 

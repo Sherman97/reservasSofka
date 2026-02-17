@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.inventory_service.adapters.out.security;
+package com.reservas.sk.inventory_service.adapters.out.security;
 
 import com.reservas.sk.inventory_service.application.port.out.TokenPort;
 import com.reservas.sk.inventory_service.application.usecase.AuthenticatedUser;

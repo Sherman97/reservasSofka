@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.auth_service.infrastructure.config;
+package com.reservas.sk.auth_service.infrastructure.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.inventory_service.exception;
+package com.reservas.sk.inventory_service.exception;
 
 import org.springframework.http.HttpStatus;
 

@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.api_gateway;
+package com.reservas.sk.api_gateway;
 
 import org.junit.jupiter.api.Test;
 

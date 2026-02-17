@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.bookings_service.adapters.out.messaging;
+package com.reservas.sk.bookings_service.adapters.out.messaging;
 
 import com.reservas.sk.bookings_service.application.port.out.ReservationEventPublisherPort;
 import com.reservas.sk.bookings_service.application.usecase.ReservationCancelledEvent;

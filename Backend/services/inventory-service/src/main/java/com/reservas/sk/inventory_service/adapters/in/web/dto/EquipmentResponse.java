@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.inventory_service.adapters.in.web.dto;
+package com.reservas.sk.inventory_service.adapters.in.web.dto;
 
 public record EquipmentResponse(Long id,
                                 Long cityId,

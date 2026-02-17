@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.auth_service;
+package com.reservas.sk.auth_service;
 
 import org.junit.jupiter.api.Test;
 class AuthServiceApplicationTests {

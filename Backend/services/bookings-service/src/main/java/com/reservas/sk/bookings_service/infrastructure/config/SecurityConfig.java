@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.bookings_service.infrastructure.config;
+package com.reservas.sk.bookings_service.infrastructure.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.ApiResponse;

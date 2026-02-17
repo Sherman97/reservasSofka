@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.auth_service.adapters.out.persistence;
+package com.reservas.sk.auth_service.adapters.out.persistence;
 
 import jakarta.persistence.*;
 

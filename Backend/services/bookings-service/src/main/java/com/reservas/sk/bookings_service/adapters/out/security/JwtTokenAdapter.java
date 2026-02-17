@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.bookings_service.adapters.out.security;
+package com.reservas.sk.bookings_service.adapters.out.security;
 
 import com.reservas.sk.bookings_service.application.port.out.TokenPort;
 import com.reservas.sk.bookings_service.application.usecase.AuthenticatedUser;

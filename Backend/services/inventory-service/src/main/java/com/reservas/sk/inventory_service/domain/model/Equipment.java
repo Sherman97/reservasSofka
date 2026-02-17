@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.inventory_service.domain.model;
+package com.reservas.sk.inventory_service.domain.model;
 
 import java.time.Instant;
 

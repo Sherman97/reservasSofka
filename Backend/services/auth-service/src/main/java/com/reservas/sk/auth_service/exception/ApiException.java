@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.auth_service.exception;
+package com.reservas.sk.auth_service.exception;
 
 import org.springframework.http.HttpStatus;
 

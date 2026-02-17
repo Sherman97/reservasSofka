@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.notifications_service.infrastructure.config;
+package com.reservas.sk.notifications_service.infrastructure.config;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;

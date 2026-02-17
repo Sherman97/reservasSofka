@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.api_gateway.infrastructure.config;
+package com.reservas.sk.api_gateway.infrastructure.config;
 
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;

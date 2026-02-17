@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.auth_service.application.port.in;
+package com.reservas.sk.auth_service.application.port.in;
 
 import com.reservas.sk.auth_service.application.usecase.AuthResult;
 import com.reservas.sk.auth_service.application.usecase.LoginCommand;
