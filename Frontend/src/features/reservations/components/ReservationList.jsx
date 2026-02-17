@@ -9,7 +9,7 @@ export const ReservationList = ({ reservations = [], onEdit, onDelete }) => {
             </div>
         );
     }
-
+    console.log("reservations", reservations);
     return (
         <div className="reservation-list">
             {reservations.map(res => (

@@ -1,4 +1,5 @@
 import bookingsApi from '../../../services/bookingsApi';
+import inventoryApi from '../../../services/inventoryApi';
 
 export const createReservation = async (reservationData) => {
     try {
@@ -12,12 +13,15 @@ export const createReservation = async (reservationData) => {
         const endAt = new Date(year, month - 1, day, endHours, endMinutes).toISOString();
 
         const payload = {
-            locationId: reservationData.locationId,
+            spaceId: reservationData.spaceId || reservationData.locationId,
             startAt,
             endAt,
-            items: (reservationData.items || []).map(it => ({
-                itemId: it.itemId || it.id, // Support both formats
-                qty: it.qty || 1
+            title: reservationData.title || `Reserva de ${reservationData.spaceName}`,
+            attendeesCount: reservationData.attendeesCount || 1,
+            notes: reservationData.notes || '',
+            items: (reservationData.items || []).map(id => ({
+                itemId: typeof id === 'object' ? (id.itemId || id.id) : id,
+                qty: 1
             }))
         };
 
@@ -30,15 +34,26 @@ export const createReservation = async (reservationData) => {
     }
 };
 
-export const availableEquipment = [
-    { id: 1, name: "Proyector 4K", available: true, icon: "📽️" },
-    { id: 2, name: "Cámara 4K para Streaming", available: true, icon: "📹" },
-    { id: 3, name: "Pizarra Digital", available: true, icon: "📊" },
-    { id: 4, name: "Adaptadores HDMI / USB-C", available: true, icon: "🔌" },
-    { id: 5, name: "Sistema de Audio", available: true, icon: "🔊" },
-    { id: 6, name: "Micrófonos de Solapa", available: false, icon: "🎤" },
-    { id: 7, name: "Puntero Láser", available: true, icon: "📍" },
-];
+export const fetchEquipment = async (cityId) => {
+    try {
+        const response = await inventoryApi.get('/items/listItems', {
+            params: { city_id: cityId }
+        });
+
+        const rawItems = response.data.data || [];
+        console.log(rawItems);
+        // Map to format used by EquipmentSelector
+        return rawItems.map(item => ({
+            id: item.id,
+            name: item.name,
+            available: item.status === 'available',
+        }));
+    } catch (error) {
+        console.error('Error fetching equipment:', error);
+        return [];
+    }
+};
+
 
 // Generate mock availability for the current month
 export const getAvailabilityForMonth = (year, month) => {

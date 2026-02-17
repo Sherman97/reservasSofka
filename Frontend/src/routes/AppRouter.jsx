@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { LoginPage } from '../features/auth';
-import { SignupPage } from '../features/signup';
+import LoginPage from '../ui/pages/auth/LoginPage';
+import SignupPage from '../ui/pages/signup/SignupPage';
 import { DashboardPage } from '../features/dashboard';
 import { MainLayout } from '../features/dashboard/components/MainLayout';
 import { MyReservationsPage } from '../features/reservations/pages/MyReservationsPage';

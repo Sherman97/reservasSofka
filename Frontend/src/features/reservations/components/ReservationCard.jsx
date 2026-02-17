@@ -12,7 +12,7 @@ export const ReservationCard = ({ reservation, onDelete }) => {
             default: return '';
         }
     };
-{/**
+    {/**HUMAN_CHECK
  * La IA duplico el status del reservationCard dejando una en el header y otra en el body, 
     dicho error se corrigio manualmente.
  */}

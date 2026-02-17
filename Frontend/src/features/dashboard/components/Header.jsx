@@ -4,6 +4,7 @@ import { useTheme } from '../../../context/ThemeContext';
 import { logout } from '../../auth/services/authService';
 import logoLight from '../../../assets/LogoSofka_FondoBlanco_peq.png';
 import logoDark from '../../../assets/LogoSofka_FondoNegro_peq.png';
+import { SearchBar } from './SearchBar';
 
 export const Header = () => {
     const { theme, toggleTheme } = useTheme();
@@ -48,7 +49,7 @@ export const Header = () => {
                         alt="Sofka Logo"
                         className="header-logo"
                     />
-                    <h1 className="logo-text">Reservas casa Sofka</h1>
+                    <h1 className="logo-text">Reservas Casa Sofka</h1>
                     <nav className="header-nav">
                         <NavLink to="/dashboard" className={({ isActive }) => isActive ? "active" : ""}>
                             Explorar
@@ -56,7 +57,9 @@ export const Header = () => {
                         <NavLink to="/my-reservations" className={({ isActive }) => isActive ? "active" : ""}>
                             Mis Reservas
                         </NavLink>
+                        
                     </nav>
+                    <SearchBar />
                 </div>
                 <div className="header-right">
                     <button onClick={toggleTheme} className="icon-btn">
@@ -68,11 +71,11 @@ export const Header = () => {
                             onClick={toggleMenu}
                         >
                             <div className="user-info">
-                                <span className="user-name">{user.name}</span>
+                                <span className="user-name">{user.username}</span>
                             </div>
-                            <div className="user-avatar">
+                            {/* <div className="user-avatar">
                                 {user.name.charAt(0).toUpperCase()}
-                            </div>
+                            </div> */}
                             <span className="dropdown-chevron">▾</span>
                         </div>
                         {/*La IA dejo el contenido del dropdown oculto y dicha funcionalidad se ejecutaba solo con pulsar el nombre del usuario*/}

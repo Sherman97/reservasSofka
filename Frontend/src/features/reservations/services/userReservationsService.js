@@ -2,7 +2,7 @@ import bookingsApi from '../../../services/bookingsApi';
 
 export const getUserReservations = async (filter = 'all', searchTerm = '') => {
     try {
-        const response = await bookingsApi.get('/bookings/getBookings');
+        const response = await bookingsApi.get('/listBookings');
         console.log("response", response);
         // Backend returns { ok: true, data: [...] }
         const rawData = response.data.data || [];

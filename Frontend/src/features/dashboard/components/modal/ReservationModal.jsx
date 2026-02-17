@@ -40,12 +40,13 @@ export const ReservationModal = ({
 
         // Format booking data for backend
         const reservationData = {
-            locationId: item.isLocation ? item.backendId : null,
+            spaceId: item.isLocation ? item.backendId : null,
+            spaceName: item.name,
             itemId: !item.isLocation ? item.backendId : null,
             date: dateStr,
             startTime,
             endTime,
-            items: selectedEquipment // Array of { itemId, name, qty }
+            items: selectedEquipment // Array of IDs
         };
 
         try {

@@ -691,3 +691,109 @@
         gap: 2rem;
     }
 }
+
+/* --- Real-time Availability & Overlap Styles --- */
+.busy-slots-container {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+.busy-slots-title {
+    margin: 0 0 0.75rem 0;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.busy-slots-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.busy-slot-item {
+    background-color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.overlap-error {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background-color: #fff5f5;
+    border: 1px solid #feb2b2;
+    border-radius: 12px;
+    margin-top: 1.5rem;
+    color: #c53030;
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+.overlap-error .error-icon {
+    font-size: 1.25rem;
+}
+
+.overlap-error p {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.available-ranges {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.available-label {
+    font-weight: 700;
+    font-size: 0.75rem;
+    color: #2563eb;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.ranges-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.range-tag {
+    background-color: white;
+    padding: 0.35rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: #2563eb;
+    border: 1px solid #dbeafe;
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(37, 99, 235, 0.05);
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}   
