@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.locations_service.application.usecase;
+package com.reservas.sk.locations_service.application.usecase;
 
 import java.time.Instant;
 

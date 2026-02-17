@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.auth_service.exception;
+package com.reservas.sk.auth_service.exception;
 
 import com.reservas.sk.auth_service.adapters.in.web.dto.ApiResponse;
 import org.springframework.http.HttpStatus;

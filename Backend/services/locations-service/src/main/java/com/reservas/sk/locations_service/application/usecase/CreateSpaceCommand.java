@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.locations_service.application.usecase;
+package com.reservas.sk.locations_service.application.usecase;
 
 public record CreateSpaceCommand(Long cityId,
                                  String name,

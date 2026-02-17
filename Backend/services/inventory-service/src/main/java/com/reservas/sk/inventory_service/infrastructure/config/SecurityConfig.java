@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.inventory_service.infrastructure.config;
+package com.reservas.sk.inventory_service.infrastructure.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reservas.sk.inventory_service.adapters.in.web.dto.ApiResponse;

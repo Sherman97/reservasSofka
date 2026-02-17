@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.auth_service.adapters.out.persistence;
+package com.reservas.sk.auth_service.adapters.out.persistence;
 
 import com.reservas.sk.auth_service.application.port.out.UserPersistencePort;
 import com.reservas.sk.auth_service.domain.model.User;

@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.inventory_service.adapters.in.web;
+package com.reservas.sk.inventory_service.adapters.in.web;
 
 import com.reservas.sk.inventory_service.adapters.in.web.dto.EquipmentResponse;
 import com.reservas.sk.inventory_service.domain.model.Equipment;

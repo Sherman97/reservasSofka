@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.notifications_service.application.service;
+package com.reservas.sk.notifications_service.application.service;
 
 import com.reservas.sk.notifications_service.application.port.in.EventBroadcastUseCase;
 import com.reservas.sk.notifications_service.application.port.out.WebSocketBroadcastPort;

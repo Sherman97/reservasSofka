@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.locations_service.adapters.in.web.dto;
+package com.reservas.sk.locations_service.adapters.in.web.dto;
 
 public record ApiResponse<T>(boolean ok, T data, String message) {
     public static <T> ApiResponse<T> success(T data) {

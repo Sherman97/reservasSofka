@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.inventory_service.application.port.in;
+package com.reservas.sk.inventory_service.application.port.in;
 
 import com.reservas.sk.inventory_service.application.usecase.CreateEquipmentCommand;
 import com.reservas.sk.inventory_service.application.usecase.DeleteEquipmentResult;

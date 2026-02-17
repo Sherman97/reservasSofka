@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.bookings_service.adapters.in.web;
+package com.reservas.sk.bookings_service.adapters.in.web;
 
 import com.reservas.sk.bookings_service.adapters.in.web.dto.ReservationEquipmentResponse;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.ReservationResponse;

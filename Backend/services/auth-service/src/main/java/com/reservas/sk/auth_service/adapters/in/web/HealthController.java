@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.auth_service.adapters.in.web;
+package com.reservas.sk.auth_service.adapters.in.web;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

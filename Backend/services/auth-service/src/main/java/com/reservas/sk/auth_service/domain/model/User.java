@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.auth_service.domain.model;
+package com.reservas.sk.auth_service.domain.model;
 
 import java.time.LocalDateTime;
 

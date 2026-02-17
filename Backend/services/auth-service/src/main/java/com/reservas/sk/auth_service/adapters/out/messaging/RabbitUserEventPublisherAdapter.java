@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.auth_service.adapters.out.messaging;
+package com.reservas.sk.auth_service.adapters.out.messaging;
 
 import com.reservas.sk.auth_service.application.port.out.UserEventPublisherPort;
 import com.reservas.sk.auth_service.application.usecase.UserCreatedEvent;

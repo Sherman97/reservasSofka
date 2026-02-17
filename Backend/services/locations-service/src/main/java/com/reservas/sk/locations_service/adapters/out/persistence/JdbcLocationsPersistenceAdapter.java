@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.locations_service.adapters.out.persistence;
+package com.reservas.sk.locations_service.adapters.out.persistence;
 
 import com.reservas.sk.locations_service.application.port.out.LocationsPersistencePort;
 import com.reservas.sk.locations_service.domain.model.City;

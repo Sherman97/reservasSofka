@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.locations_service.adapters.in.web.dto;
+package com.reservas.sk.locations_service.adapters.in.web.dto;
 
 public record SpaceResponse(Long id,
                             Long cityId,

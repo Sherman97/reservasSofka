@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.locations_service;
+package com.reservas.sk.locations_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

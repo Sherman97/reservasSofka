@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.notifications_service.infrastructure.config;
+package com.reservas.sk.notifications_service.infrastructure.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

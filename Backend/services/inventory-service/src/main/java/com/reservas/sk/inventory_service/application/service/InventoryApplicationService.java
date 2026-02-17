@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.inventory_service.application.service;
+package com.reservas.sk.inventory_service.application.service;
 
 import com.reservas.sk.inventory_service.application.port.in.InventoryUseCase;
 import com.reservas.sk.inventory_service.application.port.out.EquipmentEventPublisherPort;

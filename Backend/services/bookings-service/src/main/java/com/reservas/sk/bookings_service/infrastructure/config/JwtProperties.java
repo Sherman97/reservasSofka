@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.bookings_service.infrastructure.config;
+package com.reservas.sk.bookings_service.infrastructure.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

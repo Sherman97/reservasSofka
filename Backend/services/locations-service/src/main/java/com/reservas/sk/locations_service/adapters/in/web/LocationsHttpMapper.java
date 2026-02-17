@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.locations_service.adapters.in.web;
+package com.reservas.sk.locations_service.adapters.in.web;
 
 import com.reservas.sk.locations_service.adapters.in.web.dto.CityResponse;
 import com.reservas.sk.locations_service.adapters.in.web.dto.SpaceResponse;

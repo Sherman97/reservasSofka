@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.locations_service.application.port.out;
+package com.reservas.sk.locations_service.application.port.out;
 
 import com.reservas.sk.locations_service.application.usecase.AuthenticatedUser;
 

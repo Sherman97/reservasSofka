@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.inventory_service.application.port.out;
+package com.reservas.sk.inventory_service.application.port.out;
 
 import com.reservas.sk.inventory_service.domain.model.Equipment;
 

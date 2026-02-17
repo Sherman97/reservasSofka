@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.notifications_service.application.port.out;
+package com.reservas.sk.notifications_service.application.port.out;
 
 import com.reservas.sk.notifications_service.domain.model.NotificationEvent;
 

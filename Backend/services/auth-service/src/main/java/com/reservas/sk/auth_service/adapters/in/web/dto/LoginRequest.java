@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.auth_service.adapters.in.web.dto;
+package com.reservas.sk.auth_service.adapters.in.web.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

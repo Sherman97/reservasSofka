@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.notifications_service.domain.model;
+package com.reservas.sk.notifications_service.domain.model;
 
 import java.time.Instant;
 import java.util.Map;

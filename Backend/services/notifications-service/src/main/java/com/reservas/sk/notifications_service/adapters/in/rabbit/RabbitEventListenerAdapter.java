@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.notifications_service.adapters.in.rabbit;
+package com.reservas.sk.notifications_service.adapters.in.rabbit;
 
 import com.reservas.sk.notifications_service.application.port.in.EventBroadcastUseCase;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;

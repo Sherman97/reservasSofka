@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.inventory_service.infrastructure.security;
+package com.reservas.sk.inventory_service.infrastructure.security;
 
 import com.reservas.sk.inventory_service.application.port.out.TokenPort;
 import io.jsonwebtoken.JwtException;

@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.inventory_service.adapters.out.messaging;
+package com.reservas.sk.inventory_service.adapters.out.messaging;
 
 import com.reservas.sk.inventory_service.application.port.out.EquipmentEventPublisherPort;
 import com.reservas.sk.inventory_service.application.usecase.EquipmentCreatedEvent;

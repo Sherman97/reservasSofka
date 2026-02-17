@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.auth_service.application.service;
+package com.reservas.sk.auth_service.application.service;
 
 import com.reservas.sk.auth_service.application.port.in.AuthUseCase;
 import com.reservas.sk.auth_service.application.port.out.PasswordHasherPort;

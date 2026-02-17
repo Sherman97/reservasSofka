@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.locations_service.application.port.in;
+package com.reservas.sk.locations_service.application.port.in;
 
 import com.reservas.sk.locations_service.application.usecase.*;
 import com.reservas.sk.locations_service.domain.model.City;
