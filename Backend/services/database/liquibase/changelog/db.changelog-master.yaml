@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-init-schema-v1
+      author: reservas-sk
+      changes:
+        - sqlFile:
+            path: 001_init_schema_v1.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: false
