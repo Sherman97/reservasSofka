@@ -13,7 +13,7 @@ export class HttpInventoryRepository extends IInventoryRepository {
 
     async getAll() {
         try {
-            const response = await this.httpClient.get('/items/listItems');
+            const response = await this.httpClient.get('/inventory/equipments');
 
             if (!response.data.ok) {
                 throw new Error(response.data.message || 'Error fetching inventory');
@@ -28,7 +28,7 @@ export class HttpInventoryRepository extends IInventoryRepository {
 
     async getById(id) {
         try {
-            const response = await this.httpClient.get(`/items/${id}`);
+            const response = await this.httpClient.get(`/inventory/equipments/${id}`);
 
             if (!response.data.ok) {
                 throw new Error(response.data.message || 'Error fetching inventory item');
@@ -43,8 +43,8 @@ export class HttpInventoryRepository extends IInventoryRepository {
 
     async getByCityId(cityId) {
         try {
-            const response = await this.httpClient.get('/items/listItems', {
-                params: { city_id: cityId }
+            const response = await this.httpClient.get('/inventory/equipments', {
+                params: { cityId: cityId }
             });
 
             if (!response.data.ok) {
@@ -60,7 +60,7 @@ export class HttpInventoryRepository extends IInventoryRepository {
 
     async search(criteria) {
         try {
-            const response = await this.httpClient.get('/items/listItems', {
+            const response = await this.httpClient.get('/inventory/equipments', {
                 params: criteria
             });
 

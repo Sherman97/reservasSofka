@@ -61,8 +61,10 @@ export class HttpClientFactory {
      * @returns {AxiosHttpClient}
      */
     static createAuthClient(storageService) {
+        const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        console.log('API Base URL:', baseURL);
         return this.create({
-            baseURL: import.meta.env.VITE_API_URL,
+            baseURL,
             requiresAuth: true,
             storageService
         });
@@ -74,8 +76,9 @@ export class HttpClientFactory {
      * @returns {AxiosHttpClient}
      */
     static createBookingsClient(storageService) {
+        const baseURL = import.meta.env.VITE_BOOKINGS_URL || 'http://localhost:3000';
         return this.create({
-            baseURL: import.meta.env.VITE_BOOKINGS_URL,
+            baseURL,
             requiresAuth: true,
             storageService
         });
@@ -87,8 +90,9 @@ export class HttpClientFactory {
      * @returns {AxiosHttpClient}
      */
     static createInventoryClient(storageService) {
+        const baseURL = import.meta.env.VITE_INVENTORY_URL || import.meta.env.VITE_API_URL || 'http://localhost:3000';
         return this.create({
-            baseURL: import.meta.env.VITE_INVENTORY_URL || import.meta.env.VITE_API_URL,
+            baseURL,
             requiresAuth: true,
             storageService
         });
@@ -100,8 +104,9 @@ export class HttpClientFactory {
      * @returns {AxiosHttpClient}
      */
     static createLocationsClient(storageService) {
+        const baseURL = import.meta.env.VITE_LOCATIONS_URL || import.meta.env.VITE_API_URL || 'http://localhost:3000';
         return this.create({
-            baseURL: import.meta.env.VITE_LOCATIONS_URL || import.meta.env.VITE_API_URL,
+            baseURL,
             requiresAuth: true,
             storageService
         });

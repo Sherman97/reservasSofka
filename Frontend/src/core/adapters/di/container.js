@@ -10,6 +10,10 @@ import { RegisterUseCase } from '../../../application/use-cases/auth/RegisterUse
 import { GetLocationsUseCase } from '../../../application/use-cases/dashboard/GetLocationsUseCase';
 import { GetInventoryUseCase } from '../../../application/use-cases/dashboard/GetInventoryUseCase';
 import { CreateReservationUseCase } from '../../../application/use-cases/dashboard/CreateReservationUseCase';
+import { AssignInventoryUseCase } from '../../../application/use-cases/dashboard/AssignInventoryUseCase';
+import { RemoveInventoryUseCase } from '../../../application/use-cases/dashboard/RemoveInventoryUseCase';
+import { GetUserReservationsUseCase } from '../../../application/use-cases/reservations/GetUserReservationsUseCase';
+import { CancelReservationUseCase } from '../../../application/use-cases/reservations/CancelReservationUseCase';
 
 /**
  * DIContainer - Singleton Pattern implementation
@@ -83,6 +87,10 @@ class DIContainer {
         this.dependencies.getLocationsUseCase = new GetLocationsUseCase(locationRepository);
         this.dependencies.getInventoryUseCase = new GetInventoryUseCase(inventoryRepository);
         this.dependencies.createReservationUseCase = new CreateReservationUseCase(reservationRepository);
+        this.dependencies.assignInventoryUseCase = new AssignInventoryUseCase(locationRepository);
+        this.dependencies.removeInventoryUseCase = new RemoveInventoryUseCase(locationRepository);
+        this.dependencies.getUserReservationsUseCase = new GetUserReservationsUseCase(reservationRepository);
+        this.dependencies.cancelReservationUseCase = new CancelReservationUseCase(reservationRepository);
     }
 
     /**

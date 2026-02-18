@@ -13,7 +13,7 @@ export class HttpLocationRepository extends ILocationRepository {
 
     async getAll() {
         try {
-            const response = await this.httpClient.get('/spaces/listSpaces');
+            const response = await this.httpClient.get('/locations/spaces');
 
             if (!response.data.ok) {
                 throw new Error(response.data.message || 'Error fetching locations');
@@ -28,7 +28,7 @@ export class HttpLocationRepository extends ILocationRepository {
 
     async getById(id) {
         try {
-            const response = await this.httpClient.get(`/spaces/${id}`);
+            const response = await this.httpClient.get(`/locations/spaces/${id}`);
 
             if (!response.data.ok) {
                 throw new Error(response.data.message || 'Error fetching location');
@@ -43,7 +43,7 @@ export class HttpLocationRepository extends ILocationRepository {
 
     async search(criteria) {
         try {
-            const response = await this.httpClient.get('/spaces/listSpaces', {
+            const response = await this.httpClient.get('/locations/spaces', {
                 params: criteria
             });
 
@@ -54,6 +54,39 @@ export class HttpLocationRepository extends ILocationRepository {
             return LocationMapper.toDomainList(response.data.data || []);
         } catch (error) {
             console.error('Error in HttpLocationRepository.search:', error);
+            throw error;
+        }
+    }
+
+    async assignInventory(locationId, inventoryId, qty) {
+        try {
+            const response = await this.httpClient.post(`/locations/${locationId}/inventory`, {
+                inventoryId,
+                qty
+            });
+
+            if (!response.data.ok) {
+                throw new Error(response.data.message || 'Error assigning inventory');
+            }
+
+            return response.data.data;
+        } catch (error) {
+            console.error('Error in HttpLocationRepository.assignInventory:', error);
+            throw error;
+        }
+    }
+
+    async removeInventory(locationId, inventoryId) {
+        try {
+            const response = await this.httpClient.delete(`/locations/${locationId}/inventory/${inventoryId}`);
+
+            if (!response.data.ok) {
+                throw new Error(response.data.message || 'Error removing inventory');
+            }
+
+            return response.data.data;
+        } catch (error) {
+            console.error('Error in HttpLocationRepository.removeInventory:', error);
             throw error;
         }
     }

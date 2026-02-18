@@ -12,18 +12,20 @@ export const useSignup = () => {
     const { registerUseCase, loginUseCase } = useDependencies();
 
     const [formData, setFormData] = useState({
-        name: '',
+        fullName: '',
         email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        termsAccepted: false
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
     const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value
+            [name]: type === 'checkbox' ? checked : value
         });
     };
 
@@ -38,9 +40,14 @@ export const useSignup = () => {
                 throw new Error('Las contraseñas no coinciden');
             }
 
+            // Validate terms accepted
+            if (!formData.termsAccepted) {
+                throw new Error('Debes aceptar los términos y condiciones');
+            }
+
             // Execute register use case
             await registerUseCase.execute({
-                name: formData.name,
+                name: formData.fullName,
                 email: formData.email,
                 password: formData.password
             });

@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from '../ui/pages/auth/LoginPage';
 import SignupPage from '../ui/pages/signup/SignupPage';
-import { DashboardPage } from '../features/dashboard';
-import { MainLayout } from '../features/dashboard/components/MainLayout';
-import { MyReservationsPage } from '../features/reservations/pages/MyReservationsPage';
+import DashboardPage from '../ui/pages/dashboard/DashboardPage';
+import { MainLayout } from '../ui/layouts/MainLayout';
+import { MyReservationsPage } from '../ui/pages/reservations/MyReservationsPage';
 import ProtectedRoute from '../components/ProtectedRoute';
 
 const AppRouter = () => {

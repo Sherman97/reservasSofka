@@ -3,13 +3,14 @@
  * Represents a physical location/room in the system
  */
 export class Location {
-    constructor({ id, name, description, imageUrl, capacity, type, amenities = [] }) {
+    constructor({ id, name, description, imageUrl, capacity, type, cityId, amenities = [] }) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.imageUrl = imageUrl;
         this.capacity = capacity;
         this.type = type; // 'sala' or other types
+        this.cityId = cityId;
         this.amenities = amenities;
     }
 
@@ -65,6 +66,7 @@ export class Location {
             imageUrl: this.imageUrl,
             capacity: this.capacity,
             type: this.type,
+            cityId: this.cityId,
             amenities: this.amenities
         };
     }

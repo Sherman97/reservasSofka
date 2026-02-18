@@ -22,6 +22,7 @@ export class LocationMapper {
             imageUrl: dto.image || dto.imageUrl || dto.imageURL || '',
             capacity: dto.capacity || dto.maxCapacity || 0,
             type: dto.type || 'sala',
+            cityId: dto.cityId || null,
             amenities: dto.tags || dto.amenities || []
         });
     }
@@ -43,6 +44,7 @@ export class LocationMapper {
             imageUrl: location.imageUrl,
             capacity: location.capacity,
             type: location.type,
+            cityId: location.cityId,
             amenities: location.amenities
         };
     }

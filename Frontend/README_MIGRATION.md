@@ -153,12 +153,13 @@ npm run lint
 ## 🤝 Siguientes Features a Migrar
 
 Después de Auth:
-1. **Dashboard** (Locations + Inventory)
-2. **Reservations**
+1. ✅ **Dashboard** (Locations + Inventory)
+2. ✅ **Reservations**
 3. **Signup** (reutiliza Auth)
 4. **Limpieza final** - Eliminar `features/`
 
 ---
 
-**Última actualización**: Fase 1 completada - Infrastructure base ✅  
-**Estado actual**: Listo para migrar Auth
+**Última actualización**: Fase 3 completada - Reservations migrado ✅  
+**Estado actual**: Listo para migrar Signup o Limpieza final
+
