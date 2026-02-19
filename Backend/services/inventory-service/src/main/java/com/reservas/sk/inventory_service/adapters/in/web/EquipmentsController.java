@@ -35,7 +35,8 @@ public class EquipmentsController {
                 request.barcode(),
                 request.model(),
                 request.status(),
-                request.notes()
+                request.notes(),
+                request.imageUrl()
         ));
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(mapper.toResponse(created)));
     }
@@ -61,7 +62,8 @@ public class EquipmentsController {
                 request.barcode(),
                 request.model(),
                 request.status(),
-                request.notes()
+                request.notes(),
+                request.imageUrl()
         ));
         return ApiResponse.success(mapper.toResponse(updated));
     }
@@ -72,7 +74,6 @@ public class EquipmentsController {
         return ApiResponse.success(Map.of("id", deleted.id()));
     }
 }
-
 
 
 

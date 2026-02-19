@@ -48,7 +48,8 @@ public class InventoryApplicationService implements InventoryUseCase {
                 normalizeNullable(command.barcode()),
                 normalizeNullable(command.model()),
                 status,
-                normalizeNullable(command.notes())
+                normalizeNullable(command.notes()),
+                normalizeNullable(command.imageUrl())
         );
         Equipment created = getEquipmentById(id);
         eventPublisherPort.publishEquipmentCreated(new EquipmentCreatedEvent(
@@ -88,7 +89,8 @@ public class InventoryApplicationService implements InventoryUseCase {
                 normalizeNullable(command.barcode()),
                 normalizeNullable(command.model()),
                 status,
-                normalizeNullable(command.notes())
+                normalizeNullable(command.notes()),
+                normalizeNullable(command.imageUrl())
         );
 
         Equipment updated = getEquipmentById(existing.getId());
@@ -152,7 +154,6 @@ public class InventoryApplicationService implements InventoryUseCase {
         return normalized;
     }
 }
-
 
 
 

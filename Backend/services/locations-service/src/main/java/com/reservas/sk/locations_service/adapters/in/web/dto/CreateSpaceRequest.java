@@ -5,9 +5,9 @@ public record CreateSpaceRequest(Long cityId,
                                  Integer capacity,
                                  String floor,
                                  String description,
+                                 String imageUrl,
                                  Boolean isActive) {
 }
-
 
 
 

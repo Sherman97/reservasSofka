@@ -18,6 +18,7 @@ public class InventoryHttpMapper {
                 equipment.getModel(),
                 equipment.getStatus(),
                 equipment.getNotes(),
+                equipment.getImageUrl(),
                 toIso(equipment.getCreatedAt()),
                 toIso(equipment.getUpdatedAt())
         );
@@ -27,7 +28,6 @@ public class InventoryHttpMapper {
         return value == null ? null : value.toString();
     }
 }
-
 
 
 

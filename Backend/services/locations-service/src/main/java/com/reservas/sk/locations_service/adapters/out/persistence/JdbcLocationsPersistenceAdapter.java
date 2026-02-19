@@ -104,13 +104,14 @@ public class JdbcLocationsPersistenceAdapter implements LocationsPersistencePort
                             Integer capacity,
                             String floor,
                             String description,
+                            String imageUrl,
                             boolean isActive) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(
                     """
-                    INSERT INTO spaces (city_id, name, capacity, floor, description, is_active)
-                    VALUES (?, ?, ?, ?, ?, ?)
+                    INSERT INTO spaces (city_id, name, capacity, floor, description, image_url, is_active)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
                     """,
                     Statement.RETURN_GENERATED_KEYS
             );
@@ -123,7 +124,8 @@ public class JdbcLocationsPersistenceAdapter implements LocationsPersistencePort
             }
             ps.setString(4, floor);
             ps.setString(5, description);
-            ps.setBoolean(6, isActive);
+            ps.setString(6, imageUrl);
+            ps.setBoolean(7, isActive);
             return ps;
         }, keyHolder);
 
@@ -134,7 +136,7 @@ public class JdbcLocationsPersistenceAdapter implements LocationsPersistencePort
     @Override
     public List<Space> listSpaces(Long cityId, Boolean activeOnly) {
         StringBuilder sql = new StringBuilder(
-                "SELECT id, city_id, name, capacity, floor, description, is_active, created_at, updated_at FROM spaces"
+                "SELECT id, city_id, name, capacity, floor, description, image_url, is_active, created_at, updated_at FROM spaces"
         );
 
         List<String> where = new ArrayList<>();
@@ -161,7 +163,7 @@ public class JdbcLocationsPersistenceAdapter implements LocationsPersistencePort
     public Optional<Space> findSpaceById(long id) {
         List<Space> rows = jdbcTemplate.query(
                 """
-                SELECT id, city_id, name, capacity, floor, description, is_active, created_at, updated_at
+                SELECT id, city_id, name, capacity, floor, description, image_url, is_active, created_at, updated_at
                 FROM spaces
                 WHERE id = ?
                 LIMIT 1
@@ -179,6 +181,7 @@ public class JdbcLocationsPersistenceAdapter implements LocationsPersistencePort
                             Integer capacity,
                             String floor,
                             String description,
+                            String imageUrl,
                             Boolean isActive) {
         List<String> fields = new ArrayList<>();
         List<Object> params = new ArrayList<>();
@@ -198,6 +201,10 @@ public class JdbcLocationsPersistenceAdapter implements LocationsPersistencePort
         if (description != null) {
             fields.add("description = ?");
             params.add(description);
+        }
+        if (imageUrl != null) {
+            fields.add("image_url = ?");
+            params.add(imageUrl);
         }
         if (isActive != null) {
             fields.add("is_active = ?");
@@ -235,6 +242,7 @@ public class JdbcLocationsPersistenceAdapter implements LocationsPersistencePort
                 rs.getObject("capacity") == null ? null : rs.getInt("capacity"),
                 rs.getString("floor"),
                 rs.getString("description"),
+                rs.getString("image_url"),
                 rs.getBoolean("is_active"),
                 toInstant(rs.getTimestamp("created_at")),
                 toInstant(rs.getTimestamp("updated_at"))
@@ -249,7 +257,6 @@ public class JdbcLocationsPersistenceAdapter implements LocationsPersistencePort
         return localDateTime.toInstant(ZoneOffset.UTC);
     }
 }
-
 
 
 

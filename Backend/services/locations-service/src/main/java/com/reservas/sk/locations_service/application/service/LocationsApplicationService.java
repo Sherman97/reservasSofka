@@ -91,6 +91,7 @@ public class LocationsApplicationService implements LocationsUseCase {
                 command.capacity(),
                 normalizeNullable(command.floor()),
                 normalizeNullable(command.description()),
+                normalizeNullable(command.imageUrl()),
                 isActive
         );
 
@@ -126,6 +127,7 @@ public class LocationsApplicationService implements LocationsUseCase {
                 command.capacity(),
                 normalizeNullable(command.floor()),
                 normalizeNullable(command.description()),
+                normalizeNullable(command.imageUrl()),
                 command.isActive()
         );
         Space updated = getSpaceById(existing.getId());
@@ -176,7 +178,6 @@ public class LocationsApplicationService implements LocationsUseCase {
         return normalized.isEmpty() ? null : normalized;
     }
 }
-
 
 
 

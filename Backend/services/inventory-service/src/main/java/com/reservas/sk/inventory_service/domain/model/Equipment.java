@@ -11,6 +11,7 @@ public class Equipment {
     private final String model;
     private final String status;
     private final String notes;
+    private final String imageUrl;
     private final Instant createdAt;
     private final Instant updatedAt;
 
@@ -22,6 +23,7 @@ public class Equipment {
                      String model,
                      String status,
                      String notes,
+                     String imageUrl,
                      Instant createdAt,
                      Instant updatedAt) {
         this.id = id;
@@ -32,6 +34,7 @@ public class Equipment {
         this.model = model;
         this.status = status;
         this.notes = notes;
+        this.imageUrl = imageUrl;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -44,10 +47,10 @@ public class Equipment {
     public String getModel() { return model; }
     public String getStatus() { return status; }
     public String getNotes() { return notes; }
+    public String getImageUrl() { return imageUrl; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
 }
-
 
 
 

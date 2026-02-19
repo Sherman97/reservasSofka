@@ -6,9 +6,9 @@ public record CreateEquipmentRequest(Long cityId,
                                      String barcode,
                                      String model,
                                      String status,
-                                     String notes) {
+                                     String notes,
+                                     String imageUrl) {
 }
-
 
 
 

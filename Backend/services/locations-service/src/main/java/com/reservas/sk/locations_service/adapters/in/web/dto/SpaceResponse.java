@@ -6,11 +6,11 @@ public record SpaceResponse(Long id,
                             Integer capacity,
                             String floor,
                             String description,
+                            String imageUrl,
                             boolean isActive,
                             String createdAt,
                             String updatedAt) {
 }
-
 
 
 
