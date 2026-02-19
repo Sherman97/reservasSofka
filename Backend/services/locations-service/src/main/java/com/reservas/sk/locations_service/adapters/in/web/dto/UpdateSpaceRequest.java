@@ -4,9 +4,9 @@ public record UpdateSpaceRequest(String name,
                                  Integer capacity,
                                  String floor,
                                  String description,
+                                 String imageUrl,
                                  Boolean isActive) {
 }
-
 
 
 

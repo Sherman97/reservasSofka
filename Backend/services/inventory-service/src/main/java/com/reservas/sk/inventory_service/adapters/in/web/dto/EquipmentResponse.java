@@ -8,10 +8,10 @@ public record EquipmentResponse(Long id,
                                 String model,
                                 String status,
                                 String notes,
+                                String imageUrl,
                                 String createdAt,
                                 String updatedAt) {
 }
-
 
 
 

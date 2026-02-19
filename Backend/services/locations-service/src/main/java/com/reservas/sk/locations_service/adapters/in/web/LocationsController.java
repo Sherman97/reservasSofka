@@ -58,6 +58,7 @@ public class LocationsController {
                 request.capacity(),
                 request.floor(),
                 request.description(),
+                request.imageUrl(),
                 request.isActive()
         ));
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(mapper.toResponse(space)));
@@ -83,6 +84,7 @@ public class LocationsController {
                 request.capacity(),
                 request.floor(),
                 request.description(),
+                request.imageUrl(),
                 request.isActive()
         ));
         return ApiResponse.success(mapper.toResponse(space));
@@ -94,7 +96,6 @@ public class LocationsController {
         return ResponseEntity.noContent().build();
     }
 }
-
 
 
 

@@ -28,6 +28,7 @@ public class LocationsHttpMapper {
                 space.getCapacity(),
                 space.getFloor(),
                 space.getDescription(),
+                space.getImageUrl(),
                 space.isActive(),
                 toIso(space.getCreatedAt()),
                 toIso(space.getUpdatedAt())
@@ -38,7 +39,6 @@ public class LocationsHttpMapper {
         return value == null ? null : value.toString();
     }
 }
-
 
 
 

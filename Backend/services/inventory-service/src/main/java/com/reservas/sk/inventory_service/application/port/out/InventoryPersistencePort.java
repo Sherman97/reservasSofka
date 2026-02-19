@@ -14,7 +14,8 @@ public interface InventoryPersistencePort {
                          String barcode,
                          String model,
                          String status,
-                         String notes);
+                         String notes,
+                         String imageUrl);
 
     List<Equipment> listEquipments(Long cityId, String status);
 
@@ -26,11 +27,11 @@ public interface InventoryPersistencePort {
                          String barcode,
                          String model,
                          String status,
-                         String notes);
+                         String notes,
+                         String imageUrl);
 
     int deleteEquipment(long id);
 }
-
 
 
 

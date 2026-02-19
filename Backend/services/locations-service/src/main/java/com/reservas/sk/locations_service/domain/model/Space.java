@@ -9,6 +9,7 @@ public class Space {
     private final Integer capacity;
     private final String floor;
     private final String description;
+    private final String imageUrl;
     private final boolean active;
     private final Instant createdAt;
     private final Instant updatedAt;
@@ -19,6 +20,7 @@ public class Space {
                  Integer capacity,
                  String floor,
                  String description,
+                 String imageUrl,
                  boolean active,
                  Instant createdAt,
                  Instant updatedAt) {
@@ -28,6 +30,7 @@ public class Space {
         this.capacity = capacity;
         this.floor = floor;
         this.description = description;
+        this.imageUrl = imageUrl;
         this.active = active;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -39,11 +42,11 @@ public class Space {
     public Integer getCapacity() { return capacity; }
     public String getFloor() { return floor; }
     public String getDescription() { return description; }
+    public String getImageUrl() { return imageUrl; }
     public boolean isActive() { return active; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
 }
-
 
 
 

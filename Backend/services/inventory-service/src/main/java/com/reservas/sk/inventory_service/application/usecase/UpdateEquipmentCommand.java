@@ -5,9 +5,9 @@ public record UpdateEquipmentCommand(String name,
                                      String barcode,
                                      String model,
                                      String status,
-                                     String notes) {
+                                     String notes,
+                                     String imageUrl) {
 }
-
 
 
 

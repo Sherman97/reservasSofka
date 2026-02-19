@@ -42,13 +42,14 @@ public class JdbcInventoryPersistenceAdapter implements InventoryPersistencePort
                                 String barcode,
                                 String model,
                                 String status,
-                                String notes) {
+                                String notes,
+                                String imageUrl) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(
                     """
-                    INSERT INTO equipments (city_id, name, serial, barcode, model, status, notes)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO equipments (city_id, name, serial, barcode, model, status, notes, image_url)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     Statement.RETURN_GENERATED_KEYS
             );
@@ -59,6 +60,7 @@ public class JdbcInventoryPersistenceAdapter implements InventoryPersistencePort
             ps.setString(5, model);
             ps.setString(6, status);
             ps.setString(7, notes);
+            ps.setString(8, imageUrl);
             return ps;
         }, keyHolder);
 
@@ -70,7 +72,7 @@ public class JdbcInventoryPersistenceAdapter implements InventoryPersistencePort
     public List<Equipment> listEquipments(Long cityId, String status) {
         StringBuilder sql = new StringBuilder(
                 """
-                SELECT id, city_id, name, serial, barcode, model, status, notes, created_at, updated_at
+                SELECT id, city_id, name, serial, barcode, model, status, notes, image_url, created_at, updated_at
                 FROM equipments
                 """
         );
@@ -105,7 +107,7 @@ public class JdbcInventoryPersistenceAdapter implements InventoryPersistencePort
     public Optional<Equipment> findEquipmentById(long id) {
         List<Equipment> rows = jdbcTemplate.query(
                 """
-                SELECT id, city_id, name, serial, barcode, model, status, notes, created_at, updated_at
+                SELECT id, city_id, name, serial, barcode, model, status, notes, image_url, created_at, updated_at
                 FROM equipments
                 WHERE id = ?
                 LIMIT 1
@@ -124,7 +126,8 @@ public class JdbcInventoryPersistenceAdapter implements InventoryPersistencePort
                                 String barcode,
                                 String model,
                                 String status,
-                                String notes) {
+                                String notes,
+                                String imageUrl) {
         List<String> fields = new ArrayList<>();
         List<Object> params = new ArrayList<>();
 
@@ -151,6 +154,10 @@ public class JdbcInventoryPersistenceAdapter implements InventoryPersistencePort
         if (notes != null) {
             fields.add("notes = ?");
             params.add(notes);
+        }
+        if (imageUrl != null) {
+            fields.add("image_url = ?");
+            params.add(imageUrl);
         }
 
         if (fields.isEmpty()) {
@@ -179,6 +186,7 @@ public class JdbcInventoryPersistenceAdapter implements InventoryPersistencePort
                 rs.getString("model"),
                 rs.getString("status"),
                 rs.getString("notes"),
+                rs.getString("image_url"),
                 toInstant(rs.getTimestamp("created_at")),
                 toInstant(rs.getTimestamp("updated_at"))
         );
@@ -192,7 +200,6 @@ public class JdbcInventoryPersistenceAdapter implements InventoryPersistencePort
         return localDateTime.toInstant(ZoneOffset.UTC);
     }
 }
-
 
 
 

@@ -19,17 +19,16 @@ public interface LocationsPersistencePort {
 
     boolean existsCity(long id);
 
-    long insertSpace(long cityId, String name, Integer capacity, String floor, String description, boolean isActive);
+    long insertSpace(long cityId, String name, Integer capacity, String floor, String description, String imageUrl, boolean isActive);
 
     List<Space> listSpaces(Long cityId, Boolean activeOnly);
 
     Optional<Space> findSpaceById(long id);
 
-    void updateSpace(long id, String name, Integer capacity, String floor, String description, Boolean isActive);
+    void updateSpace(long id, String name, Integer capacity, String floor, String description, String imageUrl, Boolean isActive);
 
     int deleteSpace(long id);
 }
-
 
 
 
