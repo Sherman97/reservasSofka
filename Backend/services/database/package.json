@@ -1,0 +1,14 @@
+{
+    "name": "database-service",
+    "version": "1.0.0",
+    "description": "Database handling for Reservas Sofka",
+    "main": "src/init.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "dependencies": {
+        "dotenv": "^16.6.1",
+        "mariadb": "^3.3.0",
+        "mysql2": "^3.17.0"
+    }
+}

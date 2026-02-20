@@ -2,8 +2,29 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.reservas.sk.reservas-sk.iml" filepath="$PROJECT_DIR$/.idea/modules/com.reservas.sk.reservas-sk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.reservas.sk.reservas-sk.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.reservas.sk.reservas-sk.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.reservas.sk.reservas-sk.test.iml" filepath="$PROJECT_DIR$/.idea/modules/com.reservas.sk.reservas-sk.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/Backend/services/auth-service/src/main/main.iml" filepath="$PROJECT_DIR$/Backend/services/auth-service/src/main/main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/reservas-sk.iml" filepath="$PROJECT_DIR$/.idea/reservas-sk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/api-gateway/reservas-sk.api-gateway.iml" filepath="$PROJECT_DIR$/.idea/modules/services/api-gateway/reservas-sk.api-gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/api-gateway/reservas-sk.api-gateway.main.iml" filepath="$PROJECT_DIR$/.idea/modules/services/api-gateway/reservas-sk.api-gateway.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/api-gateway/reservas-sk.api-gateway.test.iml" filepath="$PROJECT_DIR$/.idea/modules/services/api-gateway/reservas-sk.api-gateway.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/auth-service/reservas-sk.auth-service.iml" filepath="$PROJECT_DIR$/.idea/modules/services/auth-service/reservas-sk.auth-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/auth-service/reservas-sk.auth-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/services/auth-service/reservas-sk.auth-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/auth-service/reservas-sk.auth-service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/services/auth-service/reservas-sk.auth-service.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/bookings-service/reservas-sk.bookings-service.iml" filepath="$PROJECT_DIR$/.idea/modules/services/bookings-service/reservas-sk.bookings-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/bookings-service/reservas-sk.bookings-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/services/bookings-service/reservas-sk.bookings-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/bookings-service/reservas-sk.bookings-service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/services/bookings-service/reservas-sk.bookings-service.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/inventory-service/reservas-sk.inventory-service.iml" filepath="$PROJECT_DIR$/.idea/modules/services/inventory-service/reservas-sk.inventory-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/inventory-service/reservas-sk.inventory-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/services/inventory-service/reservas-sk.inventory-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/inventory-service/reservas-sk.inventory-service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/services/inventory-service/reservas-sk.inventory-service.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/locations-service/reservas-sk.locations-service.iml" filepath="$PROJECT_DIR$/.idea/modules/services/locations-service/reservas-sk.locations-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/locations-service/reservas-sk.locations-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/services/locations-service/reservas-sk.locations-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/locations-service/reservas-sk.locations-service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/services/locations-service/reservas-sk.locations-service.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/notifications-service/reservas-sk.notifications-service.iml" filepath="$PROJECT_DIR$/.idea/modules/services/notifications-service/reservas-sk.notifications-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/notifications-service/reservas-sk.notifications-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/services/notifications-service/reservas-sk.notifications-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/notifications-service/reservas-sk.notifications-service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/services/notifications-service/reservas-sk.notifications-service.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/Backend/services/auth-service/src/test/test.iml" filepath="$PROJECT_DIR$/Backend/services/auth-service/src/test/test.iml" />
     </modules>
   </component>
