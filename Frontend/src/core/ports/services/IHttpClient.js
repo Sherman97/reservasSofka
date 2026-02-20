@@ -1,4 +1,4 @@
-﻿/**
+/**
  * IHttpClient - Interface for HTTP communication
  * All HTTP implementations must extend this interface
  * This enables dependency inversion and easy testing

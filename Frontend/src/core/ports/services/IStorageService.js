@@ -1,4 +1,4 @@
-﻿/**
+/**
  * IStorageService - Interface for data storage
  * Abstracts storage mechanism (localStorage, sessionStorage, IndexedDB, etc.)
  * This enables easy testing and switching storage implementations

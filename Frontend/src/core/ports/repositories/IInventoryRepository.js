@@ -1,4 +1,4 @@
-﻿/**
+/**
  * IInventoryRepository - Port (Interface)
  * Defines the contract for inventory data access
  */

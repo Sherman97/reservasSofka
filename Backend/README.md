@@ -1,4 +1,4 @@
-﻿# Backend - Reservas SK
+# Backend - Reservas SK
 
 Backend del proyecto construido con Spring Boot y arquitectura de microservicios.
 

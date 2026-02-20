@@ -1,4 +1,4 @@
-﻿/**
+/**
  * IAuthRepository - Port (Interface)
  * Defines the contract for authentication data access
  * All authentication repository implementations must implement these methods

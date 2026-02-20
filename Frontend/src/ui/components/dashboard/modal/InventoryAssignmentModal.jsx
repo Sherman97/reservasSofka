@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDependencies } from '../../../../core/adapters/providers/DependencyProvider';
 import '../../../styles/dashboard/InventoryAssignmentModal.css';
 

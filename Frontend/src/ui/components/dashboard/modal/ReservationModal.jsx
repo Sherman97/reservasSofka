@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Calendar } from './Calendar';
 import { DurationSelector } from './DurationSelector';
 import '../../../styles/dashboard/ReservationModal.css';
