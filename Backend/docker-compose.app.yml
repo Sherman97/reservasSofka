@@ -1,0 +1,125 @@
+services:
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    environment:
+      PORT: 3001
+      DB_HOST: ${DB_HOST:-host.containers.internal}
+      DB_PORT: ${DB_PORT:-3306}
+      DB_USER: ${DB_USER:?set DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD}
+      DB_NAME: ${DB_NAME:?set DB_NAME}
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET}
+      RABBITMQ_ENABLED: ${RABBITMQ_ENABLED:-true}
+      RABBITMQ_HOST: ${RABBITMQ_HOST:-host.containers.internal}
+      RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+      RABBITMQ_USER: ${RABBITMQ_USER:?set RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:?set RABBITMQ_PASSWORD}
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+
+  bookings-service:
+    build:
+      context: ./services/bookings-service
+      dockerfile: Dockerfile
+    environment:
+      PORT: 3003
+      DB_HOST: ${DB_HOST:-host.containers.internal}
+      DB_PORT: ${DB_PORT:-3306}
+      DB_USER: ${DB_USER:?set DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD}
+      DB_NAME: ${DB_NAME:?set DB_NAME}
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET}
+      RABBITMQ_ENABLED: ${RABBITMQ_ENABLED:-true}
+      RABBITMQ_HOST: ${RABBITMQ_HOST:-host.containers.internal}
+      RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+      RABBITMQ_USER: ${RABBITMQ_USER:?set RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:?set RABBITMQ_PASSWORD}
+    ports:
+      - "3003:3003"
+    restart: unless-stopped
+
+  locations-service:
+    build:
+      context: ./services/locations-service
+      dockerfile: Dockerfile
+    environment:
+      PORT: 3004
+      DB_HOST: ${DB_HOST:-host.containers.internal}
+      DB_PORT: ${DB_PORT:-3306}
+      DB_USER: ${DB_USER:?set DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD}
+      DB_NAME: ${DB_NAME:?set DB_NAME}
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET}
+      RABBITMQ_ENABLED: ${RABBITMQ_ENABLED:-true}
+      RABBITMQ_HOST: ${RABBITMQ_HOST:-host.containers.internal}
+      RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+      RABBITMQ_USER: ${RABBITMQ_USER:?set RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:?set RABBITMQ_PASSWORD}
+    ports:
+      - "3004:3004"
+    restart: unless-stopped
+
+  inventory-service:
+    build:
+      context: ./services/inventory-service
+      dockerfile: Dockerfile
+    environment:
+      PORT: 3005
+      DB_HOST: ${DB_HOST:-host.containers.internal}
+      DB_PORT: ${DB_PORT:-3306}
+      DB_USER: ${DB_USER:?set DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD}
+      DB_NAME: ${DB_NAME:?set DB_NAME}
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET}
+      RABBITMQ_ENABLED: ${RABBITMQ_ENABLED:-true}
+      RABBITMQ_HOST: ${RABBITMQ_HOST:-host.containers.internal}
+      RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+      RABBITMQ_USER: ${RABBITMQ_USER:?set RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:?set RABBITMQ_PASSWORD}
+    ports:
+      - "3005:3005"
+    restart: unless-stopped
+
+  notifications-service:
+    build:
+      context: ./services/notifications-service
+      dockerfile: Dockerfile
+    environment:
+      PORT: 3006
+      WEBSOCKET_ALLOWED_ORIGINS: ${WEBSOCKET_ALLOWED_ORIGINS:-*}
+      RABBITMQ_ENABLED: ${RABBITMQ_ENABLED:-true}
+      RABBITMQ_HOST: ${RABBITMQ_HOST:-host.containers.internal}
+      RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+      RABBITMQ_USER: ${RABBITMQ_USER:?set RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:?set RABBITMQ_PASSWORD}
+      RABBITMQ_EXCHANGE: ${RABBITMQ_EXCHANGE:-reservas.events}
+      RABBITMQ_QUEUE: ${RABBITMQ_QUEUE:-notifications.events.q}
+      RABBITMQ_ROUTING_KEYS: ${RABBITMQ_ROUTING_KEYS:-auth.user.created,bookings.reservation.created,bookings.reservation.cancelled,inventory.equipment.created,inventory.equipment.updated,inventory.equipment.deleted,locations.city.created,locations.city.updated,locations.city.deleted,locations.space.created,locations.space.updated,locations.space.deleted}
+    ports:
+      - "3006:3006"
+    restart: unless-stopped
+
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    environment:
+      PORT: 3000
+      AUTH_URL: http://auth-service:3001
+      BOOKINGS_URL: http://bookings-service:3003
+      INVENTORY_URL: http://inventory-service:3005
+      LOCATIONS_URL: http://locations-service:3004
+      NOTIFICATIONS_URL: http://notifications-service:3006
+      NOTIFICATIONS_WS_URL: ws://notifications-service:3006
+    ports:
+      - "3000:3000"
+    depends_on:
+      - auth-service
+      - bookings-service
+      - inventory-service
+      - locations-service
+      - notifications-service
+    restart: unless-stopped

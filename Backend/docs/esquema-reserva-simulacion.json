@@ -1,0 +1,149 @@
+{
+  "meta": {
+    "service": "bookings-service",
+    "gatewayRoutePrefix": "/bookings",
+    "responseEnvelope": {
+      "ok": "boolean",
+      "data": "any|null",
+      "message": "string|null"
+    }
+  },
+  "endpoints": {
+    "checkAvailability": {
+      "method": "GET",
+      "path": "/bookings/spaces/{spaceId}/availability",
+      "query": {
+        "startAt": "string (ISO-8601)",
+        "endAt": "string (ISO-8601)"
+      },
+      "responseData": {
+        "available": "boolean",
+        "overlappingReservations": "number"
+      }
+    },
+    "createReservation": {
+      "method": "POST",
+      "path": "/bookings/reservations",
+      "requestBody": {
+        "spaceId": "number (required, > 0)",
+        "startAt": "string (required, ISO-8601)",
+        "endAt": "string (required, ISO-8601)",
+        "title": "string|null",
+        "attendeesCount": "number|null",
+        "notes": "string|null",
+        "equipmentIds": ["number"]
+      },
+      "responseData": {
+        "$ref": "#/models/ReservationResponse"
+      }
+    },
+    "listReservations": {
+      "method": "GET",
+      "path": "/bookings/reservations",
+      "query": {
+        "userId": "number|null",
+        "spaceId": "number|null",
+        "status": "pending|confirmed|in_progress|completed|cancelled|null"
+      },
+      "responseData": [
+        {
+          "$ref": "#/models/ReservationResponse"
+        }
+      ]
+    },
+    "getReservationById": {
+      "method": "GET",
+      "path": "/bookings/reservations/{id}",
+      "responseData": {
+        "$ref": "#/models/ReservationResponse"
+      }
+    },
+    "cancelReservation": {
+      "method": "PATCH",
+      "path": "/bookings/reservations/{id}/cancel",
+      "requestBody": {
+        "reason": "string|null"
+      },
+      "responseData": {
+        "$ref": "#/models/ReservationResponse"
+      }
+    }
+  },
+  "models": {
+    "ReservationResponse": {
+      "id": "number",
+      "userId": "number",
+      "spaceId": "number",
+      "startAt": "string (ISO-8601)",
+      "endAt": "string (ISO-8601)",
+      "status": "pending|confirmed|in_progress|completed|cancelled",
+      "title": "string|null",
+      "attendeesCount": "number|null",
+      "notes": "string|null",
+      "cancellationReason": "string|null",
+      "createdAt": "string (ISO-8601)",
+      "equipments": [
+        {
+          "$ref": "#/models/ReservationEquipmentResponse"
+        }
+      ]
+    },
+    "ReservationEquipmentResponse": {
+      "id": "number",
+      "equipmentId": "number",
+      "status": "requested|confirmed|delivered|returned|damaged",
+      "deliveredAt": "string|null (ISO-8601)",
+      "deliveredBy": "number|null",
+      "returnedAt": "string|null (ISO-8601)",
+      "returnedBy": "number|null",
+      "conditionNotes": "string|null"
+    }
+  },
+  "databaseSchema": {
+    "reservations": {
+      "columns": {
+        "id": "INT PK AI",
+        "user_id": "INT FK users(id)",
+        "space_id": "INT FK spaces(id)",
+        "start_datetime": "TIMESTAMP NOT NULL",
+        "end_datetime": "TIMESTAMP NOT NULL",
+        "status": "VARCHAR(30) NOT NULL DEFAULT pending",
+        "title": "VARCHAR(150) NULL",
+        "attendees_count": "INT NULL",
+        "notes": "TEXT NULL",
+        "cancellation_reason": "TEXT NULL",
+        "created_at": "TIMESTAMP",
+        "updated_at": "TIMESTAMP"
+      },
+      "validStatus": ["pending", "confirmed", "in_progress", "completed", "cancelled"]
+    },
+    "reservation_equipments": {
+      "columns": {
+        "id": "INT PK AI",
+        "reservation_id": "INT FK reservations(id)",
+        "equipment_id": "INT FK equipments(id)",
+        "status": "VARCHAR(30) NOT NULL DEFAULT requested",
+        "delivered_at": "TIMESTAMP NULL",
+        "delivered_by": "INT NULL FK users(id)",
+        "returned_at": "TIMESTAMP NULL",
+        "returned_by": "INT NULL FK users(id)",
+        "condition_notes": "TEXT NULL",
+        "created_at": "TIMESTAMP",
+        "updated_at": "TIMESTAMP"
+      },
+      "uniqueKey": "(reservation_id, equipment_id)",
+      "validStatus": ["requested", "confirmed", "delivered", "returned", "damaged"]
+    }
+  },
+  "businessValidation": {
+    "requiredAuth": true,
+    "tokenSubjectMapsTo": "userId",
+    "timeRangeRule": "startAt < endAt",
+    "overlapRule": "No overlap in same space for active statuses: pending, confirmed, in_progress",
+    "equipmentRules": [
+      "All equipmentIds must exist",
+      "All equipmentIds must have status available in equipments",
+      "All equipmentIds must belong to same city as selected space"
+    ]
+  }
+}

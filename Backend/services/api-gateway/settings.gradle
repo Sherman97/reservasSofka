@@ -1,0 +1,25 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+rootProject.name = 'api-gateway'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
