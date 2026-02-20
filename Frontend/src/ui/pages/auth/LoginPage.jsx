@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTheme } from '../../../context/ThemeContext';
 import { LoginForm } from '../../components/auth/LoginForm';
 import '../../styles/auth/Login.css';
 

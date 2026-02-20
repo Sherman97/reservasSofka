@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useReservationDependencies } from '../providers/DependencyProvider';
+import { useReservationDependencies } from './useDependencies';
 
 /**
  * useDashboard - Adapter Hook
@@ -20,12 +20,7 @@ export const useDashboard = () => {
         capacity: 0
     });
 
-    // Load locations and inventory on mount
-    useEffect(() => {
-        loadDashboardData();
-    }, []);
-
-    const loadDashboardData = async () => {
+    const loadDashboardData = useCallback(async () => {
         setLoading(true);
         setError(null);
 
@@ -44,7 +39,12 @@ export const useDashboard = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [getLocationsUseCase, getInventoryUseCase]);
+
+    // Load locations and inventory on mount
+    useEffect(() => {
+        loadDashboardData();
+    }, [loadDashboardData]);
 
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);

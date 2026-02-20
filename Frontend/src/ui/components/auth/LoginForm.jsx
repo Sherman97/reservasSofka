@@ -5,7 +5,6 @@ import { useLogin } from '../../../core/adapters/hooks/useLogin';
 import '../../styles/auth/Login.css';
 
 export const LoginForm = () => {
-    const theme = useTheme();
     const {
         email,
         password,

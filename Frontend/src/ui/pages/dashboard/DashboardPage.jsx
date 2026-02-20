@@ -12,9 +12,7 @@ const DashboardPage = () => {
         error,
         reload,
         searchQuery,
-        handleSearch,
-        filters,
-        handleFilterChange
+        handleSearch
     } = useDashboard();
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 8;

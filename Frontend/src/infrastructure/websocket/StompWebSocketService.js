@@ -60,7 +60,7 @@ export class StompWebSocketService extends IWebSocketService {
                 this._connected = false;
             },
 
-            onWebSocketError: (event) => {
+            onWebSocketError: (_event) => {
                 console.warn('[WebSocket] Connection error — backend may not be running');
                 this._connected = false;
             },
@@ -86,14 +86,14 @@ export class StompWebSocketService extends IWebSocketService {
         if (this._client) {
             // Unsubscribe all
             this._subscriptions.forEach((sub) => {
-                try { sub.unsubscribe(); } catch (_) { /* ignore */ }
+                try { sub.unsubscribe(); } catch (_error) { /* ignore */ }
             });
             this._subscriptions.clear();
             this._pendingSubscriptions = [];
 
             try {
                 this._client.deactivate();
-            } catch (_) { /* ignore */ }
+            } catch (_error) { /* ignore */ }
 
             this._client = null;
             this._connected = false;
@@ -123,7 +123,7 @@ export class StompWebSocketService extends IWebSocketService {
                 // Or unsubscribe if already active
                 promise.then(sub => {
                     if (sub) {
-                        try { sub.unsubscribe(); } catch (_) { /* ignore */ }
+                        try { sub.unsubscribe(); } catch (_error) { /* ignore */ }
                     }
                 });
                 this._subscriptions.delete(topic);
@@ -142,7 +142,7 @@ export class StompWebSocketService extends IWebSocketService {
     _doSubscribe(topic, callback) {
         if (this._subscriptions.has(topic)) {
             // Already subscribed to this topic, unsubscribe first
-            try { this._subscriptions.get(topic).unsubscribe(); } catch (_) { /* ignore */ }
+            try { this._subscriptions.get(topic).unsubscribe(); } catch (_error) { /* ignore */ }
         }
 
         const subscription = this._client.subscribe(topic, (message) => {

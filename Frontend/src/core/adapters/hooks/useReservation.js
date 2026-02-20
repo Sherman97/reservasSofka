@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
-import { useReservationDependencies } from '../providers/DependencyProvider';
+import { useAuthDependencies, useReservationDependencies } from './useDependencies';
 import { useBookingEvents } from './useBookingEvents';
 
 /**

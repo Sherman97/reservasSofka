@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../../context/ThemeContext';
-import { useDependencies } from '../../../core/adapters/providers/DependencyProvider';
+import { useAuthDependencies } from '../../../core/adapters/hooks/useDependencies';
 import logoLight from '../../../assets/LogoSofka_FondoBlanco_peq.png';
 import logoDark from '../../../assets/LogoSofka_FondoNegro_peq.png';
 import '../../styles/common/Header.css';
 
 export const Header = () => {
     const { theme, toggleTheme } = useTheme();
-    const { logoutUseCase } = useDependencies();
+    const { logoutUseCase } = useAuthDependencies();
     const navigate = useNavigate();
     const [showUserMenu, setShowUserMenu] = useState(false);
     const menuRef = useRef(null);

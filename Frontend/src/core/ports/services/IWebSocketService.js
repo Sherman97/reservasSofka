@@ -25,7 +25,7 @@ export class IWebSocketService {
      * @param {function} callback - Callback to handle incoming messages
      * @returns {object} Subscription object with unsubscribe() method
      */
-    subscribe(topic, callback) {
+    subscribe(_topic, _callback) {
         throw new Error('Method not implemented: subscribe');
     }
 

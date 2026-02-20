@@ -9,7 +9,7 @@ export class IStorageService {
      * @param {string} key - Storage key
      * @returns {string|null} Stored value or null if not found
      */
-    get(key) {
+    get(_key) {
         throw new Error('Method not implemented: get');
     }
 
@@ -18,7 +18,7 @@ export class IStorageService {
      * @param {string} key - Storage key
      * @param {string} value - Value to store
      */
-    set(key, value) {
+    set(_key, _value) {
         throw new Error('Method not implemented: set');
     }
 
@@ -26,7 +26,7 @@ export class IStorageService {
      * Remove item from storage
      * @param {string} key - Storage key
      */
-    remove(key) {
+    remove(_key) {
         throw new Error('Method not implemented: remove');
     }
 
@@ -42,7 +42,7 @@ export class IStorageService {
      * @param {string} key - Storage key
      * @returns {boolean} True if key exists
      */
-    has(key) {
+    has(_key) {
         throw new Error('Method not implemented: has');
     }
 }

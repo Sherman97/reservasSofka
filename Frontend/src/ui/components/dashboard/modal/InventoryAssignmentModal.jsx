@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDependencies } from '../../../../core/adapters/providers/DependencyProvider';
+import { useDependencies } from '../../../../core/adapters/hooks/useDependencies';
 import '../../../styles/dashboard/InventoryAssignmentModal.css';
 
 /**
@@ -19,13 +19,7 @@ export const InventoryAssignmentModal = ({ isOpen, location, onClose, onSuccess 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        if (isOpen) {
-            loadInventory();
-        }
-    }, [isOpen]);
-
-    const loadInventory = async () => {
+    const loadInventory = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
@@ -38,7 +32,13 @@ export const InventoryAssignmentModal = ({ isOpen, location, onClose, onSuccess 
         } finally {
             setLoading(false);
         }
-    };
+    }, [getInventoryUseCase]);
+
+    useEffect(() => {
+        if (isOpen) {
+            loadInventory();
+        }
+    }, [isOpen, loadInventory]);
 
     const handleAssign = async () => {
         if (!selectedItem || quantity < 1) {
