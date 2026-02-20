@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 
 @Service
+// Human Check 🛡️: se incluyen codigos de error para distinguir conflictos/auth/not-found.
 public class AuthApplicationService implements AuthUseCase {
     private final UserPersistencePort userPersistencePort;
     private final PasswordHasherPort passwordHasherPort;
@@ -39,7 +40,7 @@ public class AuthApplicationService implements AuthUseCase {
         String normalizedEmail = EmailNormalizer.normalize(command.email());
 
         if (userPersistencePort.existsByEmail(normalizedEmail)) {
-            throw new ApiException(HttpStatus.CONFLICT, "El email ya esta registrado");
+            throw new ApiException(HttpStatus.CONFLICT, "El email ya esta registrado", "EMAIL_ALREADY_REGISTERED");
         }
 
         User user = userPersistencePort.save(
@@ -61,10 +62,10 @@ public class AuthApplicationService implements AuthUseCase {
         String normalizedEmail = EmailNormalizer.normalize(command.email());
 
         User user = userPersistencePort.findByEmail(normalizedEmail)
-                .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "Credenciales invalidas"));
+                .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "Credenciales invalidas", "INVALID_CREDENTIALS"));
 
         if (!passwordHasherPort.matches(command.password(), user.getPasswordHash())) {
-            throw new ApiException(HttpStatus.UNAUTHORIZED, "Credenciales invalidas");
+            throw new ApiException(HttpStatus.UNAUTHORIZED, "Credenciales invalidas", "INVALID_CREDENTIALS");
         }
 
         return new AuthResult(user, tokenPort.generate(user));
@@ -73,7 +74,7 @@ public class AuthApplicationService implements AuthUseCase {
     @Override
     public User getMe(Long userId) {
         return userPersistencePort.findById(userId)
-                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Usuario no encontrado", "USER_NOT_FOUND"));
     }
 }
 

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+// Human Check 🛡️: se agregan codigos de error y validacion ante posibles errores al crear la locacion y demas
 public class LocationsApplicationService implements LocationsUseCase {
     private final LocationsPersistencePort persistencePort;
     private final LocationEventPublisherPort eventPublisherPort;
@@ -48,7 +49,7 @@ public class LocationsApplicationService implements LocationsUseCase {
     public City getCityById(Long id) {
         long cityId = requirePositive(id, "id es invalido");
         return persistencePort.findCityById(cityId)
-                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Ciudad no encontrada"));
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Ciudad no encontrada", "CITY_NOT_FOUND"));
     }
 
     @Override
@@ -70,7 +71,7 @@ public class LocationsApplicationService implements LocationsUseCase {
         City existing = getCityById(id);
         int affected = persistencePort.deleteCity(existing.getId());
         if (affected == 0) {
-            throw new ApiException(HttpStatus.NOT_FOUND, "Ciudad no encontrada");
+            throw new ApiException(HttpStatus.NOT_FOUND, "Ciudad no encontrada", "CITY_NOT_FOUND");
         }
         eventPublisherPort.publishCityDeleted(new CityDeletedEvent(existing.getId(), java.time.Instant.now()));
     }
@@ -79,16 +80,17 @@ public class LocationsApplicationService implements LocationsUseCase {
     public Space createSpace(CreateSpaceCommand command) {
         long cityId = requirePositive(command.cityId(), "cityId es obligatorio");
         if (!persistencePort.existsCity(cityId)) {
-            throw new ApiException(HttpStatus.NOT_FOUND, "Ciudad no encontrada");
+            throw new ApiException(HttpStatus.NOT_FOUND, "Ciudad no encontrada", "CITY_NOT_FOUND");
         }
 
         String name = normalizeRequired(command.name(), "name es obligatorio");
+        Integer capacity = normalizeCapacity(command.capacity());
         boolean isActive = command.isActive() == null || command.isActive();
 
         long id = persistencePort.insertSpace(
                 cityId,
                 name,
-                command.capacity(),
+                capacity,
                 normalizeNullable(command.floor()),
                 normalizeNullable(command.description()),
                 normalizeNullable(command.imageUrl()),
@@ -115,7 +117,7 @@ public class LocationsApplicationService implements LocationsUseCase {
     public Space getSpaceById(Long id) {
         long spaceId = requirePositive(id, "id es invalido");
         return persistencePort.findSpaceById(spaceId)
-                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Espacio no encontrado"));
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Espacio no encontrado", "SPACE_NOT_FOUND"));
     }
 
     @Override
@@ -124,7 +126,7 @@ public class LocationsApplicationService implements LocationsUseCase {
         persistencePort.updateSpace(
                 existing.getId(),
                 normalizeNullable(command.name()),
-                command.capacity(),
+                normalizeCapacity(command.capacity()),
                 normalizeNullable(command.floor()),
                 normalizeNullable(command.description()),
                 normalizeNullable(command.imageUrl()),
@@ -146,7 +148,7 @@ public class LocationsApplicationService implements LocationsUseCase {
         Space existing = getSpaceById(id);
         int affected = persistencePort.deleteSpace(existing.getId());
         if (affected == 0) {
-            throw new ApiException(HttpStatus.NOT_FOUND, "Espacio no encontrado");
+            throw new ApiException(HttpStatus.NOT_FOUND, "Espacio no encontrado", "SPACE_NOT_FOUND");
         }
         eventPublisherPort.publishSpaceDeleted(new SpaceDeletedEvent(
                 existing.getId(),
@@ -157,7 +159,7 @@ public class LocationsApplicationService implements LocationsUseCase {
 
     private long requirePositive(Long value, String message) {
         if (value == null || value <= 0) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, message);
+            throw new ApiException(HttpStatus.BAD_REQUEST, message, "INVALID_ARGUMENT");
         }
         return value;
     }
@@ -165,9 +167,16 @@ public class LocationsApplicationService implements LocationsUseCase {
     private String normalizeRequired(String value, String message) {
         String normalized = normalizeNullable(value);
         if (normalized == null) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, message);
+            throw new ApiException(HttpStatus.BAD_REQUEST, message, "REQUIRED_FIELD");
         }
         return normalized;
+    }
+
+    private Integer normalizeCapacity(Integer value) {
+        if (value != null && value <= 0) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "capacity debe ser mayor que cero", "INVALID_CAPACITY");
+        }
+        return value;
     }
 
     private String normalizeNullable(String value) {

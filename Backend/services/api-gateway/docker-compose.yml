@@ -1,7 +1,6 @@
 ﻿services:
   mariadb:
     image: mariadb:11
-    container_name: BdMaria
     environment:
       MARIADB_ROOT_PASSWORD: root
       MARIADB_DATABASE: reservas_db

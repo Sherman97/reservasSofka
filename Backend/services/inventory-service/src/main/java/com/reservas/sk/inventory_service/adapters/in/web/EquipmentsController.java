@@ -8,6 +8,7 @@ import com.reservas.sk.inventory_service.application.port.in.InventoryUseCase;
 import com.reservas.sk.inventory_service.application.usecase.CreateEquipmentCommand;
 import com.reservas.sk.inventory_service.application.usecase.ListEquipmentsQuery;
 import com.reservas.sk.inventory_service.application.usecase.UpdateEquipmentCommand;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,8 @@ public class EquipmentsController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<EquipmentResponse>> create(@RequestBody CreateEquipmentRequest request) {
+    // Human Check 🛡️: @Valid activa validaciones de DTO para responder errores 400 consistentes.
+    public ResponseEntity<ApiResponse<EquipmentResponse>> create(@Valid @RequestBody CreateEquipmentRequest request) {
         var created = useCase.createEquipment(new CreateEquipmentCommand(
                 request.cityId(),
                 request.name(),
@@ -54,8 +56,9 @@ public class EquipmentsController {
     }
 
     @PutMapping("/{id}")
+    // Human Check 🛡️: se valida status del update antes de ejecutar la reserva
     public ApiResponse<EquipmentResponse> update(@PathVariable Long id,
-                                                 @RequestBody UpdateEquipmentRequest request) {
+                                                 @Valid @RequestBody UpdateEquipmentRequest request) {
         var updated = useCase.updateEquipment(id, new UpdateEquipmentCommand(
                 request.name(),
                 request.serial(),

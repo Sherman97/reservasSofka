@@ -1,4 +1,4 @@
-package com.reservas.sk.bookings_service.application.port.out;
+﻿package com.reservas.sk.bookings_service.application.port.out;
 
 import com.reservas.sk.bookings_service.domain.model.Reservation;
 import com.reservas.sk.bookings_service.domain.model.ReservationEquipment;
@@ -21,6 +21,11 @@ public interface BookingPersistencePort {
 
     List<Long> findEquipmentIdsOutsideCity(List<Long> equipmentIds, long cityId);
 
+    // Human Check 🛡️: Se agrego caso de uso por espacio para evitar doble reserva por concurrencia.
+    boolean acquireSpaceReservationLock(long spaceId, int timeoutSeconds);
+
+    void releaseSpaceReservationLock(long spaceId);
+
     long insertReservation(long userId,
                            long spaceId,
                            Instant startAt,
@@ -42,6 +47,7 @@ public interface BookingPersistencePort {
 
     void updateReservationCancellation(long reservationId, String status, String cancellationReason);
 }
+
 
 
 
