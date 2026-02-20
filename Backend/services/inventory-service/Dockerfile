@@ -7,7 +7,7 @@ COPY src ./src
 
 RUN gradle clean bootJar --no-daemon
 
-FROM docker.io/eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar app.jar
 

@@ -48,9 +48,10 @@ public class AuthController {
     }
 
     @GetMapping("/me")
+    // Human Check 🛡️: se agrega codigo de error consistente para auth no autenticado.
     public ApiResponse<UserResponse> me(Authentication authentication) {
         if (authentication == null || !(authentication.getPrincipal() instanceof AuthenticatedUser principal)) {
-            throw new ApiException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            throw new ApiException(HttpStatus.UNAUTHORIZED, "Unauthorized", "UNAUTHORIZED");
         }
 
         return ApiResponse.success(mapper.toUserResponse(authUseCase.getMe(principal.userId())));

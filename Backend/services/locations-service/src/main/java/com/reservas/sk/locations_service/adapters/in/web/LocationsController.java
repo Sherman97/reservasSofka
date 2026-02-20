@@ -3,6 +3,7 @@ package com.reservas.sk.locations_service.adapters.in.web;
 import com.reservas.sk.locations_service.adapters.in.web.dto.*;
 import com.reservas.sk.locations_service.application.port.in.LocationsUseCase;
 import com.reservas.sk.locations_service.application.usecase.*;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,8 @@ public class LocationsController {
     }
 
     @PostMapping("/cities")
-    public ResponseEntity<ApiResponse<CityResponse>> createCity(@RequestBody CreateCityRequest request) {
+    // Human Check 🛡️: @Valid activa validacion de campos requeridos para crear ciudad.
+    public ResponseEntity<ApiResponse<CityResponse>> createCity(@Valid @RequestBody CreateCityRequest request) {
         var city = useCase.createCity(new CreateCityCommand(request.name(), request.country()));
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(mapper.toResponse(city)));
     }
@@ -38,8 +40,9 @@ public class LocationsController {
     }
 
     @PutMapping("/cities/{id}")
+    // Human Check 🛡️: @Valid valida formato de payload antes de aplicar update de ciudad.
     public ApiResponse<CityResponse> updateCity(@PathVariable Long id,
-                                                @RequestBody UpdateCityRequest request) {
+                                                @Valid @RequestBody UpdateCityRequest request) {
         var city = useCase.updateCity(id, new UpdateCityCommand(request.name(), request.country()));
         return ApiResponse.success(mapper.toResponse(city));
     }
@@ -51,7 +54,8 @@ public class LocationsController {
     }
 
     @PostMapping("/spaces")
-    public ResponseEntity<ApiResponse<SpaceResponse>> createSpace(@RequestBody CreateSpaceRequest request) {
+    // Human Check 🛡️: @Valid evita crear espacios con cityId/name/capacity invalidos.
+    public ResponseEntity<ApiResponse<SpaceResponse>> createSpace(@Valid @RequestBody CreateSpaceRequest request) {
         var space = useCase.createSpace(new CreateSpaceCommand(
                 request.cityId(),
                 request.name(),
@@ -77,8 +81,9 @@ public class LocationsController {
     }
 
     @PutMapping("/spaces/{id}")
+    // Human Check 🛡️: @Valid valida capacity en update para prevenir datos inconsistentes o errones.
     public ApiResponse<SpaceResponse> updateSpace(@PathVariable Long id,
-                                                  @RequestBody UpdateSpaceRequest request) {
+                                                  @Valid @RequestBody UpdateSpaceRequest request) {
         var space = useCase.updateSpace(id, new UpdateSpaceCommand(
                 request.name(),
                 request.capacity(),

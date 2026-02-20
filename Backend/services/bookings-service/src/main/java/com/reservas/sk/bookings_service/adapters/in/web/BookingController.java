@@ -1,4 +1,4 @@
-package com.reservas.sk.bookings_service.adapters.in.web;
+﻿package com.reservas.sk.bookings_service.adapters.in.web;
 
 import com.reservas.sk.bookings_service.adapters.in.web.dto.*;
 import com.reservas.sk.bookings_service.application.port.in.BookingUseCase;
@@ -7,6 +7,7 @@ import com.reservas.sk.bookings_service.application.usecase.CheckSpaceAvailabili
 import com.reservas.sk.bookings_service.application.usecase.CreateReservationCommand;
 import com.reservas.sk.bookings_service.application.usecase.ListReservationsQuery;
 import com.reservas.sk.bookings_service.exception.ApiException;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -34,7 +35,8 @@ public class BookingController {
     }
 
     @PostMapping("/reservations")
-    public ResponseEntity<ApiResponse<ReservationResponse>> createReservation(@RequestBody CreateReservationRequest request,
+    // Human Check 🛡️: se usa @Valid para activar validaciones de entrada y responder 400 de forma consistente.
+    public ResponseEntity<ApiResponse<ReservationResponse>> createReservation(@Valid @RequestBody CreateReservationRequest request,
                                                                               Authentication authentication) {
         AuthenticatedUser user = requireAuthenticatedUser(authentication);
         var reservation = bookingUseCase.createReservation(new CreateReservationCommand(
@@ -78,6 +80,7 @@ public class BookingController {
         return user;
     }
 }
+
 
 
 

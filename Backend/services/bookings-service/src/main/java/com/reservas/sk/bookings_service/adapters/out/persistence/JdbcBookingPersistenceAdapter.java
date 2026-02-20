@@ -1,4 +1,4 @@
-package com.reservas.sk.bookings_service.adapters.out.persistence;
+﻿package com.reservas.sk.bookings_service.adapters.out.persistence;
 
 import com.reservas.sk.bookings_service.application.port.out.BookingPersistencePort;
 import com.reservas.sk.bookings_service.domain.model.Reservation;
@@ -126,6 +126,27 @@ public class JdbcBookingPersistenceAdapter implements BookingPersistencePort {
                 """.formatted(placeholders),
                 (rs, rowNum) -> rs.getLong("id"),
                 params.toArray()
+        );
+    }
+
+    // Human Check 🛡️: GET_LOCK serializa reservas por espacio y evita reservas simultaneas.
+    @Override
+    public boolean acquireSpaceReservationLock(long spaceId, int timeoutSeconds) {
+        Integer locked = jdbcTemplate.queryForObject(
+                "SELECT GET_LOCK(?, ?)",
+                Integer.class,
+                lockName(spaceId),
+                timeoutSeconds
+        );
+        return locked != null && locked == 1;
+    }
+
+    @Override
+    public void releaseSpaceReservationLock(long spaceId) {
+        jdbcTemplate.queryForObject(
+                "SELECT RELEASE_LOCK(?)",
+                Integer.class,
+                lockName(spaceId)
         );
     }
 
@@ -330,7 +351,12 @@ public class JdbcBookingPersistenceAdapter implements BookingPersistencePort {
         LocalDateTime localDateTime = timestamp.toLocalDateTime();
         return localDateTime.toInstant(ZoneOffset.UTC);
     }
+
+    private String lockName(long spaceId) {
+        return "bookings:space:" + spaceId;
+    }
 }
+
 
 
 

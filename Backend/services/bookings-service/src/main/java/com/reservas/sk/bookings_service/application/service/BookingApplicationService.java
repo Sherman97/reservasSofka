@@ -1,4 +1,4 @@
-package com.reservas.sk.bookings_service.application.service;
+﻿package com.reservas.sk.bookings_service.application.service;
 
 import com.reservas.sk.bookings_service.application.port.in.BookingUseCase;
 import com.reservas.sk.bookings_service.application.port.out.BookingPersistencePort;
@@ -69,60 +69,80 @@ public class BookingApplicationService implements BookingUseCase {
         Instant endAt = DateTimeService.parse(command.endAt(), "endAt");
         validateRange(startAt, endAt);
 
-        int overlaps = persistencePort.countOverlappingReservations(spaceId, startAt, endAt);
-        if (overlaps > 0) {
-            throw new ApiException(HttpStatus.CONFLICT, "El espacio ya esta reservado para ese rango de tiempo");
+        // Human Check 🛡️: lock por espacio para evitar doble reserva simultanea.
+        boolean lockAcquired = persistencePort.acquireSpaceReservationLock(spaceId, 5);
+        if (!lockAcquired) {
+            throw new ApiException(HttpStatus.CONFLICT,
+                    "No fue posible reservar en este momento. Intente de nuevo.",
+                    "SPACE_LOCK_TIMEOUT");
         }
 
-        List<Long> equipmentIds = normalizeEquipmentIds(command.equipmentIds());
-        if (!equipmentIds.isEmpty()) {
-            List<Long> existing = persistencePort.findExistingEquipmentIds(equipmentIds);
-            if (existing.size() != equipmentIds.size()) {
-                HashSet<Long> existingSet = new HashSet<>(existing);
-                List<Long> missing = equipmentIds.stream()
-                        .filter(id -> !existingSet.contains(id))
-                        .toList();
-                throw new ApiException(HttpStatus.BAD_REQUEST, "Equipos no encontrados: " + missing);
+        try {
+            int overlaps = persistencePort.countOverlappingReservations(spaceId, startAt, endAt);
+            if (overlaps > 0) {
+                throw new ApiException(HttpStatus.CONFLICT,
+                        "El espacio ya esta reservado para ese rango de tiempo",
+                        "SPACE_ALREADY_RESERVED");
             }
 
-            List<Long> unavailable = persistencePort.findUnavailableEquipmentIds(equipmentIds);
-            if (!unavailable.isEmpty()) {
-                throw new ApiException(HttpStatus.CONFLICT, "Equipos no disponibles: " + unavailable);
+            List<Long> equipmentIds = normalizeEquipmentIds(command.equipmentIds());
+            if (!equipmentIds.isEmpty()) {
+                List<Long> existing = persistencePort.findExistingEquipmentIds(equipmentIds);
+                if (existing.size() != equipmentIds.size()) {
+                    HashSet<Long> existingSet = new HashSet<>(existing);
+                    List<Long> missing = equipmentIds.stream()
+                            .filter(id -> !existingSet.contains(id))
+                            .toList();
+                    throw new ApiException(HttpStatus.BAD_REQUEST, "Equipos no encontrados: " + missing, "EQUIPMENT_NOT_FOUND");
+                }
+
+                List<Long> unavailable = persistencePort.findUnavailableEquipmentIds(equipmentIds);
+                if (!unavailable.isEmpty()) {
+                    throw new ApiException(HttpStatus.CONFLICT, "Equipos no disponibles: " + unavailable, "EQUIPMENT_UNAVAILABLE");
+                }
+
+                List<Long> outsideCity = persistencePort.findEquipmentIdsOutsideCity(equipmentIds, cityId);
+                if (!outsideCity.isEmpty()) {
+                    throw new ApiException(HttpStatus.BAD_REQUEST,
+                            "Equipos no pertenecen a la ciudad del espacio: " + outsideCity,
+                            "EQUIPMENT_OUTSIDE_CITY");
+                }
             }
 
-            List<Long> outsideCity = persistencePort.findEquipmentIdsOutsideCity(equipmentIds, cityId);
-            if (!outsideCity.isEmpty()) {
-                throw new ApiException(HttpStatus.BAD_REQUEST, "Equipos no pertenecen a la ciudad del espacio: " + outsideCity);
+            long reservationId = persistencePort.insertReservation(
+                    userId,
+                    spaceId,
+                    startAt,
+                    endAt,
+                    "confirmed",
+                    normalizeNullable(command.title()),
+                    command.attendeesCount(),
+                    normalizeNullable(command.notes())
+            );
+
+            for (Long equipmentId : equipmentIds) {
+                persistencePort.insertReservationEquipment(reservationId, equipmentId, "requested");
+            }
+
+            Reservation created = getReservationById(reservationId);
+            safePublishReservationCreated(new ReservationCreatedEvent(
+                    created.getId(),
+                    created.getUserId(),
+                    created.getSpaceId(),
+                    created.getStatus(),
+                    created.getStartDatetime().toString(),
+                    created.getEndDatetime().toString(),
+                    created.getEquipments().stream().map(ReservationEquipment::getEquipmentId).toList(),
+                    Instant.now()
+            ));
+            return created;
+        } finally {
+            try {
+                persistencePort.releaseSpaceReservationLock(spaceId);
+            } catch (Exception ex) {
+                log.warn("No se pudo liberar lock de espacio. spaceId={}", spaceId, ex);
             }
         }
-
-        long reservationId = persistencePort.insertReservation(
-                userId,
-                spaceId,
-                startAt,
-                endAt,
-                "confirmed",
-                normalizeNullable(command.title()),
-                command.attendeesCount(),
-                normalizeNullable(command.notes())
-        );
-
-        for (Long equipmentId : equipmentIds) {
-            persistencePort.insertReservationEquipment(reservationId, equipmentId, "requested");
-        }
-
-        Reservation created = getReservationById(reservationId);
-        safePublishReservationCreated(new ReservationCreatedEvent(
-                created.getId(),
-                created.getUserId(),
-                created.getSpaceId(),
-                created.getStatus(),
-                created.getStartDatetime().toString(),
-                created.getEndDatetime().toString(),
-                created.getEquipments().stream().map(ReservationEquipment::getEquipmentId).toList(),
-                Instant.now()
-        ));
-        return created;
     }
 
     @Override
@@ -259,6 +279,8 @@ public class BookingApplicationService implements BookingUseCase {
         return normalized;
     }
 }
+
+
 
 
 

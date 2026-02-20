@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 
 @Service
+// Human Check 🛡️: se agregan codigos de error para que se idenitfique bien los errores.
 public class InventoryApplicationService implements InventoryUseCase {
     private static final List<String> VALID_STATUSES = List.of("available", "maintenance", "retired");
 
@@ -35,7 +36,7 @@ public class InventoryApplicationService implements InventoryUseCase {
     public Equipment createEquipment(CreateEquipmentCommand command) {
         long cityId = requirePositive(command.cityId(), "cityId es obligatorio");
         if (!persistencePort.cityExists(cityId)) {
-            throw new ApiException(HttpStatus.NOT_FOUND, "Ciudad no encontrada");
+            throw new ApiException(HttpStatus.NOT_FOUND, "Ciudad no encontrada", "CITY_NOT_FOUND");
         }
 
         String name = normalizeRequired(command.name(), "name es obligatorio");
@@ -72,7 +73,7 @@ public class InventoryApplicationService implements InventoryUseCase {
     public Equipment getEquipmentById(Long id) {
         long equipmentId = requirePositive(id, "equipmentId es invalido");
         return persistencePort.findEquipmentById(equipmentId)
-                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Equipo no encontrado"));
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Equipo no encontrado", "EQUIPMENT_NOT_FOUND"));
     }
 
     @Override
@@ -109,7 +110,7 @@ public class InventoryApplicationService implements InventoryUseCase {
         Equipment existing = getEquipmentById(id);
         int affected = persistencePort.deleteEquipment(existing.getId());
         if (affected == 0) {
-            throw new ApiException(HttpStatus.NOT_FOUND, "Equipo no encontrado");
+            throw new ApiException(HttpStatus.NOT_FOUND, "Equipo no encontrado", "EQUIPMENT_NOT_FOUND");
         }
         eventPublisherPort.publishEquipmentDeleted(new EquipmentDeletedEvent(
                 existing.getId(),
@@ -121,7 +122,7 @@ public class InventoryApplicationService implements InventoryUseCase {
 
     private long requirePositive(Long value, String message) {
         if (value == null || value <= 0) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, message);
+            throw new ApiException(HttpStatus.BAD_REQUEST, message, "INVALID_ARGUMENT");
         }
         return value;
     }
@@ -129,7 +130,7 @@ public class InventoryApplicationService implements InventoryUseCase {
     private String normalizeRequired(String value, String message) {
         String normalized = normalizeNullable(value);
         if (normalized == null) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, message);
+            throw new ApiException(HttpStatus.BAD_REQUEST, message, "REQUIRED_FIELD");
         }
         return normalized;
     }
@@ -149,7 +150,9 @@ public class InventoryApplicationService implements InventoryUseCase {
 
         String normalized = status.trim().toLowerCase(Locale.ROOT);
         if (!VALID_STATUSES.contains(normalized)) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "status invalido. Use: available, maintenance, retired");
+            throw new ApiException(HttpStatus.BAD_REQUEST,
+                    "status invalido. Use: available, maintenance, retired",
+                    "INVALID_STATUS");
         }
         return normalized;
     }
