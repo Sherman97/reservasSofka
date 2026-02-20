@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useUserReservations } from '../../../core/adapters/hooks/useUserReservations';
 import { ReservationFilterBar } from '../../components/reservations/ReservationFilterBar';
 import { ReservationList } from '../../components/reservations/ReservationList';
-import { Pagination } from '../../../components/common/Pagination';
+import { Pagination } from '../../components/common/Pagination';
 import '../../styles/reservations/Reservations.css';
 
 /**

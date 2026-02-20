@@ -10,11 +10,6 @@ const DependencyContext = createContext(null);
 /**
  * DependencyProvider - Facade Pattern implementation
  * Wraps the application to provide dependency injection
- * 
- * Usage:
- *   <DependencyProvider>
- *     <App />
- *   </DependencyProvider>
  */
 export const DependencyProvider = ({ children }) => {
     return (
@@ -25,57 +20,59 @@ export const DependencyProvider = ({ children }) => {
 };
 
 /**
- * useDependencies - Custom hook to access dependencies
- * Facade that exposes only necessary use cases to components
- * 
- * Usage:
- *   const { loginUseCase } = useDependencies();
- *   await loginUseCase.execute({ email, password });
- * 
- * @returns {object} Object containing all use cases
+ * useContainer - Internal hook to access the DI container
+ * @returns {DIContainer} DI Container instance
  */
-export const useDependencies = () => {
-    const container = useContext(DependencyContext);
-
-    if (!container) {
-        throw new Error('useDependencies must be used within DependencyProvider');
+const useContainer = () => {
+    const context = useContext(DependencyContext);
+    if (!context) {
+        throw new Error('Dependency hooks must be used within DependencyProvider');
     }
+    return context;
+};
 
-    // Facade: Expose only use cases (not repositories or clients)
-    // This provides a clean API and hides implementation details
+/**
+ * useAuthDependencies - Module-specific hook for Auth use cases
+ */
+export const useAuthDependencies = () => {
+    const container = useContainer();
     return {
-        // Storage service (used by some hooks for direct access)
-        storageService: container.has('storageService') ? container.get('storageService') : null,
-        authClient: container.has('authClient') ? container.get('authClient') : null,
-
-        // Auth Use Cases
-        loginUseCase: container.has('loginUseCase') ? container.get('loginUseCase') : null,
-        logoutUseCase: container.has('logoutUseCase') ? container.get('logoutUseCase') : null,
-        registerUseCase: container.has('registerUseCase') ? container.get('registerUseCase') : null,
-
-        // Dashboard Use Cases
-        getLocationsUseCase: container.has('getLocationsUseCase') ? container.get('getLocationsUseCase') : null,
-        getInventoryUseCase: container.has('getInventoryUseCase') ? container.get('getInventoryUseCase') : null,
-        createReservationUseCase: container.has('createReservationUseCase') ? container.get('createReservationUseCase') : null,
-
-        // Inventory use cases (will be added during migration)
-        getEquipmentUseCase: container.has('getEquipmentUseCase') ? container.get('getEquipmentUseCase') : null,
+        loginUseCase: container.get('loginUseCase'),
+        logoutUseCase: container.get('logoutUseCase'),
+        registerUseCase: container.get('registerUseCase'),
+        getCurrentUserUseCase: container.get('getCurrentUserUseCase'),
     };
 };
 
 /**
- * useContainer - Hook to access the DI container directly
- * Use this only when you need low-level access to the container
- * Prefer useDependencies() for normal use
- * 
- * @returns {DIContainer} DI Container instance
+ * useReservationDependencies - Module-specific hook for Reservation use cases
  */
-export const useContainer = () => {
-    const container = useContext(DependencyContext);
+export const useReservationDependencies = () => {
+    const container = useContainer();
+    return {
+        getLocationsUseCase: container.get('getLocationsUseCase'),
+        getInventoryUseCase: container.get('getInventoryUseCase'),
+        createReservationUseCase: container.get('createReservationUseCase'),
+        getUserReservationsUseCase: container.get('getUserReservationsUseCase'),
+        cancelReservationUseCase: container.get('cancelReservationUseCase'),
+    };
+};
 
-    if (!container) {
-        throw new Error('useContainer must be used within DependencyProvider');
-    }
-
-    return container;
+/**
+ * @deprecated Use useAuthDependencies or useReservationDependencies instead
+ * Provided for backward compatibility during migration phases
+ */
+export const useDependencies = () => {
+    const container = useContainer();
+    return {
+        loginUseCase: container.get('loginUseCase'),
+        logoutUseCase: container.get('logoutUseCase'),
+        registerUseCase: container.get('registerUseCase'),
+        getCurrentUserUseCase: container.get('getCurrentUserUseCase'),
+        getLocationsUseCase: container.get('getLocationsUseCase'),
+        getInventoryUseCase: container.get('getInventoryUseCase'),
+        createReservationUseCase: container.get('createReservationUseCase'),
+        getUserReservationsUseCase: container.get('getUserReservationsUseCase'),
+        cancelReservationUseCase: container.get('cancelReservationUseCase'),
+    };
 };

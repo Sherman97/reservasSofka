@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useDependencies } from '../providers/DependencyProvider';
+import { useReservationDependencies } from '../providers/DependencyProvider';
 
 /**
  * useReservation - Adapter Hook
@@ -7,7 +7,7 @@ import { useDependencies } from '../providers/DependencyProvider';
  * Manages UI state for reservation modal, calendar, equipment selection
  */
 export const useReservation = (location) => {
-    const { createReservationUseCase } = useDependencies();
+    const { createReservationUseCase } = useReservationDependencies();
 
     const [isOpen, setIsOpen] = useState(false);
     const [currentDate, setCurrentDate] = useState(new Date());

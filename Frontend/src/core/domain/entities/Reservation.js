@@ -30,7 +30,8 @@ export class Reservation {
      * @returns {boolean}
      */
     isActive() {
-        return this.status === 'active';
+        const s = (this.status || '').toLowerCase();
+        return ['active', 'confirmed', 'pending', 'created'].includes(s);
     }
 
     /**
@@ -38,7 +39,7 @@ export class Reservation {
      * @returns {boolean}
      */
     isCancelled() {
-        return this.status === 'cancelled';
+        return (this.status || '').toLowerCase() === 'cancelled';
     }
 
     /**
@@ -54,7 +55,7 @@ export class Reservation {
      * @returns {boolean}
      */
     isUpcoming() {
-        return this.startAt > new Date() && this.isActive();
+        return this.startAt > new Date() && !this.isCancelled();
     }
 
     /**

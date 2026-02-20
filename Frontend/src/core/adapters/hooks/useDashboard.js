@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useDependencies } from '../providers/DependencyProvider';
+import { useReservationDependencies } from '../providers/DependencyProvider';
 
 /**
  * useDashboard - Adapter Hook
@@ -7,7 +7,7 @@ import { useDependencies } from '../providers/DependencyProvider';
  * Manages UI state for dashboard items, search, and filters
  */
 export const useDashboard = () => {
-    const { getLocationsUseCase, getInventoryUseCase } = useDependencies();
+    const { getLocationsUseCase, getInventoryUseCase } = useReservationDependencies();
 
     const [locations, setLocations] = useState([]);
     const [inventory, setInventory] = useState([]);

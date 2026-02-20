@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDependencies } from '../providers/DependencyProvider';
+import { useAuthDependencies } from '../providers/DependencyProvider';
 
 /**
  * useSignup - UI Adapter Hook
@@ -9,7 +9,7 @@ import { useDependencies } from '../providers/DependencyProvider';
  */
 export const useSignup = () => {
     const navigate = useNavigate();
-    const { registerUseCase, loginUseCase } = useDependencies();
+    const { registerUseCase, loginUseCase } = useAuthDependencies();
 
     const [formData, setFormData] = useState({
         fullName: '',

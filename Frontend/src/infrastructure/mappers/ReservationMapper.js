@@ -23,9 +23,18 @@ export class ReservationMapper {
             startAt: dto.startAt || dto.start_at,
             endAt: dto.endAt || dto.end_at,
             equipment: dto.items || dto.equipment || [],
-            status: dto.status || 'active',
+            status: ReservationMapper.normalizeStatus(dto.status),
             createdAt: dto.createdAt || dto.created_at || new Date()
         });
+    }
+
+    static normalizeStatus(status) {
+        if (!status) return 'active';
+        const s = status.toLowerCase();
+        if (['pending', 'confirmed', 'in_progress', 'active', 'created'].includes(s)) {
+            return 'active';
+        }
+        return s;
     }
 
     /**
@@ -48,6 +57,42 @@ export class ReservationMapper {
             equipment: reservation.equipment,
             status: reservation.status,
             createdAt: reservation.createdAt.toISOString()
+        };
+    }
+
+    /**
+     * Prepare payload for creating a reservation in the API
+     * @param {object} reservationData - Raw data from UI/Use Case
+     * @returns {object} API payload
+     */
+    static toApi(reservationData) {
+        // Format dates for API
+        // reservationData.date comes as YYYY-MM-DD
+        // reservationData.startTime/endTime come as HH:MM
+        const [year, month, day] = reservationData.date.split('-').map(Number);
+        const [startHours, startMinutes] = reservationData.startTime.split(':').map(Number);
+        const [endHours, endMinutes] = reservationData.endTime.split(':').map(Number);
+
+        // Create Date objects (assuming local time)
+        const startAt = new Date(year, month - 1, day, startHours, startMinutes).toISOString();
+        const endAt = new Date(year, month - 1, day, endHours, endMinutes).toISOString();
+
+        // Map equipment to IDs (backend expects List<Long>)
+        const equipmentIds = (reservationData.equipment || []).map(item => {
+            if (typeof item === 'object') {
+                return item.itemId || item.id;
+            }
+            return item;
+        });
+
+        return {
+            spaceId: reservationData.locationId,
+            startAt,
+            endAt,
+            title: reservationData.title || `Reserva de ${reservationData.locationName || 'espacio'}`,
+            attendeesCount: reservationData.attendeesCount || 1,
+            notes: reservationData.notes || '',
+            equipmentIds: equipmentIds
         };
     }
 

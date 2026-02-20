@@ -4,7 +4,7 @@ import SignupPage from '../ui/pages/signup/SignupPage';
 import DashboardPage from '../ui/pages/dashboard/DashboardPage';
 import { MainLayout } from '../ui/layouts/MainLayout';
 import { MyReservationsPage } from '../ui/pages/reservations/MyReservationsPage';
-import ProtectedRoute from '../components/ProtectedRoute';
+import ProtectedRoute from '../ui/components/common/ProtectedRoute';
 
 const AppRouter = () => {
     return (

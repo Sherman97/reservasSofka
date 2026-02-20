@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useDependencies } from '../providers/DependencyProvider';
+import { useAuthDependencies } from '../providers/DependencyProvider';
 
 /**
  * useLogout - UI Adapter Hook
@@ -8,7 +8,7 @@ import { useDependencies } from '../providers/DependencyProvider';
  */
 export const useLogout = () => {
     const navigate = useNavigate();
-    const { logoutUseCase } = useDependencies();
+    const { logoutUseCase } = useAuthDependencies();
 
     const logout = async () => {
         try {

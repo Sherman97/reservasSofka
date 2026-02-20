@@ -1,4 +1,5 @@
 import { IAuthRepository } from '../../core/ports/repositories/IAuthRepository';
+import { User } from '../../core/domain/entities/User';
 import { UserMapper } from '../mappers/UserMapper';
 import {
     AuthenticationError,

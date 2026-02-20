@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useDependencies } from '../providers/DependencyProvider';
+import { useAuthDependencies, useReservationDependencies } from '../providers/DependencyProvider';
 
 /**
  * useUserReservations - Adapter Hook
@@ -7,11 +7,8 @@ import { useDependencies } from '../providers/DependencyProvider';
  * Manages user's reservations, filtering, and cancellation
  */
 export const useUserReservations = () => {
-    const {
-        getUserReservationsUseCase,
-        cancelReservationUseCase,
-        authRepository
-    } = useDependencies();
+    const { getUserReservationsUseCase, cancelReservationUseCase } = useReservationDependencies();
+    const { getCurrentUserUseCase } = useAuthDependencies();
 
     const [reservations, setReservations] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -24,7 +21,7 @@ export const useUserReservations = () => {
     }, []);
 
     const loadReservations = async () => {
-        const user = authRepository.getStoredUser();
+        const user = getCurrentUserUseCase.execute();
         if (!user) {
             setError('Usuario no autenticado');
             setLoading(false);

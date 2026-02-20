@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDependencies } from '../providers/DependencyProvider';
+import { useAuthDependencies } from '../providers/DependencyProvider';
 
 /**
  * useLogin - UI Adapter Hook
@@ -9,7 +9,7 @@ import { useDependencies } from '../providers/DependencyProvider';
  */
 export const useLogin = () => {
     const navigate = useNavigate();
-    const { loginUseCase } = useDependencies();
+    const { loginUseCase } = useAuthDependencies();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');

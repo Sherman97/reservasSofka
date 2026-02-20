@@ -14,36 +14,7 @@ export class HttpReservationRepository extends IReservationRepository {
 
     async create(reservationData) {
         try {
-            // Format dates for API
-            // reservationData.date comes as YYYY-MM-DD
-            // reservationData.startTime/endTime come as HH:MM
-            const [year, month, day] = reservationData.date.split('-').map(Number);
-            const [startHours, startMinutes] = reservationData.startTime.split(':').map(Number);
-            const [endHours, endMinutes] = reservationData.endTime.split(':').map(Number);
-
-            // Create Date objects (assuming local time)
-            const startAt = new Date(year, month - 1, day, startHours, startMinutes).toISOString();
-            const endAt = new Date(year, month - 1, day, endHours, endMinutes).toISOString();
-
-            // Map equipment to IDs (backend expects List<Long>)
-            const equipmentIds = (reservationData.equipment || []).map(item => {
-                // If item is object {id: 1, ...} or {itemId: 1, ...} extract ID, else use item as ID
-                if (typeof item === 'object') {
-                    return item.itemId || item.id;
-                }
-                return item;
-            });
-
-            const payload = {
-                spaceId: reservationData.locationId,
-                startAt,
-                endAt,
-                title: reservationData.title || `Reserva de ${reservationData.locationName || 'espacio'}`,
-                attendeesCount: reservationData.attendeesCount || 1,
-                notes: reservationData.notes || '',
-                equipmentIds: equipmentIds
-            };
-
+            const payload = ReservationMapper.toApi(reservationData);
             const response = await this.httpClient.post('/bookings/reservations', payload);
 
             if (!response.data.ok) {
@@ -67,6 +38,7 @@ export class HttpReservationRepository extends IReservationRepository {
                 throw new Error(response.data.message || 'Error fetching reservations');
             }
 
+            console.log('User reservations response:', response.data);
             return ReservationMapper.toDomainList(response.data.data || []);
         } catch (error) {
             console.error('Error in HttpReservationRepository.getByUserId:', error);

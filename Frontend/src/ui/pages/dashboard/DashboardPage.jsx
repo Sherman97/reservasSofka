@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDashboard } from '../../../core/adapters/hooks/useDashboard';
 import { SearchBar } from '../../components/dashboard/SearchBar';
 import { ItemCard } from '../../components/dashboard/ItemCard';
-import { Pagination } from '../../../components/common/Pagination';
+import { Pagination } from '../../components/common/Pagination';
 import '../../styles/dashboard/Dashboard.css';
 
 const DashboardPage = () => {
