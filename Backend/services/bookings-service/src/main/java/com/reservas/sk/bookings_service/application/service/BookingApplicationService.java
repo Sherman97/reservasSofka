@@ -16,6 +16,8 @@ import com.reservas.sk.bookings_service.exception.ApiException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ import java.util.Map;
 @Service
 public class BookingApplicationService implements BookingUseCase {
     private static final List<String> RESERVATION_ACTIVE_STATUSES = List.of("pending", "confirmed", "in_progress");
+    private static final Logger log = LoggerFactory.getLogger(BookingApplicationService.class);
 
     private final BookingPersistencePort persistencePort;
     private final ReservationEventPublisherPort eventPublisherPort;
@@ -109,7 +112,7 @@ public class BookingApplicationService implements BookingUseCase {
         }
 
         Reservation created = getReservationById(reservationId);
-        eventPublisherPort.publishReservationCreated(new ReservationCreatedEvent(
+        safePublishReservationCreated(new ReservationCreatedEvent(
                 created.getId(),
                 created.getUserId(),
                 created.getSpaceId(),
@@ -161,7 +164,7 @@ public class BookingApplicationService implements BookingUseCase {
 
         persistencePort.updateReservationCancellation(existing.getId(), "cancelled", normalizeNullable(reason));
         Reservation cancelled = getReservationById(existing.getId());
-        eventPublisherPort.publishReservationCancelled(new ReservationCancelledEvent(
+        safePublishReservationCancelled(new ReservationCancelledEvent(
                 cancelled.getId(),
                 cancelled.getUserId(),
                 cancelled.getSpaceId(),
@@ -170,6 +173,22 @@ public class BookingApplicationService implements BookingUseCase {
                 Instant.now()
         ));
         return cancelled;
+    }
+
+    private void safePublishReservationCreated(ReservationCreatedEvent event) {
+        try {
+            eventPublisherPort.publishReservationCreated(event);
+        } catch (Exception ex) {
+            log.warn("No se pudo publicar evento de reserva creada. reservationId={}", event.reservationId(), ex);
+        }
+    }
+
+    private void safePublishReservationCancelled(ReservationCancelledEvent event) {
+        try {
+            eventPublisherPort.publishReservationCancelled(event);
+        } catch (Exception ex) {
+            log.warn("No se pudo publicar evento de reserva cancelada. reservationId={}", event.reservationId(), ex);
+        }
     }
 
     private Reservation withEquipments(Reservation reservation, List<ReservationEquipment> equipments) {
@@ -240,7 +259,6 @@ public class BookingApplicationService implements BookingUseCase {
         return normalized;
     }
 }
-
 
 
 
