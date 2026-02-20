@@ -40,10 +40,11 @@ services:
       - --url=jdbc:mariadb://mariadb:3306/${DB_NAME:-reservas_db}
       - --username=${DB_USER:-app}
       - --password=${DB_PASSWORD:-app123}
-      - --changelog-file=/liquibase/changelog/db.changelog-master.yaml
+      - --search-path=/liquibase/changelog
+      - --changelog-file=db.changelog-master.yaml
       - update
     volumes:
-      - ./services/database/liquibase:/liquibase/changelog:ro
+      - ./services/database/liquibase/changelog:/liquibase/changelog:ro
     networks:
       - reservas_net
     depends_on:

@@ -60,7 +60,8 @@ public class JdbcBookingPersistenceAdapter implements BookingPersistencePort {
                 WHERE space_id = ?
                   AND start_datetime < ?
                   AND end_datetime > ?
-                  AND """ + ACTIVE_RESERVATION_FILTER,
+                  AND
+                """ + ACTIVE_RESERVATION_FILTER,
                 Integer.class,
                 spaceId,
                 Timestamp.from(endAt),
@@ -330,7 +331,6 @@ public class JdbcBookingPersistenceAdapter implements BookingPersistencePort {
         return localDateTime.toInstant(ZoneOffset.UTC);
     }
 }
-
 
 
 
