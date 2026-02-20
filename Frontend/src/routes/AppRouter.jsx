@@ -1,9 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { LoginPage } from '../features/auth';
-import { SignupPage } from '../features/signup';
-import { DashboardPage } from '../features/dashboard';
-import { MainLayout } from '../features/dashboard/components/MainLayout';
-import { MyReservationsPage } from '../features/reservations/pages/MyReservationsPage';
+import LoginPage from '../ui/pages/auth/LoginPage';
+import SignupPage from '../ui/pages/signup/SignupPage';
+import DashboardPage from '../ui/pages/dashboard/DashboardPage';
+import { MainLayout } from '../ui/layouts/MainLayout';
+import { MyReservationsPage } from '../ui/pages/reservations/MyReservationsPage';
+import ProtectedRoute from '../ui/components/common/ProtectedRoute';
 
 const AppRouter = () => {
     return (
@@ -14,9 +15,11 @@ const AppRouter = () => {
                 <Route path="/signup" element={<SignupPage />} />
 
                 {/* Protected Routes with Layout */}
-                <Route element={<MainLayout />}>
-                    <Route path="/dashboard" element={<DashboardPage />} />
-                    <Route path="/my-reservations" element={<MyReservationsPage />} />
+                <Route element={<ProtectedRoute />}>
+                    <Route element={<MainLayout />}>
+                        <Route path="/dashboard" element={<DashboardPage />} />
+                        <Route path="/my-reservations" element={<MyReservationsPage />} />
+                    </Route>
                 </Route>
             </Routes>
         </Router>

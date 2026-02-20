@@ -1,15 +1,15 @@
-Ahora
+﻿Ahora
 # Reservas Sofka
 
-Sistema integral para la gestión de reservas de locaciones y equipamiento adjunto, diseñado con una arquitectura moderna de microservicios para garantizar escalabilidad y mantenibilidad.
+Sistema integral para la gestiÃ³n de reservas de locaciones y equipamiento adjunto, diseÃ±ado con una arquitectura moderna de microservicios para garantizar escalabilidad y mantenibilidad.
 
-## 🚀 Descripción
+## ðŸš€ DescripciÃ³n
 
-El proyecto permite a los usuarios gestionar reservas de espacios físicos (locaciones) junto con el inventario necesario para su uso. El objetivo principal es optimizar la organización y disponibilidad de estos recursos dentro de la organización.
+El proyecto permite a los usuarios gestionar reservas de espacios fÃ­sicos (locaciones) junto con el inventario necesario para su uso. El objetivo principal es optimizar la organizaciÃ³n y disponibilidad de estos recursos dentro de la organizaciÃ³n.
 
-## 🏗️ Arquitectura
+## ðŸ—ï¸ Arquitectura
 
-El sistema utiliza una arquitectura de **microservicios** en el backend y un frontend basado en **React** con un patrón de diseño orientado a **Features**.
+El sistema utiliza una arquitectura de **microservicios** en el backend y un frontend basado en **React** con un patrÃ³n de diseÃ±o orientado a **Features**.
 
 mermaid
 graph TD
@@ -25,23 +25,23 @@ graph TD
 
 ### Backend (Microservicios)
 
-| Servicio | Descripción | Tecnologías Clave |
+| Servicio | DescripciÃ³n | TecnologÃ­as Clave |
 | :--- | :--- | :--- |
-| **API Gateway** | Punto de entrada único, maneja el ruteo y proxy de peticiones. | Express, http-proxy-middleware |
-| **Auth Service** | Gestión de usuarios, autenticación (JWT) y autorización. | Bcrypt, JSONWebToken |
-| **Bookings Service** | Lógica central de creación y gestión de reservas. | Express |
-| **Inventory Service** | Control de existencias y asignación de equipos a reservas. | Express, MySQL2 |
-| **Locations Service** | Gestión de espacios físicos y su disponibilidad. | Express |
-| **Database Service** | Scripts de inicialización y conexión a MariaDB. | MariaDB, MySQL2 |
+| **API Gateway** | Punto de entrada Ãºnico, maneja el ruteo y proxy de peticiones. | Express, http-proxy-middleware |
+| **Auth Service** | GestiÃ³n de usuarios, autenticaciÃ³n (JWT) y autorizaciÃ³n. | Bcrypt, JSONWebToken |
+| **Bookings Service** | LÃ³gica central de creaciÃ³n y gestiÃ³n de reservas. | Express |
+| **Inventory Service** | Control de existencias y asignaciÃ³n de equipos a reservas. | Express, MySQL2 |
+| **Locations Service** | GestiÃ³n de espacios fÃ­sicos y su disponibilidad. | Express |
+| **Database Service** | Scripts de inicializaciÃ³n y conexiÃ³n a MariaDB. | MariaDB, MySQL2 |
 
 ### Frontend
 
-El frontend está construido con **Vite + React** y sigue una estructura modular:
-**Features**: Módulos aislados que contienen componentes, servicios y lógica específica por función.
+El frontend estÃ¡ construido con **Vite + React** y sigue una estructura modular:
+**Features**: MÃ³dulos aislados que contienen componentes, servicios y lÃ³gica especÃ­fica por funciÃ³n.
 **Context**: Manejo de estado global (auth, temas, etc.).
-**Services**: Capa de abstracción para el consumo de APIs.
+**Services**: Capa de abstracciÃ³n para el consumo de APIs.
 
-## 🛠️ Tecnologías
+## ðŸ› ï¸ TecnologÃ­as
 
 ### Core
 **Frontend**: React 19, Vite, React Router DOM, Axios.
@@ -53,13 +53,13 @@ El frontend está construido con **Vite + React** y sigue una estructura modular
 **Procesos**: Nodemon (para desarrollo en backend).
 **Seguridad**: Helmet, CORS.
 
-## 📋 Requisitos Previos
+## ðŸ“‹ Requisitos Previos
 
 Node.js (v18 o superior)
 MariaDB
 Docker (opcional, para despliegue de base de datos)
 
-## 🔧 Instalación y Configuración
+## ðŸ”§ InstalaciÃ³n y ConfiguraciÃ³n
 
 ### 1. Clonar el repositorio
 bash
@@ -72,7 +72,7 @@ cd Backend
 npm install
 # Repetir en cada servicio dentro de /services si es necesario para desarrollo individual
 > [!IMPORTANT]
-> Configura los archivos .env en cada servicio basándote en los ejemplos (si existen) o las necesidades de conexión a la DB.
+> Configura los archivos .env en cada servicio basÃ¡ndote en los ejemplos (si existen) o las necesidades de conexiÃ³n a la DB.
 
 ### 3. Configurar el Frontend
 bash
@@ -80,6 +80,11 @@ cd Frontend
 npm install
 npm run dev
 
-## 📜 Licencia
+## ðŸ“œ Licencia
 
 ISC License
+
+
+
+
+

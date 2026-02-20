@@ -1,0 +1,40 @@
+services:
+  database:
+    image: mariadb:latest
+    container_name: reservas_mariadb
+    environment:
+      MARIADB_ROOT_PASSWORD: rootpassword
+      MARIADB_DATABASE: app_db
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: [ "CMD", "mariadb-admin", "ping", "-h", "localhost", "--password=rootpassword" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: reservas_app
+    depends_on:
+      database:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+      - "3002:3002"
+      - "3003:3003"
+      - "3004:3004"
+      - "8080:8080"
+    environment:
+      DB_HOST: database
+      DB_USER: root
+      DB_PASSWORD: rootpassword
+      DB_NAME: app_db
+      PORT: 3000
+      AUTH_URL: http://localhost:3001
+      BOOKINGS_URL: http://localhost:3002
+      INVENTORY_URL: http://localhost:3003
+      LOCATIONS_URL: http://localhost:3004
+      JWT_SECRET: supersecret
+      NODE_ENV: production

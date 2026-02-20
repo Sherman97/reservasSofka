@@ -1,0 +1,17 @@
+rootProject.name = "reservas-sk"
+
+include(
+    "api-gateway",
+    "auth-service",
+    "bookings-service",
+    "inventory-service",
+    "locations-service",
+    "notifications-service"
+)
+
+project(":api-gateway").projectDir = file("services/api-gateway")
+project(":auth-service").projectDir = file("services/auth-service")
+project(":bookings-service").projectDir = file("services/bookings-service")
+project(":inventory-service").projectDir = file("services/inventory-service")
+project(":locations-service").projectDir = file("services/locations-service")
+project(":notifications-service").projectDir = file("services/notifications-service")
