@@ -18,6 +18,8 @@ services:
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:?set RABBITMQ_PASSWORD}
     ports:
       - "3001:3001"
+    networks:
+      - reservas_net
     restart: unless-stopped
 
   bookings-service:
@@ -39,6 +41,8 @@ services:
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:?set RABBITMQ_PASSWORD}
     ports:
       - "3003:3003"
+    networks:
+      - reservas_net
     restart: unless-stopped
 
   locations-service:
@@ -60,6 +64,8 @@ services:
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:?set RABBITMQ_PASSWORD}
     ports:
       - "3004:3004"
+    networks:
+      - reservas_net
     restart: unless-stopped
 
   inventory-service:
@@ -81,6 +87,8 @@ services:
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:?set RABBITMQ_PASSWORD}
     ports:
       - "3005:3005"
+    networks:
+      - reservas_net
     restart: unless-stopped
 
   notifications-service:
@@ -100,6 +108,8 @@ services:
       RABBITMQ_ROUTING_KEYS: ${RABBITMQ_ROUTING_KEYS:-auth.user.created,bookings.reservation.created,bookings.reservation.cancelled,inventory.equipment.created,inventory.equipment.updated,inventory.equipment.deleted,locations.city.created,locations.city.updated,locations.city.deleted,locations.space.created,locations.space.updated,locations.space.deleted}
     ports:
       - "3006:3006"
+    networks:
+      - reservas_net
     restart: unless-stopped
 
   api-gateway:
@@ -116,6 +126,8 @@ services:
       NOTIFICATIONS_WS_URL: ws://notifications-service:3006
     ports:
       - "3000:3000"
+    networks:
+      - reservas_net
     depends_on:
       - auth-service
       - bookings-service
@@ -123,3 +135,6 @@ services:
       - locations-service
       - notifications-service
     restart: unless-stopped
+
+networks:
+  reservas_net:

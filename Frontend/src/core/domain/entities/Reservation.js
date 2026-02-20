@@ -51,11 +51,21 @@ export class Reservation {
     }
 
     /**
-     * Check if reservation is upcoming
+     * Check if reservation is upcoming or ongoing
      * @returns {boolean}
      */
     isUpcoming() {
-        return this.startAt > new Date() && !this.isCancelled();
+        // If it hasn't ended and it's not cancelled, it should be visible in "Upcoming/Active"
+        return !this.isPast() && !this.isCancelled();
+    }
+
+    /**
+     * Check if reservation is currently happening
+     * @returns {boolean}
+     */
+    isOngoing() {
+        const now = new Date();
+        return this.startAt <= now && this.endAt >= now && !this.isCancelled();
     }
 
     /**

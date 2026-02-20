@@ -1,230 +1,123 @@
-# Estructura de Arquitectura Hexagonal - Frontend
+# Arquitectura Hexagonal - Frontend Reservas Sofka
 
-## 📁 Estructura de Carpetas Creada
+Este documento describe la arquitectura actual del frontend, la cual sigue el patrón de **Arquitectura Hexagonal (Puertos y Adaptadores)** para garantizar un desacoplamiento total entre la lógica de negocio y la infraestructura (frameworks, librerías externas, APIs).
+
+## 🏗️ Diagrama de Arquitectura
+
+```mermaid
+graph TD
+    subgraph UI ["Capa de Interfaz de Usuario (UI)"]
+        Components[Componentes React]
+        Pages[Páginas]
+        Hooks[Custom Hooks / Adapters]
+    end
+
+    subgraph Application ["Capa de Aplicación"]
+        UseCases[Casos de Uso]
+    end
+
+    subgraph Domain ["Capa de Dominio"]
+        Entities[Entidades]
+        Ports[Puertos / Interfaces]
+    end
+
+    subgraph Infrastructure ["Capa de Infraestructura"]
+        Repos[Implementación Repositorios]
+        Mappers[Mappers DTO/Entidad]
+        Http[Clientes HTTP]
+    end
+
+    UI --> UseCases
+    UseCases --> Domain
+    Infrastructure --> Domain
+    UI -.-> Ports
+```
+
+## 📁 Estructura de Carpetas Actual
 
 ```
 src/
-├── core/                                    # ← TODA LA LÓGICA (Arquitectura Hexagonal)
-│   ├── domain/                             # Capa de Dominio (aún por migrar)
-│   │   ├── entities/                       # Entidades de negocio
-│   │   ├── value-objects/                  # Value Objects
-│   │   └── errors/                         # Errores de dominio
+├── core/                                    # LÓGICA DE DOMINIO Y PUERTOS
+│   ├── domain/                              # Capa de Dominio
+│   │   ├── entities/                        # Entidades de negocio (User, Reservation, etc.)
+│   │   ├── value-objects/                   # Objetos de valor
+│   │   └── errors/                          # Errores de dominio personalizados
 │   │
-│   ├── ports/                              # Puertos (Interfaces)
-│   │   ├── repositories/                   # Interfaces de repositorios
-│   │   └── services/                       # Interfaces de servicios externos
-│   │       ├── IHttpClient.js              ✅ Creado
-│   │       └── IStorageService.js          ✅ Creado
+│   ├── ports/                               # Puertos (Interfaces de entrada/salida)
+│   │   ├── repositories/                    # Interfaces de repositorios (IAuthRepository, etc.)
+│   │   └── services/                        # Interfaces de servicios (IHttpClient, IStorageService)
 │   │
-│   └── adapters/                           # Adaptadores para UI
-│       ├── hooks/                          # Custom hooks (por migrar)
-│       ├── providers/                      # Context providers
-│       │   └── DependencyProvider.jsx      ✅ Creado
-│       └── di/                             # Dependency Injection
-│           └── container.js                ✅ Creado (Singleton Pattern)
+│   └── adapters/                            # Adaptadores de Entrada (React Hooks)
+│       ├── hooks/                           # Hooks que orquestan Casos de Uso
+│       ├── providers/                       # Context Providers (DependencyProvider)
+│       └── di/                              # Inyección de Dependencias (Container)
 │
-├── application/                            # Capa de Aplicación (por crear)
-│   └── use-cases/                         # Casos de uso
-│       ├── auth/                          # (por migrar)
-│       ├── locations/                     # (por migrar)
-│       ├── reservations/                  # (por migrar)
-│       └── inventory/                     # (por migrar)
+├── application/                             # CAPA DE APLICACIÓN (Casos de Uso)
+│   └── use-cases/                           # Implementación de lógica de aplicación
+│       ├── auth/                            # Casos de uso de autenticación
+│       ├── dashboard/                       # Casos de uso de gestión de inventario/ubicaciones
+│       └── reservations/                    # Casos de uso de reservas
 │
-├── infrastructure/                         # Capa de Infraestructura
-│   ├── http/
-│   │   ├── clients/
-│   │   │   ├── AxiosHttpClient.js         ✅ Creado (Adapter Pattern)
-│   │   │   └── HttpClientFactory.js       ✅ Creado (Factory Pattern)
-│   │   └── config/                        # (por crear)
-│   │
-│   ├── repositories/                       # Implementaciones de repositorios (por migrar)
-│   ├── storage/
-│   │   └── LocalStorageService.js         ✅ Creado (Adapter Pattern)
-│   └── mappers/                           # DTOs ↔ Entidades (por migrar)
+├── infrastructure/                          # CAPA DE INFRAESTRUCTURA (Adaptadores de Salida)
+│   ├── http/                                # Implementación de clientes HTTP (Axios)
+│   ├── repositories/                        # Implementación de repositorios (HTTP Repos)
+│   ├── storage/                             # Persistencia local (LocalStorage)
+│   └── mappers/                             # Transformación de datos (DTO ↔ Entity)
 │
-├── ui/                                     # ← TODA LA UI/UX (por migrar desde features/)
-│   ├── pages/                             # Páginas
-│   ├── components/                        # Componentes visuales
-│   └── styles/                            # Estilos
-│
-└── features/                               # ← ESTRUCTURA ANTIGUA (por eliminar después)
-    ├── auth/
-    ├── dashboard/
-    ├── reservations/
-    └── signup/
+└── ui/                                      # CAPA DE PRESENTACIÓN
+    ├── components/                          # Componentes atómicos y moleculares
+    ├── layouts/                             # Plantillas de diseño base
+    ├── pages/                               # Componentes de página (Rutas)
+    └── styles/                              # Configuración global de estilos
 ```
 
-## ✅ Fase 1 Completada: Infraestructura Base
+## ✅ Estado de la Implementación
 
-### Componentes Creados
+### 1. Capa de Dominio (Core)
+- **Entidades**: `User`, `Reservation`, `Location`, `InventoryItem` implementadas con validaciones propias.
+- **Puertos**: Definidos contratos estables para todos los repositorios y servicios externos.
 
-#### **1. Puertos (Interfaces)**
+### 2. Capa de Aplicación
+- **Casos de Uso**: Implementada la lógica de orquestación para:
+  - Autenticación (Login, Register, Logout, GetCurrentUser).
+  - Reservas (Create, Cancel, GetUserReservations).
+  - Dashboard (GetLocations, GetInventory, Assign/Remove Inventory).
 
-##### `IHttpClient.js`
-- **Patrón**: Interface (Port)
-- **Ubicación**: `core/ports/services/`
-- **Propósito**: Define el contrato para clientes HTTP
-- **Métodos**: `get()`, `post()`, `put()`, `delete()`, `addRequestInterceptor()`, `addResponseInterceptor()`
-- **Beneficio**: Permite cambiar de axios a fetch/ky sin tocar casos de uso
+### 3. Capa de Infraestructura
+- **Adaptadores**: Implementados usando patrones robustos:
+  - **Patrón Adapter**: `AxiosHttpClient` y `LocalStorageService`.
+  - **Patrón Factory**: `HttpClientFactory` para configurar clientes con diferentes URLs y middlewares.
+  - **Mappers**: Transformación centralizada de respuestas de API a entidades de dominio.
 
-##### `IStorageService.js`
-- **Patrón**: Interface (Port)
-- **Ubicación**: `core/ports/services/`
-- **Propósito**: Define el contrato para almacenamiento de datos
-- **Métodos**: `get()`, `set()`, `remove()`, `clear()`, `has()`
-- **Beneficio**: Permite cambiar de localStorage a IndexedDB/SessionStorage
-
-#### **2. Adaptadores de Infraestructura**
-
-##### `AxiosHttpClient.js`
-- **Patrón**: Adapter
-- **Ubicación**: `infrastructure/http/clients/`
-- **Propósito**: Adapta axios a la interfaz IHttpClient
-- **Características**:
-  - Manejo centralizado de errores
-  - Soporte para interceptores
-  - Retorna formato estandarizado `{ data, status }`
-- **Beneficio**: Desacopla la app de axios
-
-##### `LocalStorageService.js`
-- **Patrón**: Adapter
-- **Ubicación**: `infrastructure/storage/`
-- **Propósito**: Adapta localStorage del navegador a IStorageService
-- **Características**:
-  - Manejo de errores
-  - Métodos helper para JSON (`getJSON()`, `setJSON()`)
-  - Detección de cuota excedida
-- **Beneficio**: Testeable y reemplazable
-
-##### `HttpClientFactory.js`
-- **Patrón**: Factory
-- **Ubicación**: `infrastructure/http/clients/`
-- **Propósito**: Crea clientes HTTP pre-configurados
-- **Métodos**:
-  - `create()` - Factory genérico
-  - `createAuthClient()` - Cliente para API de autenticación
-  - `createBookingsClient()` - Cliente para API de reservas
-  - `createInventoryClient()` - Cliente para API de inventario
-  - `createLocationsClient()` - Cliente para API de ubicaciones
-- **Características**:
-  - Agrega automáticamente interceptor de autenticación
-  - Manejo de errores comunes (401, 403, 500+)
-  - Lee URLs de variables de entorno
-- **Beneficio**: Evita duplicar configuración de clientes
-
-#### **3. Dependency Injection**
-
-##### `container.js`
-- **Patrón**: Singleton
-- **Ubicación**: `core/adapters/di/`
-- **Propósito**: Registro central de todas las dependencias
-- **Métodos**:
-  - `get(name)` - Obtiene dependencia por nombre
-  - `register(name, instance)` - Registra nueva dependencia
-  - `has(name)` - Verifica si existe dependencia
-  - `reset()` - Reinicia contenedor (para testing)
-- **Dependencias Registradas Actualmente**:
-  - ✅ `storageService` (LocalStorageService)
-  - ✅ `authClient` (AxiosHttpClient para auth)
-  - ✅ `bookingsClient` (AxiosHttpClient para reservas)
-  - ✅ `inventoryClient` (AxiosHttpClient para inventario)
-  - ✅ `locationsClient` (AxiosHttpClient para ubicaciones)
-- **Beneficio**: Un solo lugar para configurar todas las dependencias
-
-##### `DependencyProvider.jsx`
-- **Patrón**: Facade + Context Provider
-- **Ubicación**: `core/adapters/providers/`
-- **Propósito**: Provee dependencias a través de React Context
-- **Hooks Exportados**:
-  - `useDependencies()` - Hook principal (Facade)
-  - `useContainer()` - Acceso directo al container (uso avanzado)
-- **Características**:
-  - Facade que expone solo casos de uso (no repositorios)
-  - Validación de contexto
-  - API limpia para componentes
-- **Beneficio**: Componentes no conocen el contenedor directamente
-
-#### **4. Integración con la App**
-
-##### `main.jsx`
-- **Cambio**: Envolver `<App />` con `<DependencyProvider>`
-- **Efecto**: Todas las dependencias ahora están disponibles vía `useDependencies()`
-- **Sin cambios visuales**: La app funciona exactamente igual
-
-## 🎯 Estado Actual
-
-### ✅ Completado
-- Estructura de carpetas `core/` e `infrastructure/`
-- Interfaces (Ports) para HTTP y Storage
-- Adaptadores para Axios y localStorage
-- Factory para crear HTTP clients
-- DI Container con Singleton pattern
-- Dependency Provider con Facade pattern
-- Integración no-invasiva en la app
-
-### 📋 Próximos Pasos (Fase 2: Migrar Auth)
-
-1. **Crear capa de dominio**:
-   - `core/domain/entities/User.js`
-   - `core/domain/errors/AuthenticationError.js`
-   
-2. **Crear puerto de repositorio**:
-   - `core/ports/repositories/IAuthRepository.js`
-
-3. **Implementar repositorio**:
-   - `infrastructure/repositories/HttpAuthRepository.js`
-   - `infrastructure/mappers/UserMapper.js`
-
-4. **Crear casos de uso**:
-   - `application/use-cases/auth/LoginUseCase.js`
-   - `application/use-cases/auth/LogoutUseCase.js`
-   - `application/use-cases/auth/RegisterUseCase.js`
-
-5. **Migrar hooks**:
-   - Mover `features/auth/hooks/useLogin.js` → `core/adapters/hooks/useLogin.js`
-   - Actualizar para usar `loginUseCase` del container
-
-6. **Mover componentes a ui/**:
-   - `features/auth/` → `ui/pages/auth/` y `ui/components/auth/`
-
-## 🔍 Verificación
-
-### Comandos de Verificación
-```bash
-# La app debe arrancar sin errores
-npm run dev
-
-# En el navegador, verificar consola: 0 errores
-```
-
-### Checklist de Validación
-- [x] App arranca correctamente
-- [x] No hay errores en consola
-- [x] Funcionalidad existente NO se rompe
-- [x] Nueva estructura coexiste con la antigua
-- [ ] Tests pasan (cuando se creen)
+### 4. Capa de UI
+- **Inyección de Dependencias**: 
+  - `container.js`: Singleton que mantiene el registro de todas las instancias.
+  - `DependencyProvider.jsx`: Facade que expone las dependencias a React evitando el "prop drilling".
+- **Componentes**: Migrados totalmente a la nueva estructura en `src/ui`.
 
 ## 📊 Patrones de Diseño Aplicados
 
-| Patrón | Archivo | Propósito |
+| Patrón | Implementación | Propósito |
 |--------|---------|-----------|
-| **Port (Interface)** | `IHttpClient.js`, `IStorageService.js` | Contratos para inversión de dependencias |
-| **Adapter** | `AxiosHttpClient.js`, `LocalStorageService.js` | Adaptar bibliotecas externas a nuestras interfaces |
-| **Factory** | `HttpClientFactory.js` | Crear instancias configuradas de HTTP clients |
-| **Singleton** | `container.js` | Una única instancia del contenedor de DI |
-| **Facade** | `DependencyProvider.jsx` (useDependencies) | API simple para acceder a dependencias |
+| **Port (Interface)** | `IAuthRepository`, `IHttpClient` | Define contratos sin acoplarse a implementaciones. |
+| **Adapter (Output)** | `HttpAuthRepository`, `AxiosHttpClient` | Adapta servicios externos al dominio. |
+| **Adapter (Input)** | `useUserReservations`, `useLogin` | Adapta los casos de uso para que sean usados por React. |
+| **Factory** | `HttpClientFactory` | Centraliza la creación y configuración de clientes HTTP. |
+| **Singleton** | `container.js` | Asegura una única instancia del contenedor de dependencias. |
+| **Facade** | `useDependencies` | Provee una API limpia y simplificada para los componentes UI. |
+| **Mapper** | `UserMapper`, `ReservationMapper` | Desacopla el modelo de datos de la API del modelo de dominio. |
 
-## 🚀 Ventajas Obtenidas
+## 🚀 Ventajas de esta Arquitectura
 
-1. **Testabilidad**: Puedes mockear `IHttpClient` en tests sin tocar axios
-2. **Flexibilidad**: Cambiar de axios a fetch requiere solo crear nuevo adapter
-3. **Centralización**: Toda la configuración HTTP está en un solo lugar
-4. **Type Safety (futuro)**: Las interfaces facilitan migrar a TypeScript
-5. **No Breaking Changes**: El código antiguo sigue funcionando sin modificaciones
+1. **Testabilidad**: Es posible probar casos de uso y entidades de manera aislada con mocks de los puertos.
+2. **Independencia de Framework**: React es tratado como un detalle de implementación en la capa `ui/`.
+3. **Mantenibilidad**: Los cambios en la API afectan solo a los mappers y repositorios en `infrastructure/`.
+4. **Claridad**: La separación de responsabilidades facilita la navegación y el escalado del proyecto.
 
-## 📝 Notas
+## 🔍 Verificación
 
-- La estructura antigua (`features/`) se mantendrá hasta terminar la migración
-- Durante la migración habrá duplicación temporal de código (normal)
-- Los casos de uso se agregarán al container a medida que se migren features
-- La carpeta `ui/` se creará cuando comencemos a mover componentes
+Para asegurar la integridad de la arquitectura:
+- Los componentes UI **solo** pueden usar hooks de `core/adapters/hooks`.
+- Los casos de uso **solo** pueden depender de puertos (`core/ports`).
+- Las entidades de dominio **no** deben tener dependencias externas.
+- Toda transformación de datos externa debe ocurrir en `infrastructure/mappers`.

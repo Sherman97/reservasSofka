@@ -9,9 +9,7 @@ export const ItemCard = ({ item }) => {
     const reservation = useReservation(isLocation ? item._entity || item : null);
 
     const handleConfirmBooking = () => {
-        reservation.handleConfirm((result) => {
-            alert('¡Reserva creada exitosamente!');
-        });
+        reservation.handleConfirm();
     };
 
     return (
@@ -62,6 +60,12 @@ export const ItemCard = ({ item }) => {
                     endTime={reservation.endTime}
                     availability={reservation.availability}
                     loading={reservation.loading}
+                    busySlots={reservation.busySlots}
+                    loadingSlots={reservation.loadingSlots}
+                    hasTimeConflict={reservation.hasTimeConflict}
+                    error={reservation.error}
+                    successMessage={reservation.successMessage}
+                    slotsUpdatedFlag={reservation.slotsUpdatedFlag}
                     onDateSelect={reservation.handleDateSelect}
                     onEquipmentToggle={reservation.handleEquipmentToggle}
                     onStartTimeChange={reservation.handleStartTimeChange}

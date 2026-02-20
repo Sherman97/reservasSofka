@@ -83,49 +83,46 @@ export class HttpReservationRepository extends IReservationRepository {
 
             if (!response.data.ok) {
                 console.warn('Could not fetch reservations for availability check', response.data.message);
-                return { locationId, date, busySlots: [], availableSlots: [] };
+                return { locationId, date, busySlots: [] };
             }
 
             const reservations = response.data.data || [];
             const busySlots = [];
 
-            // Format target date to compare (YYYY-MM-DD)
-            const targetDate = date; // date is already YYYY-MM-DD string
+            const targetDate = date; // YYYY-MM-DD string
 
             reservations.forEach(res => {
-                // Ignore cancelled or rejected reservations
-                if (res.status === 'CANCELLED' || res.status === 'REJECTED') return;
+                // Ignore cancelled or completed reservations
+                const status = (res.status || '').toLowerCase();
+                if (status === 'cancelled' || status === 'rejected' || status === 'completed') return;
 
-                // Parse reservation times
                 const start = new Date(res.startAt);
                 const end = new Date(res.endAt);
 
-                // Compare dates (YYYY-MM-DD) in local time
-                // start.toLocaleDateString() uses local timezone
-                const resDate = start.toLocaleDateString('en-CA'); // en-CA gives YYYY-MM-DD
+                // Compare dates (YYYY-MM-DD) in local timezone
+                const resDate = start.toLocaleDateString('en-CA');
 
                 if (resDate === targetDate) {
-                    // Format HH:MM
                     const startStr = start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
                     const endStr = end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-                    busySlots.push(`${startStr}-${endStr}`);
+                    busySlots.push({ start: startStr, end: endStr });
                 }
             });
 
+            // Sort by start time
+            busySlots.sort((a, b) => a.start.localeCompare(b.start));
+
             return {
                 locationId,
                 date,
-                busySlots,
-                availableSlots: [] // Calculated by UI based on busy slots
+                busySlots
             };
         } catch (error) {
             console.error('Error in HttpReservationRepository.getAvailability:', error);
-            // Return empty to avoid UI crash
             return {
                 locationId,
                 date,
-                busySlots: [],
-                availableSlots: []
+                busySlots: []
             };
         }
     }

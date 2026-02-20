@@ -55,6 +55,8 @@ export const useReservationDependencies = () => {
         createReservationUseCase: container.get('createReservationUseCase'),
         getUserReservationsUseCase: container.get('getUserReservationsUseCase'),
         cancelReservationUseCase: container.get('cancelReservationUseCase'),
+        getSpaceAvailabilityUseCase: container.get('getSpaceAvailabilityUseCase'),
+        webSocketService: container.get('webSocketService'),
     };
 };
 

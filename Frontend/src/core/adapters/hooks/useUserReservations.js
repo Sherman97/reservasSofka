@@ -67,7 +67,7 @@ export const useUserReservations = () => {
         return reservations.filter(res => {
             // Search filter
             const matchesSearch =
-                res.locationName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (res.locationName && res.locationName.toLowerCase().includes(searchTerm.toLowerCase())) ||
                 (res.id && res.id.toString().includes(searchTerm));
 
             // Tab filter

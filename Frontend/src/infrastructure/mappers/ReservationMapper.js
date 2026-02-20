@@ -19,10 +19,10 @@ export class ReservationMapper {
             id: dto.id || dto.bookingId,
             userId: dto.userId || dto.user_id,
             locationId: dto.spaceId || dto.locationId || dto.space_id,
-            locationName: dto.spaceName || dto.locationName || dto.space_name || 'Unknown',
+            locationName: dto.spaceName || dto.locationName || dto.space_name || dto.title || 'Unknown',
             startAt: dto.startAt || dto.start_at,
             endAt: dto.endAt || dto.end_at,
-            equipment: dto.items || dto.equipment || [],
+            equipment: dto.equipments || dto.items || dto.equipment || [],
             status: ReservationMapper.normalizeStatus(dto.status),
             createdAt: dto.createdAt || dto.created_at || new Date()
         });

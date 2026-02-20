@@ -15,6 +15,8 @@ import { RemoveInventoryUseCase } from '../../../application/use-cases/dashboard
 import { GetUserReservationsUseCase } from '../../../application/use-cases/reservations/GetUserReservationsUseCase';
 import { CancelReservationUseCase } from '../../../application/use-cases/reservations/CancelReservationUseCase';
 import { GetCurrentUserUseCase } from '../../../application/use-cases/auth/GetCurrentUserUseCase';
+import { GetSpaceAvailabilityUseCase } from '../../../application/use-cases/dashboard/GetSpaceAvailabilityUseCase';
+import { StompWebSocketService } from '../../../infrastructure/websocket/StompWebSocketService';
 
 /**
  * DIContainer - Singleton Pattern implementation
@@ -57,6 +59,11 @@ class DIContainer {
         const inventoryClient = HttpClientFactory.createInventoryClient(storageService);
         const locationsClient = HttpClientFactory.createLocationsClient(storageService);
 
+        // WebSocket Service (STOMP over WebSocket)
+        const gatewayUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        const webSocketService = new StompWebSocketService(gatewayUrl);
+        this.dependencies.webSocketService = webSocketService;
+
         this.dependencies.authClient = authClient;
         this.dependencies.bookingsClient = bookingsClient;
         this.dependencies.inventoryClient = inventoryClient;
@@ -93,6 +100,7 @@ class DIContainer {
         this.dependencies.removeInventoryUseCase = new RemoveInventoryUseCase(locationRepository);
         this.dependencies.getUserReservationsUseCase = new GetUserReservationsUseCase(reservationRepository);
         this.dependencies.cancelReservationUseCase = new CancelReservationUseCase(reservationRepository);
+        this.dependencies.getSpaceAvailabilityUseCase = new GetSpaceAvailabilityUseCase(reservationRepository);
     }
 
     /**

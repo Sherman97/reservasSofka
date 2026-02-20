@@ -20,9 +20,15 @@ export const ReservationModal = ({
     onPreviousMonth,
     onNextMonth,
     onClose,
-    onConfirm, // New prop for confirm action
+    onConfirm,
     canConfirm,
-    loading // New prop for loading state
+    loading,
+    busySlots = [],
+    loadingSlots = false,
+    hasTimeConflict = false,
+    error = null,
+    successMessage = null,
+    slotsUpdatedFlag = false
 }) => {
     if (!isOpen) return null;
 
@@ -69,15 +75,10 @@ export const ReservationModal = ({
                                     endTime={endTime}
                                     onStartTimeChange={onStartTimeChange}
                                     onEndTimeChange={onEndTimeChange}
-                                />
-                            </div>
-
-                            <div className="modal-section">
-                                <h3>Equipos Adicionales</h3>
-                                <EquipmentSelector
-                                    selectedEquipment={selectedEquipment}
-                                    onEquipmentToggle={onEquipmentToggle}
-                                    item={item}
+                                    busySlots={busySlots}
+                                    loadingSlots={loadingSlots}
+                                    hasTimeConflict={hasTimeConflict}
+                                    selectedDate={selectedDate}                                    slotsUpdatedFlag={slotsUpdatedFlag}                                    item={item}
                                 />
                             </div>
                         </div>
@@ -86,7 +87,7 @@ export const ReservationModal = ({
 
                 <div className="modal-footer">
                     <button className="btn-cancel" onClick={onClose}>
-                        Cancelar
+                        {successMessage ? 'Cerrar' : 'Cancelar'}
                     </button>
                     <button
                         className="btn-confirm"
