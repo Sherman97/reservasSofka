@@ -1,7 +1,6 @@
 services:
   mariadb:
     image: mariadb:11
-    container_name: BdMaria
     environment:
       MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
       MARIADB_DATABASE: ${DB_NAME:-reservas_db}
@@ -22,7 +21,6 @@ services:
 
   rabbitmq:
     image: rabbitmq:3.13-management
-    container_name: RabbitMQ
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
@@ -35,7 +33,6 @@ services:
 
   database:
     image: liquibase/liquibase:4.30
-    container_name: LiquibaseMigrator
     command:
       - --url=jdbc:mariadb://mariadb:3306/${DB_NAME:-reservas_db}
       - --username=${DB_USER:-app}
