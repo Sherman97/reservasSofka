@@ -1,7 +1,6 @@
-services:
+﻿services:
   mariadb:
     image: mariadb:11
-    container_name: BdMaria
     environment:
       MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
       MARIADB_DATABASE: ${DB_NAME:-reservas_db}
@@ -34,7 +33,6 @@ services:
       - "3005:3005"
     volumes:
       - ./services/inventory-service:/app
-      - /app/node_modules
     networks:
       - reservas_net
     depends_on:
@@ -47,3 +45,10 @@ networks:
 
 volumes:
   mariadb_data:
+
+
+
+
+
+
+

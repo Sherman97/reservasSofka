@@ -1,13 +1,13 @@
-FROM node:20-alpine
+﻿FROM gradle:8.14.4-jdk17-alpine
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
-
-# ✅ nodemon global para DEV
-RUN npm install -g nodemon
-
 COPY . .
+RUN chmod +x ./gradlew
 
 EXPOSE 3001
-CMD ["npm", "run", "dev"]
+CMD ["./gradlew", "bootRun", "--no-daemon"]
+
+
+
+
+

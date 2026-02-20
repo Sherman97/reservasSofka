@@ -1,0 +1,22 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+rootProject.name = 'inventory-service'
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,27 +1,30 @@
 :root {
     /* Light Mode (Default) */
-    --bg-color: #f8f9fa;
-    --text-color: #212529;
-    --primary-color: #0d6efd;
+    --bg-color: #fdfcfb;
+    --text-color: #1a1e23;
+    --primary-color: #ff8c03;
+    --primary-hover: #e57e02;
     --secondary-color: #6c757d;
     --card-bg: #ffffff;
     --input-bg: #ffffff;
-    --input-border: #ced4da;
+    --input-border: #e2e8f0;
     --button-text: #ffffff;
-    --link-color: #0d6efd;
+    --link-color: #ff8c03;
 }
-
+/*L IA modifico el backgroundColor de la card´s y no estaba siguiendo lo requerido*/
 [data-theme='dark'] {
     /* Dark Mode */
-    --bg-color: #212529;
-    --text-color: #f8f9fa;
-    --primary-color: #0d6efd;
-    --secondary-color: #adb5bd;
-    --card-bg: #343a40;
-    --input-bg: #2b3035;
-    --input-border: #495057;
+    --bg-color: #383838;
+    --text-color: #e0e0e0;
+    --text-color-card: #ffffff;
+    --primary-color: #ff8c03;
+    --primary-hover: #ffa333;
+    --secondary-color: #94a3b8;
+    --card-bg: #464646;
+    --input-bg: #ffffff;
+    --input-border: #404040;
     --button-text: #ffffff;
-    --link-color: #6ea8fe;
+    --link-color: #ffa333;
 }
 
 body {

@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-init-schema-v1
+      author: reservas-sk
+      changes:
+        - sqlFile:
+            path: 001_init_schema_v1.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: false
+  - changeSet:
+      id: 002-remove-username-unique-and-add-images
+      author: reservas-sk
+      changes:
+        - sqlFile:
+            path: 002_remove_username_unique_and_add_images.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: false
+  - changeSet:
+      id: 003-seed-data-v1
+      author: reservas-sk
+      changes:
+        - sqlFile:
+            path: 003_seed_data_v1.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: false
