@@ -2,7 +2,7 @@
 
 Sistema de reservas de espacios y equipos con arquitectura de microservicios, eventos y notificaciones en tiempo real.
 
-## Stack Actual
+## Stack Antiguo 
 
 - Frontend: React + Vite
 - Backend: Spring Boot 3 (Java 17) + Spring Cloud Gateway
