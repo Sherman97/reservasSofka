@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthDependencies } from '../providers/DependencyProvider';
+import { useAuthDependencies } from './useDependencies';
 
 /**
  * useLogin - UI Adapter Hook

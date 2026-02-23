@@ -1,11 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useTheme } from '../../../context/ThemeContext';
 import { useLogin } from '../../../core/adapters/hooks/useLogin';
 import '../../styles/auth/Login.css';
 
 export const LoginForm = () => {
-    const theme = useTheme();
     const {
         email,
         password,

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 /**
  * Generate 1-hour time slot blocks for the timeline (08:00 - 18:00)

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useAuthDependencies } from '../providers/DependencyProvider';
+import { useAuthDependencies } from './useDependencies';
 
 /**
  * useLogout - UI Adapter Hook

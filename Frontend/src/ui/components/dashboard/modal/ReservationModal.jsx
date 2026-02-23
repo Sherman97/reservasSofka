@@ -9,12 +9,10 @@ export const ReservationModal = ({
     item,
     currentDate,
     selectedDate,
-    selectedEquipment,
     startTime,
     endTime,
     availability,
     onDateSelect,
-    onEquipmentToggle,
     onStartTimeChange,
     onEndTimeChange,
     onPreviousMonth,
@@ -26,7 +24,6 @@ export const ReservationModal = ({
     busySlots = [],
     loadingSlots = false,
     hasTimeConflict = false,
-    error = null,
     successMessage = null,
     slotsUpdatedFlag = false
 }) => {
@@ -78,7 +75,7 @@ export const ReservationModal = ({
                                     busySlots={busySlots}
                                     loadingSlots={loadingSlots}
                                     hasTimeConflict={hasTimeConflict}
-                                    selectedDate={selectedDate}                                    slotsUpdatedFlag={slotsUpdatedFlag}                                    item={item}
+                                    selectedDate={selectedDate} slotsUpdatedFlag={slotsUpdatedFlag} item={item}
                                 />
                             </div>
                         </div>
