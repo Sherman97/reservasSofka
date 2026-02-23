@@ -1,4 +1,4 @@
-/**
+﻿/**
  * IStorageService - Interface for data storage
  * Abstracts storage mechanism (localStorage, sessionStorage, IndexedDB, etc.)
  * This enables easy testing and switching storage implementations
@@ -9,7 +9,7 @@ export class IStorageService {
      * @param {string} key - Storage key
      * @returns {string|null} Stored value or null if not found
      */
-    get(key) {
+    get() {
         throw new Error('Method not implemented: get');
     }
 
@@ -18,7 +18,7 @@ export class IStorageService {
      * @param {string} key - Storage key
      * @param {string} value - Value to store
      */
-    set(key, value) {
+    set() {
         throw new Error('Method not implemented: set');
     }
 
@@ -26,7 +26,7 @@ export class IStorageService {
      * Remove item from storage
      * @param {string} key - Storage key
      */
-    remove(key) {
+    remove() {
         throw new Error('Method not implemented: remove');
     }
 
@@ -42,7 +42,7 @@ export class IStorageService {
      * @param {string} key - Storage key
      * @returns {boolean} True if key exists
      */
-    has(key) {
+    has() {
         throw new Error('Method not implemented: has');
     }
 }
