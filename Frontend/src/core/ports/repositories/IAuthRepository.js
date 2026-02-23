@@ -6,26 +6,26 @@
 export class IAuthRepository {
     /**
      * Authenticate user with credentials
-     * @param {object} credentials - User credentials
-     * @param {string} credentials.email - User email
-     * @param {string} credentials.password - User password
+     * @param {object} _credentials - User credentials
+     * @param {string} _credentials.email - User email
+     * @param {string} _credentials.password - User password
      * @returns {Promise<User>} Authenticated user entity
      * @throws {AuthenticationError} If authentication fails
      */
-    async login(credentials) {
+    async login(_credentials) {
         throw new Error('Method not implemented: login');
     }
 
     /**
      * Register a new user
-     * @param {object} userData - User registration data
-     * @param {string} userData.email - User email
-     * @param {string} userData.password - User password
-     * @param {string} userData.name - User name
+     * @param {object} _userData - User registration data
+     * @param {string} _userData.email - User email
+     * @param {string} _userData.password - User password
+     * @param {string} _userData.name - User name
      * @returns {Promise<User>} Registered user entity
      * @throws {RegistrationError} If registration fails
      */
-    async register(userData) {
+    async register(_userData) {
         throw new Error('Method not implemented: register');
     }
 

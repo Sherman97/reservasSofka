@@ -13,28 +13,28 @@ export class IInventoryRepository {
 
     /**
      * Get inventory item by ID
-     * @param {string|number} id - Item ID
+     * @param {string|number} _id - Item ID
      * @returns {Promise<InventoryItem>} Inventory item entity
      */
-    async getById(id) {
+    async getById(_id) {
         throw new Error('Method not implemented: getById');
     }
 
     /**
      * Get inventory items by city
-     * @param {string|number} cityId - City ID
+     * @param {string|number} _cityId - City ID
      * @returns {Promise<InventoryItem[]>} Filtered inventory items
      */
-    async getByCityId(cityId) {
+    async getByCityId(_cityId) {
         throw new Error('Method not implemented: getByCityId');
     }
 
     /**
      * Search inventory by criteria
-     * @param {object} criteria - Search criteria
+     * @param {object} _criteria - Search criteria
      * @returns {Promise<InventoryItem[]>} Filtered inventory items
      */
-    async search(criteria) {
+    async search(_criteria) {
         throw new Error('Method not implemented: search');
     }
 }
