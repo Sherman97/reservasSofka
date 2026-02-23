@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
 import { useReservationDependencies } from '../providers/DependencyProvider';
 
 /**
@@ -57,7 +57,11 @@ export const useBookingEvents = (spaceId, onBookingChange) => {
         return () => {
             // Cleanup subscriptions on unmount or spaceId change
             subscriptionsRef.current.forEach(sub => {
-                try { sub?.unsubscribe(); } catch (_) { /* ignore */ }
+                try {
+                    sub?.unsubscribe();
+                } catch {
+                    // ignore
+                }
             });
             subscriptionsRef.current = [];
         };

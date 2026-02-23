@@ -34,6 +34,7 @@ const useContainer = () => {
 /**
  * useAuthDependencies - Module-specific hook for Auth use cases
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuthDependencies = () => {
     const container = useContainer();
     return {
@@ -47,6 +48,7 @@ export const useAuthDependencies = () => {
 /**
  * useReservationDependencies - Module-specific hook for Reservation use cases
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export const useReservationDependencies = () => {
     const container = useContainer();
     return {
@@ -64,6 +66,7 @@ export const useReservationDependencies = () => {
  * @deprecated Use useAuthDependencies or useReservationDependencies instead
  * Provided for backward compatibility during migration phases
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export const useDependencies = () => {
     const container = useContainer();
     return {

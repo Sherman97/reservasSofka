@@ -1,26 +1,61 @@
-﻿# Node
-**/node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Env
-**/.env
-**/.env.*
-!.env.example
-
-# OS / Editor
+﻿# =========================
+# OS files
+# =========================
 .DS_Store
 Thumbs.db
+Desktop.ini
+
+# =========================
+# Editors / IDEs
+# =========================
 .vscode/
 .idea/
+*.iml
 
-# Build outputs
-dist/
+# IntelliJ local files (extra safety)
+**/.idea/
+**/.idea/workspace.xml
+**/.idea/tasks.xml
+**/.idea/shelf/
+**/.idea/httpRequests/
+**/.idea/**/workspace.xml
+
+# =========================
+# Gradle / Java build cache
+# =========================
+.gradle/
+**/.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Java / JVM build outputs
+out/
+**/out/
+target/
+**/target/
 build/
-coverage/
+**/build/
+*.class
 
+# =========================
+# Logs
+# =========================
+logs/
+*.log
 
+# =========================
+# Env / local config
+# =========================
+.env
+.env.*
+*.env
+*.env.*
+!.env.example
+!**/.env.example
 
-
-
+# =========================
+# Temporary files
+# =========================
+*.tmp
+*.temp
+*.swp
+*.swo

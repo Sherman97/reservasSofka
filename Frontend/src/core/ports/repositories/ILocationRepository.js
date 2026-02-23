@@ -1,4 +1,4 @@
-/**
+﻿/**
  * ILocationRepository - Port (Interface)
  * Defines the contract for location data access
  */
@@ -16,7 +16,7 @@ export class ILocationRepository {
      * @param {string|number} id - Location ID
      * @returns {Promise<Location>} Location entity
      */
-    async getById(id) {
+    async getById() {
         throw new Error('Method not implemented: getById');
     }
 
@@ -25,28 +25,28 @@ export class ILocationRepository {
      * @param {object} criteria - Search criteria
      * @returns {Promise<Location[]>} Filtered locations
      */
-    async search(criteria) {
+    async search() {
         throw new Error('Method not implemented: search');
     }
 
     /**
      * Assign inventory to location
-     * @param {string|number} locationId 
-     * @param {string|number} inventoryId 
-     * @param {number} qty 
+     * @param {string|number} locationId
+     * @param {string|number} inventoryId
+     * @param {number} qty
      * @returns {Promise<any>}
      */
-    async assignInventory(locationId, inventoryId, qty) {
+    async assignInventory() {
         throw new Error('Method not implemented: assignInventory');
     }
 
     /**
      * Remove inventory from location
-     * @param {string|number} locationId 
-     * @param {string|number} inventoryId 
+     * @param {string|number} locationId
+     * @param {string|number} inventoryId
      * @returns {Promise<any>}
      */
-    async removeInventory(locationId, inventoryId) {
+    async removeInventory() {
         throw new Error('Method not implemented: removeInventory');
     }
 }
