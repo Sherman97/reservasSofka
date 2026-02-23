@@ -1,4 +1,4 @@
-/**
+﻿/**
  * IWebSocketService - Port (Interface)
  * Defines the contract for WebSocket real-time communication
  */

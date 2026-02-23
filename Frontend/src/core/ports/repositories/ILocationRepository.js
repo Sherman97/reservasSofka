@@ -1,4 +1,4 @@
-/**
+﻿/**
  * ILocationRepository - Port (Interface)
  * Defines the contract for location data access
  */

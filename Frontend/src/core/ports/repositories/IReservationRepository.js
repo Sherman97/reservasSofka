@@ -1,4 +1,4 @@
-/**
+﻿/**
  * IReservationRepository - Port (Interface)
  * Defines the contract for reservation data access
  */
