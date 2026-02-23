@@ -1,7 +1,6 @@
-services:
+﻿services:
   mariadb:
     image: mariadb:11
-    container_name: BdMaria
     environment:
       MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
       MARIADB_DATABASE: ${DB_NAME:-reservas_db}
@@ -24,7 +23,6 @@ services:
       context: ./services/bookings-service
       dockerfile: Dockerfile.dev
     environment:
-      NODE_ENV: production
       PORT: 3003
       DB_HOST: mariadb
       DB_PORT: 3306
@@ -35,7 +33,6 @@ services:
       - "3003:3003"
     volumes:
       - ./services/bookings-service:/app
-      - /app/node_modules
     networks:
       - reservas_net
     depends_on:
@@ -48,3 +45,10 @@ networks:
 
 volumes:
   mariadb_data:
+
+
+
+
+
+
+
