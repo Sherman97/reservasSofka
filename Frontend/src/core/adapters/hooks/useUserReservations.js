@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuthDependencies, useReservationDependencies } from '../providers/DependencyProvider';
 
 /**
@@ -16,11 +16,7 @@ export const useUserReservations = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [activeTab, setActiveTab] = useState('upcoming'); // 'upcoming', 'past', 'cancelled'
 
-    useEffect(() => {
-        loadReservations();
-    }, []);
-
-    const loadReservations = async () => {
+    const loadReservations = useCallback(async () => {
         const user = getCurrentUserUseCase.execute();
         if (!user) {
             setError('Usuario no autenticado');
@@ -39,10 +35,14 @@ export const useUserReservations = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [getCurrentUserUseCase, getUserReservationsUseCase]);
+
+    useEffect(() => {
+        loadReservations();
+    }, [loadReservations]);
 
     const handleCancelReservation = async (reservationId) => {
-        if (!window.confirm('¿Estás seguro de cancelar esta reserva?')) {
+        if (!window.confirm('Estas seguro de cancelar esta reserva?')) {
             return;
         }
 

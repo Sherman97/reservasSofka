@@ -1,4 +1,4 @@
-/**
+﻿/**
  * IInventoryRepository - Port (Interface)
  * Defines the contract for inventory data access
  */
@@ -16,7 +16,7 @@ export class IInventoryRepository {
      * @param {string|number} id - Item ID
      * @returns {Promise<InventoryItem>} Inventory item entity
      */
-    async getById(id) {
+    async getById() {
         throw new Error('Method not implemented: getById');
     }
 
@@ -25,7 +25,7 @@ export class IInventoryRepository {
      * @param {string|number} cityId - City ID
      * @returns {Promise<InventoryItem[]>} Filtered inventory items
      */
-    async getByCityId(cityId) {
+    async getByCityId() {
         throw new Error('Method not implemented: getByCityId');
     }
 
@@ -34,7 +34,7 @@ export class IInventoryRepository {
      * @param {object} criteria - Search criteria
      * @returns {Promise<InventoryItem[]>} Filtered inventory items
      */
-    async search(criteria) {
+    async search() {
         throw new Error('Method not implemented: search');
     }
 }

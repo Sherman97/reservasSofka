@@ -12,9 +12,7 @@ const DashboardPage = () => {
         error,
         reload,
         searchQuery,
-        handleSearch,
-        filters,
-        handleFilterChange
+        handleSearch
     } = useDashboard();
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 8;
@@ -38,7 +36,7 @@ const DashboardPage = () => {
 
                     {error && (
                         <div className="error-banner">
-                            <p>⚠️ {error}</p>
+                            <p>[!] {error}</p>
                             <button onClick={reload} className="btn-retry">Reintentar</button>
                         </div>
                     )}

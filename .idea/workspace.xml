@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="8096078f-91f3-4936-b176-12145b874104" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/controllers/items.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/controllers/items.controller.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/controllers/locationItems.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/controllers/locationItems.controller.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/db.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/middlewares/auth.middleware.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/routes/items.routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/routes/items.routes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/routes/locationItems.routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/routes/locationItems.routes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/server.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/services/items.service.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/services/items.service.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/services/locationItems.service.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/services/locationItems.service.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="643" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$/Backend">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="reservas-sk" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="39kpETeNvSyPdhLSbkz7fewzjau" />
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Rebasing develop&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/german.rojas/Desktop/Nueva carpeta/reservas-sk&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Artifacts&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\german.rojas\Desktop\Nueva carpeta\reservas-sk\Backend" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="KtorApplicationConfigurationType" />
+        <option value="MicronautRunConfigurationType" />
+        <option value="QuarkusRunConfigurationType" />
+        <option value="SpringBootApplicationConfigurationType" />
+      </set>
+    </option>
+  </component>
+  <component name="RunManager" selected="Spring Boot.ApiGatewayApplication">
+    <configuration name="ApiGatewayApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="reservas-sk.api-gateway.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.reservas.sk.api_gateway.ApiGatewayApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AuthServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="reservas-sk.auth-service.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.reservas.sk.auth_service.AuthServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="BookingsServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="reservas-sk.bookings-service.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.reservas.sk.bookings_service.BookingsServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="InventoryServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="reservas-sk.inventory-service.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.reservas.sk.inventory_service.InventoryServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LocationsServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="reservas-sk.locations-service.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.reservas.sk.locations_service.LocationsServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NotificationsServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="reservas-sk.notifications-service.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.reservas.sk.notifications_service.NotificationsServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.31033.145" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.31033.145" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8096078f-91f3-4936-b176-12145b874104" name="Changes" comment="" />
+      <created>1771249812158</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1771249812158</updated>
+      <workItem from="1771249812977" duration="25529000" />
+      <workItem from="1771435490364" duration="2795000" />
+      <workItem from="1771591248402" duration="4723000" />
+      <workItem from="1771596224889" duration="1471000" />
+      <workItem from="1771597890837" duration="18525000" />
+      <workItem from="1771620369830" duration="55000" />
+      <workItem from="1771852572847" duration="4014000" />
+      <workItem from="1771862407752" duration="689000" />
+      <workItem from="1771864014540" duration="304000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
