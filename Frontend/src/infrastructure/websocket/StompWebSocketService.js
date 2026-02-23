@@ -6,7 +6,7 @@ import { IWebSocketService } from '../../core/ports/services/IWebSocketService';
  * Connects to the backend notifications-service via STOMP over WebSocket
  * through the API Gateway.
  * 
- * Backend flow: bookings-service → RabbitMQ → notifications-service → STOMP WebSocket
+ * Backend flow: bookings-service â†’ RabbitMQ â†’ notifications-service â†’ STOMP WebSocket
  * Frontend connects to: ws://<gateway>/notifications/ws
  */
 export class StompWebSocketService extends IWebSocketService {
@@ -20,7 +20,7 @@ export class StompWebSocketService extends IWebSocketService {
         this._maxReconnectAttempts = 10;
 
         // Build WebSocket URL from gateway base URL
-        // Gateway: http://localhost:3000 → ws://localhost:3000/notifications/ws
+        // Gateway: http://localhost:3000 â†’ ws://localhost:3000/notifications/ws
         const wsProtocol = gatewayUrl.startsWith('https') ? 'wss' : 'ws';
         const host = gatewayUrl.replace(/^https?:\/\//, '');
         this._wsUrl = `${wsProtocol}://${host}/notifications/ws`;
@@ -60,8 +60,8 @@ export class StompWebSocketService extends IWebSocketService {
                 this._connected = false;
             },
 
-            onWebSocketError: (event) => {
-                console.warn('[WebSocket] Connection error — backend may not be running');
+            onWebSocketError: () => {
+                console.warn('[WebSocket] Connection error â€” backend may not be running');
                 this._connected = false;
             },
 
@@ -86,14 +86,14 @@ export class StompWebSocketService extends IWebSocketService {
         if (this._client) {
             // Unsubscribe all
             this._subscriptions.forEach((sub) => {
-                try { sub.unsubscribe(); } catch (_) { /* ignore */ }
+                try { sub.unsubscribe(); } catch { /* ignore */ }
             });
             this._subscriptions.clear();
             this._pendingSubscriptions = [];
 
             try {
                 this._client.deactivate();
-            } catch (_) { /* ignore */ }
+            } catch { /* ignore */ }
 
             this._client = null;
             this._connected = false;
@@ -123,7 +123,7 @@ export class StompWebSocketService extends IWebSocketService {
                 // Or unsubscribe if already active
                 promise.then(sub => {
                     if (sub) {
-                        try { sub.unsubscribe(); } catch (_) { /* ignore */ }
+                        try { sub.unsubscribe(); } catch { /* ignore */ }
                     }
                 });
                 this._subscriptions.delete(topic);
@@ -142,7 +142,7 @@ export class StompWebSocketService extends IWebSocketService {
     _doSubscribe(topic, callback) {
         if (this._subscriptions.has(topic)) {
             // Already subscribed to this topic, unsubscribe first
-            try { this._subscriptions.get(topic).unsubscribe(); } catch (_) { /* ignore */ }
+            try { this._subscriptions.get(topic).unsubscribe(); } catch { /* ignore */ }
         }
 
         const subscription = this._client.subscribe(topic, (message) => {

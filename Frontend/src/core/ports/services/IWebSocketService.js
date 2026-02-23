@@ -1,4 +1,4 @@
-/**
+﻿/**
  * IWebSocketService - Port (Interface)
  * Defines the contract for WebSocket real-time communication
  */
@@ -25,7 +25,7 @@ export class IWebSocketService {
      * @param {function} callback - Callback to handle incoming messages
      * @returns {object} Subscription object with unsubscribe() method
      */
-    subscribe(topic, callback) {
+    subscribe() {
         throw new Error('Method not implemented: subscribe');
     }
 

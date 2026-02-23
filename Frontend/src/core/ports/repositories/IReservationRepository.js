@@ -1,4 +1,4 @@
-/**
+﻿/**
  * IReservationRepository - Port (Interface)
  * Defines the contract for reservation data access
  */
@@ -8,7 +8,7 @@ export class IReservationRepository {
      * @param {object} reservationData - Reservation data
      * @returns {Promise<Reservation>} Created reservation
      */
-    async create(reservationData) {
+    async create() {
         throw new Error('Method not implemented: create');
     }
 
@@ -17,7 +17,7 @@ export class IReservationRepository {
      * @param {string|number} userId - User ID
      * @returns {Promise<Reservation[]>} User's reservations
      */
-    async getByUserId(userId) {
+    async getByUserId() {
         throw new Error('Method not implemented: getByUserId');
     }
 
@@ -26,7 +26,7 @@ export class IReservationRepository {
      * @param {string|number} id - Reservation ID
      * @returns {Promise<Reservation>} Reservation entity
      */
-    async getById(id) {
+    async getById() {
         throw new Error('Method not implemented: getById');
     }
 
@@ -35,7 +35,7 @@ export class IReservationRepository {
      * @param {string|number} id - Reservation ID
      * @returns {Promise<void>}
      */
-    async cancel(id) {
+    async cancel() {
         throw new Error('Method not implemented: cancel');
     }
 
@@ -45,7 +45,7 @@ export class IReservationRepository {
      * @param {Date} date - Date to check
      * @returns {Promise<object>} Availability info
      */
-    async getAvailability(locationId, date) {
+    async getAvailability() {
         throw new Error('Method not implemented: getAvailability');
     }
 }
