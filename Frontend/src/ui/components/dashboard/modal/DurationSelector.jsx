@@ -60,7 +60,7 @@ export const DurationSelector = ({
                     />
                 </div>
 
-                <div className="time-separator">Ã¢â€ â€™</div>
+                <div className="time-separator">-></div>
 
                 <div className="time-input-group">
                     <label htmlFor="endTime">FIN</label>
@@ -88,11 +88,11 @@ export const DurationSelector = ({
                 <div className={`time-slots-section ${slotsUpdatedFlag ? 'slots-updated' : ''}`}>
                     {slotsUpdatedFlag && (
                         <div className="slots-updated-banner">
-                            <span>Ã°Å¸â€â€ž Disponibilidad actualizada en tiempo real</span>
+                            <span>ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ¢â‚¬Å¾ Disponibilidad actualizada en tiempo real</span>
                         </div>
                     )}
                     <div className="time-slots-header">
-                        <span className="time-slots-title">Disponibilidad del dÃƒÂ­a</span>
+                        <span className="time-slots-title">Disponibilidad del dÃƒÆ’Ã‚Â­a</span>
                         {loadingSlots && <span className="time-slots-loading">Cargando...</span>}
                     </div>
 
@@ -150,7 +150,7 @@ export const DurationSelector = ({
             )}
 
             <div className="time-info">
-                <span className="info-icon">Ã¢â€žÂ¹Ã¯Â¸Â</span>
+                <span className="info-icon">ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¹ÃƒÂ¯Ã‚Â¸Ã‚Â</span>
                 <span>Horario disponible: 8:00 AM - 6:00 PM</span>
             </div>
         </div>
