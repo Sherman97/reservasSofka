@@ -1,51 +1,51 @@
-/**
+﻿/**
  * IReservationRepository - Port (Interface)
  * Defines the contract for reservation data access
  */
 export class IReservationRepository {
     /**
      * Create a new reservation
-     * @param {object} _reservationData - Reservation data
+     * @param {object} reservationData - Reservation data
      * @returns {Promise<Reservation>} Created reservation
      */
-    async create(_reservationData) {
+    async create() {
         throw new Error('Method not implemented: create');
     }
 
     /**
      * Get reservations by user ID
-     * @param {string|number} _userId - User ID
+     * @param {string|number} userId - User ID
      * @returns {Promise<Reservation[]>} User's reservations
      */
-    async getByUserId(_userId) {
+    async getByUserId() {
         throw new Error('Method not implemented: getByUserId');
     }
 
     /**
      * Get reservation by ID
-     * @param {string|number} _id - Reservation ID
+     * @param {string|number} id - Reservation ID
      * @returns {Promise<Reservation>} Reservation entity
      */
-    async getById(_id) {
+    async getById() {
         throw new Error('Method not implemented: getById');
     }
 
     /**
      * Cancel a reservation
-     * @param {string|number} _id - Reservation ID
+     * @param {string|number} id - Reservation ID
      * @returns {Promise<void>}
      */
-    async cancel(_id) {
+    async cancel() {
         throw new Error('Method not implemented: cancel');
     }
 
     /**
      * Get availability for location and date
-     * @param {string|number} _locationId - Location ID
-     * @param {Date} _date - Date to check
+     * @param {string|number} locationId - Location ID
+     * @param {Date} date - Date to check
      * @returns {Promise<object>} Availability info
      */
-    async getAvailability(_locationId, _date) {
+    async getAvailability() {
         throw new Error('Method not implemented: getAvailability');
     }
 }

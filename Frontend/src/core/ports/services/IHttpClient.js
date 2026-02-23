@@ -1,4 +1,4 @@
-/**
+﻿/**
  * IHttpClient - Interface for HTTP communication
  * All HTTP implementations must extend this interface
  * This enables dependency inversion and easy testing
@@ -10,7 +10,7 @@ export class IHttpClient {
      * @param {object} config - Request configuration
      * @returns {Promise<{data: any, status: number}>}
      */
-    async get(url, config) {
+    async get() {
         throw new Error('Method not implemented: get');
     }
 
@@ -21,7 +21,7 @@ export class IHttpClient {
      * @param {object} config - Request configuration
      * @returns {Promise<{data: any, status: number}>}
      */
-    async post(url, data, config) {
+    async post() {
         throw new Error('Method not implemented: post');
     }
 
@@ -32,7 +32,7 @@ export class IHttpClient {
      * @param {object} config - Request configuration
      * @returns {Promise<{data: any, status: number}>}
      */
-    async put(url, data, config) {
+    async put() {
         throw new Error('Method not implemented: put');
     }
 
@@ -42,7 +42,7 @@ export class IHttpClient {
      * @param {object} config - Request configuration
      * @returns {Promise<{data: any, status: number}>}
      */
-    async delete(url, config) {
+    async delete() {
         throw new Error('Method not implemented: delete');
     }
 
@@ -50,7 +50,7 @@ export class IHttpClient {
      * Add request interceptor
      * @param {Function} interceptor - Function to modify request before sending
      */
-    addRequestInterceptor(interceptor) {
+    addRequestInterceptor() {
         throw new Error('Method not implemented: addRequestInterceptor');
     }
 
@@ -59,7 +59,7 @@ export class IHttpClient {
      * @param {Function} onSuccess - Function to handle successful response
      * @param {Function} onError - Function to handle error response
      */
-    addResponseInterceptor(onSuccess, onError) {
+    addResponseInterceptor() {
         throw new Error('Method not implemented: addResponseInterceptor');
     }
 }

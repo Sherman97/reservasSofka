@@ -1,4 +1,4 @@
-/**
+﻿/**
  * IAuthRepository - Port (Interface)
  * Defines the contract for authentication data access
  * All authentication repository implementations must implement these methods
@@ -6,26 +6,26 @@
 export class IAuthRepository {
     /**
      * Authenticate user with credentials
-     * @param {object} _credentials - User credentials
-     * @param {string} _credentials.email - User email
-     * @param {string} _credentials.password - User password
+     * @param {object} credentials - User credentials
+     * @param {string} credentials.email - User email
+     * @param {string} credentials.password - User password
      * @returns {Promise<User>} Authenticated user entity
      * @throws {AuthenticationError} If authentication fails
      */
-    async login(_credentials) {
+    async login() {
         throw new Error('Method not implemented: login');
     }
 
     /**
      * Register a new user
-     * @param {object} _userData - User registration data
-     * @param {string} _userData.email - User email
-     * @param {string} _userData.password - User password
-     * @param {string} _userData.name - User name
+     * @param {object} userData - User registration data
+     * @param {string} userData.email - User email
+     * @param {string} userData.password - User password
+     * @param {string} userData.name - User name
      * @returns {Promise<User>} Registered user entity
      * @throws {RegistrationError} If registration fails
      */
-    async register(_userData) {
+    async register() {
         throw new Error('Method not implemented: register');
     }
 
