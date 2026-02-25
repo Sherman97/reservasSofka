@@ -20,7 +20,8 @@ dist/
 build/
 coverage/
 
-
+Backend/.gradle/
+.gradle/
 
 
 
