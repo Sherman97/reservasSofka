@@ -8,7 +8,7 @@ vi.mock('../../components/auth/LoginForm', () => ({
     LoginForm: () => <div data-testid="login-form">Mocked LoginForm</div>,
 }));
 
-vi.mock('../../../context/ThemeContext', () => ({
+vi.mock('../../../core/adapters/providers/ThemeContext', () => ({
     useTheme: () => ({ theme: 'light', toggleTheme: vi.fn() }),
 }));
 

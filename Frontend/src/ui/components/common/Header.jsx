@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useTheme } from '../../../context/ThemeContext';
+import { useTheme } from '../../../core/adapters/providers/ThemeContext';
 import { useAuthDependencies } from '../../../core/adapters/hooks/useDependencies';
 import logoLight from '../../../assets/LogoSofka_FondoBlanco_peq.png';
 import logoDark from '../../../assets/LogoSofka_FondoNegro_peq.png';

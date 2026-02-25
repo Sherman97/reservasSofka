@@ -9,7 +9,7 @@ vi.mock('../../../core/adapters/hooks/useLogin', () => ({
     useLogin: () => mockLoginState,
 }));
 
-vi.mock('../../../context/ThemeContext', () => ({
+vi.mock('../../../core/adapters/providers/ThemeContext', () => ({
     useTheme: () => ({ theme: 'light', toggleTheme: vi.fn() }),
 }));
 
