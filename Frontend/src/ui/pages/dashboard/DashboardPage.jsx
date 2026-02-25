@@ -36,7 +36,7 @@ const DashboardPage = () => {
 
                     {error && (
                         <div className="error-banner">
-                            <p>[!] {error}</p>
+                            <p>⚠️ {error}</p>
                             <button onClick={reload} className="btn-retry">Reintentar</button>
                         </div>
                     )}
