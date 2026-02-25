@@ -35,11 +35,7 @@ export const LoginForm = () => {
                     <input
                         type="password"
                         id="password"
-<<<<<<< HEAD
                         placeholder="••••••••"
-=======
-                        placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
->>>>>>> origin/develop
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
@@ -51,19 +47,11 @@ export const LoginForm = () => {
 
 
             <button type="submit" className="btn-primary" disabled={loading}>
-<<<<<<< HEAD
                 {loading ? 'Cargando...' : 'Iniciar Sesión'}
             </button>
 
             <p className="signup-link">
                 ¿No tienes cuenta? <a href="/signup">Regístrate aquí</a>
-=======
-                {loading ? 'Cargando...' : 'Iniciar SesiÃ³n'}
-            </button>
-
-            <p className="signup-link">
-                Â¿No tienes cuenta? <a href="/signup">RegÃ­strate aquÃ­</a>
->>>>>>> origin/develop
             </p>
         </form>
     );
