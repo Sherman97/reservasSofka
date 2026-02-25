@@ -1,0 +1,271 @@
+.signup-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    background-color: #f8f9fa;
+    /* Matches mockup light bg */
+    color: #212529;
+}
+
+/* Left components (Blue side) */
+.signup-left {
+    flex: 1;
+    background-color: #0d6efd;
+    /* Blue color */
+    color: white;
+    padding: 4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    /* For potential background shapes */
+}
+
+.signup-left .overlay {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 4rem;
+    position: absolute;
+    top: 0;
+}
+
+.brand-icon {
+    font-size: 1.5rem;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 0.5rem;
+    border-radius: 8px;
+}
+
+.brand-text {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.signup-left h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+}
+
+.signup-left p {
+    font-size: 1.25rem;
+    opacity: 0.9;
+    max-width: 500px;
+    margin-bottom: auto;
+    /* Push bottom elements down */
+}
+
+.carousel-indicators {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+}
+
+.indicator.active {
+    background-color: white;
+    width: 20px;
+    border-radius: 10px;
+}
+
+.employee-count {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+    width: fit-content;
+}
+
+.avatars {
+    display: flex;
+}
+
+.avatars .avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #ddd;
+    border: 2px solid #0d6efd;
+    margin-left: -10px;
+}
+
+.avatars .avatar:first-child {
+    margin-left: 0;
+}
+
+/* Right components (Form side) */
+.signup-right {
+    flex: 1;
+    /* Split 50/50 roughly, or maybe 40/60 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    background-color: #f8f9fa;
+    overflow-y: auto;
+}
+
+.signup-form-wrapper {
+    width: 100%;
+    max-width: 480px;
+}
+
+.signup-right h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #212529;
+}
+
+.subtitle {
+    color: #6c757d;
+    margin-bottom: 2rem;
+}
+
+/* Form Styles Reuse/Override */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 1rem;
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+.input-wrapper input,
+.input-wrapper select {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.8rem;
+    /* Space for icon */
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: white;
+    color: #212529;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-wrapper input:focus,
+.input-wrapper select:focus {
+    outline: none;
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+}
+
+.form-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.form-check input {
+    margin-top: 0.25rem;
+}
+
+.form-check a {
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 0.875rem;
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-bottom: 1.5rem;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+}
+
+.btn-primary:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.login-link {
+    text-align: center;
+    color: #6c757d;
+    font-size: 0.95rem;
+}
+
+.login-link a {
+    color: #0d6efd;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.error-message {
+    color: #dc3545;
+    background-color: rgba(220, 53, 69, 0.1);
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .signup-container {
+        flex-direction: column;
+    }
+
+    .signup-left {
+        display: none;
+        /* Hide on mobile like login */
+    }
+
+    .signup-right {
+        padding: 1.5rem;
+    }
+}

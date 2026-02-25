@@ -73,8 +73,8 @@ services:
     depends_on:
       rabbitmq:
         condition: service_started
-      mariadb:
-        condition: service_healthy
+      database:
+        condition: service_completed_successfully
     restart: unless-stopped
 
   bookings-service:
@@ -101,8 +101,8 @@ services:
     depends_on:
       rabbitmq:
         condition: service_started
-      mariadb:
-        condition: service_healthy
+      database:
+        condition: service_completed_successfully
     restart: unless-stopped
 
   locations-service:
@@ -129,8 +129,8 @@ services:
     depends_on:
       rabbitmq:
         condition: service_started
-      mariadb:
-        condition: service_healthy
+      database:
+        condition: service_completed_successfully
     restart: unless-stopped
 
   inventory-service:
@@ -157,8 +157,8 @@ services:
     depends_on:
       rabbitmq:
         condition: service_started
-      mariadb:
-        condition: service_healthy
+      database:
+        condition: service_completed_successfully
     restart: unless-stopped
 
   notifications-service:
@@ -183,8 +183,8 @@ services:
     depends_on:
       rabbitmq:
         condition: service_started
-      mariadb:
-        condition: service_healthy
+      database:
+        condition: service_completed_successfully
     restart: unless-stopped
 
   api-gateway:

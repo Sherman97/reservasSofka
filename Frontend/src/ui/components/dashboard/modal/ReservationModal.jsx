@@ -1,6 +1,11 @@
+<<<<<<< HEAD
 import React from 'react';
 import { Calendar } from './Calendar';
 import { EquipmentSelector } from './EquipmentSelector';
+=======
+﻿import React from 'react';
+import { Calendar } from './Calendar';
+>>>>>>> origin/develop
 import { DurationSelector } from './DurationSelector';
 import '../../../styles/dashboard/ReservationModal.css';
 
@@ -32,17 +37,27 @@ export const ReservationModal = ({
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+<<<<<<< HEAD
                 <button className="modal-close" onClick={onClose}>✕</button>
+=======
+                <button className="modal-close" onClick={onClose}>x</button>
+>>>>>>> origin/develop
 
                 <div className="modal-header">
                     <div className="modal-item-info">
                         <img src={item.image} alt={item.title} className="modal-item-image" />
                         <div className="modal-item-details">
                             <h2>{item.title}</h2>
+<<<<<<< HEAD
                             <p className="modal-item-location">📍 {item.location || 'Sede Central'}</p>
                             {/* Check item type safely */}
                             {(item.type === 'location' || item._type === 'location') && (
                                 <p className="modal-item-type">🏢 Locación</p>
+=======
+                            <p className="modal-item-location">Ubicacion: {item.location || 'Sede Central'}</p>
+                            {(item.type === 'location' || item._type === 'location') && (
+                                <p className="modal-item-type">Tipo: Locacion</p>
+>>>>>>> origin/develop
                             )}
                         </div>
                     </div>
@@ -75,7 +90,12 @@ export const ReservationModal = ({
                                     busySlots={busySlots}
                                     loadingSlots={loadingSlots}
                                     hasTimeConflict={hasTimeConflict}
+<<<<<<< HEAD
                                     selectedDate={selectedDate} slotsUpdatedFlag={slotsUpdatedFlag} item={item}
+=======
+                                    selectedDate={selectedDate}
+                                    slotsUpdatedFlag={slotsUpdatedFlag}
+>>>>>>> origin/develop
                                 />
                             </div>
                         </div>

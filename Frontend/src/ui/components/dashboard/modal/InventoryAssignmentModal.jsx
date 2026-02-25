@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDependencies } from '../../../../core/adapters/hooks/useDependencies';
+=======
+﻿import React, { useState, useEffect, useCallback } from 'react';
+import { useDependencies } from '../../../../core/adapters/providers/DependencyProvider';
+>>>>>>> origin/develop
 import '../../../styles/dashboard/InventoryAssignmentModal.css';
 
 /**
@@ -42,7 +47,11 @@ export const InventoryAssignmentModal = ({ isOpen, location, onClose, onSuccess 
 
     const handleAssign = async () => {
         if (!selectedItem || quantity < 1) {
+<<<<<<< HEAD
             alert('Por favor selecciona un artículo y una cantidad válida');
+=======
+            alert('Por favor selecciona un articulo y una cantidad valida');
+>>>>>>> origin/develop
             return;
         }
 
@@ -68,7 +77,11 @@ export const InventoryAssignmentModal = ({ isOpen, location, onClose, onSuccess 
     };
 
     const handleRemove = async (inventoryId) => {
+<<<<<<< HEAD
         if (!window.confirm('¿Estás seguro de remover este artículo de la locación?')) {
+=======
+        if (!window.confirm('Estas seguro de remover este articulo de la locacion?')) {
+>>>>>>> origin/develop
             return;
         }
 
@@ -95,17 +108,28 @@ export const InventoryAssignmentModal = ({ isOpen, location, onClose, onSuccess 
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content inventory-modal" onClick={(e) => e.stopPropagation()}>
+<<<<<<< HEAD
                 <button className="modal-close" onClick={onClose}>✕</button>
 
                 <div className="modal-header">
                     <h2>Gestionar Inventario - {location.name}</h2>
                     <p className="modal-subtitle">📍 {location.subtitle || 'Sede Central'}</p>
+=======
+                <button className="modal-close" onClick={onClose}>x</button>
+
+                <div className="modal-header">
+                    <h2>Gestionar Inventario - {location.name}</h2>
+                    <p className="modal-subtitle">Ubicacion: {location.subtitle || 'Sede Central'}</p>
+>>>>>>> origin/develop
                 </div>
 
                 <div className="modal-body">
                     {error && <div className="error-message">{error}</div>}
 
+<<<<<<< HEAD
                     {/* Current Inventory */}
+=======
+>>>>>>> origin/develop
                     <div className="inventory-section">
                         <h3>Inventario Actual</h3>
                         {location.inventory && location.inventory.length > 0 ? (
@@ -121,7 +145,11 @@ export const InventoryAssignmentModal = ({ isOpen, location, onClose, onSuccess 
                                             onClick={() => handleRemove(item.id)}
                                             disabled={loading}
                                         >
+<<<<<<< HEAD
                                             🗑️ Remover
+=======
+                                            Remover
+>>>>>>> origin/develop
                                         </button>
                                     </div>
                                 ))}
@@ -131,19 +159,30 @@ export const InventoryAssignmentModal = ({ isOpen, location, onClose, onSuccess 
                         )}
                     </div>
 
+<<<<<<< HEAD
                     {/* Add Inventory */}
+=======
+>>>>>>> origin/develop
                     <div className="inventory-section">
                         <h3>Asignar Nuevo Inventario</h3>
                         <div className="assign-form">
                             <div className="form-group">
+<<<<<<< HEAD
                                 <label>Artículo</label>
+=======
+                                <label>Articulo</label>
+>>>>>>> origin/develop
                                 <select
                                     value={selectedItem}
                                     onChange={(e) => setSelectedItem(e.target.value)}
                                     className="form-select"
                                     disabled={loading}
                                 >
+<<<<<<< HEAD
                                     <option value="">Selecciona un artículo...</option>
+=======
+                                    <option value="">Selecciona un articulo...</option>
+>>>>>>> origin/develop
                                     {availableInventory.map((item) => (
                                         <option key={item.id} value={item.id}>
                                             {item.name} ({item.category})
@@ -158,7 +197,11 @@ export const InventoryAssignmentModal = ({ isOpen, location, onClose, onSuccess 
                                     type="number"
                                     min="1"
                                     value={quantity}
+<<<<<<< HEAD
                                     onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
+=======
+                                    onChange={(e) => setQuantity(parseInt(e.target.value, 10) || 1)}
+>>>>>>> origin/develop
                                     className="form-input"
                                     disabled={loading}
                                 />
@@ -169,7 +212,11 @@ export const InventoryAssignmentModal = ({ isOpen, location, onClose, onSuccess 
                                 onClick={handleAssign}
                                 disabled={loading || !selectedItem}
                             >
+<<<<<<< HEAD
                                 {loading ? 'Asignando...' : '➕ Asignar Inventario'}
+=======
+                                {loading ? 'Asignando...' : 'Asignar Inventario'}
+>>>>>>> origin/develop
                             </button>
                         </div>
                     </div>
