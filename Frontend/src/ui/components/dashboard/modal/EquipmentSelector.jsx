@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useDependencies } from '../../../../core/adapters/providers/DependencyProvider';
+import { useDependencies } from '../../../../core/adapters/hooks/useDependencies';
 
 export const EquipmentSelector = ({ selectedEquipment, onEquipmentToggle, item }) => {
     const { getInventoryUseCase } = useDependencies();
