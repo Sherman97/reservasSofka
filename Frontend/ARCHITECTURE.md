@@ -45,11 +45,11 @@ src/
 │   │
 │   ├── ports/                               # Puertos (Interfaces de entrada/salida)
 │   │   ├── repositories/                    # Interfaces de repositorios (IAuthRepository, etc.)
-│   │   └── services/                        # Interfaces de servicios (IHttpClient, IStorageService)
+│   │   └── services/                        # Interfaces de servicios (IHttpClient, IStorageService, IWebSocketService)
 │   │
 │   └── adapters/                            # Adaptadores de Entrada (React Hooks)
 │       ├── hooks/                           # Hooks que orquestan Casos de Uso
-│       ├── providers/                       # Context Providers (DependencyProvider)
+│       ├── providers/                       # Context Providers (DependencyProvider, ThemeContext)
 │       └── di/                              # Inyección de Dependencias (Container)
 │
 ├── application/                             # CAPA DE APLICACIÓN (Casos de Uso)
@@ -62,6 +62,7 @@ src/
 │   ├── http/                                # Implementación de clientes HTTP (Axios)
 │   ├── repositories/                        # Implementación de repositorios (HTTP Repos)
 │   ├── storage/                             # Persistencia local (LocalStorage)
+│   ├── websocket/                           # Implementación de WebSocket (STOMP)
 │   └── mappers/                             # Transformación de datos (DTO ↔ Entity)
 │
 └── ui/                                      # CAPA DE PRESENTACIÓN
@@ -75,37 +76,45 @@ src/
 
 ### 1. Capa de Dominio (Core)
 - **Entidades**: `User`, `Reservation`, `Location`, `InventoryItem` implementadas con validaciones propias.
-- **Puertos**: Definidos contratos estables para todos los repositorios y servicios externos.
+- **Errores**: `AuthenticationError` con variantes (`InvalidCredentialsError`, `RegistrationError`, `UnauthorizedError`).
+- **Puertos**: Definidos contratos estables para todos los repositorios y servicios externos:
+  - **Repos**: `IAuthRepository` (6 métodos), `IReservationRepository` (5 métodos), `ILocationRepository` (5 métodos), `IInventoryRepository` (4 métodos).
+  - **Services**: `IHttpClient` (7 métodos incl. `patch`), `IStorageService` (7 métodos incl. `getJSON`/`setJSON`), `IWebSocketService` (4 métodos).
 
 ### 2. Capa de Aplicación
 - **Casos de Uso**: Implementada la lógica de orquestación para:
   - Autenticación (Login, Register, Logout, GetCurrentUser).
-  - Reservas (Create, Cancel, GetUserReservations).
+  - Reservas (Create, Cancel, GetUserReservations, GetSpaceAvailability).
   - Dashboard (GetLocations, GetInventory, Assign/Remove Inventory).
 
 ### 3. Capa de Infraestructura
 - **Adaptadores**: Implementados usando patrones robustos:
-  - **Patrón Adapter**: `AxiosHttpClient` y `LocalStorageService`.
+  - **Patrón Adapter**: `AxiosHttpClient`, `LocalStorageService`, `StompWebSocketService`.
   - **Patrón Factory**: `HttpClientFactory` para configurar clientes con diferentes URLs y middlewares.
-  - **Mappers**: Transformación centralizada de respuestas de API a entidades de dominio.
+  - **Mappers**: Transformación centralizada de respuestas de API a entidades de dominio (`UserMapper`, `ReservationMapper`, `LocationMapper`, `InventoryMapper`).
+- **Repositorios HTTP**: `HttpAuthRepository`, `HttpReservationRepository`, `HttpLocationRepository`, `HttpInventoryRepository` — todos cumplen al 100% con sus contratos de puerto.
 
 ### 4. Capa de UI
 - **Inyección de Dependencias**: 
-  - `container.js`: Singleton que mantiene el registro de todas las instancias.
-  - `DependencyProvider.jsx`: Facade que expone las dependencias a React evitando el "prop drilling".
-- **Componentes**: Migrados totalmente a la nueva estructura en `src/ui`.
+  - `container.js`: Singleton que mantiene el registro de todas las instancias (22 dependencias).
+  - `DependencyProvider.jsx`: Facade que expone las dependencias a React a través de hooks especializados:
+    - `useAuthDependencies()`: Login, Logout, Register, GetCurrentUser.
+    - `useReservationDependencies()`: Locations, Inventory, Create/Cancel reservations, Availability, WebSocket.
+    - `useDashboardDependencies()`: Locations, Inventory, AssignInventory, RemoveInventory.
+  - `ThemeContext.jsx`: Gestión de tema claro/oscuro, ubicado en `core/adapters/providers/`.
+- **Componentes**: Migrados totalmente a la nueva estructura en `src/ui/`. Código legacy en `features/` y `services/` eliminado.
 
 ## 📊 Patrones de Diseño Aplicados
 
 | Patrón | Implementación | Propósito |
 |--------|---------|-----------|
-| **Port (Interface)** | `IAuthRepository`, `IHttpClient` | Define contratos sin acoplarse a implementaciones. |
-| **Adapter (Output)** | `HttpAuthRepository`, `AxiosHttpClient` | Adapta servicios externos al dominio. |
-| **Adapter (Input)** | `useUserReservations`, `useLogin` | Adapta los casos de uso para que sean usados por React. |
+| **Port (Interface)** | `IAuthRepository`, `IHttpClient`, `IStorageService`, `IWebSocketService` | Define contratos sin acoplarse a implementaciones. |
+| **Adapter (Output)** | `HttpAuthRepository`, `AxiosHttpClient`, `LocalStorageService`, `StompWebSocketService` | Adapta servicios externos al dominio. |
+| **Adapter (Input)** | `useUserReservations`, `useLogin`, `useDashboard`, `useReservation` | Adapta los casos de uso para que sean usados por React. |
 | **Factory** | `HttpClientFactory` | Centraliza la creación y configuración de clientes HTTP. |
 | **Singleton** | `container.js` | Asegura una única instancia del contenedor de dependencias. |
-| **Facade** | `useDependencies` | Provee una API limpia y simplificada para los componentes UI. |
-| **Mapper** | `UserMapper`, `ReservationMapper` | Desacopla el modelo de datos de la API del modelo de dominio. |
+| **Facade** | `useAuthDependencies`, `useReservationDependencies`, `useDashboardDependencies` | Provee APIs limpias y especializadas por módulo para los componentes UI. |
+| **Mapper** | `UserMapper`, `ReservationMapper`, `LocationMapper`, `InventoryMapper` | Desacopla el modelo de datos de la API del modelo de dominio. |
 
 ## 🚀 Ventajas de esta Arquitectura
 
@@ -121,3 +130,6 @@ Para asegurar la integridad de la arquitectura:
 - Los casos de uso **solo** pueden depender de puertos (`core/ports`).
 - Las entidades de dominio **no** deben tener dependencias externas.
 - Toda transformación de datos externa debe ocurrir en `infrastructure/mappers`.
+- **No debe existir** código legacy en `features/`, `services/` o `context/` — todo vive en la estructura hexagonal.
+- Todos los repositorios de infraestructura deben implementar **todos** los métodos de su puerto correspondiente.
+- El `ThemeContext` está ubicado en `core/adapters/providers/` como parte de la arquitectura.

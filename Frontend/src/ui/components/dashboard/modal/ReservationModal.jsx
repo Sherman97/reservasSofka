@@ -1,5 +1,6 @@
-﻿import React from 'react';
+import React from 'react';
 import { Calendar } from './Calendar';
+import { EquipmentSelector } from './EquipmentSelector';
 import { DurationSelector } from './DurationSelector';
 import '../../../styles/dashboard/ReservationModal.css';
 
@@ -31,16 +32,17 @@ export const ReservationModal = ({
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <button className="modal-close" onClick={onClose}>x</button>
+                <button className="modal-close" onClick={onClose}>✕</button>
 
                 <div className="modal-header">
                     <div className="modal-item-info">
                         <img src={item.image} alt={item.title} className="modal-item-image" />
                         <div className="modal-item-details">
                             <h2>{item.title}</h2>
-                            <p className="modal-item-location">Ubicacion: {item.location || 'Sede Central'}</p>
+                            <p className="modal-item-location">📍 {item.location || 'Sede Central'}</p>
+                            {/* Check item type safely */}
                             {(item.type === 'location' || item._type === 'location') && (
-                                <p className="modal-item-type">Tipo: Locacion</p>
+                                <p className="modal-item-type">🏢 Locación</p>
                             )}
                         </div>
                     </div>
@@ -73,8 +75,7 @@ export const ReservationModal = ({
                                     busySlots={busySlots}
                                     loadingSlots={loadingSlots}
                                     hasTimeConflict={hasTimeConflict}
-                                    selectedDate={selectedDate}
-                                    slotsUpdatedFlag={slotsUpdatedFlag}
+                                    selectedDate={selectedDate} slotsUpdatedFlag={slotsUpdatedFlag} item={item}
                                 />
                             </div>
                         </div>
