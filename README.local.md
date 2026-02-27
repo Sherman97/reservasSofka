@@ -118,8 +118,14 @@ npm install
 npm run dev
 ```
 
+<<<<<<< HEAD
+## 📜 Licencia
+
+ISC License
+=======
 ## Documentacion adicional
 
 - Resumen general: `README.md`
 - Detalle backend por servicio: `Backend/README.md`
 
+>>>>>>> origin/develop
