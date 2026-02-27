@@ -16,11 +16,17 @@ export class HttpDeliveryRepository implements IDeliveryRepository {
         try {
             const payload = DeliveryMapper.toApi(deliveryData as Parameters<typeof DeliveryMapper.toApi>[0]);
             const response = await this.httpClient.post('/bookings/deliveries', payload);
-            const data = response.data as ApiResponse;
+            const raw = response.data as ApiResponse & Record<string, unknown>;
 
-            if (!data.ok) throw new Error(data.message || 'Error submitting delivery');
+            // Support both { ok, data } wrapper and direct object responses
+            const isWrapped = typeof raw.ok === 'boolean';
 
-            const delivery = DeliveryMapper.toDomain(data.data as Parameters<typeof DeliveryMapper.toDomain>[0]);
+            if (isWrapped && !raw.ok) {
+                throw new Error(raw.message || 'Error submitting delivery');
+            }
+
+            const deliveryDTO = isWrapped ? raw.data : raw;
+            const delivery = DeliveryMapper.toDomain(deliveryDTO as Parameters<typeof DeliveryMapper.toDomain>[0]);
             if (!delivery) throw new Error('Error mapping delivery data');
             return delivery;
         } catch (error) {

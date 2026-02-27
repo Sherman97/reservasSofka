@@ -52,6 +52,7 @@ export const ReservationModal = ({
                 </div>
 
                 <div className="modal-body">
+
                     {successMessage && (
                         <div className="modal-success-banner">
                             <span className="success-icon">✅</span>
@@ -97,6 +98,7 @@ export const ReservationModal = ({
                                     item={item}
                                     successMessage={successMessage}
                                 />
+
                             </div>
 
                             <div className="modal-section">

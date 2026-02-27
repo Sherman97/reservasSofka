@@ -174,8 +174,8 @@ Tests end-to-end que simulan un usuario real interactuando con la aplicación co
                 ┌┴───────────────┴┐
                 │ Component Tests │  ✅ 65 tests (43%)
                ┌┴─────────────────┴┐
-               │    Unit Tests      │  ✅ 85 tests (57%)
-               └────────────────────┘
+               │    Unit Tests     │  ✅ 85 tests (57%)
+               └───────────────────┘
 ```
 
 ---
