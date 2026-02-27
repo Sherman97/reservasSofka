@@ -97,6 +97,9 @@ npm install
 npm run dev
 ```
 
+## 📜 Licencia
+
+ISC License
 ## Documentacion Tecnica
 
 - Detalle completo del backend: `Backend/README.md`

@@ -1,5 +1,5 @@
-﻿import React, { useState, useEffect, useCallback } from 'react';
-import { useDependencies } from '../../../../core/adapters/providers/DependencyProvider';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDependencies } from '../../../../core/adapters/hooks/useDependencies';
 import '../../../styles/dashboard/InventoryAssignmentModal.css';
 
 /**
@@ -42,7 +42,7 @@ export const InventoryAssignmentModal = ({ isOpen, location, onClose, onSuccess 
 
     const handleAssign = async () => {
         if (!selectedItem || quantity < 1) {
-            alert('Por favor selecciona un articulo y una cantidad valida');
+            alert('Por favor selecciona un artículo y una cantidad válida');
             return;
         }
 
@@ -68,7 +68,7 @@ export const InventoryAssignmentModal = ({ isOpen, location, onClose, onSuccess 
     };
 
     const handleRemove = async (inventoryId) => {
-        if (!window.confirm('Estas seguro de remover este articulo de la locacion?')) {
+        if (!window.confirm('¿Estás seguro de remover este artículo de la locación?')) {
             return;
         }
 
@@ -95,16 +95,17 @@ export const InventoryAssignmentModal = ({ isOpen, location, onClose, onSuccess 
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content inventory-modal" onClick={(e) => e.stopPropagation()}>
-                <button className="modal-close" onClick={onClose}>x</button>
+                <button className="modal-close" onClick={onClose}>✕</button>
 
                 <div className="modal-header">
                     <h2>Gestionar Inventario - {location.name}</h2>
-                    <p className="modal-subtitle">Ubicacion: {location.subtitle || 'Sede Central'}</p>
+                    <p className="modal-subtitle">📍 {location.subtitle || 'Sede Central'}</p>
                 </div>
 
                 <div className="modal-body">
                     {error && <div className="error-message">{error}</div>}
 
+                    {/* Current Inventory */}
                     <div className="inventory-section">
                         <h3>Inventario Actual</h3>
                         {location.inventory && location.inventory.length > 0 ? (
@@ -120,7 +121,7 @@ export const InventoryAssignmentModal = ({ isOpen, location, onClose, onSuccess 
                                             onClick={() => handleRemove(item.id)}
                                             disabled={loading}
                                         >
-                                            Remover
+                                            🗑️ Remover
                                         </button>
                                     </div>
                                 ))}
@@ -130,18 +131,19 @@ export const InventoryAssignmentModal = ({ isOpen, location, onClose, onSuccess 
                         )}
                     </div>
 
+                    {/* Add Inventory */}
                     <div className="inventory-section">
                         <h3>Asignar Nuevo Inventario</h3>
                         <div className="assign-form">
                             <div className="form-group">
-                                <label>Articulo</label>
+                                <label>Artículo</label>
                                 <select
                                     value={selectedItem}
                                     onChange={(e) => setSelectedItem(e.target.value)}
                                     className="form-select"
                                     disabled={loading}
                                 >
-                                    <option value="">Selecciona un articulo...</option>
+                                    <option value="">Selecciona un artículo...</option>
                                     {availableInventory.map((item) => (
                                         <option key={item.id} value={item.id}>
                                             {item.name} ({item.category})
@@ -156,7 +158,7 @@ export const InventoryAssignmentModal = ({ isOpen, location, onClose, onSuccess 
                                     type="number"
                                     min="1"
                                     value={quantity}
-                                    onChange={(e) => setQuantity(parseInt(e.target.value, 10) || 1)}
+                                    onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
                                     className="form-input"
                                     disabled={loading}
                                 />
@@ -167,7 +169,7 @@ export const InventoryAssignmentModal = ({ isOpen, location, onClose, onSuccess 
                                 onClick={handleAssign}
                                 disabled={loading || !selectedItem}
                             >
-                                {loading ? 'Asignando...' : 'Asignar Inventario'}
+                                {loading ? 'Asignando...' : '➕ Asignar Inventario'}
                             </button>
                         </div>
                     </div>
