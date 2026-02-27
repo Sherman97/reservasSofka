@@ -44,7 +44,6 @@
       context: ../bookings-service
       dockerfile: Dockerfile.dev
     environment:
-      NODE_ENV: production
       PORT: 3003
       DB_HOST: mariadb
       DB_PORT: 3306
@@ -55,7 +54,6 @@
       - "3003:3003"
     volumes:
       - ../bookings-service:/app
-      - /app/node_modules
     networks:
       - reservas_net
     depends_on:
@@ -67,7 +65,6 @@
       context: ../locations-service
       dockerfile: Dockerfile.dev
     environment:
-      NODE_ENV: production
       PORT: 3004
       DB_HOST: mariadb
       DB_PORT: 3306
@@ -78,7 +75,6 @@
       - "3004:3004"
     volumes:
       - ../locations-service:/app
-      - /app/node_modules
     networks:
       - reservas_net
     depends_on:
@@ -90,7 +86,6 @@
       context: ../inventory-service
       dockerfile: Dockerfile.dev
     environment:
-      NODE_ENV: production
       PORT: 3005
       DB_HOST: mariadb
       DB_PORT: 3306
@@ -101,7 +96,6 @@
       - "3005:3005"
     volumes:
       - ../inventory-service:/app
-      - /app/node_modules
     networks:
       - reservas_net
     depends_on:
