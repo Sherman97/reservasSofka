@@ -9,10 +9,12 @@ export const ReservationModal = ({
     item,
     currentDate,
     selectedDate,
+    selectedEquipment = [],
     startTime,
     endTime,
     availability,
     onDateSelect,
+    onEquipmentToggle,
     onStartTimeChange,
     onEndTimeChange,
     onPreviousMonth,
@@ -21,6 +23,7 @@ export const ReservationModal = ({
     onConfirm,
     canConfirm,
     loading,
+    error = null,
     busySlots = [],
     loadingSlots = false,
     hasTimeConflict = false,
@@ -49,6 +52,21 @@ export const ReservationModal = ({
                 </div>
 
                 <div className="modal-body">
+
+                    {successMessage && (
+                        <div className="modal-success-banner">
+                            <span className="success-icon">✅</span>
+                            <span>{successMessage}</span>
+                        </div>
+                    )}
+
+                    {!successMessage && error && (
+                        <div className="modal-error-banner">
+                            <span className="error-icon">⚠️</span>
+                            <span>{error}</span>
+                        </div>
+                    )}
+
                     <div className="modal-columns">
                         <div className="modal-left-column">
                             <div className="modal-section">
@@ -75,7 +93,20 @@ export const ReservationModal = ({
                                     busySlots={busySlots}
                                     loadingSlots={loadingSlots}
                                     hasTimeConflict={hasTimeConflict}
-                                    selectedDate={selectedDate} slotsUpdatedFlag={slotsUpdatedFlag} item={item}
+                                    selectedDate={selectedDate}
+                                    slotsUpdatedFlag={slotsUpdatedFlag}
+                                    item={item}
+                                    successMessage={successMessage}
+                                />
+
+                            </div>
+
+                            <div className="modal-section">
+                                <h3>Equipos Adicionales</h3>
+                                <EquipmentSelector
+                                    selectedEquipment={selectedEquipment}
+                                    onEquipmentToggle={onEquipmentToggle}
+                                    item={item}
                                 />
                             </div>
                         </div>

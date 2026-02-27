@@ -39,7 +39,8 @@ export const DurationSelector = ({
     loadingSlots = false,
     hasTimeConflict = false,
     selectedDate = null,
-    slotsUpdatedFlag = false
+    slotsUpdatedFlag = false,
+    successMessage = null
 }) => {
     const hasBusySlots = busySlots.length > 0;
 
@@ -76,7 +77,7 @@ export const DurationSelector = ({
                 </div>
             </div>
 
-            {hasTimeConflict && (
+            {hasTimeConflict && !successMessage && (
                 <div className="time-conflict-warning">
                     <span className="conflict-icon">⚠️</span>
                     <span>El horario seleccionado se solapa con una reserva existente</span>
@@ -146,12 +147,13 @@ export const DurationSelector = ({
                             ))}
                         </div>
                     )}
+
                 </div>
             )}
 
             <div className="time-info">
                 <span className="info-icon">ℹ️</span>
-                <span>Horario disponible: 8:00 AM - 6:00 PM</span>
+                <span>solo se puede reservar de: 8:00 AM - 6:00 PM</span>
             </div>
         </div>
     );

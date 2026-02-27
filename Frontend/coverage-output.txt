@@ -1,0 +1,733 @@
+﻿
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90mC:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/Frontend[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+ [32mÔ£ô[39m src/ui/components/dashboard/SearchBar.test.jsx [2m([22m[2m4 tests[22m[2m)[22m[32m 169[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/reservations/ReservationFilterBar.test.jsx [2m([22m[2m6 tests[22m[2m)[22m[32m 165[2mms[22m[39m
+ [32mÔ£ô[39m src/core/adapters/hooks/useDelivery.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 49[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/reservations/ReservationList.test.jsx [2m([22m[2m4 tests[22m[2m)[22m[32m 83[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/common/Pagination.test.jsx [2m([22m[2m10 tests[22m[2m)[22m[33m 325[2mms[22m[39m
+ [32mÔ£ô[39m src/core/adapters/hooks/useReservationAlert.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 55[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/pages/auth/LoginPage.test.jsx [2m([22m[2m4 tests[22m[2m)[22m[32m 218[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/pages/signup/SignupPage.test.jsx [2m([22m[2m4 tests[22m[2m)[22m[32m 214[2mms[22m[39m
+ [32mÔ£ô[39m src/routes/AppRouter.test.jsx [2m([22m[2m8 tests[22m[2m)[22m[32m 258[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/auth/LoginForm.test.jsx [2m([22m[2m8 tests[22m[2m)[22m[33m 777[2mms[22m[39m
+     [33m[2mÔ£ô[22m[39m should render submit button [33m 438[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/signup/SignupForm.test.jsx [2m([22m[2m8 tests[22m[2m)[22m[33m 937[2mms[22m[39m
+     [33m[2mÔ£ô[22m[39m should render submit button [33m 404[2mms[22m[39m
+node.exe : [90mstderr[2m | src/infrastructure/repositories/HttpReservationRep
+ository.test.ts[2m:43:9[22m[2m[2m > [22m[2mHttpReservationRepository[2m 
+> [22m[2mcreate()[2m > [22m[2mdebe lanzar error si ok es false
+En línea: 1 Carácter: 1
++ & "C:\Program Files\nodejs/node.exe" "C:\Users\anderson.rodriguez\App ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([90mstderr[2m... si ok es false 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[22m[39mError in HttpReservationRepository.create: Error: Conflict
+    at HttpReservationRepository.create (C:/Users/anderson.rodriguez/Documents/
+ProyectosTrainingAI/reservasSofka/Frontend/src/infrastructure/repositories/Http
+ReservationRepository.ts:25:33)
+[90m    at processTicksAndRejections 
+(node:internal/process/task_queues:103:5)[39m
+
+[90mstderr[2m | src/infrastructure/repositories/HttpReservationRepository.tes
+t.ts[2m:53:9[22m[2m[2m > [22m[2mHttpReservationRepository[2m > 
+[22m[2mcreate()[2m > [22m[2mdebe propagar errores de red
+[22m[39mError in HttpReservationRepository.create: Error: Network error
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/repositories/HttpReservationRepository.test.ts:55:4
+9
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+45:11
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:9
+15:26
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/anderson.rodriguez/Documents/Proye
+ctosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m
+/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+653:37
+    at Traces.$ [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTr
+ainingAI/reservasSofka/Frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/t
+races.CCmnQaNT.js:142:27[90m)[39m
+    at trace [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTrain
+ingAI/reservasSofka/Frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/test
+.B8ej_ZHS.js:239:21[90m)[39m
+    at runTest [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTra
+iningAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/i
+ndex.js:1653:12[90m)[39m
+
+[90mstdout[2m | src/infrastructure/repositories/HttpReservationRepository.test.ts[2m:65:9[22m[2m[2m > [22m[2mHttpReservationRepository[2m > [22m[2mgetByUserId()[2m > [22m[2mdebe retornar lista de reservas
+[22m[39mUser reservations response: {
+  ok: [33mtrue[39m,
+  data: [
+    {
+      id: [32m'r1'[39m,
+      userId: [32m'u1'[39m,
+      spaceId: [32m'l1'[39m,
+      spaceName: [32m'Sala A'[39m,
+      startAt: [32m'2026-03-01T10:00:00Z'[39m,
+      endAt: [32m'2026-03-01T11:00:00Z'[39m,
+      equipments: [],
+      status: [32m'active'[39m,
+      createdAt: [32m'2026-02-28T12:00:00Z'[39m
+    }
+  ]
+}
+
+[90mstderr[2m | src/infrastructure/repositories/HttpReservationRepository.tes
+t.ts[2m:76:9[22m[2m[2m > [22m[2mHttpReservationRepository[2m > 
+[22m[2mgetByUserId()[2m > [22m[2mdebe lanzar error si ok es false
+[22m[39mError in HttpReservationRepository.getByUserId: Error: Error
+    at HttpReservationRepository.getByUserId (C:/Users/anderson.rodriguez/Docum
+ents/ProyectosTrainingAI/reservasSofka/Frontend/src/infrastructure/repositories
+/HttpReservationRepository.ts:43:33)
+[90m    at processTicksAndRejections 
+(node:internal/process/task_queues:103:5)[39m
+
+[90mstderr[2m | src/infrastructure/repositories/HttpReservationRepository.tes
+t.ts[2m:109:9[22m[2m[2m > [22m[2mHttpReservationRepository[2m > 
+[22m[2mcancel()[2m > [22m[2mdebe lanzar error si ok es false
+[22m[39mError in HttpReservationRepository.cancel: Error: Cannot cancel
+    at HttpReservationRepository.cancel (C:/Users/anderson.rodriguez/Documents/
+ProyectosTrainingAI/reservasSofka/Frontend/src/infrastructure/repositories/Http
+ReservationRepository.ts:74:33)
+[90m    at processTicksAndRejections 
+(node:internal/process/task_queues:103:5)[39m
+
+[90mstderr[2m | 
+src/infrastructure/storage/LocalStorageService.test.ts[2m:29:9[22m[2m[2m > 
+[22m[2mLocalStorageService[2m > [22m[2mget()[2m > [22m[2mdebe retornar 
+null si localStorage lanza error
+[22m[39mError getting item from localStorage: key Error: Access denied
+    at Object.<anonymous> (C:/Users/anderson.rodriguez/Documents/ProyectosTrain
+ingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageService.tes
+t.ts:30:78)
+    at Object.Mock [as getItem] [90m(file:///C:/Users/anderson.rodriguez/Docum
+ents/ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/s
+py[24m/dist/index.js:285:34[90m)[39m
+    at LocalStorageService.get (C:/Users/anderson.rodriguez/Documents/Proyectos
+TrainingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageServic
+e.ts:10:33)
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/storage/LocalStorageService.test.ts:31:28
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+45:11
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:9
+15:26
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/anderson.rodriguez/Documents/Proye
+ctosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m
+/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+653:37
+
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts [2m([22m[2m29 tests[22m[2m)[22m[32m 84[2mms[22m[39m
+[90mstderr[2m | 
+src/infrastructure/storage/LocalStorageService.test.ts[2m:41:9[22m[2m[2m > 
+[22m[2mLocalStorageService[2m > [22m[2mset()[2m > [22m[2mdebe manejar 
+QuotaExceededError sin lanzar
+[22m[39mError setting item in localStorage: key DOMException {}
+localStorage quota exceeded
+
+[90mstderr[2m | src/infrastructure/repositories/HttpReservationRepository.tes
+t.ts[2m:139:9[22m[2m[2m > [22m[2mHttpReservationRepository[2m > 
+[22m[2mgetAvailability()[2m > [22m[2mdebe retornar slots vac├¡os si ok es 
+false
+[22m[39mCould not fetch reservations for availability check Error
+
+[90mstderr[2m | 
+src/infrastructure/storage/LocalStorageService.test.ts[2m:47:9[22m[2m[2m > 
+[22m[2mLocalStorageService[2m > [22m[2mset()[2m > [22m[2mdebe manejar 
+errores gen├®ricos sin lanzar
+[22m[39mError setting item in localStorage: key Error: Error
+    at Object.<anonymous> (C:/Users/anderson.rodriguez/Documents/ProyectosTrain
+ingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageService.tes
+t.ts:48:78)
+    at Object.Mock [as setItem] [90m(file:///C:/Users/anderson.rodriguez/Docum
+ents/ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/s
+py[24m/dist/index.js:285:34[90m)[39m
+    at LocalStorageService.set (C:/Users/anderson.rodriguez/Documents/Proyectos
+TrainingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageServic
+e.ts:19:26)
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/storage/LocalStorageService.test.ts:49:34
+    at Proxy.assertThrows [90m(file:///C:/Users/anderson.rodriguez/Documents/P
+royectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mchai[24m/index
+.js:2798:5[90m)[39m
+    at Proxy.methodWrapper [90m(file:///C:/Users/anderson.rodriguez/Documents/
+ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mchai[24m/inde
+x.js:1700:25[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1149:12[90m)[39m
+    at Proxy.overwritingMethodWrapper [90m(file:///C:/Users/anderson.rodriguez
+/Documents/ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mcha
+i[24m/index.js:1750:33[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1485:16[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1090:14[90m)[39m
+
+[90mstderr[2m | src/infrastructure/repositories/HttpReservationRepository.tes
+t.ts[2m:168:9[22m[2m[2m > [22m[2mHttpReservationRepository[2m > 
+[22m[2mgetAvailability()[2m > [22m[2mdebe manejar errores de red sin 
+lanzar
+[22m[39mError in HttpReservationRepository.getAvailability: Error: Network 
+error
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/repositories/HttpReservationRepository.test.ts:170:
+48
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+45:11
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:9
+15:26
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/anderson.rodriguez/Documents/Proye
+ctosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m
+/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+653:37
+    at Traces.$ [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTr
+ainingAI/reservasSofka/Frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/t
+races.CCmnQaNT.js:142:27[90m)[39m
+    at trace [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTrain
+ingAI/reservasSofka/Frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/test
+.B8ej_ZHS.js:239:21[90m)[39m
+    at runTest [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTra
+iningAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/i
+ndex.js:1653:12[90m)[39m
+
+[90mstderr[2m | 
+src/infrastructure/storage/LocalStorageService.test.ts[2m:59:9[22m[2m[2m > 
+[22m[2mLocalStorageService[2m > [22m[2mremove()[2m > [22m[2mdebe 
+manejar errores sin lanzar
+[22m[39mError removing item from localStorage: key Error: Error
+    at Object.<anonymous> (C:/Users/anderson.rodriguez/Documents/ProyectosTrain
+ingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageService.tes
+t.ts:60:81)
+    at Object.Mock [as removeItem] [90m(file:///C:/Users/anderson.rodriguez/Do
+cuments/ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vites
+t/spy[24m/dist/index.js:285:34[90m)[39m
+    at LocalStorageService.remove (C:/Users/anderson.rodriguez/Documents/Proyec
+tosTrainingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageSer
+vice.ts:30:26)
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/storage/LocalStorageService.test.ts:61:34
+    at Proxy.assertThrows [90m(file:///C:/Users/anderson.rodriguez/Documents/P
+royectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mchai[24m/index
+.js:2798:5[90m)[39m
+    at Proxy.methodWrapper [90m(file:///C:/Users/anderson.rodriguez/Documents/
+ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mchai[24m/inde
+x.js:1700:25[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1149:12[90m)[39m
+    at Proxy.overwritingMethodWrapper [90m(file:///C:/Users/anderson.rodriguez
+/Documents/ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mcha
+i[24m/index.js:1750:33[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1485:16[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1090:14[90m)[39m
+
+[90mstderr[2m | 
+src/infrastructure/storage/LocalStorageService.test.ts[2m:71:9[22m[2m[2m > 
+[22m[2mLocalStorageService[2m > [22m[2mclear()[2m > [22m[2mdebe 
+manejar errores sin lanzar
+[22m[39mError clearing localStorage Error: Error
+    at Object.<anonymous> (C:/Users/anderson.rodriguez/Documents/ProyectosTrain
+ingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageService.tes
+t.ts:72:76)
+    at Object.Mock [as clear] [90m(file:///C:/Users/anderson.rodriguez/Documen
+ts/ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/spy
+[24m/dist/index.js:285:34[90m)[39m
+    at LocalStorageService.clear (C:/Users/anderson.rodriguez/Documents/Proyect
+osTrainingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageServ
+ice.ts:38:26)
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/storage/LocalStorageService.test.ts:73:34
+    at Proxy.assertThrows [90m(file:///C:/Users/anderson.rodriguez/Documents/P
+royectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mchai[24m/index
+.js:2798:5[90m)[39m
+    at Proxy.methodWrapper [90m(file:///C:/Users/anderson.rodriguez/Documents/
+ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mchai[24m/inde
+x.js:1700:25[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1149:12[90m)[39m
+    at Proxy.overwritingMethodWrapper [90m(file:///C:/Users/anderson.rodriguez
+/Documents/ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mcha
+i[24m/index.js:1750:33[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1485:16[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1090:14[90m)[39m
+
+[90mstderr[2m | 
+src/infrastructure/storage/LocalStorageService.test.ts[2m:87:9[22m[2m[2m > 
+[22m[2mLocalStorageService[2m > [22m[2mhas()[2m > [22m[2mdebe retornar 
+false si localStorage lanza error
+[22m[39mError checking if key exists in localStorage: key Error: Error
+    at Object.<anonymous> (C:/Users/anderson.rodriguez/Documents/ProyectosTrain
+ingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageService.tes
+t.ts:88:78)
+    at Object.Mock [as getItem] [90m(file:///C:/Users/anderson.rodriguez/Docum
+ents/ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/s
+py[24m/dist/index.js:285:34[90m)[39m
+    at LocalStorageService.has (C:/Users/anderson.rodriguez/Documents/Proyectos
+TrainingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageServic
+e.ts:46:33)
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/storage/LocalStorageService.test.ts:89:28
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+45:11
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:9
+15:26
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/anderson.rodriguez/Documents/Proye
+ctosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m
+/dist/index.js:1209:10[90m)[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpReservationRepository.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 83[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/storage/LocalStorageService.test.ts [2m([22m[2m18 tests[22m[2m)[22m[32m 49[2mms[22m[39m
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+653:37
+
+[90mstderr[2m | 
+src/infrastructure/storage/LocalStorageService.test.ts[2m:104:9[22m[2m[2m 
+> [22m[2mLocalStorageService[2m > [22m[2mgetJSON()[2m > [22m[2mdebe 
+retornar null si JSON es inv├ílido
+[22m[39mError parsing JSON from localStorage: bad SyntaxError: Unexpected 
+token 'o', "not-json" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at LocalStorageService.getJSON (C:/Users/anderson.rodriguez/Documents/Proye
+ctosTrainingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageSe
+rvice.ts:56:34)
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/storage/LocalStorageService.test.ts:106:28
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+45:11
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:9
+15:26
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/anderson.rodriguez/Documents/Proye
+ctosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m
+/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+653:37
+    at Traces.$ [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTr
+ainingAI/reservasSofka/Frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/t
+races.CCmnQaNT.js:142:27[90m)[39m
+
+[90mstderr[2m | 
+src/infrastructure/storage/LocalStorageService.test.ts[2m:116:9[22m[2m[2m 
+> [22m[2mLocalStorageService[2m > [22m[2msetJSON()[2m > [22m[2mdebe 
+manejar errores de stringify sin lanzar
+[22m[39mError stringifying JSON to localStorage: key TypeError: Converting 
+circular structure to JSON
+    --> starting at object with constructor 'Object'
+    --- property 'self' closes the circle
+    at JSON.stringify (<anonymous>)
+    at LocalStorageService.setJSON (C:/Users/anderson.rodriguez/Documents/Proye
+ctosTrainingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageSe
+rvice.ts:65:32)
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/storage/LocalStorageService.test.ts:119:34
+    at Proxy.assertThrows [90m(file:///C:/Users/anderson.rodriguez/Documents/P
+royectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mchai[24m/index
+.js:2798:5[90m)[39m
+    at Proxy.methodWrapper [90m(file:///C:/Users/anderson.rodriguez/Documents/
+ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mchai[24m/inde
+x.js:1700:25[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1149:12[90m)[39m
+    at Proxy.overwritingMethodWrapper [90m(file:///C:/Users/anderson.rodriguez
+/Documents/ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mcha
+i[24m/index.js:1750:33[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1485:16[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1090:14[90m)[39m
+    at Proxy.methodWrapper [90m(file:///C:/Users/anderson.rodriguez/Documents/
+ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mchai[24m/inde
+x.js:1700:25[90m)[39m
+
+[90mstderr[2m | src/infrastructure/repositories/HttpLocationRepository.test.t
+s[2m:32:9[22m[2m[2m > [22m[2mHttpLocationRepository[2m > 
+[22m[2mgetAll()[2m > [22m[2mdebe lanzar error si ok es false
+[22m[39mError in HttpLocationRepository.getAll: Error: Server error
+    at HttpLocationRepository.getAll (C:/Users/anderson.rodriguez/Documents/Pro
+yectosTrainingAI/reservasSofka/Frontend/src/infrastructure/repositories/HttpLoc
+ationRepository.ts:20:33)
+[90m    at processTicksAndRejections 
+(node:internal/process/task_queues:103:5)[39m
+
+[90mstderr[2m | src/infrastructure/repositories/HttpLocationRepository.test.t
+s[2m:40:9[22m[2m[2m > [22m[2mHttpLocationRepository[2m > 
+[22m[2mgetAll()[2m > [22m[2mdebe propagar errores de red
+[22m[39mError in HttpLocationRepository.getAll: Error: Network error
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/repositories/HttpLocationRepository.test.ts:42:48
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+45:11
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:9
+15:26
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/anderson.rodriguez/Documents/Proye
+ctosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m
+/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+653:37
+    at Traces.$ [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTr
+ainingAI/reservasSofka/Frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/t
+races.CCmnQaNT.js:142:27[90m)[39m
+    at trace [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTrain
+ingAI/reservasSofka/Frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/test
+.B8ej_ZHS.js:239:21[90m)[39m
+    at runTest [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTra
+iningAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/i
+ndex.js:1653:12[90m)[39m
+
+[90mstderr[2m | src/infrastructure/repositories/HttpLocationRepository.test.t
+s[2m:60:9[22m[2m[2m > [22m[2mHttpLocationRepository[2m > 
+[22m[2mgetById()[2m > [22m[2mdebe lanzar error si ok es false
+[22m[39mError in HttpLocationRepository.getById: Error: Not found
+    at HttpLocationRepository.getById (C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/src/infrastructure/repositories/HttpLo
+cationRepository.ts:33:33)
+[90m    at processTicksAndRejections 
+(node:internal/process/task_queues:103:5)[39m
+
+[90mstderr[2m | src/infrastructure/repositories/HttpLocationRepository.test.t
+s[2m:92:9[22m[2m[2m > [22m[2mHttpLocationRepository[2m > 
+[22m[2massignInventory()[2m > [22m[2mdebe lanzar error si ok es false
+[22m[39mError in HttpLocationRepository.assignInventory: Error: Not found
+    at HttpLocationRepository.assignInventory (C:/Users/anderson.rodriguez/Docu
+ments/ProyectosTrainingAI/reservasSofka/Frontend/src/infrastructure/repositorie
+s/HttpLocationRepository.ts:63:33)
+[90m    at processTicksAndRejections 
+(node:internal/process/task_queues:103:5)[39m
+
+ [32mÔ£ô[39m src/application/use-cases/dashboard/RemoveInventoryUseCase.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpLocationRepository.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 46[2mms[22m[39m
+[90mstderr[2m | src/infrastructure/repositories/HttpDeliveryRepository.test.t
+s[2m:50:9[22m[2m[2m > [22m[2mHttpDeliveryRepository[2m > 
+[22m[2msubmit()[2m > [22m[2mdebe lanzar error si ok es false
+[22m[39mError in HttpDeliveryRepository.submit: Error: Error
+    at HttpDeliveryRepository.submit (C:/Users/anderson.rodriguez/Documents/Pro
+yectosTrainingAI/reservasSofka/Frontend/src/infrastructure/repositories/HttpDel
+iveryRepository.ts:25:23)
+[90m    at processTicksAndRejections 
+(node:internal/process/task_queues:103:5)[39m
+
+[90mstderr[2m | src/infrastructure/repositories/HttpInventoryRepository.test.
+ts[2m:31:9[22m[2m[2m > [22m[2mHttpInventoryRepository[2m > 
+[22m[2mgetAll()[2m > [22m[2mdebe lanzar error si ok es false
+[22m[39mError in HttpInventoryRepository.getAll: Error: Fetch error
+    at HttpInventoryRepository.getAll (C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/src/infrastructure/repositories/HttpIn
+ventoryRepository.ts:20:33)
+[90m    at processTicksAndRejections 
+(node:internal/process/task_queues:103:5)[39m
+
+[90mstderr[2m | src/infrastructure/repositories/HttpDeliveryRepository.test.t
+s[2m:60:9[22m[2m[2m > [22m[2mHttpDeliveryRepository[2m > 
+[22m[2msubmit()[2m > [22m[2mdebe propagar errores de red
+[22m[39mError in HttpDeliveryRepository.submit: Error: Network error
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/repositories/HttpDeliveryRepository.test.ts:62:49
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+45:11
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:9
+15:26
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/anderson.rodriguez/Documents/Proye
+ctosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m
+/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+653:37
+    at Traces.$ [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTr
+ainingAI/reservasSofka/Frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/t
+races.CCmnQaNT.js:142:27[90m)[39m
+    at trace [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTrain
+ingAI/reservasSofka/Frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/test
+.B8ej_ZHS.js:239:21[90m)[39m
+    at runTest [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTra
+iningAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/i
+ndex.js:1653:12[90m)[39m
+
+[90mstderr[2m | src/infrastructure/repositories/HttpInventoryRepository.test.
+ts[2m:39:9[22m[2m[2m > [22m[2mHttpInventoryRepository[2m > 
+[22m[2mgetAll()[2m > [22m[2mdebe propagar errores de red
+[22m[39mError in HttpInventoryRepository.getAll: Error: Network error
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/repositories/HttpInventoryRepository.test.ts:41:48
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+45:11
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:9
+15:26
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/anderson.rodriguez/Documents/Proye
+ctosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m
+/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+653:37
+    at Traces.$ [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTr
+ainingAI/reservasSofka/Frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/t
+races.CCmnQaNT.js:142:27[90m)[39m
+    at trace [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTrain
+ingAI/reservasSofka/Frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/test
+.B8ej_ZHS.js:239:21[90m)[39m
+    at runTest [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTra
+iningAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/i
+ndex.js:1653:12[90m)[39m
+
+[90mstderr[2m | src/infrastructure/repositories/HttpDeliveryRepository.test.t
+s[2m:70:9[22m[2m[2m > [22m[2mHttpDeliveryRepository[2m > 
+[22m[2msubmit()[2m > [22m[2mdebe lanzar error si mapping retorna null
+[22m[39mError in HttpDeliveryRepository.submit: Error: Error mapping 
+delivery data
+    at HttpDeliveryRepository.submit (C:/Users/anderson.rodriguez/Documents/Pro
+yectosTrainingAI/reservasSofka/Frontend/src/infrastructure/repositories/HttpDel
+iveryRepository.ts:30:34)
+[90m    at processTicksAndRejections 
+(node:internal/process/task_queues:103:5)[39m
+
+[90mstderr[2m | src/infrastructure/repositories/HttpInventoryRepository.test.
+ts[2m:59:9[22m[2m[2m > [22m[2mHttpInventoryRepository[2m > 
+[22m[2mgetById()[2m > [22m[2mdebe lanzar error si mapping falla
+[22m[39mError in HttpInventoryRepository.getById: Error: Error mapping 
+inventory data
+    at HttpInventoryRepository.getById (C:/Users/anderson.rodriguez/Documents/P
+royectosTrainingAI/reservasSofka/Frontend/src/infrastructure/repositories/HttpI
+nventoryRepository.ts:35:30)
+[90m    at processTicksAndRejections 
+(node:internal/process/task_queues:103:5)[39m
+
+[90mstderr[2m | src/infrastructure/repositories/HttpInventoryRepository.test.
+ts[2m:78:9[22m[2m[2m > [22m[2mHttpInventoryRepository[2m > 
+[22m[2mgetByCityId()[2m > [22m[2mdebe lanzar error si ok es false
+[22m[39mError in HttpInventoryRepository.getByCityId: Error: Error
+    at HttpInventoryRepository.getByCityId (C:/Users/anderson.rodriguez/Documen
+ts/ProyectosTrainingAI/reservasSofka/Frontend/src/infrastructure/repositories/H
+ttpInventoryRepository.ts:50:33)
+[90m    at processTicksAndRejections 
+(node:internal/process/task_queues:103:5)[39m
+
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpDeliveryRepository.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpAuthRepository.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 35[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpInventoryRepository.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 32[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/common/ProtectedRoute.test.jsx [2m([22m[2m3 tests[22m[2m)[22m[32m 135[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/GetSpaceAvailabilityUseCase.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/auth/RegisterUseCase.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/InventoryMapper.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/auth/LoginUseCase.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/delivery/SubmitDeliveryUseCase.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/UserMapper.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/CreateReservationUseCase.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32mÔ£ô[39m src/test/integration/reservation-flow.integration.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/LocationMapper.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/reservations/GetUserReservationsUseCase.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/User.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Location.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/reservations/CancelReservationUseCase.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/InventoryItem.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts [2m([22m[2m29 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/DeliveryMapper.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32mÔ£ô[39m src/test/integration/auth-flow.integration.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/AssignInventoryUseCase.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/GetLocationsUseCase.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32mÔ£ô[39m src/test/integration/dashboard-flow.integration.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/errors/AuthenticationError.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Delivery.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/auth/LogoutUseCase.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/GetInventoryUseCase.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/auth/GetCurrentUserUseCase.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m46 passed[39m[22m[90m (46)[39m
+[2m      Tests [22m [1m[32m391 passed[39m[22m[90m (391)[39m
+[2m   Start at [22m 09:48:38
+[2m   Duration [22m 23.76s[2m (transform 5.68s, setup 24.21s, import 14.55s, tests 4.04s, environment 159.90s)[22m
+
+JSON report written to C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/Frontend/reports/test-results.json
+[1m[7m[35m HTML [39m[27m[22m [35mReport is generated[39m
+[2m       You can run [22m[1mnpx vite preview --outDir html[22m[2m to see the test results.[22m
+JUNIT report written to C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/Frontend/reports/junit-report.xml
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   40.72 |    42.14 |   47.15 |   42.15 |                   
+ src               |       0 |      100 |       0 |       0 |                   
+  App.jsx          |       0 |      100 |       0 |       0 | 5                 
+ ...use-cases/auth |     100 |      100 |     100 |     100 |                   
+  ...serUseCase.ts |     100 |      100 |     100 |     100 |                   
+  LoginUseCase.ts  |     100 |      100 |     100 |     100 |                   
+  LogoutUseCase.ts |     100 |      100 |     100 |     100 |                   
+  ...terUseCase.ts |     100 |      100 |     100 |     100 |                   
+ ...ases/dashboard |     100 |      100 |     100 |     100 |                   
+  ...oryUseCase.ts |     100 |      100 |     100 |     100 |                   
+  ...ionUseCase.ts |     100 |      100 |     100 |     100 |                   
+  ...oryUseCase.ts |     100 |      100 |     100 |     100 |                   
+  ...onsUseCase.ts |     100 |      100 |     100 |     100 |                   
+  ...ityUseCase.ts |     100 |      100 |     100 |     100 |                   
+  ...oryUseCase.ts |     100 |      100 |     100 |     100 |                   
+ ...cases/delivery |     100 |      100 |     100 |     100 |                   
+  ...eryUseCase.ts |     100 |      100 |     100 |     100 |                   
+ ...s/reservations |     100 |      100 |     100 |     100 |                   
+  ...ionUseCase.ts |     100 |      100 |     100 |     100 |                   
+  ...onsUseCase.ts |     100 |      100 |     100 |     100 |                   
+ ...re/adapters/di |       0 |        0 |       0 |       0 |                   
+  container.ts     |       0 |        0 |       0 |       0 | 60-136            
+ ...adapters/hooks |   12.36 |     5.75 |   17.39 |   14.48 |                   
+  ...kingEvents.ts |       0 |        0 |       0 |       0 | 5-31              
+  useDashboard.ts  |       0 |        0 |       0 |       0 | 34-93             
+  useDelivery.ts   |     100 |       50 |     100 |     100 | 39                
+  ...pendencies.ts |       0 |        0 |       0 |       0 |                   
+  useLogin.ts      |       0 |        0 |       0 |       0 | 15-39             
+  useLogout.ts     |       0 |      100 |       0 |       0 | 8-22              
+  ...eservation.ts |       0 |        0 |       0 |       0 | 55-203            
+  ...ationAlert.ts |     100 |      100 |     100 |     100 |                   
+  useSignup.ts     |       0 |        0 |       0 |       0 | 21-55             
+  ...servations.ts |       0 |        0 |       0 |       0 | 18-74             
+ ...ters/providers |       0 |        0 |       0 |       0 |                   
+  ...yProvider.tsx |       0 |        0 |       0 |       0 | 20-125            
+  ThemeContext.tsx |       0 |        0 |       0 |       0 | 8-36              
+ ...omain/entities |     100 |    95.12 |     100 |     100 |                   
+  Delivery.ts      |     100 |      100 |     100 |     100 |                   
+  InventoryItem.ts |     100 |      100 |     100 |     100 |                   
+  Location.ts      |     100 |      100 |     100 |     100 |                   
+  Reservation.ts   |     100 |    91.66 |     100 |     100 | 40-45             
+  User.ts          |     100 |      100 |     100 |     100 |                   
+ .../domain/errors |     100 |      100 |     100 |     100 |                   
+  ...ationError.ts |     100 |      100 |     100 |     100 |                   
+ ...s/repositories |       0 |        0 |       0 |       0 |                   
+  ...Repository.ts |       0 |        0 |       0 |       0 |                   
+  ...Repository.ts |       0 |        0 |       0 |       0 |                   
+  ...Repository.ts |       0 |        0 |       0 |       0 |                   
+  ...Repository.ts |       0 |        0 |       0 |       0 |                   
+  ...Repository.ts |       0 |        0 |       0 |       0 |                   
+ ...ports/services |       0 |        0 |       0 |       0 |                   
+  IHttpClient.ts   |       0 |        0 |       0 |       0 |                   
+  ...ageService.ts |       0 |        0 |       0 |       0 |                   
+  ...ketService.ts |       0 |        0 |       0 |       0 |                   
+ ...e/http/clients |       0 |        0 |       0 |       0 |                   
+  ...HttpClient.ts |       0 |        0 |       0 |       0 | 18-98             
+  ...entFactory.ts |       0 |        0 |       0 |       0 | 14-65             
+ ...ucture/mappers |     100 |    91.54 |     100 |     100 |                   
+  ...veryMapper.ts |     100 |    71.42 |     100 |     100 | 38-43             
+  ...toryMapper.ts |     100 |    96.15 |     100 |     100 | 24                
+  ...tionMapper.ts |     100 |    96.42 |     100 |     100 | 25                
+  ...tionMapper.ts |     100 |    92.45 |     100 |     100 | 53,57-58,94       
+  UserMapper.ts    |     100 |      100 |     100 |     100 |                   
+ ...e/repositories |      90 |    66.18 |   96.42 |   95.26 |                   
+  ...Repository.ts |   91.52 |       75 |     100 |   97.95 | 91                
+  ...Repository.ts |     100 |       90 |     100 |     100 | 25                
+  ...Repository.ts |   88.88 |    54.16 |     100 |   93.54 | 66-67             
+  ...Repository.ts |   84.09 |    53.84 |     100 |   89.47 | 51-52,79-80       
+  ...Repository.ts |    90.9 |    66.66 |    87.5 |   96.55 | 64-65             
+ ...ucture/storage |     100 |      100 |     100 |     100 |                   
+  ...ageService.ts |     100 |      100 |     100 |     100 |                   
+ ...ture/websocket |       0 |        0 |       0 |       0 |                   
+  ...ketService.ts |       0 |        0 |       0 |       0 | 15-133            
+ src/routes        |       0 |      100 |       0 |       0 |                   
+  AppRouter.jsx    |       0 |      100 |       0 |       0 | 9-10              
+ ...omponents/auth |     100 |      100 |     100 |     100 |                   
+  LoginForm.jsx    |     100 |      100 |     100 |     100 |                   
+ ...ponents/common |   32.69 |    13.63 |   31.57 |      30 |                   
+  Header.jsx       |       0 |        0 |       0 |       0 | 9-122             
+  Pagination.jsx   |     100 |      100 |     100 |     100 |                   
+  ...ctedRoute.jsx |     100 |      100 |     100 |     100 |                   
+ ...ents/dashboard |   22.22 |        0 |      25 |   22.22 |                   
+  ItemCard.jsx     |       0 |        0 |       0 |       0 | 5-34              
+  SearchBar.jsx    |     100 |      100 |     100 |     100 |                   
+ ...ashboard/modal |       0 |        0 |       0 |       0 |                   
+  Calendar.jsx     |       0 |        0 |       0 |       0 | 3-46              
+  ...nSelector.jsx |       0 |        0 |       0 |       0 | 6-144             
+  ...tSelector.jsx |       0 |        0 |       0 |       0 | 4-95              
+  ...mentModal.jsx |       0 |        0 |       0 |       0 | 9-161             
+  ...tionModal.jsx |       0 |        0 |       0 |       0 | 7-37              
+ ...s/reservations |   21.95 |     23.8 |   45.45 |   28.12 |                   
+  ...ationCard.jsx |       0 |        0 |       0 |       0 | 8-75              
+  ...FilterBar.jsx |   66.66 |    83.33 |      60 |   66.66 | 18-24             
+  ...ationList.jsx |     100 |      100 |     100 |     100 |                   
+ ...ponents/signup |     100 |      100 |     100 |     100 |                   
+  SignupForm.jsx   |     100 |      100 |     100 |     100 |                   
+ src/ui/layouts    |       0 |      100 |       0 |       0 |                   
+  MainLayout.jsx   |       0 |      100 |       0 |       0 | 6-7               
+ src/ui/pages/auth |     100 |      100 |     100 |     100 |                   
+  LoginPage.jsx    |     100 |      100 |     100 |     100 |                   
+ ...ages/dashboard |       0 |        0 |       0 |       0 |                   
+  ...boardPage.jsx |       0 |        0 |       0 |       0 | 8-62              
+ ...s/reservations |       0 |        0 |       0 |       0 |                   
+  ...tionsPage.jsx |       0 |        0 |       0 |       0 | 12-46             
+ ...i/pages/signup |     100 |      100 |     100 |     100 |                   
+  SignupPage.jsx   |     100 |      100 |     100 |     100 |                   
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 40.72% ( 562/1380 )
+Branches     : 42.14% ( 365/866 )
+Functions    : 47.15% ( 166/352 )
+Lines        : 42.15% ( 505/1198 )
+================================================================================

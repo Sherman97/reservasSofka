@@ -137,7 +137,7 @@ export const useReservation = (location: LocationInput | null | undefined): UseR
     };
 
     const handleDateSelect = (day: number): void => {
-        if (availability[day]?.available) { setSelectedDate(day); setError(null); fetchBusySlots(day); }
+        if (availability[day]?.available) { setSelectedDate(day); setError(null); setSuccessMessage(null); fetchBusySlots(day); }
     };
 
     const handleEquipmentToggle = (equipmentId: string, equipmentName: string): void => {
@@ -148,8 +148,8 @@ export const useReservation = (location: LocationInput | null | undefined): UseR
         });
     };
 
-    const handleStartTimeChange = (time: string): void => { setStartTime(time); setError(null); };
-    const handleEndTimeChange = (time: string): void => { setEndTime(time); setError(null); };
+    const handleStartTimeChange = (time: string): void => { setStartTime(time); setError(null); setSuccessMessage(null); };
+    const handleEndTimeChange = (time: string): void => { setEndTime(time); setError(null); setSuccessMessage(null); };
 
     const goToPreviousMonth = (): void => {
         setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
@@ -161,9 +161,10 @@ export const useReservation = (location: LocationInput | null | undefined): UseR
     };
 
     const hasTimeConflict = useMemo((): boolean => {
+        if (successMessage) return false;
         if (!busySlots.length || !startTime || !endTime) return false;
         return busySlots.some(slot => startTime < slot.end && endTime > slot.start);
-    }, [busySlots, startTime, endTime]);
+    }, [busySlots, startTime, endTime, successMessage]);
 
     const handleConfirm = async (onSuccess?: (reservation: Reservation) => void): Promise<void> => {
         if (!selectedDate) { setError('Por favor selecciona una fecha'); return; }
