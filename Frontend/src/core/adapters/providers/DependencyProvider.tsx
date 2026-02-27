@@ -12,6 +12,7 @@ import type { CancelReservationUseCase } from '../../../application/use-cases/re
 import type { GetSpaceAvailabilityUseCase } from '../../../application/use-cases/dashboard/GetSpaceAvailabilityUseCase';
 import type { AssignInventoryUseCase } from '../../../application/use-cases/dashboard/AssignInventoryUseCase';
 import type { RemoveInventoryUseCase } from '../../../application/use-cases/dashboard/RemoveInventoryUseCase';
+import type { SubmitDeliveryUseCase } from '../../../application/use-cases/delivery/SubmitDeliveryUseCase';
 import type { IWebSocketService } from '../../../core/ports/services/IWebSocketService';
 
 type ContainerType = typeof container;
@@ -92,6 +93,17 @@ export const useDashboardDependencies = (): DashboardDependencies => {
         getInventoryUseCase: c.get('getInventoryUseCase'),
         assignInventoryUseCase: c.get('assignInventoryUseCase'),
         removeInventoryUseCase: c.get('removeInventoryUseCase'),
+    };
+};
+
+export interface DeliveryDependencies {
+    submitDeliveryUseCase: SubmitDeliveryUseCase;
+}
+
+export const useDeliveryDependencies = (): DeliveryDependencies => {
+    const c = useContainer();
+    return {
+        submitDeliveryUseCase: c.get('submitDeliveryUseCase'),
     };
 };
 
