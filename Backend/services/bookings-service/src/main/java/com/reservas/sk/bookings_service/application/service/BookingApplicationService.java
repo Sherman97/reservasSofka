@@ -5,9 +5,12 @@ import com.reservas.sk.bookings_service.application.port.out.BookingPersistenceP
 import com.reservas.sk.bookings_service.application.port.out.ReservationEventPublisherPort;
 import com.reservas.sk.bookings_service.application.usecase.CheckSpaceAvailabilityQuery;
 import com.reservas.sk.bookings_service.application.usecase.CreateReservationCommand;
+import com.reservas.sk.bookings_service.application.usecase.HandoverReservationCommand;
 import com.reservas.sk.bookings_service.application.usecase.ListReservationsQuery;
 import com.reservas.sk.bookings_service.application.usecase.ReservationCancelledEvent;
 import com.reservas.sk.bookings_service.application.usecase.ReservationCreatedEvent;
+import com.reservas.sk.bookings_service.application.usecase.ReservationDeliveredEvent;
+import com.reservas.sk.bookings_service.application.usecase.ReservationReturnedEvent;
 import com.reservas.sk.bookings_service.domain.model.Reservation;
 import com.reservas.sk.bookings_service.domain.model.ReservationEquipment;
 import com.reservas.sk.bookings_service.domain.model.SpaceAvailability;
@@ -195,6 +198,80 @@ public class BookingApplicationService implements BookingUseCase {
         return cancelled;
     }
 
+    @Override
+    @Transactional
+    public Reservation deliverReservation(HandoverReservationCommand command) {
+        long reservationId = requirePositive(command.reservationId(), "id es invalido");
+        long staffId = requirePositive(command.staffId(), "staffId es invalido");
+        String novelty = normalizeNullable(command.novelty());
+
+        Reservation existing = getReservationById(reservationId);
+        assertHandoverAllowed(existing, List.of("confirmed", "in_progress"), "La reserva no puede marcarse como entregada");
+
+        Instant now = Instant.now();
+        persistencePort.updateReservationStatus(existing.getId(), "in_progress");
+        persistencePort.markReservationEquipmentsDelivered(existing.getId(), staffId, now, novelty);
+        persistencePort.insertReservationHandoverLog(
+                existing.getId(),
+                existing.getSpaceId(),
+                existing.getUserId(),
+                staffId,
+                "DELIVERED",
+                novelty,
+                now
+        );
+
+        Reservation delivered = getReservationById(existing.getId());
+        safePublishReservationDelivered(new ReservationDeliveredEvent(
+                delivered.getId(),
+                delivered.getUserId(),
+                delivered.getSpaceId(),
+                staffId,
+                delivered.getStatus(),
+                novelty,
+                delivered.getEndDatetime().toString(),
+                now
+        ));
+        return delivered;
+    }
+
+    @Override
+    @Transactional
+    public Reservation returnReservation(HandoverReservationCommand command) {
+        long reservationId = requirePositive(command.reservationId(), "id es invalido");
+        long staffId = requirePositive(command.staffId(), "staffId es invalido");
+        String novelty = normalizeNullable(command.novelty());
+
+        Reservation existing = getReservationById(reservationId);
+        assertHandoverAllowed(existing, List.of("in_progress", "confirmed"), "La reserva no puede marcarse como devuelta");
+
+        Instant now = Instant.now();
+        persistencePort.updateReservationStatus(existing.getId(), "completed");
+        persistencePort.markReservationEquipmentsReturned(existing.getId(), staffId, now, novelty);
+        persistencePort.insertReservationHandoverLog(
+                existing.getId(),
+                existing.getSpaceId(),
+                existing.getUserId(),
+                staffId,
+                "RETURNED",
+                novelty,
+                now
+        );
+
+        Reservation returned = getReservationById(existing.getId());
+        safePublishReservationReturned(new ReservationReturnedEvent(
+                returned.getId(),
+                returned.getUserId(),
+                returned.getSpaceId(),
+                staffId,
+                returned.getStatus(),
+                novelty,
+                returned.getEndDatetime().toString(),
+                now
+        ));
+        return returned;
+    }
+
     private void safePublishReservationCreated(ReservationCreatedEvent event) {
         try {
             eventPublisherPort.publishReservationCreated(event);
@@ -208,6 +285,22 @@ public class BookingApplicationService implements BookingUseCase {
             eventPublisherPort.publishReservationCancelled(event);
         } catch (Exception ex) {
             log.warn("No se pudo publicar evento de reserva cancelada. reservationId={}", event.reservationId(), ex);
+        }
+    }
+
+    private void safePublishReservationDelivered(ReservationDeliveredEvent event) {
+        try {
+            eventPublisherPort.publishReservationDelivered(event);
+        } catch (Exception ex) {
+            log.warn("No se pudo publicar evento de reserva entregada. reservationId={}", event.reservationId(), ex);
+        }
+    }
+
+    private void safePublishReservationReturned(ReservationReturnedEvent event) {
+        try {
+            eventPublisherPort.publishReservationReturned(event);
+        } catch (Exception ex) {
+            log.warn("No se pudo publicar evento de reserva devuelta. reservationId={}", event.reservationId(), ex);
         }
     }
 
@@ -277,6 +370,15 @@ public class BookingApplicationService implements BookingUseCase {
                     "status invalido. Use: pending, confirmed, in_progress, completed, cancelled");
         }
         return normalized;
+    }
+
+    private void assertHandoverAllowed(Reservation reservation, List<String> validStatuses, String message) {
+        String normalizedStatus = reservation.getStatus() == null
+                ? ""
+                : reservation.getStatus().trim().toLowerCase(Locale.ROOT);
+        if (!validStatuses.contains(normalizedStatus)) {
+            throw new ApiException(HttpStatus.CONFLICT, message, "INVALID_RESERVATION_STATUS");
+        }
     }
 }
 

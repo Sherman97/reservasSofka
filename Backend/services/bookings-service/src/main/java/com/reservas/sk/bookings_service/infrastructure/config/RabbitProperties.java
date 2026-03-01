@@ -8,6 +8,8 @@ public class RabbitProperties {
     private String exchange = "reservas.events";
     private String reservationCreatedRoutingKey = "bookings.reservation.created";
     private String reservationCancelledRoutingKey = "bookings.reservation.cancelled";
+    private String reservationDeliveredRoutingKey = "bookings.reservation.delivered";
+    private String reservationReturnedRoutingKey = "bookings.reservation.returned";
 
     public boolean isEnabled() {
         return enabled;
@@ -39,6 +41,22 @@ public class RabbitProperties {
 
     public void setReservationCancelledRoutingKey(String reservationCancelledRoutingKey) {
         this.reservationCancelledRoutingKey = reservationCancelledRoutingKey;
+    }
+
+    public String getReservationDeliveredRoutingKey() {
+        return reservationDeliveredRoutingKey;
+    }
+
+    public void setReservationDeliveredRoutingKey(String reservationDeliveredRoutingKey) {
+        this.reservationDeliveredRoutingKey = reservationDeliveredRoutingKey;
+    }
+
+    public String getReservationReturnedRoutingKey() {
+        return reservationReturnedRoutingKey;
+    }
+
+    public void setReservationReturnedRoutingKey(String reservationReturnedRoutingKey) {
+        this.reservationReturnedRoutingKey = reservationReturnedRoutingKey;
     }
 }
 

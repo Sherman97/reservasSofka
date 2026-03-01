@@ -5,12 +5,13 @@ import com.reservas.sk.bookings_service.application.port.in.BookingUseCase;
 import com.reservas.sk.bookings_service.application.usecase.AuthenticatedUser;
 import com.reservas.sk.bookings_service.application.usecase.CheckSpaceAvailabilityQuery;
 import com.reservas.sk.bookings_service.application.usecase.CreateReservationCommand;
+import com.reservas.sk.bookings_service.application.usecase.HandoverReservationCommand;
 import com.reservas.sk.bookings_service.application.usecase.ListReservationsQuery;
 import com.reservas.sk.bookings_service.exception.ApiException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,8 +38,7 @@ public class BookingController {
     @PostMapping("/reservations")
     // Human Check 🛡️: se usa @Valid para activar validaciones de entrada y responder 400 de forma consistente.
     public ResponseEntity<ApiResponse<ReservationResponse>> createReservation(@Valid @RequestBody CreateReservationRequest request,
-                                                                              Authentication authentication) {
-        AuthenticatedUser user = requireAuthenticatedUser(authentication);
+                                                                              @AuthenticationPrincipal AuthenticatedUser user) {
         var reservation = bookingUseCase.createReservation(new CreateReservationCommand(
                 user.userId(),
                 request.spaceId(),
@@ -73,17 +73,23 @@ public class BookingController {
         return ApiResponse.success(mapper.toResponse(bookingUseCase.cancelReservation(id, reason)));
     }
 
-    private AuthenticatedUser requireAuthenticatedUser(Authentication authentication) {
-        if (authentication == null || !(authentication.getPrincipal() instanceof AuthenticatedUser user)) {
-            throw new ApiException(HttpStatus.UNAUTHORIZED, "Unauthorized");
-        }
-        return user;
+    @PatchMapping("/reservations/{id}/deliver")
+    public ApiResponse<ReservationResponse> deliver(@PathVariable Long id,
+                                                    @RequestBody(required = false) HandoverReservationRequest request,
+                                                    @AuthenticationPrincipal AuthenticatedUser user) {
+        String novelty = request == null ? null : request.novelty();
+        return ApiResponse.success(mapper.toResponse(bookingUseCase.deliverReservation(
+                new HandoverReservationCommand(id, user.userId(), novelty)
+        )));
+    }
+
+    @PatchMapping("/reservations/{id}/return")
+    public ApiResponse<ReservationResponse> markReturned(@PathVariable Long id,
+                                                         @RequestBody(required = false) HandoverReservationRequest request,
+                                                         @AuthenticationPrincipal AuthenticatedUser user) {
+        String novelty = request == null ? null : request.novelty();
+        return ApiResponse.success(mapper.toResponse(bookingUseCase.returnReservation(
+                new HandoverReservationCommand(id, user.userId(), novelty)
+        )));
     }
 }
-
-
-
-
-
-
-
