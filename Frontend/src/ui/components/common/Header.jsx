@@ -11,7 +11,9 @@ export const Header = () => {
     const { logoutUseCase } = useAuthDependencies();
     const navigate = useNavigate();
     const [showUserMenu, setShowUserMenu] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const menuRef = useRef(null);
+    const mobileMenuRef = useRef(null);
 
     // Get user from localStorage - should eventually be handled by auth context/hook
     const user = JSON.parse(localStorage.getItem('user')) || { name: 'Usuario' };
@@ -36,16 +38,19 @@ export const Header = () => {
             if (menuRef.current && !menuRef.current.contains(event.target)) {
                 setShowUserMenu(false);
             }
+            if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
+                setMobileMenuOpen(false);
+            }
         };
 
-        if (showUserMenu) {
+        if (showUserMenu || mobileMenuOpen) {
             document.addEventListener('mousedown', handleClickOutside);
         }
 
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [showUserMenu]);
+    }, [showUserMenu, mobileMenuOpen]);
 
     return (
         <header className="dashboard-header">
@@ -64,7 +69,6 @@ export const Header = () => {
                         <NavLink to="/my-reservations" className={({ isActive }) => isActive ? "active" : ""}>
                             Mis Reservas
                         </NavLink>
-
                     </nav>
                 </div>
                 <div className="header-right">
@@ -87,6 +91,39 @@ export const Header = () => {
                                     <span className="dropdown-icon">🚪</span>
                                     Cerrar Sesión
                                 </button>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Hamburger button - visible only on mobile */}
+                    <div className="hamburger-wrapper" ref={mobileMenuRef}>
+                        <button
+                            className={`hamburger-btn ${mobileMenuOpen ? 'open' : ''}`}
+                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                            aria-label="Menú de navegación"
+                        >
+                            <span className="hamburger-line"></span>
+                            <span className="hamburger-line"></span>
+                            <span className="hamburger-line"></span>
+                        </button>
+                        {mobileMenuOpen && (
+                            <div className="mobile-dropdown">
+                                <NavLink
+                                    to="/dashboard"
+                                    className={({ isActive }) => `mobile-dropdown-item ${isActive ? 'active' : ''}`}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    <span className="dropdown-icon">🔍</span>
+                                    Explorar
+                                </NavLink>
+                                <NavLink
+                                    to="/my-reservations"
+                                    className={({ isActive }) => `mobile-dropdown-item ${isActive ? 'active' : ''}`}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    <span className="dropdown-icon">📋</span>
+                                    Mis Reservas
+                                </NavLink>
                             </div>
                         )}
                     </div>

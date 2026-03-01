@@ -7,10 +7,3 @@ class InventoryServiceApplicationTests {
     void applicationTestPlaceholder() {
     }
 }
-
-
-
-
-
-
-

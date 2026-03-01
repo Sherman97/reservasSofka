@@ -70,6 +70,19 @@ export class Reservation {
         return `${start} - ${end}`;
     }
 
+    getRemainingMinutes(): number {
+        const now = new Date();
+        if (this.endAt <= now) return 0;
+        const diffMs = this.endAt.getTime() - now.getTime();
+        return Math.ceil(diffMs / (1000 * 60));
+    }
+
+    isAboutToExpire(thresholdMinutes: number = 10): boolean {
+        if (this.isCancelled() || this.isPast()) return false;
+        const remaining = this.getRemainingMinutes();
+        return remaining > 0 && remaining <= thresholdMinutes;
+    }
+
     overlaps(startAt: string | Date, endAt: string | Date): boolean {
         const start = new Date(startAt);
         const end = new Date(endAt);
