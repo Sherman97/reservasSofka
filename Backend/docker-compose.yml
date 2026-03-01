@@ -1,11 +1,12 @@
 services:
+  # ── Infraestructura ──────────────────────────────────────────
   mariadb:
     image: mariadb:11
     environment:
       MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
-      MARIADB_DATABASE: ${DB_NAME:-reservas_db}
-      MARIADB_USER: ${DB_USER:-app}
-      MARIADB_PASSWORD: ${DB_PASSWORD:-app123}
+      MARIADB_DATABASE: ${DB_NAME:-app_db}
+      MARIADB_USER: ${DB_USER:-app_user}
+      MARIADB_PASSWORD: ${DB_PASSWORD:-123456}
     ports:
       - "3307:3306"
     volumes:
@@ -34,9 +35,9 @@ services:
   database:
     image: liquibase/liquibase:4.30
     command:
-      - --url=jdbc:mariadb://mariadb:3306/${DB_NAME:-reservas_db}
-      - --username=${DB_USER:-app}
-      - --password=${DB_PASSWORD:-app123}
+      - --url=jdbc:mariadb://mariadb:3306/${DB_NAME:-app_db}
+      - --username=${DB_USER:-app_user}
+      - --password=${DB_PASSWORD:-123456}
       - --search-path=/liquibase/changelog
       - --changelog-file=db.changelog-master.yaml
       - update
@@ -45,10 +46,10 @@ services:
     networks:
       - reservas_net
     depends_on:
-      mariadb:
-        condition: service_healthy
-    restart: "no"
+      - mariadb
+    restart: on-failure
 
+  # ── Microservicios ───────────────────────────────────────────
   auth-service:
     build:
       context: ./services/auth-service
@@ -57,10 +58,10 @@ services:
       PORT: 3001
       DB_HOST: mariadb
       DB_PORT: 3306
-      DB_USER: ${DB_USER:-app}
-      DB_PASSWORD: ${DB_PASSWORD:-app123}
-      DB_NAME: ${DB_NAME:-reservas_db}
-      JWT_SECRET: ${JWT_SECRET:-5c8b8f7a1b6e2c5c2d570e5a2777bef3ceb6ab9ddb6e242bcc04120dee8cd698a73617717a36aedfebd4330e27482eaa7361205472e27c1590a39d2a823fe131}
+      DB_USER: ${DB_USER:-app_user}
+      DB_PASSWORD: ${DB_PASSWORD:-123456}
+      DB_NAME: ${DB_NAME:-app_db}
+      JWT_SECRET: ${JWT_SECRET:-supersecret}
       RABBITMQ_ENABLED: ${RABBITMQ_ENABLED:-true}
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
@@ -71,10 +72,8 @@ services:
     networks:
       - reservas_net
     depends_on:
-      rabbitmq:
-        condition: service_started
-      database:
-        condition: service_completed_successfully
+      - mariadb
+      - rabbitmq
     restart: unless-stopped
 
   bookings-service:
@@ -85,10 +84,10 @@ services:
       PORT: 3003
       DB_HOST: mariadb
       DB_PORT: 3306
-      DB_USER: ${DB_USER:-app}
-      DB_PASSWORD: ${DB_PASSWORD:-app123}
-      DB_NAME: ${DB_NAME:-reservas_db}
-      JWT_SECRET: ${JWT_SECRET:-5c8b8f7a1b6e2c5c2d570e5a2777bef3ceb6ab9ddb6e242bcc04120dee8cd698a73617717a36aedfebd4330e27482eaa7361205472e27c1590a39d2a823fe131}
+      DB_USER: ${DB_USER:-app_user}
+      DB_PASSWORD: ${DB_PASSWORD:-123456}
+      DB_NAME: ${DB_NAME:-app_db}
+      JWT_SECRET: ${JWT_SECRET:-supersecret}
       RABBITMQ_ENABLED: ${RABBITMQ_ENABLED:-true}
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
@@ -99,10 +98,8 @@ services:
     networks:
       - reservas_net
     depends_on:
-      rabbitmq:
-        condition: service_started
-      database:
-        condition: service_completed_successfully
+      - mariadb
+      - rabbitmq
     restart: unless-stopped
 
   locations-service:
@@ -113,10 +110,10 @@ services:
       PORT: 3004
       DB_HOST: mariadb
       DB_PORT: 3306
-      DB_USER: ${DB_USER:-app}
-      DB_PASSWORD: ${DB_PASSWORD:-app123}
-      DB_NAME: ${DB_NAME:-reservas_db}
-      JWT_SECRET: ${JWT_SECRET:-5c8b8f7a1b6e2c5c2d570e5a2777bef3ceb6ab9ddb6e242bcc04120dee8cd698a73617717a36aedfebd4330e27482eaa7361205472e27c1590a39d2a823fe131}
+      DB_USER: ${DB_USER:-app_user}
+      DB_PASSWORD: ${DB_PASSWORD:-123456}
+      DB_NAME: ${DB_NAME:-app_db}
+      JWT_SECRET: ${JWT_SECRET:-supersecret}
       RABBITMQ_ENABLED: ${RABBITMQ_ENABLED:-true}
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
@@ -127,10 +124,8 @@ services:
     networks:
       - reservas_net
     depends_on:
-      rabbitmq:
-        condition: service_started
-      database:
-        condition: service_completed_successfully
+      - mariadb
+      - rabbitmq
     restart: unless-stopped
 
   inventory-service:
@@ -141,10 +136,10 @@ services:
       PORT: 3005
       DB_HOST: mariadb
       DB_PORT: 3306
-      DB_USER: ${DB_USER:-app}
-      DB_PASSWORD: ${DB_PASSWORD:-app123}
-      DB_NAME: ${DB_NAME:-reservas_db}
-      JWT_SECRET: ${JWT_SECRET:-5c8b8f7a1b6e2c5c2d570e5a2777bef3ceb6ab9ddb6e242bcc04120dee8cd698a73617717a36aedfebd4330e27482eaa7361205472e27c1590a39d2a823fe131}
+      DB_USER: ${DB_USER:-app_user}
+      DB_PASSWORD: ${DB_PASSWORD:-123456}
+      DB_NAME: ${DB_NAME:-app_db}
+      JWT_SECRET: ${JWT_SECRET:-supersecret}
       RABBITMQ_ENABLED: ${RABBITMQ_ENABLED:-true}
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
@@ -155,10 +150,8 @@ services:
     networks:
       - reservas_net
     depends_on:
-      rabbitmq:
-        condition: service_started
-      database:
-        condition: service_completed_successfully
+      - mariadb
+      - rabbitmq
     restart: unless-stopped
 
   notifications-service:
@@ -168,7 +161,7 @@ services:
     environment:
       PORT: 3006
       WEBSOCKET_ALLOWED_ORIGINS: ${WEBSOCKET_ALLOWED_ORIGINS:-*}
-      RABBITMQ_ENABLED: true
+      RABBITMQ_ENABLED: ${RABBITMQ_ENABLED:-true}
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: ${RABBITMQ_USER:-guest}
@@ -181,10 +174,7 @@ services:
     networks:
       - reservas_net
     depends_on:
-      rabbitmq:
-        condition: service_started
-      database:
-        condition: service_completed_successfully
+      - rabbitmq
     restart: unless-stopped
 
   api-gateway:
@@ -203,12 +193,6 @@ services:
       - "3000:3000"
     networks:
       - reservas_net
-    depends_on:
-      - auth-service
-      - bookings-service
-      - inventory-service
-      - locations-service
-      - notifications-service
     restart: unless-stopped
 
 networks:
