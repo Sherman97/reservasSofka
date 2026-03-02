@@ -13,7 +13,7 @@
     <content url="file://$MODULE_DIR$/../../../../Backend/services/auth-service/src/test">
       <sourceFolder url="file://$MODULE_DIR$/../../../../Backend/services/auth-service/src/test/java" isTestSource="true" />
     </content>
-    <orderEntry type="jdk" jdkName="17" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="reservas-sk.auth-service.main" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-web:3.4.1" level="project" />
@@ -111,7 +111,10 @@
     <orderEntry type="library" scope="RUNTIME" name="Gradle: io.jsonwebtoken:jjwt-impl:0.12.6" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: io.jsonwebtoken:jjwt-jackson:0.12.6" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.mariadb.jdbc:mariadb-java-client:3.4.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.junit.platform:junit-platform-launcher:1.11.4" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.h2database:h2:2.3.232" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: com.github.waffle:waffle-jna:3.3.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.junit.platform:junit-platform-engine:1.11.4" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.glassfish.jaxb:jaxb-runtime:4.0.5" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.hibernate.common:hibernate-commons-annotations:7.0.3.Final" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: io.smallrye:jandex:3.2.0" level="project" />
@@ -125,7 +128,6 @@
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.objenesis:objenesis:3.3" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.glassfish.jaxb:jaxb-core:4.0.5" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: com.google.errorprone:error_prone_annotations:2.21.1" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.junit.platform:junit-platform-engine:1.11.4" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.eclipse.angus:angus-activation:2.0.2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.glassfish.jaxb:txw2:4.0.5" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: com.sun.istack:istack-commons-runtime:4.1.2" level="project" />

@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [ main, develop ]
   push:
-    branches: [ develop ]
+    branches: [ main, develop ]
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -18,13 +18,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20]
         service:
           - auth-service
           - bookings-service
           - api-gateway
           - inventory-service
           - locations-service
+          - notifications-service
 
     defaults:
       run:
@@ -35,50 +35,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
 
-      - name: Detect service
+      - name: Verify service structure
         run: |
           echo "Working dir: $(pwd)"
-          if [ ! -f package.json ]; then
-            echo "No package.json in Backend/services/${{ matrix.service }}. Skipping this service."
-            echo "SKIP=true" >> $GITHUB_ENV
-          else
-            echo "SKIP=false" >> $GITHUB_ENV
-          fi
+          test -f build.gradle
+          test -f gradlew
 
-      - name: Install
-        if: env.SKIP != 'true'
+      - name: Run tests
         run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
-
-      - name: Lint
-        if: env.SKIP != 'true'
-        run: npm run lint --if-present
-
-      - name: Test
-        if: env.SKIP != 'true'
-        run: |
-          # Si no hay script test, no corremos nada
-          if ! node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts.test ? 0 : 1)"; then
-            echo "No test script, skipping"
-            exit 0
-          fi
-
-          # Si el test es el placeholder típico, no fallar el CI
-          if node -e "const p=require('./package.json'); const t=(p.scripts&&p.scripts.test)||''; process.exit(t.includes('no test specified') ? 0 : 1)"; then
-            echo "Placeholder test script detected (no test specified). Skipping"
-            exit 0
-          fi
-
-          npm test
+          chmod +x ./gradlew
+          ./gradlew --no-daemon test
 
   frontend:
     name: Frontend
