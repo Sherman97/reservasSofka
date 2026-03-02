@@ -1,9 +1,11 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { HttpInventoryRepository } from './HttpInventoryRepository';
 import { InventoryItem } from '../../core/domain/entities/InventoryItem';
 import type { IHttpClient } from '../../core/ports/services/IHttpClient';
 
 describe('HttpInventoryRepository', () => {
+    beforeEach(() => { vi.spyOn(console, 'error').mockImplementation(() => {}); });
+    afterEach(() => { vi.restoreAllMocks(); });
     function createMockHttpClient(overrides: Partial<IHttpClient> = {}): IHttpClient {
         return {
             get: vi.fn(), post: vi.fn(), put: vi.fn(), patch: vi.fn(), delete: vi.fn(),
@@ -93,6 +95,48 @@ describe('HttpInventoryRepository', () => {
             const result = await repo.search({ category: 'tech' });
             expect(result).toHaveLength(1);
             expect(mockGet).toHaveBeenCalledWith('/inventory/equipments', { params: { category: 'tech' } });
+        });
+    });
+
+    describe('respuestas directas (sin wrapper { ok, data })', () => {
+        it('getAll() debe manejar un array directo', async () => {
+            const client = createMockHttpClient({
+                get: vi.fn().mockResolvedValue({ data: itemDTOs, status: 200 })
+            });
+            const repo = new HttpInventoryRepository(client);
+            const result = await repo.getAll();
+            expect(result).toHaveLength(2);
+            expect(result[0]).toBeInstanceOf(InventoryItem);
+            expect(result[0].name).toBe('Proyector');
+        });
+
+        it('getById() debe manejar un objeto directo', async () => {
+            const client = createMockHttpClient({
+                get: vi.fn().mockResolvedValue({ data: itemDTOs[0], status: 200 })
+            });
+            const repo = new HttpInventoryRepository(client);
+            const result = await repo.getById('i1');
+            expect(result).toBeInstanceOf(InventoryItem);
+            expect(result.id).toBe('i1');
+        });
+
+        it('getByCityId() debe manejar un array directo', async () => {
+            const client = createMockHttpClient({
+                get: vi.fn().mockResolvedValue({ data: itemDTOs, status: 200 })
+            });
+            const repo = new HttpInventoryRepository(client);
+            const result = await repo.getByCityId('c1');
+            expect(result).toHaveLength(2);
+        });
+
+        it('search() debe manejar un array directo', async () => {
+            const client = createMockHttpClient({
+                get: vi.fn().mockResolvedValue({ data: [itemDTOs[1]], status: 200 })
+            });
+            const repo = new HttpInventoryRepository(client);
+            const result = await repo.search({ category: 'tech' });
+            expect(result).toHaveLength(1);
+            expect(result[0].name).toBe('Monitor');
         });
     });
 });

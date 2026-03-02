@@ -27,6 +27,8 @@ import { CancelReservationUseCase } from '../../../application/use-cases/reserva
 import { GetCurrentUserUseCase } from '../../../application/use-cases/auth/GetCurrentUserUseCase';
 import { GetSpaceAvailabilityUseCase } from '../../../application/use-cases/dashboard/GetSpaceAvailabilityUseCase';
 import { SubmitDeliveryUseCase } from '../../../application/use-cases/delivery/SubmitDeliveryUseCase';
+import { DeliverReservationUseCase } from '../../../application/use-cases/reservations/DeliverReservationUseCase';
+import { ReturnReservationUseCase } from '../../../application/use-cases/reservations/ReturnReservationUseCase';
 import { StompWebSocketService } from '../../../infrastructure/websocket/StompWebSocketService';
 
 export interface DependencyMap {
@@ -54,6 +56,8 @@ export interface DependencyMap {
     cancelReservationUseCase: CancelReservationUseCase;
     getSpaceAvailabilityUseCase: GetSpaceAvailabilityUseCase;
     submitDeliveryUseCase: SubmitDeliveryUseCase;
+    deliverReservationUseCase: DeliverReservationUseCase;
+    returnReservationUseCase: ReturnReservationUseCase;
 }
 
 class DIContainer {
@@ -113,6 +117,8 @@ class DIContainer {
         this.dependencies.cancelReservationUseCase = new CancelReservationUseCase(reservationRepository);
         this.dependencies.getSpaceAvailabilityUseCase = new GetSpaceAvailabilityUseCase(reservationRepository);
         this.dependencies.submitDeliveryUseCase = new SubmitDeliveryUseCase(deliveryRepository);
+        this.dependencies.deliverReservationUseCase = new DeliverReservationUseCase(reservationRepository);
+        this.dependencies.returnReservationUseCase = new ReturnReservationUseCase(reservationRepository);
     }
 
     get<K extends keyof DependencyMap>(name: K): DependencyMap[K] {

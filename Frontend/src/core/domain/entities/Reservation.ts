@@ -38,7 +38,20 @@ export class Reservation {
 
     isActive(): boolean {
         const s = (this.status || '').toLowerCase();
-        return ['active', 'confirmed', 'pending', 'created'].includes(s);
+        return ['active', 'confirmed', 'pending', 'created', 'in_progress'].includes(s);
+    }
+
+    isConfirmed(): boolean {
+        const s = (this.status || '').toLowerCase();
+        return ['confirmed', 'active', 'pending', 'created'].includes(s);
+    }
+
+    isInProgress(): boolean {
+        return (this.status || '').toLowerCase() === 'in_progress';
+    }
+
+    isCompleted(): boolean {
+        return (this.status || '').toLowerCase() === 'completed';
     }
 
     isCancelled(): boolean {
