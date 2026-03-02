@@ -3,6 +3,7 @@ package com.reservas.sk.locations_service.adapters.in.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reservas.sk.locations_service.adapters.in.web.dto.CreateSpaceRequest;
 import com.reservas.sk.locations_service.application.port.in.LocationsUseCase;
+import com.reservas.sk.locations_service.application.port.out.TokenPort;
 import com.reservas.sk.locations_service.application.usecase.CreateSpaceCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +36,8 @@ class SpacesControllerTest {
     private ObjectMapper objectMapper;
     @Autowired
     private LocationsUseCase locationsUseCase;
+    @MockBean
+    private TokenPort tokenPort;
 
     private CreateSpaceRequest validRequest;
 
@@ -42,6 +46,10 @@ class SpacesControllerTest {
         @Bean
         public LocationsUseCase locationsUseCase() {
             return Mockito.mock(LocationsUseCase.class);
+        }
+        @Bean
+        public LocationsHttpMapper locationsHttpMapper() {
+            return Mockito.mock(LocationsHttpMapper.class);
         }
     }
 
