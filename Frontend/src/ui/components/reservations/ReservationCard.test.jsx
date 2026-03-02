@@ -85,9 +85,14 @@ describe('ReservationCard', () => {
 
     // === Tests for deliver/return buttons and new statuses ===
 
-    it('debe mostrar botón de entrega para reservas confirmed/active', () => {
+    it('debe mostrar botón de entrega para reservas en progreso (ongoing)', () => {
         const mockOnDeliver = vi.fn();
-        const res = createReservation({ status: 'active' });
+        const now = new Date();
+        const res = createReservation({
+            status: 'active',
+            startAt: new Date(now.getTime() - 30 * 60000).toISOString(),
+            endAt: new Date(now.getTime() + 30 * 60000).toISOString(),
+        });
         const { container } = render(
             <ReservationCard reservation={res} onCancel={mockOnCancel} onDeliver={mockOnDeliver} onReturn={vi.fn()} />
         );
@@ -97,12 +102,26 @@ describe('ReservationCard', () => {
 
     it('debe llamar onDeliver con la reserva al hacer clic en botón entrega', () => {
         const mockOnDeliver = vi.fn();
-        const res = createReservation({ status: 'active' });
+        const now = new Date();
+        const res = createReservation({
+            status: 'active',
+            startAt: new Date(now.getTime() - 30 * 60000).toISOString(),
+            endAt: new Date(now.getTime() + 30 * 60000).toISOString(),
+        });
         const { container } = render(
             <ReservationCard reservation={res} onCancel={mockOnCancel} onDeliver={mockOnDeliver} onReturn={vi.fn()} />
         );
         container.querySelector('.btn-deliver-res').click();
         expect(mockOnDeliver).toHaveBeenCalledWith(res);
+    });
+
+    it('no debe mostrar botón de entrega para reservas futuras (próximas)', () => {
+        const mockOnDeliver = vi.fn();
+        const res = createReservation({ status: 'active' });
+        const { container } = render(
+            <ReservationCard reservation={res} onCancel={mockOnCancel} onDeliver={mockOnDeliver} onReturn={vi.fn()} />
+        );
+        expect(container.querySelector('.btn-deliver-res')).toBeNull();
     });
 
     it('no debe mostrar botón de entrega para reservas canceladas', () => {
@@ -124,7 +143,12 @@ describe('ReservationCard', () => {
     });
 
     it('no debe mostrar botón de entrega si onDeliver no se pasa', () => {
-        const res = createReservation({ status: 'active' });
+        const now = new Date();
+        const res = createReservation({
+            status: 'active',
+            startAt: new Date(now.getTime() - 30 * 60000).toISOString(),
+            endAt: new Date(now.getTime() + 30 * 60000).toISOString(),
+        });
         const { container } = render(
             <ReservationCard reservation={res} onCancel={mockOnCancel} />
         );
@@ -202,5 +226,27 @@ describe('ReservationCard', () => {
         const res = createReservation({ locationName: 'Kit de Video' });
         const { container } = render(<ReservationCard reservation={res} onCancel={mockOnCancel} />);
         expect(container.querySelector('.card-icon').textContent).toBe('📹');
+    });
+
+    it('debe mostrar "En Progreso" automáticamente cuando la reserva está en curso por tiempo', () => {
+        const now = new Date();
+        const res = createReservation({
+            status: 'active',
+            startAt: new Date(now.getTime() - 30 * 60000).toISOString(),
+            endAt: new Date(now.getTime() + 30 * 60000).toISOString(),
+        });
+        render(<ReservationCard reservation={res} onCancel={mockOnCancel} />);
+        expect(screen.getByText('En Progreso')).toBeDefined();
+    });
+
+    it('debe aplicar clase res-status-in-progress para reserva en curso por tiempo', () => {
+        const now = new Date();
+        const res = createReservation({
+            status: 'active',
+            startAt: new Date(now.getTime() - 30 * 60000).toISOString(),
+            endAt: new Date(now.getTime() + 30 * 60000).toISOString(),
+        });
+        const { container } = render(<ReservationCard reservation={res} onCancel={mockOnCancel} />);
+        expect(container.querySelector('.res-status-in-progress')).not.toBeNull();
     });
 });

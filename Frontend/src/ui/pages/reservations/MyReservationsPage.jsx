@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useUserReservations } from '../../../core/adapters/hooks/useUserReservations';
 import { useReminderAlerts } from '../../../core/adapters/hooks/useReminderAlerts';
 import { ReservationFilterBar } from '../../components/reservations/ReservationFilterBar';
@@ -34,6 +34,46 @@ export const MyReservationsPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [handoverModal, setHandoverModal] = useState({ isOpen: false, reservation: null, action: null });
     const itemsPerPage = 5;
+
+    // Periodic tick to re-evaluate reservation time status
+    const [tick, setTick] = useState(0);
+    useEffect(() => {
+        const interval = setInterval(() => setTick(t => t + 1), 15_000);
+        return () => clearInterval(interval);
+    }, []);
+
+    // Track reservations that were ongoing so we detect when they expire
+    const previouslyOngoingRef = useRef(new Set());
+    const autoModalShownRef = useRef(new Set());
+
+    const triggerReturnModal = useCallback((reservation) => {
+        setHandoverModal({ isOpen: true, reservation, action: 'return' });
+    }, []);
+
+    // Auto-open return modal when an ongoing reservation expires (becomes past)
+    useEffect(() => {
+        if (!reservations || reservations.length === 0) return;
+
+        const currentlyOngoing = new Set();
+        reservations.forEach(r => {
+            if (r.isOngoing() && !r.isCancelled() && !r.isCompleted()) {
+                currentlyOngoing.add(r.id);
+            }
+        });
+
+        // Check if any previously ongoing reservation is now past
+        previouslyOngoingRef.current.forEach(id => {
+            if (!currentlyOngoing.has(id) && !autoModalShownRef.current.has(id)) {
+                const expiredRes = reservations.find(r => r.id === id && r.isPast() && !r.isCancelled() && !r.isCompleted());
+                if (expiredRes) {
+                    autoModalShownRef.current.add(id);
+                    triggerReturnModal(expiredRes);
+                }
+            }
+        });
+
+        previouslyOngoingRef.current = currentlyOngoing;
+    }, [reservations, triggerReturnModal, tick]);
 
     // Pagination logic
     const totalPages = Math.ceil(reservations.length / itemsPerPage);

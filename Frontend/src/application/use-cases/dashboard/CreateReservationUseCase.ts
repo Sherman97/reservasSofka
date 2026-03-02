@@ -33,11 +33,6 @@ export class CreateReservationUseCase {
             throw new Error('End time must be after start time');
         }
 
-        const durationMinutes = endMinutes - startMinutes;
-        if (durationMinutes < 30) {
-            throw new Error('Reservation must be at least 30 minutes');
-        }
-
         return await this.reservationRepository.create(reservationData as unknown as Record<string, unknown>);
     }
 }

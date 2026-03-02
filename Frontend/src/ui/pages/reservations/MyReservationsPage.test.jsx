@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 vi.mock('../../../core/adapters/hooks/useUserReservations', () => ({
@@ -75,8 +75,30 @@ import { MyReservationsPage } from './MyReservationsPage';
 import { useUserReservations } from '../../../core/adapters/hooks/useUserReservations';
 import { useReminderAlerts } from '../../../core/adapters/hooks/useReminderAlerts';
 
+// Helper to create mock reservation objects with required methods
+const createMockRes = (overrides = {}) => ({
+    id: 'r1',
+    locationName: 'Sala Test',
+    isOngoing: () => false,
+    isPast: () => false,
+    isCancelled: () => false,
+    isCompleted: () => false,
+    isUpcoming: () => true,
+    isInProgress: () => false,
+    isConfirmed: () => false,
+    isActive: () => true,
+    ...overrides
+});
+
 describe('MyReservationsPage', () => {
-    beforeEach(() => { vi.clearAllMocks(); });
+    beforeEach(() => {
+        vi.clearAllMocks();
+        vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+        vi.useRealTimers();
+    });
 
     it('debe mostrar loading cuando loading=true', () => {
         useUserReservations.mockReturnValue({
@@ -105,7 +127,7 @@ describe('MyReservationsPage', () => {
 
     it('debe mostrar la lista de reservas', () => {
         useUserReservations.mockReturnValue({
-            reservations: [{ id: 'r1' }, { id: 'r2' }],
+            reservations: [createMockRes({ id: 'r1' }), createMockRes({ id: 'r2' })],
             loading: false, error: null,
             searchTerm: '', activeTab: 'upcoming',
             setActiveTab: vi.fn(), handleSearch: vi.fn(),
@@ -129,7 +151,7 @@ describe('MyReservationsPage', () => {
     });
 
     it('debe mostrar paginación cuando hay más de 5 reservas', () => {
-        const reservations = Array.from({ length: 7 }, (_, i) => ({ id: `r${i}` }));
+        const reservations = Array.from({ length: 7 }, (_, i) => createMockRes({ id: `r${i}` }));
         useUserReservations.mockReturnValue({
             reservations, loading: false, error: null,
             searchTerm: '', activeTab: 'upcoming',
@@ -144,7 +166,7 @@ describe('MyReservationsPage', () => {
     it('debe cambiar de página con handlePageChange', () => {
         const scrollToSpy = vi.fn();
         window.scrollTo = scrollToSpy;
-        const reservations = Array.from({ length: 7 }, (_, i) => ({ id: `r${i}` }));
+        const reservations = Array.from({ length: 7 }, (_, i) => createMockRes({ id: `r${i}` }));
         useUserReservations.mockReturnValue({
             reservations, loading: false, error: null,
             searchTerm: '', activeTab: 'upcoming',
@@ -159,7 +181,7 @@ describe('MyReservationsPage', () => {
 
     it('debe resetear página al cambiar tab', () => {
         const setActiveTab = vi.fn();
-        const reservations = Array.from({ length: 7 }, (_, i) => ({ id: `r${i}` }));
+        const reservations = Array.from({ length: 7 }, (_, i) => createMockRes({ id: `r${i}` }));
         useUserReservations.mockReturnValue({
             reservations, loading: false, error: null,
             searchTerm: '', activeTab: 'upcoming',
@@ -176,7 +198,7 @@ describe('MyReservationsPage', () => {
 
     it('debe abrir modal de entrega al hacer clic en deliver', () => {
         useUserReservations.mockReturnValue({
-            reservations: [{ id: 'r1' }], loading: false, error: null,
+            reservations: [createMockRes()], loading: false, error: null,
             searchTerm: '', activeTab: 'upcoming',
             setActiveTab: vi.fn(), handleSearch: vi.fn(),
             cancelReservation: vi.fn(), deliverReservation: vi.fn(), returnReservation: vi.fn(), reload: vi.fn()
@@ -192,7 +214,7 @@ describe('MyReservationsPage', () => {
 
     it('debe abrir modal de devolución al hacer clic en return', () => {
         useUserReservations.mockReturnValue({
-            reservations: [{ id: 'r1' }], loading: false, error: null,
+            reservations: [createMockRes()], loading: false, error: null,
             searchTerm: '', activeTab: 'upcoming',
             setActiveTab: vi.fn(), handleSearch: vi.fn(),
             cancelReservation: vi.fn(), deliverReservation: vi.fn(), returnReservation: vi.fn(), reload: vi.fn()
@@ -208,7 +230,7 @@ describe('MyReservationsPage', () => {
 
     it('debe cerrar modal al hacer clic en Close', () => {
         useUserReservations.mockReturnValue({
-            reservations: [{ id: 'r1' }], loading: false, error: null,
+            reservations: [createMockRes()], loading: false, error: null,
             searchTerm: '', activeTab: 'upcoming',
             setActiveTab: vi.fn(), handleSearch: vi.fn(),
             cancelReservation: vi.fn(), deliverReservation: vi.fn(), returnReservation: vi.fn(), reload: vi.fn()
@@ -225,7 +247,7 @@ describe('MyReservationsPage', () => {
     it('debe llamar deliverReservation al confirmar modal deliver', async () => {
         const deliverReservation = vi.fn().mockResolvedValue(undefined);
         useUserReservations.mockReturnValue({
-            reservations: [{ id: 'r1' }], loading: false, error: null,
+            reservations: [createMockRes()], loading: false, error: null,
             searchTerm: '', activeTab: 'upcoming',
             setActiveTab: vi.fn(), handleSearch: vi.fn(),
             cancelReservation: vi.fn(), deliverReservation, returnReservation: vi.fn(), reload: vi.fn()
@@ -233,17 +255,19 @@ describe('MyReservationsPage', () => {
 
         render(<MemoryRouter><MyReservationsPage /></MemoryRouter>);
         fireEvent.click(screen.getByTestId('deliver-btn'));
-        fireEvent.click(screen.getByTestId('modal-confirm'));
 
-        await waitFor(() => {
-            expect(deliverReservation).toHaveBeenCalledWith('r1', 'test novelty');
+        await act(async () => {
+            fireEvent.click(screen.getByTestId('modal-confirm'));
+            await vi.advanceTimersByTimeAsync(0);
         });
+
+        expect(deliverReservation).toHaveBeenCalledWith('r1', 'test novelty');
     });
 
     it('debe llamar returnReservation al confirmar modal return', async () => {
         const returnReservation = vi.fn().mockResolvedValue(undefined);
         useUserReservations.mockReturnValue({
-            reservations: [{ id: 'r1' }], loading: false, error: null,
+            reservations: [createMockRes()], loading: false, error: null,
             searchTerm: '', activeTab: 'upcoming',
             setActiveTab: vi.fn(), handleSearch: vi.fn(),
             cancelReservation: vi.fn(), deliverReservation: vi.fn(), returnReservation, reload: vi.fn()
@@ -251,11 +275,13 @@ describe('MyReservationsPage', () => {
 
         render(<MemoryRouter><MyReservationsPage /></MemoryRouter>);
         fireEvent.click(screen.getByTestId('return-btn'));
-        fireEvent.click(screen.getByTestId('modal-confirm'));
 
-        await waitFor(() => {
-            expect(returnReservation).toHaveBeenCalledWith('r2', 'test novelty');
+        await act(async () => {
+            fireEvent.click(screen.getByTestId('modal-confirm'));
+            await vi.advanceTimersByTimeAsync(0);
         });
+
+        expect(returnReservation).toHaveBeenCalledWith('r2', 'test novelty');
     });
 
     // === Tests for reminder alerts ===
@@ -291,5 +317,47 @@ describe('MyReservationsPage', () => {
         render(<MemoryRouter><MyReservationsPage /></MemoryRouter>);
         fireEvent.click(screen.getByText('Reintentar'));
         expect(reload).toHaveBeenCalled();
+    });
+
+    // === Tests for auto-return modal on reservation expiry ===
+
+    it('debe abrir modal de devolución automáticamente cuando una reserva en progreso expira', async () => {
+        let isOngoing = true;
+        let isPast = false;
+
+        const mockReservation = createMockRes({
+            id: 'r-auto',
+            locationName: 'Sala Auto',
+            isOngoing: () => isOngoing,
+            isPast: () => isPast,
+            isUpcoming: () => false,
+        });
+
+        // Initial render with the ongoing reservation
+        useUserReservations.mockReturnValue({
+            reservations: [mockReservation], loading: false, error: null,
+            searchTerm: '', activeTab: 'upcoming',
+            setActiveTab: vi.fn(), handleSearch: vi.fn(),
+            cancelReservation: vi.fn(), deliverReservation: vi.fn(), returnReservation: vi.fn(), reload: vi.fn()
+        });
+
+        render(<MemoryRouter><MyReservationsPage /></MemoryRouter>);
+
+        // Modal should not be open yet
+        expect(screen.queryByTestId('handover-modal')).toBeNull();
+
+        // Now simulate the reservation expiring
+        isOngoing = false;
+        isPast = true;
+
+        // Advance timer to trigger the periodic tick, causing re-evaluation
+        await act(async () => {
+            vi.advanceTimersByTime(15_000);
+        });
+
+        // The return modal should auto-open
+        expect(screen.getByTestId('handover-modal')).toBeDefined();
+        expect(screen.getByTestId('modal-action').textContent).toBe('return');
+        expect(screen.getByTestId('modal-name').textContent).toBe('Sala Auto');
     });
 });
