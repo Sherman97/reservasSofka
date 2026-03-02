@@ -14,6 +14,8 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -108,6 +110,66 @@ class ReservationReminderApplicationServiceTest {
 
         List<NotificationEvent> events = captor.getAllValues();
         assertTrue(events.stream().anyMatch(e -> "notifications.reservation.reminder.overdue.10m".equals(e.routingKey())));
+    }
+
+    @Test
+    void handleEvent_acceptsStringNumericIds() {
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("reservationId", "404");
+        payload.put("userId", "505");
+        payload.put("spaceId", "606");
+        payload.put("endAt", Instant.now().plus(10, ChronoUnit.MINUTES).toString());
+
+        service.handleEvent("bookings.reservation.created", payload);
+        service.publishReminders();
+
+        ArgumentCaptor<NotificationEvent> captor = ArgumentCaptor.forClass(NotificationEvent.class);
+        verify(webSocketBroadcastPort, times(1)).publish(captor.capture());
+
+        List<NotificationEvent> events = captor.getAllValues();
+        assertEquals("notifications.reservation.reminder.15m", events.get(0).routingKey());
+    }
+
+    @Test
+    void handleEvent_ignoresInvalidNumberAndDatePayloads() {
+        Map<String, Object> invalidReservationId = new HashMap<>();
+        invalidReservationId.put("reservationId", "ABC");
+        invalidReservationId.put("userId", 202L);
+        invalidReservationId.put("spaceId", 303L);
+        invalidReservationId.put("endAt", Instant.now().toString());
+
+        Map<String, Object> invalidEndAt = new HashMap<>();
+        invalidEndAt.put("reservationId", 101L);
+        invalidEndAt.put("userId", 202L);
+        invalidEndAt.put("spaceId", 303L);
+        invalidEndAt.put("endAt", "not-an-instant");
+
+        service.handleEvent("bookings.reservation.created", invalidReservationId);
+        service.handleEvent("bookings.reservation.created", invalidEndAt);
+        service.publishReminders();
+
+        verifyNoInteractions(webSocketBroadcastPort);
+    }
+
+    @Test
+    void cancelledEvent_withInvalidReservationIdDoesNotRemoveExistingState() {
+        Map<String, Object> payload = validPayload(Instant.now().plus(10, ChronoUnit.MINUTES));
+
+        service.handleEvent("bookings.reservation.created", payload);
+        service.handleEvent("bookings.reservation.cancelled", Map.of("reservationId", "invalid-id"));
+        service.publishReminders();
+
+        verify(webSocketBroadcastPort, times(1)).publish(any(NotificationEvent.class));
+    }
+
+    @Test
+    void publishReminders_doesNothingBeforeThresholds() {
+        Map<String, Object> payload = validPayload(Instant.now().plus(30, ChronoUnit.MINUTES));
+
+        service.handleEvent("bookings.reservation.created", payload);
+        service.publishReminders();
+
+        verify(webSocketBroadcastPort, never()).publish(any(NotificationEvent.class));
     }
 
     private Map<String, Object> validPayload(Instant endAt) {
