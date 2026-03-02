@@ -10,6 +10,11 @@ interface ApiResponse<T = unknown> {
     data?: T;
 }
 
+/** Detect whether the API response uses { ok, data } wrapper or returns data directly */
+function isWrappedResponse(raw: unknown): raw is ApiResponse {
+    return typeof (raw as ApiResponse).ok === 'boolean';
+}
+
 export class HttpReservationRepository implements IReservationRepository {
     constructor(
         private readonly httpClient: IHttpClient,
@@ -20,11 +25,17 @@ export class HttpReservationRepository implements IReservationRepository {
         try {
             const payload = ReservationMapper.toApi(reservationData as unknown as Parameters<typeof ReservationMapper.toApi>[0]);
             const response = await this.httpClient.post('/bookings/reservations', payload);
-            const data = response.data as ApiResponse;
+            const raw = response.data as ApiResponse & Record<string, unknown>;
 
-            if (!data.ok) throw new Error(data.message || 'Error creating reservation');
+            if (isWrappedResponse(raw)) {
+                if (!raw.ok) throw new Error(raw.message || 'Error creating reservation');
+                const reservation = ReservationMapper.toDomain(raw.data as unknown as Parameters<typeof ReservationMapper.toDomain>[0]);
+                if (!reservation) throw new Error('Error mapping reservation data');
+                return reservation;
+            }
 
-            const reservation = ReservationMapper.toDomain(data.data as unknown as Parameters<typeof ReservationMapper.toDomain>[0]);
+            // Direct object response
+            const reservation = ReservationMapper.toDomain(raw as unknown as Parameters<typeof ReservationMapper.toDomain>[0]);
             if (!reservation) throw new Error('Error mapping reservation data');
             return reservation;
         } catch (error) {
@@ -38,12 +49,18 @@ export class HttpReservationRepository implements IReservationRepository {
             const response = await this.httpClient.get('/bookings/reservations', {
                 params: { userId }
             });
-            const data = response.data as ApiResponse<unknown[]>;
+            const raw = response.data as ApiResponse<unknown[]> & Record<string, unknown>;
 
-            if (!data.ok) throw new Error(data.message || 'Error fetching reservations');
+            if (isWrappedResponse(raw)) {
+                if (!raw.ok) throw new Error(raw.message || 'Error fetching reservations');
+                console.log('User reservations response:', raw);
+                return ReservationMapper.toDomainList((raw.data || []) as Parameters<typeof ReservationMapper.toDomainList>[0]);
+            }
 
-            console.log('User reservations response:', data);
-            return ReservationMapper.toDomainList((data.data || []) as Parameters<typeof ReservationMapper.toDomainList>[0]);
+            // Direct array response
+            console.log('User reservations response (direct):', raw);
+            const items = Array.isArray(raw) ? raw : [];
+            return ReservationMapper.toDomainList(items as Parameters<typeof ReservationMapper.toDomainList>[0]);
         } catch (error) {
             console.error('Error in HttpReservationRepository.getByUserId:', error);
             throw error;
@@ -53,11 +70,17 @@ export class HttpReservationRepository implements IReservationRepository {
     async getById(id: string): Promise<Reservation> {
         try {
             const response = await this.httpClient.get(`/bookings/reservations/${id}`);
-            const data = response.data as ApiResponse;
+            const raw = response.data as ApiResponse & Record<string, unknown>;
 
-            if (!data.ok) throw new Error(data.message || 'Error fetching reservation');
+            if (isWrappedResponse(raw)) {
+                if (!raw.ok) throw new Error(raw.message || 'Error fetching reservation');
+                const reservation = ReservationMapper.toDomain(raw.data as Parameters<typeof ReservationMapper.toDomain>[0]);
+                if (!reservation) throw new Error('Error mapping reservation data');
+                return reservation;
+            }
 
-            const reservation = ReservationMapper.toDomain(data.data as Parameters<typeof ReservationMapper.toDomain>[0]);
+            // Direct object response
+            const reservation = ReservationMapper.toDomain(raw as Parameters<typeof ReservationMapper.toDomain>[0]);
             if (!reservation) throw new Error('Error mapping reservation data');
             return reservation;
         } catch (error) {
@@ -69,11 +92,58 @@ export class HttpReservationRepository implements IReservationRepository {
     async cancel(id: string): Promise<void> {
         try {
             const response = await this.httpClient.patch(`/bookings/reservations/${id}/cancel`);
-            const data = response.data as ApiResponse;
+            const raw = response.data as ApiResponse & Record<string, unknown>;
 
-            if (!data.ok) throw new Error(data.message || 'Error cancelling reservation');
+            if (isWrappedResponse(raw) && !raw.ok) {
+                throw new Error(raw.message || 'Error cancelling reservation');
+            }
+            // For unwrapped responses, if no error was thrown by HTTP client, consider it successful
         } catch (error) {
             console.error('Error in HttpReservationRepository.cancel:', error);
+            throw error;
+        }
+    }
+
+    async deliver(id: string, novelty?: string): Promise<Reservation> {
+        try {
+            const body = novelty ? { novelty } : undefined;
+            const response = await this.httpClient.patch(`/bookings/reservations/${id}/deliver`, body);
+            const raw = response.data as ApiResponse & Record<string, unknown>;
+
+            if (isWrappedResponse(raw)) {
+                if (!raw.ok) throw new Error(raw.message || 'Error al registrar la entrega');
+                const reservation = ReservationMapper.toDomain(raw.data as unknown as Parameters<typeof ReservationMapper.toDomain>[0]);
+                if (!reservation) throw new Error('Error mapping reservation data');
+                return reservation;
+            }
+
+            const reservation = ReservationMapper.toDomain(raw as unknown as Parameters<typeof ReservationMapper.toDomain>[0]);
+            if (!reservation) throw new Error('Error mapping reservation data');
+            return reservation;
+        } catch (error) {
+            console.error('Error in HttpReservationRepository.deliver:', error);
+            throw error;
+        }
+    }
+
+    async returnReservation(id: string, novelty?: string): Promise<Reservation> {
+        try {
+            const body = novelty ? { novelty } : undefined;
+            const response = await this.httpClient.patch(`/bookings/reservations/${id}/return`, body);
+            const raw = response.data as ApiResponse & Record<string, unknown>;
+
+            if (isWrappedResponse(raw)) {
+                if (!raw.ok) throw new Error(raw.message || 'Error al registrar la devolución');
+                const reservation = ReservationMapper.toDomain(raw.data as unknown as Parameters<typeof ReservationMapper.toDomain>[0]);
+                if (!reservation) throw new Error('Error mapping reservation data');
+                return reservation;
+            }
+
+            const reservation = ReservationMapper.toDomain(raw as unknown as Parameters<typeof ReservationMapper.toDomain>[0]);
+            if (!reservation) throw new Error('Error mapping reservation data');
+            return reservation;
+        } catch (error) {
+            console.error('Error in HttpReservationRepository.returnReservation:', error);
             throw error;
         }
     }
@@ -83,14 +153,21 @@ export class HttpReservationRepository implements IReservationRepository {
             const response = await this.httpClient.get('/bookings/reservations', {
                 params: { spaceId: locationId }
             });
-            const data = response.data as ApiResponse<Array<{ status?: string; startAt?: string; endAt?: string }>>;
+            const raw = response.data as ApiResponse<Array<{ status?: string; startAt?: string; endAt?: string }>> & Record<string, unknown>;
 
-            if (!data.ok) {
-                console.warn('Could not fetch reservations for availability check', data.message);
-                return { locationId, date, busySlots: [] };
+            let reservations: Array<{ status?: string; startAt?: string; endAt?: string }>;
+
+            if (isWrappedResponse(raw)) {
+                if (!raw.ok) {
+                    console.warn('Could not fetch reservations for availability check', raw.message);
+                    return { locationId, date, busySlots: [] };
+                }
+                reservations = raw.data || [];
+            } else {
+                // Direct array response
+                reservations = Array.isArray(raw) ? raw : [];
             }
 
-            const reservations = data.data || [];
             const busySlots: Array<{ start: string; end: string }> = [];
             const targetDate = date;
 

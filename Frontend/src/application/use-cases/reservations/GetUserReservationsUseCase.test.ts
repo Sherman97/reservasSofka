@@ -16,6 +16,9 @@ describe('GetUserReservationsUseCase', () => {
         create: vi.fn(),
         cancel: vi.fn(),
         getByUserId: vi.fn().mockResolvedValue(mockReservations),
+        getById: vi.fn(),
+        deliver: vi.fn(),
+        returnReservation: vi.fn(),
         getAvailability: vi.fn(),
         ...overrides
     });

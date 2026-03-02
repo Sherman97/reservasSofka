@@ -38,7 +38,20 @@ export class Reservation {
 
     isActive(): boolean {
         const s = (this.status || '').toLowerCase();
-        return ['active', 'confirmed', 'pending', 'created'].includes(s);
+        return ['active', 'confirmed', 'pending', 'created', 'in_progress'].includes(s);
+    }
+
+    isConfirmed(): boolean {
+        const s = (this.status || '').toLowerCase();
+        return ['confirmed', 'active', 'pending', 'created'].includes(s);
+    }
+
+    isInProgress(): boolean {
+        return (this.status || '').toLowerCase() === 'in_progress';
+    }
+
+    isCompleted(): boolean {
+        return (this.status || '').toLowerCase() === 'completed';
     }
 
     isCancelled(): boolean {
@@ -77,7 +90,7 @@ export class Reservation {
         return Math.ceil(diffMs / (1000 * 60));
     }
 
-    isAboutToExpire(thresholdMinutes: number = 10): boolean {
+    isAboutToExpire(thresholdMinutes: number = 2): boolean {
         if (this.isCancelled() || this.isPast()) return false;
         const remaining = this.getRemainingMinutes();
         return remaining > 0 && remaining <= thresholdMinutes;

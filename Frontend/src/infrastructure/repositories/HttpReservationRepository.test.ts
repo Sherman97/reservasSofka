@@ -1,10 +1,16 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { HttpReservationRepository } from './HttpReservationRepository';
 import { Reservation } from '../../core/domain/entities/Reservation';
 import type { IHttpClient } from '../../core/ports/services/IHttpClient';
 import type { IStorageService } from '../../core/ports/services/IStorageService';
 
 describe('HttpReservationRepository', () => {
+    beforeEach(() => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
+        vi.spyOn(console, 'log').mockImplementation(() => {});
+    });
+    afterEach(() => { vi.restoreAllMocks(); });
     function createMockHttpClient(overrides: Partial<IHttpClient> = {}): IHttpClient {
         return {
             get: vi.fn(), post: vi.fn(), put: vi.fn(), patch: vi.fn(), delete: vi.fn(),
@@ -173,6 +179,68 @@ describe('HttpReservationRepository', () => {
 
             const result = await repo.getAvailability('l1', '2026-03-01');
             expect(result.busySlots).toEqual([]);
+        });
+    });
+
+    describe('respuestas directas (sin wrapper { ok, data })', () => {
+        it('create() debe manejar un objeto directo', async () => {
+            const client = createMockHttpClient({
+                post: vi.fn().mockResolvedValue({ data: reservationDTO, status: 201 })
+            });
+            const repo = new HttpReservationRepository(client, createMockStorage());
+
+            const result = await repo.create({
+                locationId: 'l1', date: '2026-03-01', startTime: '10:00', endTime: '11:00'
+            } as Record<string, unknown>);
+            expect(result).toBeInstanceOf(Reservation);
+            expect(result.id).toBe('r1');
+        });
+
+        it('getByUserId() debe manejar un array directo', async () => {
+            const client = createMockHttpClient({
+                get: vi.fn().mockResolvedValue({ data: [reservationDTO], status: 200 })
+            });
+            const repo = new HttpReservationRepository(client, createMockStorage());
+
+            const result = await repo.getByUserId('u1');
+            expect(result).toHaveLength(1);
+            expect(result[0]).toBeInstanceOf(Reservation);
+        });
+
+        it('getById() debe manejar un objeto directo', async () => {
+            const client = createMockHttpClient({
+                get: vi.fn().mockResolvedValue({ data: reservationDTO, status: 200 })
+            });
+            const repo = new HttpReservationRepository(client, createMockStorage());
+
+            const result = await repo.getById('r1');
+            expect(result).toBeInstanceOf(Reservation);
+            expect(result.id).toBe('r1');
+        });
+
+        it('cancel() debe funcionar con respuesta directa', async () => {
+            const mockPatch = vi.fn().mockResolvedValue({ data: { cancelled: true }, status: 200 });
+            const client = createMockHttpClient({ patch: mockPatch });
+            const repo = new HttpReservationRepository(client, createMockStorage());
+
+            await repo.cancel('r1');
+            expect(mockPatch).toHaveBeenCalledWith('/bookings/reservations/r1/cancel');
+        });
+
+        it('getAvailability() debe manejar un array directo de reservas', async () => {
+            const client = createMockHttpClient({
+                get: vi.fn().mockResolvedValue({
+                    data: [
+                        { status: 'active', startAt: '2026-03-01T10:00:00Z', endAt: '2026-03-01T11:00:00Z' }
+                    ],
+                    status: 200
+                })
+            });
+            const repo = new HttpReservationRepository(client, createMockStorage());
+
+            const result = await repo.getAvailability('l1', '2026-03-01');
+            expect(result.locationId).toBe('l1');
+            expect(result.date).toBe('2026-03-01');
         });
     });
 });

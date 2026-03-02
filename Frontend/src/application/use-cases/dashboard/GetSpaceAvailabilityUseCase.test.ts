@@ -13,6 +13,9 @@ describe('GetSpaceAvailabilityUseCase', () => {
         create: vi.fn(),
         cancel: vi.fn(),
         getByUserId: vi.fn(),
+        getById: vi.fn(),
+        deliver: vi.fn(),
+        returnReservation: vi.fn(),
         getAvailability: vi.fn().mockResolvedValue(mockAvailability),
         ...overrides
     });

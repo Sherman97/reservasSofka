@@ -102,8 +102,8 @@ describe('ReservationMapper', () => {
             expect(ReservationMapper.normalizeStatus('confirmed')).toBe('active');
         });
 
-        it('debe retornar active para in_progress', () => {
-            expect(ReservationMapper.normalizeStatus('in_progress')).toBe('active');
+        it('debe retornar in_progress para in_progress', () => {
+            expect(ReservationMapper.normalizeStatus('in_progress')).toBe('in_progress');
         });
 
         it('debe retornar active para active', () => {

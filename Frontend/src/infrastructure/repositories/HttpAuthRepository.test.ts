@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { HttpAuthRepository } from './HttpAuthRepository';
 import { User } from '../../core/domain/entities/User';
 import { InvalidCredentialsError, RegistrationError, UnauthorizedError, AuthenticationError } from '../../core/domain/errors/AuthenticationError';
@@ -6,6 +6,8 @@ import type { IHttpClient } from '../../core/ports/services/IHttpClient';
 import type { IStorageService } from '../../core/ports/services/IStorageService';
 
 describe('HttpAuthRepository', () => {
+    beforeEach(() => { vi.spyOn(console, 'error').mockImplementation(() => {}); });
+    afterEach(() => { vi.restoreAllMocks(); });
     function createMockHttpClient(overrides: Partial<IHttpClient> = {}): IHttpClient {
         return {
             get: vi.fn(),
@@ -238,6 +240,82 @@ describe('HttpAuthRepository', () => {
             vi.mocked(storage.getJSON).mockReturnValue(null);
             const repo = new HttpAuthRepository(createMockHttpClient(), storage);
             expect(repo.getStoredUser()).toBeNull();
+        });
+    });
+
+    describe('respuestas directas (sin wrapper { ok, data })', () => {
+        it('login() debe manejar respuesta directa con token', async () => {
+            const httpClient = createMockHttpClient({
+                post: vi.fn().mockResolvedValue({
+                    data: { token: 'direct-token', user: { id: 'u1', email: 'a@b.com', name: 'Direct' } },
+                    status: 200
+                })
+            });
+            const storage = createMockStorage();
+            const repo = new HttpAuthRepository(httpClient, storage);
+
+            const user = await repo.login({ email: 'a@b.com', password: '123456' });
+            expect(user).toBeInstanceOf(User);
+            expect(user.email).toBe('a@b.com');
+            expect(storage.set).toHaveBeenCalledWith('token', 'direct-token');
+        });
+
+        it('login() debe lanzar error si respuesta directa no tiene token', async () => {
+            const httpClient = createMockHttpClient({
+                post: vi.fn().mockResolvedValue({
+                    data: { user: { id: 'u1', email: 'a@b.com', name: 'No Token' } },
+                    status: 200
+                })
+            });
+            const storage = createMockStorage();
+            const repo = new HttpAuthRepository(httpClient, storage);
+
+            await expect(repo.login({ email: 'a@b.com', password: '123456' }))
+                .rejects.toThrow(InvalidCredentialsError);
+        });
+
+        it('register() debe manejar respuesta directa con token', async () => {
+            const httpClient = createMockHttpClient({
+                post: vi.fn().mockResolvedValue({
+                    data: { token: 'reg-token', user: { id: 'u2', email: 'new@b.com', name: 'NewDirect' } },
+                    status: 201
+                })
+            });
+            const storage = createMockStorage();
+            const repo = new HttpAuthRepository(httpClient, storage);
+
+            const user = await repo.register({ email: 'new@b.com', password: '123456', name: 'NewDirect' });
+            expect(user).toBeInstanceOf(User);
+            expect(storage.set).toHaveBeenCalledWith('token', 'reg-token');
+        });
+
+        it('register() debe manejar respuesta directa sin token', async () => {
+            const httpClient = createMockHttpClient({
+                post: vi.fn().mockResolvedValue({
+                    data: { id: 'u3', email: 'no-token@b.com', name: 'NoTokenDirect' },
+                    status: 201
+                })
+            });
+            const storage = createMockStorage();
+            const repo = new HttpAuthRepository(httpClient, storage);
+
+            const user = await repo.register({ email: 'no-token@b.com', password: '123456', name: 'NoTokenDirect' });
+            expect(user).toBeInstanceOf(User);
+        });
+
+        it('getCurrentUser() debe manejar objeto usuario directo', async () => {
+            const httpClient = createMockHttpClient({
+                get: vi.fn().mockResolvedValue({
+                    data: { id: 'u1', email: 'a@b.com', name: 'DirectUser' },
+                    status: 200
+                })
+            });
+            const storage = createMockStorage();
+            const repo = new HttpAuthRepository(httpClient, storage);
+
+            const user = await repo.getCurrentUser();
+            expect(user).toBeInstanceOf(User);
+            expect(user.name).toBe('DirectUser');
         });
     });
 });

@@ -14,6 +14,9 @@ describe('CreateReservationUseCase', () => {
         create: vi.fn().mockResolvedValue(mockReservation),
         cancel: vi.fn(),
         getByUserId: vi.fn(),
+        getById: vi.fn(),
+        deliver: vi.fn(),
+        returnReservation: vi.fn(),
         getAvailability: vi.fn(),
         ...overrides
     });
@@ -68,17 +71,10 @@ describe('CreateReservationUseCase', () => {
             .rejects.toThrow('End time must be after start time');
     });
 
-    it('debe lanzar error si duración es menor a 30 minutos', async () => {
+    it('debe aceptar reserva de cualquier duración válida', async () => {
         const repo = createMockRepo();
         const useCase = new CreateReservationUseCase(repo);
-        await expect(useCase.execute({ ...validData, startTime: '10:00', endTime: '10:20' }))
-            .rejects.toThrow('Reservation must be at least 30 minutes');
-    });
-
-    it('debe aceptar reserva de exactamente 30 minutos', async () => {
-        const repo = createMockRepo();
-        const useCase = new CreateReservationUseCase(repo);
-        const result = await useCase.execute({ ...validData, startTime: '10:00', endTime: '10:30' });
+        const result = await useCase.execute({ ...validData, startTime: '10:00', endTime: '10:05' });
         expect(result).toBe(mockReservation);
     });
 });

@@ -65,7 +65,8 @@ export class ReservationMapper {
     static normalizeStatus(status?: string): string {
         if (!status) return 'active';
         const s = status.toLowerCase();
-        if (['pending', 'confirmed', 'in_progress', 'active', 'created'].includes(s)) {
+        if (s === 'in_progress') return 'in_progress';
+        if (['pending', 'confirmed', 'active', 'created'].includes(s)) {
             return 'active';
         }
         return s;
