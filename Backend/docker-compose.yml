@@ -1,7 +1,7 @@
 services:
   # ── Infraestructura ──────────────────────────────────────────
   mariadb:
-    image: mariadb:11
+    image: docker.io/library/mariadb:11
     environment:
       MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
       MARIADB_DATABASE: ${DB_NAME:-app_db}
@@ -21,7 +21,7 @@ services:
     restart: unless-stopped
 
   rabbitmq:
-    image: rabbitmq:3.13-management
+    image: docker.io/library/rabbitmq:3.13-management
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
@@ -33,7 +33,7 @@ services:
     restart: unless-stopped
 
   database:
-    image: liquibase/liquibase:4.30
+    image: docker.io/liquibase/liquibase:4.30
     command:
       - --url=jdbc:mariadb://mariadb:3306/${DB_NAME:-app_db}
       - --username=${DB_USER:-app_user}
@@ -51,6 +51,7 @@ services:
 
   # ── Microservicios ───────────────────────────────────────────
   auth-service:
+    image: localhost/backend-auth-service:latest
     build:
       context: ./services/auth-service
       dockerfile: Dockerfile
@@ -77,6 +78,7 @@ services:
     restart: unless-stopped
 
   bookings-service:
+    image: localhost/backend-bookings-service:latest
     build:
       context: ./services/bookings-service
       dockerfile: Dockerfile
@@ -103,6 +105,7 @@ services:
     restart: unless-stopped
 
   locations-service:
+    image: localhost/backend-locations-service:latest
     build:
       context: ./services/locations-service
       dockerfile: Dockerfile
@@ -129,6 +132,7 @@ services:
     restart: unless-stopped
 
   inventory-service:
+    image: localhost/backend-inventory-service:latest
     build:
       context: ./services/inventory-service
       dockerfile: Dockerfile
@@ -155,6 +159,7 @@ services:
     restart: unless-stopped
 
   notifications-service:
+    image: localhost/backend-notifications-service:latest
     build:
       context: ./services/notifications-service
       dockerfile: Dockerfile
@@ -178,6 +183,7 @@ services:
     restart: unless-stopped
 
   api-gateway:
+    image: localhost/backend-api-gateway:latest
     build:
       context: ./services/api-gateway
       dockerfile: Dockerfile

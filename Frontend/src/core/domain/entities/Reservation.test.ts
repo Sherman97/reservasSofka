@@ -150,3 +150,149 @@ describe('Reservation - Alert de expiración', () => {
         expect(reservation.isAboutToExpire(15)).toBe(false);
     });
 });
+
+describe('Reservation - Status Methods', () => {
+    it('isInProgress() debe retornar true para status in_progress', () => {
+        const reservation = new Reservation({
+            id: 'r1', userId: 'u1', locationId: 'l1', locationName: 'Sala A',
+            startAt: '2026-02-26T10:00:00', endAt: '2026-02-26T11:00:00',
+            status: 'in_progress',
+        });
+        expect(reservation.isInProgress()).toBe(true);
+    });
+
+    it('isInProgress() debe retornar false para status active', () => {
+        const reservation = new Reservation({
+            id: 'r2', userId: 'u1', locationId: 'l1', locationName: 'Sala B',
+            startAt: '2026-02-26T10:00:00', endAt: '2026-02-26T11:00:00',
+            status: 'active',
+        });
+        expect(reservation.isInProgress()).toBe(false);
+    });
+
+    it('isConfirmed() debe retornar true para status confirmed', () => {
+        const reservation = new Reservation({
+            id: 'r3', userId: 'u1', locationId: 'l1', locationName: 'Sala C',
+            startAt: '2026-02-26T10:00:00', endAt: '2026-02-26T11:00:00',
+            status: 'confirmed',
+        });
+        expect(reservation.isConfirmed()).toBe(true);
+    });
+
+    it('isConfirmed() debe retornar true para status active', () => {
+        const reservation = new Reservation({
+            id: 'r4', userId: 'u1', locationId: 'l1', locationName: 'Sala D',
+            startAt: '2026-02-26T10:00:00', endAt: '2026-02-26T11:00:00',
+            status: 'active',
+        });
+        expect(reservation.isConfirmed()).toBe(true);
+    });
+
+    it('isConfirmed() debe retornar true para status pending', () => {
+        const reservation = new Reservation({
+            id: 'r5', userId: 'u1', locationId: 'l1', locationName: 'Sala E',
+            startAt: '2026-02-26T10:00:00', endAt: '2026-02-26T11:00:00',
+            status: 'pending',
+        });
+        expect(reservation.isConfirmed()).toBe(true);
+    });
+
+    it('isConfirmed() debe retornar true para status created', () => {
+        const reservation = new Reservation({
+            id: 'r6', userId: 'u1', locationId: 'l1', locationName: 'Sala F',
+            startAt: '2026-02-26T10:00:00', endAt: '2026-02-26T11:00:00',
+            status: 'created',
+        });
+        expect(reservation.isConfirmed()).toBe(true);
+    });
+
+    it('isConfirmed() debe retornar false para status cancelled', () => {
+        const reservation = new Reservation({
+            id: 'r7', userId: 'u1', locationId: 'l1', locationName: 'Sala G',
+            startAt: '2026-02-26T10:00:00', endAt: '2026-02-26T11:00:00',
+            status: 'cancelled',
+        });
+        expect(reservation.isConfirmed()).toBe(false);
+    });
+
+    it('isConfirmed() debe retornar false para status in_progress', () => {
+        const reservation = new Reservation({
+            id: 'r8', userId: 'u1', locationId: 'l1', locationName: 'Sala H',
+            startAt: '2026-02-26T10:00:00', endAt: '2026-02-26T11:00:00',
+            status: 'in_progress',
+        });
+        expect(reservation.isConfirmed()).toBe(false);
+    });
+
+    it('isCompleted() debe retornar true para status completed', () => {
+        const reservation = new Reservation({
+            id: 'r9', userId: 'u1', locationId: 'l1', locationName: 'Sala I',
+            startAt: '2026-02-26T10:00:00', endAt: '2026-02-26T11:00:00',
+            status: 'completed',
+        });
+        expect(reservation.isCompleted()).toBe(true);
+    });
+
+    it('isCompleted() debe retornar false para status active', () => {
+        const reservation = new Reservation({
+            id: 'r10', userId: 'u1', locationId: 'l1', locationName: 'Sala J',
+            startAt: '2026-02-26T10:00:00', endAt: '2026-02-26T11:00:00',
+            status: 'active',
+        });
+        expect(reservation.isCompleted()).toBe(false);
+    });
+
+    it('isActive() debe incluir in_progress', () => {
+        const reservation = new Reservation({
+            id: 'r11', userId: 'u1', locationId: 'l1', locationName: 'Sala K',
+            startAt: '2026-02-26T10:00:00', endAt: '2026-02-26T11:00:00',
+            status: 'in_progress',
+        });
+        expect(reservation.isActive()).toBe(true);
+    });
+
+    it('isActive() debe retornar false para completed', () => {
+        const reservation = new Reservation({
+            id: 'r12', userId: 'u1', locationId: 'l1', locationName: 'Sala L',
+            startAt: '2026-02-26T10:00:00', endAt: '2026-02-26T11:00:00',
+            status: 'completed',
+        });
+        expect(reservation.isActive()).toBe(false);
+    });
+
+    it('isActive() debe retornar false para status desconocido', () => {
+        const reservation = new Reservation({
+            id: 'r13', userId: 'u1', locationId: 'l1', locationName: 'Sala M',
+            startAt: '2026-02-26T10:00:00', endAt: '2026-02-26T11:00:00',
+            status: 'unknown_status',
+        });
+        expect(reservation.isActive()).toBe(false);
+    });
+
+    it('isInProgress() debe retornar false para completed', () => {
+        const reservation = new Reservation({
+            id: 'r14', userId: 'u1', locationId: 'l1', locationName: 'Sala N',
+            startAt: '2026-02-26T10:00:00', endAt: '2026-02-26T11:00:00',
+            status: 'completed',
+        });
+        expect(reservation.isInProgress()).toBe(false);
+    });
+
+    it('isCompleted() debe retornar false para in_progress', () => {
+        const reservation = new Reservation({
+            id: 'r15', userId: 'u1', locationId: 'l1', locationName: 'Sala O',
+            startAt: '2026-02-26T10:00:00', endAt: '2026-02-26T11:00:00',
+            status: 'in_progress',
+        });
+        expect(reservation.isCompleted()).toBe(false);
+    });
+
+    it('isConfirmed() debe retornar false para completed', () => {
+        const reservation = new Reservation({
+            id: 'r16', userId: 'u1', locationId: 'l1', locationName: 'Sala P',
+            startAt: '2026-02-26T10:00:00', endAt: '2026-02-26T11:00:00',
+            status: 'completed',
+        });
+        expect(reservation.isConfirmed()).toBe(false);
+    });
+});

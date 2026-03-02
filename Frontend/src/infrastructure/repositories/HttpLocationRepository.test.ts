@@ -1,9 +1,11 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { HttpLocationRepository } from './HttpLocationRepository';
 import { Location } from '../../core/domain/entities/Location';
 import type { IHttpClient } from '../../core/ports/services/IHttpClient';
 
 describe('HttpLocationRepository', () => {
+    beforeEach(() => { vi.spyOn(console, 'error').mockImplementation(() => {}); });
+    afterEach(() => { vi.restoreAllMocks(); });
     function createMockHttpClient(overrides: Partial<IHttpClient> = {}): IHttpClient {
         return {
             get: vi.fn(), post: vi.fn(), put: vi.fn(), patch: vi.fn(), delete: vi.fn(),
@@ -107,6 +109,57 @@ describe('HttpLocationRepository', () => {
             const result = await repo.removeInventory('l1', 'i1');
             expect(result).toEqual({ success: true });
             expect(mockDelete).toHaveBeenCalledWith('/locations/l1/inventory/i1');
+        });
+    });
+
+    describe('respuestas directas (sin wrapper { ok, data })', () => {
+        it('getAll() debe manejar un array directo', async () => {
+            const client = createMockHttpClient({
+                get: vi.fn().mockResolvedValue({ data: locationDTOs, status: 200 })
+            });
+            const repo = new HttpLocationRepository(client);
+            const result = await repo.getAll();
+            expect(result).toHaveLength(2);
+            expect(result[0]).toBeInstanceOf(Location);
+            expect(result[0].name).toBe('Sala A');
+        });
+
+        it('getById() debe manejar un objeto directo', async () => {
+            const client = createMockHttpClient({
+                get: vi.fn().mockResolvedValue({ data: locationDTOs[0], status: 200 })
+            });
+            const repo = new HttpLocationRepository(client);
+            const result = await repo.getById('l1');
+            expect(result).toBeInstanceOf(Location);
+            expect(result.id).toBe('l1');
+        });
+
+        it('search() debe manejar un array directo', async () => {
+            const mockGet = vi.fn().mockResolvedValue({ data: [locationDTOs[1]], status: 200 });
+            const client = createMockHttpClient({ get: mockGet });
+            const repo = new HttpLocationRepository(client);
+
+            const result = await repo.search({ type: 'sala' });
+            expect(result).toHaveLength(1);
+            expect(result[0].name).toBe('Sala B');
+        });
+
+        it('assignInventory() debe manejar respuesta directa', async () => {
+            const mockPost = vi.fn().mockResolvedValue({ data: { assigned: true }, status: 200 });
+            const client = createMockHttpClient({ post: mockPost });
+            const repo = new HttpLocationRepository(client);
+
+            const result = await repo.assignInventory('l1', 'i1', 3);
+            expect(result).toEqual({ assigned: true });
+        });
+
+        it('removeInventory() debe manejar respuesta directa', async () => {
+            const mockDelete = vi.fn().mockResolvedValue({ data: { removed: true }, status: 200 });
+            const client = createMockHttpClient({ delete: mockDelete });
+            const repo = new HttpLocationRepository(client);
+
+            const result = await repo.removeInventory('l1', 'i1');
+            expect(result).toEqual({ removed: true });
         });
     });
 });

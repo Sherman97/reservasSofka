@@ -220,10 +220,13 @@ Backend/
     notifications-service/
     database/
   docker-compose.yml
+  docker-compose.app.yml
   settings.gradle
 ```
 
 ## 10. Ejecucion
+
+### Opcion A - Stack completo (recomendado)
 
 Desde `Backend/`:
 
@@ -231,7 +234,11 @@ Desde `Backend/`:
 docker compose up --build
 ```
 
-Este comando levanta toda la infraestructura (MariaDB, RabbitMQ, Liquibase) junto con los microservicios.
+### Opcion B - Solo aplicaciones contra infraestructura externa
+
+```bash
+docker compose -f docker-compose.app.yml up --build
+```
 
 ## 11. Variables de Entorno Clave
 

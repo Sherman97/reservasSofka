@@ -20,5 +20,7 @@ export interface IReservationRepository {
     getByUserId(userId: string): Promise<Reservation[]>;
     getById(id: string): Promise<Reservation>;
     cancel(id: string): Promise<void>;
+    deliver(id: string, novelty?: string): Promise<Reservation>;
+    returnReservation(id: string, novelty?: string): Promise<Reservation>;
     getAvailability(locationId: string, date: string): Promise<AvailabilityResult>;
 }

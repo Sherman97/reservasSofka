@@ -313,6 +313,76 @@ public class JdbcBookingPersistenceAdapter implements BookingPersistencePort {
         );
     }
 
+    @Override
+    public void updateReservationStatus(long reservationId, String status) {
+        jdbcTemplate.update(
+                "UPDATE reservations SET status = ? WHERE id = ?",
+                status,
+                reservationId
+        );
+    }
+
+    @Override
+    public void markReservationEquipmentsDelivered(long reservationId, long deliveredBy, Instant deliveredAt, String novelty) {
+        jdbcTemplate.update(
+                """
+                UPDATE reservation_equipments
+                SET status = 'delivered',
+                    delivered_at = COALESCE(delivered_at, ?),
+                    delivered_by = COALESCE(delivered_by, ?),
+                    condition_notes = COALESCE(?, condition_notes)
+                WHERE reservation_id = ?
+                  AND status IN ('requested', 'confirmed')
+                """,
+                Timestamp.from(deliveredAt),
+                deliveredBy,
+                novelty,
+                reservationId
+        );
+    }
+
+    @Override
+    public void markReservationEquipmentsReturned(long reservationId, long returnedBy, Instant returnedAt, String novelty) {
+        jdbcTemplate.update(
+                """
+                UPDATE reservation_equipments
+                SET status = 'returned',
+                    returned_at = COALESCE(returned_at, ?),
+                    returned_by = COALESCE(returned_by, ?),
+                    condition_notes = COALESCE(?, condition_notes)
+                WHERE reservation_id = ?
+                  AND status IN ('requested', 'confirmed', 'delivered')
+                """,
+                Timestamp.from(returnedAt),
+                returnedBy,
+                novelty,
+                reservationId
+        );
+    }
+
+    @Override
+    public void insertReservationHandoverLog(long reservationId,
+                                             long spaceId,
+                                             long userId,
+                                             long staffId,
+                                             String action,
+                                             String novelty,
+                                             Instant eventAt) {
+        jdbcTemplate.update(
+                """
+                INSERT INTO reservation_handover_logs (reservation_id, space_id, user_id, staff_id, action, novelty, event_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                reservationId,
+                spaceId,
+                userId,
+                staffId,
+                action,
+                novelty,
+                Timestamp.from(eventAt)
+        );
+    }
+
     private Reservation toReservation(java.sql.ResultSet rs) throws java.sql.SQLException {
         return new Reservation(
                 rs.getLong("id"),

@@ -45,6 +45,20 @@ describe('Integration: Reservation Flow (UseCase + Mapper + Entity)', () => {
                 const idx = reservations.findIndex(r => r['id'] === reservationId);
                 if (idx >= 0) reservations[idx]['status'] = 'cancelled';
             },
+            async getById(id: string) {
+                const r = reservations.find(r => r['id'] === id);
+                return ReservationMapper.toDomain(r as any)!;
+            },
+            async deliver(id: string, novelty?: string) {
+                const idx = reservations.findIndex(r => r['id'] === id);
+                if (idx >= 0) reservations[idx]['status'] = 'in_progress';
+                return ReservationMapper.toDomain(reservations[idx] as any)!;
+            },
+            async returnReservation(id: string, novelty?: string) {
+                const idx = reservations.findIndex(r => r['id'] === id);
+                if (idx >= 0) reservations[idx]['status'] = 'completed';
+                return ReservationMapper.toDomain(reservations[idx] as any)!;
+            },
             async getByUserId(userId: string) {
                 const userReservations = reservations.filter(r => r['userId'] === userId);
                 return ReservationMapper.toDomainList(userReservations as any);
@@ -53,7 +67,7 @@ describe('Integration: Reservation Flow (UseCase + Mapper + Entity)', () => {
                 const busy = reservations
                     .filter(r => r['spaceId'] === spaceId && r['status'] !== 'cancelled')
                     .map(r => ({ startAt: r['startAt'] as string, endAt: r['endAt'] as string }));
-                return { busySlots: busy };
+                return { locationId: spaceId, date, busySlots: busy.map(b => ({ start: b.startAt, end: b.endAt })) };
             }
         };
     }
