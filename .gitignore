@@ -15,3 +15,14 @@ node_modules/
 Thumbs.db
 .vscode/
 
+.github/
+
+Backend/.gradle/
+Backend/.idea/
+Backend/gradle/
+
+Frontend/node_modules/
+Frontend/dist/
+Frontend/docs/
+Frontend/html/
+Frontend/reports/

@@ -1,0 +1,960 @@
+﻿
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90mC:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/Frontend[39m
+
+node.exe : [90mstderr[2m | 
+src/infrastructure/repositories/HttpReservationRepository.test.ts[2m > 
+[22m[2mHttpReservationRepository[2m > [22m[2mcreate()[2m > [22m[2mdebe 
+lanzar error si ok es false
+En línea: 1 Carácter: 1
++ & "C:\Program Files\nodejs/node.exe" "C:\Users\anderson.rodriguez\App ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([90mstderr[2m... si ok es false 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[22m[39mError in HttpReservationRepository.create: Error: Conflict
+    at HttpReservationRepository.create (C:/Users/anderson.rodriguez/Documents/
+ProyectosTrainingAI/reservasSofka/Frontend/src/infrastructure/repositories/Http
+ReservationRepository.ts:25:33)
+[90m    at processTicksAndRejections 
+(node:internal/process/task_queues:103:5)[39m
+
+[90mstderr[2m | 
+src/infrastructure/repositories/HttpReservationRepository.test.ts[2m > 
+[22m[2mHttpReservationRepository[2m > [22m[2mcreate()[2m > [22m[2mdebe 
+propagar errores de red
+[22m[39mError in HttpReservationRepository.create: Error: Network error
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/repositories/HttpReservationRepository.test.ts:55:4
+9
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+45:11
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:9
+15:26
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/anderson.rodriguez/Documents/Proye
+ctosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m
+/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+653:37
+    at Traces.$ [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTr
+ainingAI/reservasSofka/Frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/t
+races.CCmnQaNT.js:142:27[90m)[39m
+    at trace [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTrain
+ingAI/reservasSofka/Frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/test
+.B8ej_ZHS.js:239:21[90m)[39m
+    at runTest [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTra
+iningAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/i
+ndex.js:1653:12[90m)[39m
+
+[90mstdout[2m | src/infrastructure/repositories/HttpReservationRepository.test.ts[2m > [22m[2mHttpReservationRepository[2m > [22m[2mgetByUserId()[2m > [22m[2mdebe retornar lista de reservas
+[22m[39mUser reservations response: {
+  ok: [33mtrue[39m,
+  data: [
+    {
+      id: [32m'r1'[39m,
+      userId: [32m'u1'[39m,
+      spaceId: [32m'l1'[39m,
+      spaceName: [32m'Sala A'[39m,
+      startAt: [32m'2026-03-01T10:00:00Z'[39m,
+      endAt: [32m'2026-03-01T11:00:00Z'[39m,
+      equipments: [],
+      status: [32m'active'[39m,
+      createdAt: [32m'2026-02-28T12:00:00Z'[39m
+    }
+  ]
+}
+
+[90mstderr[2m | 
+src/infrastructure/repositories/HttpReservationRepository.test.ts[2m > 
+[22m[2mHttpReservationRepository[2m > [22m[2mgetByUserId()[2m > 
+[22m[2mdebe lanzar error si ok es false
+[22m[39mError in HttpReservationRepository.getByUserId: Error: Error
+    at HttpReservationRepository.getByUserId (C:/Users/anderson.rodriguez/Docum
+ents/ProyectosTrainingAI/reservasSofka/Frontend/src/infrastructure/repositories
+/HttpReservationRepository.ts:43:33)
+[90m    at processTicksAndRejections 
+(node:internal/process/task_queues:103:5)[39m
+
+[90mstderr[2m | 
+src/infrastructure/repositories/HttpReservationRepository.test.ts[2m > 
+[22m[2mHttpReservationRepository[2m > [22m[2mcancel()[2m > [22m[2mdebe 
+lanzar error si ok es false
+[22m[39mError in HttpReservationRepository.cancel: Error: Cannot cancel
+    at HttpReservationRepository.cancel (C:/Users/anderson.rodriguez/Documents/
+ProyectosTrainingAI/reservasSofka/Frontend/src/infrastructure/repositories/Http
+ReservationRepository.ts:74:33)
+[90m    at processTicksAndRejections 
+(node:internal/process/task_queues:103:5)[39m
+
+[90mstderr[2m | 
+src/infrastructure/repositories/HttpReservationRepository.test.ts[2m > 
+[22m[2mHttpReservationRepository[2m > [22m[2mgetAvailability()[2m > 
+[22m[2mdebe retornar slots vac├¡os si ok es false
+[22m[39mCould not fetch reservations for availability check Error
+
+[90mstderr[2m | 
+src/infrastructure/repositories/HttpReservationRepository.test.ts[2m > 
+[22m[2mHttpReservationRepository[2m > [22m[2mgetAvailability()[2m > 
+[22m[2mdebe manejar errores de red sin lanzar
+[22m[39mError in HttpReservationRepository.getAvailability: Error: Network 
+error
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/repositories/HttpReservationRepository.test.ts:170:
+48
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+45:11
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:9
+15:26
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/anderson.rodriguez/Documents/Proye
+ctosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m
+/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+653:37
+    at Traces.$ [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTr
+ainingAI/reservasSofka/Frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/t
+races.CCmnQaNT.js:142:27[90m)[39m
+    at trace [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTrain
+ingAI/reservasSofka/Frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/test
+.B8ej_ZHS.js:239:21[90m)[39m
+    at runTest [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTra
+iningAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/i
+ndex.js:1653:12[90m)[39m
+
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpReservationRepository.test.ts[2m > [22mHttpReservationRepository[2m > [22mcreate()[2m > [22mdebe crear una reserva[32m 5[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpReservationRepository.test.ts[2m > [22mHttpReservationRepository[2m > [22mcreate()[2m > [22mdebe lanzar error si ok es false[32m 8[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpReservationRepository.test.ts[2m > [22mHttpReservationRepository[2m > [22mcreate()[2m > [22mdebe propagar errores de red[32m 4[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpReservationRepository.test.ts[2m > [22mHttpReservationRepository[2m > [22mgetByUserId()[2m > [22mdebe retornar lista de reservas[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpReservationRepository.test.ts[2m > [22mHttpReservationRepository[2m > [22mgetByUserId()[2m > [22mdebe lanzar error si ok es false[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpReservationRepository.test.ts[2m > [22mHttpReservationRepository[2m > [22mgetById()[2m > [22mdebe retornar una reserva[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpReservationRepository.test.ts[2m > [22mHttpReservationRepository[2m > [22mcancel()[2m > [22mdebe cancelar una reserva[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpReservationRepository.test.ts[2m > [22mHttpReservationRepository[2m > [22mcancel()[2m > [22mdebe lanzar error si ok es false[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpReservationRepository.test.ts[2m > [22mHttpReservationRepository[2m > [22mgetAvailability()[2m > [22mdebe retornar slots ocupados[32m 24[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpReservationRepository.test.ts[2m > [22mHttpReservationRepository[2m > [22mgetAvailability()[2m > [22mdebe retornar slots vac├¡os si ok es false[32m 30[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpReservationRepository.test.ts[2m > [22mHttpReservationRepository[2m > [22mgetAvailability()[2m > [22mdebe filtrar reservas canceladas[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpReservationRepository.test.ts[2m > [22mHttpReservationRepository[2m > [22mgetAvailability()[2m > [22mdebe manejar errores de red sin lanzar[32m 7[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/dashboard/SearchBar.test.jsx[2m > [22mSearchBar[2m > [22mshould render search input with placeholder[32m 45[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/dashboard/SearchBar.test.jsx[2m > [22mSearchBar[2m > [22mshould display current search query[32m 9[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/dashboard/SearchBar.test.jsx[2m > [22mSearchBar[2m > [22mshould call handleSearch on input change[32m 17[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/dashboard/SearchBar.test.jsx[2m > [22mSearchBar[2m > [22mshould render search icon[32m 14[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/reservations/ReservationFilterBar.test.jsx[2m > [22mReservationFilterBar[2m > [22mshould render all three filter tabs[32m 56[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/reservations/ReservationFilterBar.test.jsx[2m > [22mReservationFilterBar[2m > [22mshould apply active class to the active tab[32m 9[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/reservations/ReservationFilterBar.test.jsx[2m > [22mReservationFilterBar[2m > [22mshould call onTabChange when clicking a tab[32m 17[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/reservations/ReservationFilterBar.test.jsx[2m > [22mReservationFilterBar[2m > [22mshould render search input[32m 10[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/reservations/ReservationFilterBar.test.jsx[2m > [22mReservationFilterBar[2m > [22mshould display current search term[32m 6[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/common/Pagination.test.jsx[2m > [22mPagination[2m > [22mshould not render when totalPages is 1[32m 24[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/common/Pagination.test.jsx[2m > [22mPagination[2m > [22mshould not render when totalPages is 0[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/common/Pagination.test.jsx[2m > [22mPagination[2m > [22mshould render page numbers for multiple pages[32m 31[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/common/Pagination.test.jsx[2m > [22mPagination[2m > [22mshould render Anterior and Siguiente buttons[32m 10[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/common/Pagination.test.jsx[2m > [22mPagination[2m > [22mshould disable Anterior on first page[32m 5[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/common/Pagination.test.jsx[2m > [22mPagination[2m > [22mshould disable Siguiente on last page[32m 8[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/common/Pagination.test.jsx[2m > [22mPagination[2m > [22mshould call onPageChange when clicking a page number[32m 10[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/common/Pagination.test.jsx[2m > [22mPagination[2m > [22mshould call onPageChange with previous page when clicking Anterior[32m 6[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/reservations/ReservationFilterBar.test.jsx[2m > [22mReservationFilterBar[2m > [22mshould call onSearchChange on input change[32m 9[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/common/Pagination.test.jsx[2m > [22mPagination[2m > [22mshould call onPageChange with next page when clicking Siguiente[32m 9[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/common/Pagination.test.jsx[2m > [22mPagination[2m > [22mshould apply active class to current page[32m 5[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/reservations/ReservationList.test.jsx[2m > [22mReservationList[2m > [22mshould render empty state when no reservations[32m 40[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/reservations/ReservationList.test.jsx[2m > [22mReservationList[2m > [22mshould render empty state when reservations is undefined[32m 4[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/reservations/ReservationList.test.jsx[2m > [22mReservationList[2m > [22mshould render reservation cards for each reservation[32m 9[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/reservations/ReservationList.test.jsx[2m > [22mReservationList[2m > [22mshould display correct location names[32m 5[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/common/ProtectedRoute.test.jsx[2m > [22mProtectedRoute[2m > [22mshould redirect to login when no token exists[32m 47[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/common/ProtectedRoute.test.jsx[2m > [22mProtectedRoute[2m > [22mshould render children when token exists[32m 8[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/common/ProtectedRoute.test.jsx[2m > [22mProtectedRoute[2m > [22mshould check localStorage for "token" key[32m 7[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/pages/auth/LoginPage.test.jsx[2m > [22mLoginPage[2m > [22mshould render page structure[32m 52[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/pages/auth/LoginPage.test.jsx[2m > [22mLoginPage[2m > [22mshould render LoginForm component[32m 9[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/pages/auth/LoginPage.test.jsx[2m > [22mLoginPage[2m > [22mshould display branding elements[32m 9[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/pages/auth/LoginPage.test.jsx[2m > [22mLoginPage[2m > [22mshould display subtitle text[32m 7[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/pages/signup/SignupPage.test.jsx[2m > [22mSignupPage[2m > [22mshould render page structure[32m 50[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/pages/signup/SignupPage.test.jsx[2m > [22mSignupPage[2m > [22mshould render SignupForm component[32m 9[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/pages/signup/SignupPage.test.jsx[2m > [22mSignupPage[2m > [22mshould display branding[32m 9[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/pages/signup/SignupPage.test.jsx[2m > [22mSignupPage[2m > [22mshould display subtitle[32m 8[2mms[22m[39m
+ [32mÔ£ô[39m src/routes/AppRouter.test.jsx[2m > [22mAppRouter - Routing Integration[2m > [22mshould render LoginPage on "/" route[32m 47[2mms[22m[39m
+ [32mÔ£ô[39m src/routes/AppRouter.test.jsx[2m > [22mAppRouter - Routing Integration[2m > [22mshould render LoginPage on "/login" route[32m 7[2mms[22m[39m
+ [32mÔ£ô[39m src/routes/AppRouter.test.jsx[2m > [22mAppRouter - Routing Integration[2m > [22mshould render SignupPage on "/signup" route[32m 8[2mms[22m[39m
+ [32mÔ£ô[39m src/routes/AppRouter.test.jsx[2m > [22mAppRouter - Routing Integration[2m > [22mshould redirect to login when accessing /dashboard without token[32m 14[2mms[22m[39m
+ [32mÔ£ô[39m src/routes/AppRouter.test.jsx[2m > [22mAppRouter - Routing Integration[2m > [22mshould redirect to login when accessing /my-reservations without token[32m 6[2mms[22m[39m
+ [32mÔ£ô[39m src/routes/AppRouter.test.jsx[2m > [22mAppRouter - Routing Integration[2m > [22mshould render DashboardPage when authenticated and navigating to /dashboard[32m 9[2mms[22m[39m
+ [32mÔ£ô[39m src/routes/AppRouter.test.jsx[2m > [22mAppRouter - Routing Integration[2m > [22mshould render MyReservationsPage when authenticated and navigating to /my-reservations[32m 7[2mms[22m[39m
+ [32mÔ£ô[39m src/routes/AppRouter.test.jsx[2m > [22mAppRouter - Routing Integration[2m > [22mshould wrap protected routes in MainLayout[32m 8[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/auth/LoginForm.test.jsx[2m > [22mLoginForm[2m > [22mshould render email and password inputs[32m 54[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/signup/SignupForm.test.jsx[2m > [22mSignupForm[2m > [22mshould render all form fields[32m 62[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/signup/SignupForm.test.jsx[2m > [22mSignupForm[2m > [22mshould render terms checkbox[32m 24[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/auth/LoginForm.test.jsx[2m > [22mLoginForm[2m > [22mshould render submit button[33m 341[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/auth/LoginForm.test.jsx[2m > [22mLoginForm[2m > [22mshould render signup link[32m 17[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/auth/LoginForm.test.jsx[2m > [22mLoginForm[2m > [22mshould call setEmail on email input change[32m 17[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/auth/LoginForm.test.jsx[2m > [22mLoginForm[2m > [22mshould call setPassword on password input change[32m 10[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/signup/SignupForm.test.jsx[2m > [22mSignupForm[2m > [22mshould render submit button[33m 347[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/signup/SignupForm.test.jsx[2m > [22mSignupForm[2m > [22mshould render login link[32m 15[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/signup/SignupForm.test.jsx[2m > [22mSignupForm[2m > [22mshould call handleChange on input change[32m 21[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/auth/LoginForm.test.jsx[2m > [22mLoginForm[2m > [22mshould call handleSubmit on form submission[32m 62[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/auth/LoginForm.test.jsx[2m > [22mLoginForm[2m > [22mshould show loading text and disable button when loading[32m 56[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/auth/LoginForm.test.jsx[2m > [22mLoginForm[2m > [22mshould display error message when error exists[32m 6[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/signup/SignupForm.test.jsx[2m > [22mSignupForm[2m > [22mshould call handleSubmit on form submission[32m 67[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/signup/SignupForm.test.jsx[2m > [22mSignupForm[2m > [22mshould disable button and show loading text when loading[32m 59[2mms[22m[39m
+ [32mÔ£ô[39m src/ui/components/signup/SignupForm.test.jsx[2m > [22mSignupForm[2m > [22mshould display error message when error exists[32m 26[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22mconstructor[2m > [22mdebe crear reserva con todas las propiedades[32m 4[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22mconstructor[2m > [22mdebe asignar defaults si no se proveen opcionales[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22mconstructor[2m > [22mdebe aceptar Date objects[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22misActive()[2m > [22mdebe retornar true para status active[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22misActive()[2m > [22mdebe retornar true para status confirmed[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22misActive()[2m > [22mdebe retornar true para status pending[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22misActive()[2m > [22mdebe retornar true para status created[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22misActive()[2m > [22mdebe retornar false para status cancelled[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22misCancelled()[2m > [22mdebe retornar true para cancelled[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22misCancelled()[2m > [22mdebe retornar false para active[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22misPast()[2m > [22mdebe retornar true si endAt es pasado[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22misPast()[2m > [22mdebe retornar false si endAt es futuro[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22misUpcoming()[2m > [22mdebe retornar true si no es pasada ni cancelada[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22misUpcoming()[2m > [22mdebe retornar false si es cancelada[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22misUpcoming()[2m > [22mdebe retornar false si es pasada[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22misOngoing()[2m > [22mdebe retornar true si est├í en curso[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22misOngoing()[2m > [22mdebe retornar false si no ha comenzado[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22misOngoing()[2m > [22mdebe retornar false si ya termin├│[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22misOngoing()[2m > [22mdebe retornar false si est├í cancelada aunque est├® en el rango[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22mgetDurationHours()[2m > [22mdebe calcular duraci├│n en horas[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22mgetDurationHours()[2m > [22mdebe retornar fracciones de hora[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22mgetFormattedDateRange()[2m > [22mdebe retornar string formateado[32m 25[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22moverlaps()[2m > [22mdebe detectar solapamiento completo[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22moverlaps()[2m > [22mdebe detectar solapamiento parcial[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22moverlaps()[2m > [22mdebe retornar false si no se solapan[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22moverlaps()[2m > [22mdebe retornar false si termina justo cuando empieza[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22mtoJSON()[2m > [22mdebe serializar correctamente[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22mfromJSON()[2m > [22mdebe deserializar correctamente[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.core.test.ts[2m > [22mReservation - Core Methods[2m > [22mfromJSON()[2m > [22mroundtrip debe preservar datos[32m 0[2mms[22m[39m
+[90mstderr[2m | src/infrastructure/storage/LocalStorageService.test.ts[2m > 
+[22m[2mLocalStorageService[2m > [22m[2mget()[2m > [22m[2mdebe retornar 
+null si localStorage lanza error
+[22m[39mError getting item from localStorage: key Error: Access denied
+    at Object.<anonymous> (C:/Users/anderson.rodriguez/Documents/ProyectosTrain
+ingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageService.tes
+t.ts:30:78)
+    at Object.Mock [as getItem] [90m(file:///C:/Users/anderson.rodriguez/Docum
+ents/ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/s
+py[24m/dist/index.js:285:34[90m)[39m
+    at LocalStorageService.get (C:/Users/anderson.rodriguez/Documents/Proyectos
+TrainingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageServic
+e.ts:10:33)
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/storage/LocalStorageService.test.ts:31:28
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+45:11
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:9
+15:26
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/anderson.rodriguez/Documents/Proye
+ctosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m
+/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+653:37
+
+[90mstderr[2m | src/infrastructure/storage/LocalStorageService.test.ts[2m > 
+[22m[2mLocalStorageService[2m > [22m[2mset()[2m > [22m[2mdebe manejar 
+QuotaExceededError sin lanzar
+[22m[39mError setting item in localStorage: key DOMException {}
+localStorage quota exceeded
+
+[90mstderr[2m | src/infrastructure/storage/LocalStorageService.test.ts[2m > 
+[22m[2mLocalStorageService[2m > [22m[2mset()[2m > [22m[2mdebe manejar 
+errores gen├®ricos sin lanzar
+[22m[39mError setting item in localStorage: key Error: Error
+    at Object.<anonymous> (C:/Users/anderson.rodriguez/Documents/ProyectosTrain
+ingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageService.tes
+t.ts:48:78)
+    at Object.Mock [as setItem] [90m(file:///C:/Users/anderson.rodriguez/Docum
+ents/ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/s
+py[24m/dist/index.js:285:34[90m)[39m
+    at LocalStorageService.set (C:/Users/anderson.rodriguez/Documents/Proyectos
+TrainingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageServic
+e.ts:19:26)
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/storage/LocalStorageService.test.ts:49:34
+    at Proxy.assertThrows [90m(file:///C:/Users/anderson.rodriguez/Documents/P
+royectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mchai[24m/index
+.js:2798:5[90m)[39m
+    at Proxy.methodWrapper [90m(file:///C:/Users/anderson.rodriguez/Documents/
+ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mchai[24m/inde
+x.js:1700:25[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1149:12[90m)[39m
+    at Proxy.overwritingMethodWrapper [90m(file:///C:/Users/anderson.rodriguez
+/Documents/ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mcha
+i[24m/index.js:1750:33[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1485:16[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1090:14[90m)[39m
+
+[90mstderr[2m | src/infrastructure/storage/LocalStorageService.test.ts[2m > 
+[22m[2mLocalStorageService[2m > [22m[2mremove()[2m > [22m[2mdebe 
+manejar errores sin lanzar
+[22m[39mError removing item from localStorage: key Error: Error
+    at Object.<anonymous> (C:/Users/anderson.rodriguez/Documents/ProyectosTrain
+ingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageService.tes
+t.ts:60:81)
+    at Object.Mock [as removeItem] [90m(file:///C:/Users/anderson.rodriguez/Do
+cuments/ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vites
+t/spy[24m/dist/index.js:285:34[90m)[39m
+    at LocalStorageService.remove (C:/Users/anderson.rodriguez/Documents/Proyec
+tosTrainingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageSer
+vice.ts:30:26)
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/storage/LocalStorageService.test.ts:61:34
+    at Proxy.assertThrows [90m(file:///C:/Users/anderson.rodriguez/Documents/P
+royectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mchai[24m/index
+.js:2798:5[90m)[39m
+    at Proxy.methodWrapper [90m(file:///C:/Users/anderson.rodriguez/Documents/
+ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mchai[24m/inde
+x.js:1700:25[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1149:12[90m)[39m
+    at Proxy.overwritingMethodWrapper [90m(file:///C:/Users/anderson.rodriguez
+/Documents/ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mcha
+i[24m/index.js:1750:33[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1485:16[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1090:14[90m)[39m
+
+[90mstderr[2m | src/infrastructure/storage/LocalStorageService.test.ts[2m > 
+[22m[2mLocalStorageService[2m > [22m[2mclear()[2m > [22m[2mdebe 
+manejar errores sin lanzar
+[22m[39mError clearing localStorage Error: Error
+    at Object.<anonymous> (C:/Users/anderson.rodriguez/Documents/ProyectosTrain
+ingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageService.tes
+t.ts:72:76)
+    at Object.Mock [as clear] [90m(file:///C:/Users/anderson.rodriguez/Documen
+ts/ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/spy
+[24m/dist/index.js:285:34[90m)[39m
+    at LocalStorageService.clear (C:/Users/anderson.rodriguez/Documents/Proyect
+osTrainingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageServ
+ice.ts:38:26)
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/storage/LocalStorageService.test.ts:73:34
+    at Proxy.assertThrows [90m(file:///C:/Users/anderson.rodriguez/Documents/P
+royectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mchai[24m/index
+.js:2798:5[90m)[39m
+    at Proxy.methodWrapper [90m(file:///C:/Users/anderson.rodriguez/Documents/
+ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mchai[24m/inde
+x.js:1700:25[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1149:12[90m)[39m
+    at Proxy.overwritingMethodWrapper [90m(file:///C:/Users/anderson.rodriguez
+/Documents/ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mcha
+i[24m/index.js:1750:33[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1485:16[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1090:14[90m)[39m
+
+[90mstderr[2m | src/infrastructure/storage/LocalStorageService.test.ts[2m > 
+[22m[2mLocalStorageService[2m > [22m[2mhas()[2m > [22m[2mdebe retornar 
+false si localStorage lanza error
+[22m[39mError checking if key exists in localStorage: key Error: Error
+    at Object.<anonymous> (C:/Users/anderson.rodriguez/Documents/ProyectosTrain
+ingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageService.tes
+t.ts:88:78)
+    at Object.Mock [as getItem] [90m(file:///C:/Users/anderson.rodriguez/Docum
+ents/ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/s
+py[24m/dist/index.js:285:34[90m)[39m
+    at LocalStorageService.has (C:/Users/anderson.rodriguez/Documents/Proyectos
+TrainingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageServic
+e.ts:46:33)
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/storage/LocalStorageService.test.ts:89:28
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+45:11
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:9
+15:26
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/anderson.rodriguez/Documents/Proye
+ctosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m
+/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+653:37
+
+[90mstderr[2m | src/infrastructure/storage/LocalStorageService.test.ts[2m > 
+[22m[2mLocalStorageService[2m > [22m[2mgetJSON()[2m > [22m[2mdebe 
+retornar null si JSON es inv├ílido
+[22m[39mError parsing JSON from localStorage: bad SyntaxError: Unexpected 
+token 'o', "not-json" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at LocalStorageService.getJSON (C:/Users/anderson.rodriguez/Documents/Proye
+ctosTrainingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageSe
+rvice.ts:56:34)
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/storage/LocalStorageService.test.ts:106:28
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+45:11
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:9
+15:26
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/anderson.rodriguez/Documents/Proye
+ctosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m
+/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+653:37
+    at Traces.$ [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTr
+ainingAI/reservasSofka/Frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/t
+races.CCmnQaNT.js:142:27[90m)[39m
+
+[90mstderr[2m | src/infrastructure/storage/LocalStorageService.test.ts[2m > 
+[22m[2mLocalStorageService[2m > [22m[2msetJSON()[2m > [22m[2mdebe 
+manejar errores de stringify sin lanzar
+[22m[39mError stringifying JSON to localStorage: key TypeError: Converting 
+circular structure to JSON
+    --> starting at object with constructor 'Object'
+    --- property 'self' closes the circle
+    at JSON.stringify (<anonymous>)
+    at LocalStorageService.setJSON (C:/Users/anderson.rodriguez/Documents/Proye
+ctosTrainingAI/reservasSofka/Frontend/src/infrastructure/storage/LocalStorageSe
+rvice.ts:65:32)
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/storage/LocalStorageService.test.ts:119:34
+    at Proxy.assertThrows [90m(file:///C:/Users/anderson.rodriguez/Documents/P
+royectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mchai[24m/index
+.js:2798:5[90m)[39m
+    at Proxy.methodWrapper [90m(file:///C:/Users/anderson.rodriguez/Documents/
+ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mchai[24m/inde
+x.js:1700:25[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1149:12[90m)[39m
+    at Proxy.overwritingMethodWrapper [90m(file:///C:/Users/anderson.rodriguez
+/Documents/ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mcha
+i[24m/index.js:1750:33[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1485:16[90m)[39m
+    at Proxy.<anonymous> [90m(file:///C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/expect[
+24m/dist/index.js:1090:14[90m)[39m
+    at Proxy.methodWrapper [90m(file:///C:/Users/anderson.rodriguez/Documents/
+ProyectosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4mchai[24m/inde
+x.js:1700:25[90m)[39m
+
+ [32mÔ£ô[39m src/infrastructure/storage/LocalStorageService.test.ts[2m > [22mLocalStorageService[2m > [22mget()[2m > [22mdebe retornar valor existente[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/storage/LocalStorageService.test.ts[2m > [22mLocalStorageService[2m > [22mget()[2m > [22mdebe retornar null para key inexistente[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/storage/LocalStorageService.test.ts[2m > [22mLocalStorageService[2m > [22mget()[2m > [22mdebe retornar null si localStorage lanza error[32m 7[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/storage/LocalStorageService.test.ts[2m > [22mLocalStorageService[2m > [22mset()[2m > [22mdebe guardar un valor[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/storage/LocalStorageService.test.ts[2m > [22mLocalStorageService[2m > [22mset()[2m > [22mdebe manejar QuotaExceededError sin lanzar[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/storage/LocalStorageService.test.ts[2m > [22mLocalStorageService[2m > [22mset()[2m > [22mdebe manejar errores gen├®ricos sin lanzar[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/storage/LocalStorageService.test.ts[2m > [22mLocalStorageService[2m > [22mremove()[2m > [22mdebe remover un valor[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/storage/LocalStorageService.test.ts[2m > [22mLocalStorageService[2m > [22mremove()[2m > [22mdebe manejar errores sin lanzar[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/storage/LocalStorageService.test.ts[2m > [22mLocalStorageService[2m > [22mclear()[2m > [22mdebe limpiar todo[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/storage/LocalStorageService.test.ts[2m > [22mLocalStorageService[2m > [22mclear()[2m > [22mdebe manejar errores sin lanzar[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/storage/LocalStorageService.test.ts[2m > [22mLocalStorageService[2m > [22mhas()[2m > [22mdebe retornar true si key existe[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/storage/LocalStorageService.test.ts[2m > [22mLocalStorageService[2m > [22mhas()[2m > [22mdebe retornar false si key no existe[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/storage/LocalStorageService.test.ts[2m > [22mLocalStorageService[2m > [22mhas()[2m > [22mdebe retornar false si localStorage lanza error[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/storage/LocalStorageService.test.ts[2m > [22mLocalStorageService[2m > [22mgetJSON()[2m > [22mdebe retornar objeto parseado[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/storage/LocalStorageService.test.ts[2m > [22mLocalStorageService[2m > [22mgetJSON()[2m > [22mdebe retornar null si no existe[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/storage/LocalStorageService.test.ts[2m > [22mLocalStorageService[2m > [22mgetJSON()[2m > [22mdebe retornar null si JSON es inv├ílido[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/storage/LocalStorageService.test.ts[2m > [22mLocalStorageService[2m > [22msetJSON()[2m > [22mdebe guardar objeto como JSON[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/storage/LocalStorageService.test.ts[2m > [22mLocalStorageService[2m > [22msetJSON()[2m > [22mdebe manejar errores de stringify sin lanzar[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/core/adapters/hooks/useReservationAlert.test.ts[2m > [22museReservationAlert[2m > [22mdebe retornar alertas vac├¡as cuando no hay reservas activas[32m 30[2mms[22m[39m
+ [32mÔ£ô[39m src/core/adapters/hooks/useReservationAlert.test.ts[2m > [22museReservationAlert[2m > [22mdebe detectar una reserva que est├í a punto de expirar[32m 6[2mms[22m[39m
+ [32mÔ£ô[39m src/core/adapters/hooks/useReservationAlert.test.ts[2m > [22museReservationAlert[2m > [22mno debe alertar reservas con suficiente tiempo restante[32m 4[2mms[22m[39m
+ [32mÔ£ô[39m src/core/adapters/hooks/useReservationAlert.test.ts[2m > [22museReservationAlert[2m > [22mno debe alertar reservas canceladas[32m 4[2mms[22m[39m
+ [32mÔ£ô[39m src/core/adapters/hooks/useReservationAlert.test.ts[2m > [22museReservationAlert[2m > [22mdebe permitir descartar una alerta[32m 8[2mms[22m[39m
+ [32mÔ£ô[39m src/core/adapters/hooks/useReservationAlert.test.ts[2m > [22museReservationAlert[2m > [22mdebe usar umbral personalizado de minutos[32m 10[2mms[22m[39m
+ [32mÔ£ô[39m src/core/adapters/hooks/useReservationAlert.test.ts[2m > [22museReservationAlert[2m > [22mdebe actualizar peri├│dicamente verificando las reservas[32m 5[2mms[22m[39m
+[90mstderr[2m | 
+src/infrastructure/repositories/HttpLocationRepository.test.ts[2m > 
+[22m[2mHttpLocationRepository[2m > [22m[2mgetAll()[2m > [22m[2mdebe 
+lanzar error si ok es false
+[22m[39mError in HttpLocationRepository.getAll: Error: Server error
+    at HttpLocationRepository.getAll (C:/Users/anderson.rodriguez/Documents/Pro
+yectosTrainingAI/reservasSofka/Frontend/src/infrastructure/repositories/HttpLoc
+ationRepository.ts:20:33)
+[90m    at processTicksAndRejections 
+(node:internal/process/task_queues:103:5)[39m
+
+[90mstderr[2m | 
+src/infrastructure/repositories/HttpLocationRepository.test.ts[2m > 
+[22m[2mHttpLocationRepository[2m > [22m[2mgetAll()[2m > [22m[2mdebe 
+propagar errores de red
+[22m[39mError in HttpLocationRepository.getAll: Error: Network error
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/repositories/HttpLocationRepository.test.ts:42:48
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+45:11
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:9
+15:26
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/anderson.rodriguez/Documents/Proye
+ctosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m
+/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+653:37
+    at Traces.$ [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTr
+ainingAI/reservasSofka/Frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/t
+races.CCmnQaNT.js:142:27[90m)[39m
+    at trace [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTrain
+ingAI/reservasSofka/Frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/test
+.B8ej_ZHS.js:239:21[90m)[39m
+    at runTest [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTra
+iningAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/i
+ndex.js:1653:12[90m)[39m
+
+[90mstderr[2m | 
+src/infrastructure/repositories/HttpLocationRepository.test.ts[2m > 
+[22m[2mHttpLocationRepository[2m > [22m[2mgetById()[2m > [22m[2mdebe 
+lanzar error si ok es false
+[22m[39mError in HttpLocationRepository.getById: Error: Not found
+    at HttpLocationRepository.getById (C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/src/infrastructure/repositories/HttpLo
+cationRepository.ts:33:33)
+[90m    at processTicksAndRejections 
+(node:internal/process/task_queues:103:5)[39m
+
+[90mstderr[2m | 
+src/infrastructure/repositories/HttpLocationRepository.test.ts[2m > 
+[22m[2mHttpLocationRepository[2m > [22m[2massignInventory()[2m > 
+[22m[2mdebe lanzar error si ok es false
+[22m[39mError in HttpLocationRepository.assignInventory: Error: Not found
+    at HttpLocationRepository.assignInventory (C:/Users/anderson.rodriguez/Docu
+ments/ProyectosTrainingAI/reservasSofka/Frontend/src/infrastructure/repositorie
+s/HttpLocationRepository.ts:63:33)
+[90m    at processTicksAndRejections 
+(node:internal/process/task_queues:103:5)[39m
+
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpLocationRepository.test.ts[2m > [22mHttpLocationRepository[2m > [22mgetAll()[2m > [22mdebe retornar lista de Location[32m 5[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpLocationRepository.test.ts[2m > [22mHttpLocationRepository[2m > [22mgetAll()[2m > [22mdebe lanzar error si ok es false[32m 8[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpLocationRepository.test.ts[2m > [22mHttpLocationRepository[2m > [22mgetAll()[2m > [22mdebe propagar errores de red[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpLocationRepository.test.ts[2m > [22mHttpLocationRepository[2m > [22mgetById()[2m > [22mdebe retornar una Location[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpLocationRepository.test.ts[2m > [22mHttpLocationRepository[2m > [22mgetById()[2m > [22mdebe lanzar error si ok es false[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpLocationRepository.test.ts[2m > [22mHttpLocationRepository[2m > [22msearch()[2m > [22mdebe pasar criteria como params[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpLocationRepository.test.ts[2m > [22mHttpLocationRepository[2m > [22massignInventory()[2m > [22mdebe hacer POST para asignar inventario[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpLocationRepository.test.ts[2m > [22mHttpLocationRepository[2m > [22massignInventory()[2m > [22mdebe lanzar error si ok es false[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpLocationRepository.test.ts[2m > [22mHttpLocationRepository[2m > [22mremoveInventory()[2m > [22mdebe hacer DELETE para remover inventario[32m 1[2mms[22m[39m
+[90mstderr[2m | 
+src/infrastructure/repositories/HttpInventoryRepository.test.ts[2m > 
+[22m[2mHttpInventoryRepository[2m > [22m[2mgetAll()[2m > [22m[2mdebe 
+lanzar error si ok es false
+[22m[39mError in HttpInventoryRepository.getAll: Error: Fetch error
+    at HttpInventoryRepository.getAll (C:/Users/anderson.rodriguez/Documents/Pr
+oyectosTrainingAI/reservasSofka/Frontend/src/infrastructure/repositories/HttpIn
+ventoryRepository.ts:20:33)
+[90m    at processTicksAndRejections 
+(node:internal/process/task_queues:103:5)[39m
+
+[90mstderr[2m | 
+src/infrastructure/repositories/HttpInventoryRepository.test.ts[2m > 
+[22m[2mHttpInventoryRepository[2m > [22m[2mgetAll()[2m > [22m[2mdebe 
+propagar errores de red
+[22m[39mError in HttpInventoryRepository.getAll: Error: Network error
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/repositories/HttpInventoryRepository.test.ts:41:48
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+45:11
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:9
+15:26
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/anderson.rodriguez/Documents/Proye
+ctosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m
+/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+653:37
+    at Traces.$ [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTr
+ainingAI/reservasSofka/Frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/t
+races.CCmnQaNT.js:142:27[90m)[39m
+    at trace [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTrain
+ingAI/reservasSofka/Frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/test
+.B8ej_ZHS.js:239:21[90m)[39m
+    at runTest [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTra
+iningAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/i
+ndex.js:1653:12[90m)[39m
+
+[90mstderr[2m | 
+src/infrastructure/repositories/HttpInventoryRepository.test.ts[2m > 
+[22m[2mHttpInventoryRepository[2m > [22m[2mgetById()[2m > [22m[2mdebe 
+lanzar error si mapping falla
+[22m[39mError in HttpInventoryRepository.getById: Error: Error mapping 
+inventory data
+    at HttpInventoryRepository.getById (C:/Users/anderson.rodriguez/Documents/P
+royectosTrainingAI/reservasSofka/Frontend/src/infrastructure/repositories/HttpI
+nventoryRepository.ts:35:30)
+[90m    at processTicksAndRejections 
+(node:internal/process/task_queues:103:5)[39m
+
+[90mstderr[2m | 
+src/infrastructure/repositories/HttpInventoryRepository.test.ts[2m > 
+[22m[2mHttpInventoryRepository[2m > [22m[2mgetByCityId()[2m > 
+[22m[2mdebe lanzar error si ok es false
+[22m[39mError in HttpInventoryRepository.getByCityId: Error: Error
+    at HttpInventoryRepository.getByCityId (C:/Users/anderson.rodriguez/Documen
+ts/ProyectosTrainingAI/reservasSofka/Frontend/src/infrastructure/repositories/H
+ttpInventoryRepository.ts:50:33)
+[90m    at processTicksAndRejections 
+(node:internal/process/task_queues:103:5)[39m
+
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpInventoryRepository.test.ts[2m > [22mHttpInventoryRepository[2m > [22mgetAll()[2m > [22mdebe retornar lista de InventoryItem[32m 4[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpInventoryRepository.test.ts[2m > [22mHttpInventoryRepository[2m > [22mgetAll()[2m > [22mdebe lanzar error si ok es false[32m 7[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpInventoryRepository.test.ts[2m > [22mHttpInventoryRepository[2m > [22mgetAll()[2m > [22mdebe propagar errores de red[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpInventoryRepository.test.ts[2m > [22mHttpInventoryRepository[2m > [22mgetById()[2m > [22mdebe retornar un InventoryItem[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpInventoryRepository.test.ts[2m > [22mHttpInventoryRepository[2m > [22mgetById()[2m > [22mdebe lanzar error si mapping falla[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpInventoryRepository.test.ts[2m > [22mHttpInventoryRepository[2m > [22mgetByCityId()[2m > [22mdebe pasar cityId como param[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpInventoryRepository.test.ts[2m > [22mHttpInventoryRepository[2m > [22mgetByCityId()[2m > [22mdebe lanzar error si ok es false[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpInventoryRepository.test.ts[2m > [22mHttpInventoryRepository[2m > [22msearch()[2m > [22mdebe pasar criteria como params[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mtoDomain()[2m > [22mdebe mapear DTO est├índar a dominio[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mtoDomain()[2m > [22mdebe usar bookingId si id no existe[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mtoDomain()[2m > [22mdebe usar user_id si userId no existe[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mtoDomain()[2m > [22mdebe usar locationId si spaceId no existe[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mtoDomain()[2m > [22mdebe usar space_id como fallback[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mtoDomain()[2m > [22mdebe usar locationName si spaceName no existe[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mtoDomain()[2m > [22mdebe usar space_name como fallback[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mtoDomain()[2m > [22mdebe usar title como ├║ltimo fallback de locationName[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mtoDomain()[2m > [22mdebe usar start_at si startAt no existe[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mtoDomain()[2m > [22mdebe usar items como fallback de equipments[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mtoDomain()[2m > [22mdebe usar equipment como fallback[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mtoDomain()[2m > [22mdebe usar created_at si createdAt no existe[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mtoDomain()[2m > [22mdebe retornar null si dto es null[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mnormalizeStatus()[2m > [22mdebe retornar active para undefined[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mnormalizeStatus()[2m > [22mdebe retornar active para pending[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mnormalizeStatus()[2m > [22mdebe retornar active para confirmed[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mnormalizeStatus()[2m > [22mdebe retornar active para in_progress[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mnormalizeStatus()[2m > [22mdebe retornar active para active[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mnormalizeStatus()[2m > [22mdebe retornar active para created[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mnormalizeStatus()[2m > [22mdebe retornar active para PENDING (case insensitive)[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mnormalizeStatus()[2m > [22mdebe retornar cancelled para cancelled[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mnormalizeStatus()[2m > [22mdebe retornar completed para completed[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mtoDTO()[2m > [22mdebe mapear dominio a DTO[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mtoDTO()[2m > [22mdebe retornar null si reservation es null[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mtoApi()[2m > [22mdebe convertir datos de creaci├│n al formato API[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mtoApi()[2m > [22mdebe usar t├¡tulo por defecto si no se provee[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mtoApi()[2m > [22mdebe usar defaults para campos opcionales[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mtoDomainList()[2m > [22mdebe mapear lista de DTOs[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/ReservationMapper.test.ts[2m > [22mReservationMapper[2m > [22mtoDomainList()[2m > [22mdebe retornar array vac├¡o si no es array[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/adapters/hooks/useDelivery.test.ts[2m > [22museDelivery[2m > [22mdebe inicializar con estado vac├¡o[32m 22[2mms[22m[39m
+ [32mÔ£ô[39m src/core/adapters/hooks/useDelivery.test.ts[2m > [22museDelivery[2m > [22mdebe enviar entrega correctamente[32m 8[2mms[22m[39m
+ [32mÔ£ô[39m src/core/adapters/hooks/useDelivery.test.ts[2m > [22museDelivery[2m > [22mdebe manejar errores al enviar[32m 4[2mms[22m[39m
+ [32mÔ£ô[39m src/core/adapters/hooks/useDelivery.test.ts[2m > [22museDelivery[2m > [22mdebe poner loading en true durante el env├¡o[32m 4[2mms[22m[39m
+ [32mÔ£ô[39m src/core/adapters/hooks/useDelivery.test.ts[2m > [22museDelivery[2m > [22mdebe resetear el estado con resetDelivery[32m 4[2mms[22m[39m
+[90mstderr[2m | 
+src/infrastructure/repositories/HttpDeliveryRepository.test.ts[2m > 
+[22m[2mHttpDeliveryRepository[2m > [22m[2msubmit()[2m > [22m[2mdebe 
+lanzar error si ok es false
+[22m[39mError in HttpDeliveryRepository.submit: Error: Error
+    at HttpDeliveryRepository.submit (C:/Users/anderson.rodriguez/Documents/Pro
+yectosTrainingAI/reservasSofka/Frontend/src/infrastructure/repositories/HttpDel
+iveryRepository.ts:25:23)
+[90m    at processTicksAndRejections 
+(node:internal/process/task_queues:103:5)[39m
+
+[90mstderr[2m | 
+src/infrastructure/repositories/HttpDeliveryRepository.test.ts[2m > 
+[22m[2mHttpDeliveryRepository[2m > [22m[2msubmit()[2m > [22m[2mdebe 
+propagar errores de red
+[22m[39mError in HttpDeliveryRepository.submit: Error: Network error
+    at C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/
+Frontend/src/infrastructure/repositories/HttpDeliveryRepository.test.ts:62:49
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+45:11
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:9
+15:26
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/anderson.rodriguez/Documents/Proye
+ctosTrainingAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m
+/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/r
+eservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1
+653:37
+    at Traces.$ [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTr
+ainingAI/reservasSofka/Frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/t
+races.CCmnQaNT.js:142:27[90m)[39m
+    at trace [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTrain
+ingAI/reservasSofka/Frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/test
+.B8ej_ZHS.js:239:21[90m)[39m
+    at runTest [90m(file:///C:/Users/anderson.rodriguez/Documents/ProyectosTra
+iningAI/reservasSofka/Frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/i
+ndex.js:1653:12[90m)[39m
+
+[90mstderr[2m | 
+src/infrastructure/repositories/HttpDeliveryRepository.test.ts[2m > 
+[22m[2mHttpDeliveryRepository[2m > [22m[2msubmit()[2m > [22m[2mdebe 
+lanzar error si mapping retorna null
+[22m[39mError in HttpDeliveryRepository.submit: Error: Error mapping 
+delivery data
+    at HttpDeliveryRepository.submit (C:/Users/anderson.rodriguez/Documents/Pro
+yectosTrainingAI/reservasSofka/Frontend/src/infrastructure/repositories/HttpDel
+iveryRepository.ts:30:34)
+[90m    at processTicksAndRejections 
+(node:internal/process/task_queues:103:5)[39m
+
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpDeliveryRepository.test.ts[2m > [22mHttpDeliveryRepository[2m > [22msubmit()[2m > [22mdebe enviar delivery y retornar entidad (respuesta con wrapper ok)[32m 4[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpDeliveryRepository.test.ts[2m > [22mHttpDeliveryRepository[2m > [22msubmit()[2m > [22mdebe enviar delivery y retornar entidad (respuesta directa sin wrapper)[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpDeliveryRepository.test.ts[2m > [22mHttpDeliveryRepository[2m > [22msubmit()[2m > [22mdebe lanzar error si ok es false[32m 7[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpDeliveryRepository.test.ts[2m > [22mHttpDeliveryRepository[2m > [22msubmit()[2m > [22mdebe propagar errores de red[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpDeliveryRepository.test.ts[2m > [22mHttpDeliveryRepository[2m > [22msubmit()[2m > [22mdebe lanzar error si mapping retorna null[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpAuthRepository.test.ts[2m > [22mHttpAuthRepository[2m > [22mlogin()[2m > [22mdebe hacer login exitoso y devolver User[32m 6[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpAuthRepository.test.ts[2m > [22mHttpAuthRepository[2m > [22mlogin()[2m > [22mdebe lanzar InvalidCredentialsError si ok es false[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpAuthRepository.test.ts[2m > [22mHttpAuthRepository[2m > [22mlogin()[2m > [22mdebe lanzar InvalidCredentialsError si no hay token[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpAuthRepository.test.ts[2m > [22mHttpAuthRepository[2m > [22mlogin()[2m > [22mdebe lanzar InvalidCredentialsError si status 401[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpAuthRepository.test.ts[2m > [22mHttpAuthRepository[2m > [22mlogin()[2m > [22mdebe lanzar AuthenticationError gen├®rico para otros errores[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpAuthRepository.test.ts[2m > [22mHttpAuthRepository[2m > [22mregister()[2m > [22mdebe registrar exitosamente con token[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpAuthRepository.test.ts[2m > [22mHttpAuthRepository[2m > [22mregister()[2m > [22mdebe registrar exitosamente sin token[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpAuthRepository.test.ts[2m > [22mHttpAuthRepository[2m > [22mregister()[2m > [22mdebe lanzar RegistrationError si ok es false[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpAuthRepository.test.ts[2m > [22mHttpAuthRepository[2m > [22mregister()[2m > [22mdebe lanzar RegistrationError para errores de red[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpAuthRepository.test.ts[2m > [22mHttpAuthRepository[2m > [22mlogout()[2m > [22mdebe remover token y user del storage[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpAuthRepository.test.ts[2m > [22mHttpAuthRepository[2m > [22mgetCurrentUser()[2m > [22mdebe retornar el usuario actual[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpAuthRepository.test.ts[2m > [22mHttpAuthRepository[2m > [22mgetCurrentUser()[2m > [22mdebe lanzar UnauthorizedError si ok es false[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpAuthRepository.test.ts[2m > [22mHttpAuthRepository[2m > [22mgetCurrentUser()[2m > [22mdebe lanzar UnauthorizedError para status 401[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpAuthRepository.test.ts[2m > [22mHttpAuthRepository[2m > [22misAuthenticated()[2m > [22mdebe retornar true si hay token[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpAuthRepository.test.ts[2m > [22mHttpAuthRepository[2m > [22misAuthenticated()[2m > [22mdebe retornar false si no hay token[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpAuthRepository.test.ts[2m > [22mHttpAuthRepository[2m > [22mgetStoredUser()[2m > [22mdebe retornar User si hay datos almacenados[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/repositories/HttpAuthRepository.test.ts[2m > [22mHttpAuthRepository[2m > [22mgetStoredUser()[2m > [22mdebe retornar null si no hay datos almacenados[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/auth/LoginUseCase.test.ts[2m > [22mLoginUseCase[2m > [22mdebe ejecutar login con credenciales v├ílidas[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/auth/LoginUseCase.test.ts[2m > [22mLoginUseCase[2m > [22mdebe lanzar error si email est├í vac├¡o[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/auth/LoginUseCase.test.ts[2m > [22mLoginUseCase[2m > [22mdebe lanzar error si password est├í vac├¡o[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/auth/LoginUseCase.test.ts[2m > [22mLoginUseCase[2m > [22mdebe lanzar error si email es inv├ílido[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/auth/LoginUseCase.test.ts[2m > [22mLoginUseCase[2m > [22mdebe aceptar emails v├ílidos con diferentes formatos[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/delivery/SubmitDeliveryUseCase.test.ts[2m > [22mSubmitDeliveryUseCase[2m > [22mdebe enviar la entrega correctamente con todos los campos[32m 6[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/delivery/SubmitDeliveryUseCase.test.ts[2m > [22mSubmitDeliveryUseCase[2m > [22mdebe lanzar error si falta locationId[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/delivery/SubmitDeliveryUseCase.test.ts[2m > [22mSubmitDeliveryUseCase[2m > [22mdebe lanzar error si falta userId[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/delivery/SubmitDeliveryUseCase.test.ts[2m > [22mSubmitDeliveryUseCase[2m > [22mdebe lanzar error si falta managerId[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/delivery/SubmitDeliveryUseCase.test.ts[2m > [22mSubmitDeliveryUseCase[2m > [22mdebe propagar errores del repository[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/CreateReservationUseCase.test.ts[2m > [22mCreateReservationUseCase[2m > [22mdebe crear una reserva con datos v├ílidos[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/CreateReservationUseCase.test.ts[2m > [22mCreateReservationUseCase[2m > [22mdebe lanzar error si locationId falta[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/CreateReservationUseCase.test.ts[2m > [22mCreateReservationUseCase[2m > [22mdebe lanzar error si date falta[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/CreateReservationUseCase.test.ts[2m > [22mCreateReservationUseCase[2m > [22mdebe lanzar error si startTime falta[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/CreateReservationUseCase.test.ts[2m > [22mCreateReservationUseCase[2m > [22mdebe lanzar error si endTime falta[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/CreateReservationUseCase.test.ts[2m > [22mCreateReservationUseCase[2m > [22mdebe lanzar error si end time es antes de start time[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/CreateReservationUseCase.test.ts[2m > [22mCreateReservationUseCase[2m > [22mdebe lanzar error si duraci├│n es menor a 30 minutos[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/CreateReservationUseCase.test.ts[2m > [22mCreateReservationUseCase[2m > [22mdebe aceptar reserva de exactamente 30 minutos[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/reservations/CancelReservationUseCase.test.ts[2m > [22mCancelReservationUseCase[2m > [22mdebe cancelar una reserva con ID v├ílido[32m 4[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/reservations/CancelReservationUseCase.test.ts[2m > [22mCancelReservationUseCase[2m > [22mdebe lanzar error si reservationId est├í vac├¡o[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/RemoveInventoryUseCase.test.ts[2m > [22mRemoveInventoryUseCase[2m > [22mdebe remover inventario con datos v├ílidos[32m 4[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/RemoveInventoryUseCase.test.ts[2m > [22mRemoveInventoryUseCase[2m > [22mdebe lanzar error si locationId falta[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/RemoveInventoryUseCase.test.ts[2m > [22mRemoveInventoryUseCase[2m > [22mdebe lanzar error si inventoryId falta[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/InventoryMapper.test.ts[2m > [22mInventoryMapper[2m > [22mtoDomain()[2m > [22mdebe mapear DTO est├índar a dominio[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/InventoryMapper.test.ts[2m > [22mInventoryMapper[2m > [22mtoDomain()[2m > [22mdebe usar itemId si id no existe[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/InventoryMapper.test.ts[2m > [22mInventoryMapper[2m > [22mtoDomain()[2m > [22mdebe usar itemName si name no existe[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/InventoryMapper.test.ts[2m > [22mInventoryMapper[2m > [22mtoDomain()[2m > [22mdebe usar imageUrl como fallback de image[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/InventoryMapper.test.ts[2m > [22mInventoryMapper[2m > [22mtoDomain()[2m > [22mdebe usar imageURL como fallback[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/InventoryMapper.test.ts[2m > [22mInventoryMapper[2m > [22mtoDomain()[2m > [22mdebe usar qty como fallback de quantity[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/InventoryMapper.test.ts[2m > [22mInventoryMapper[2m > [22mtoDomain()[2m > [22mdebe usar available_qty como fallback[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/InventoryMapper.test.ts[2m > [22mInventoryMapper[2m > [22mtoDomain()[2m > [22mdebe asignar available true por defecto[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/InventoryMapper.test.ts[2m > [22mInventoryMapper[2m > [22mtoDomain()[2m > [22mdebe respetar available false[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/InventoryMapper.test.ts[2m > [22mInventoryMapper[2m > [22mtoDomain()[2m > [22mdebe retornar null si dto es null[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/InventoryMapper.test.ts[2m > [22mInventoryMapper[2m > [22mtoDomain()[2m > [22mdebe asignar defaults para campos faltantes[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/InventoryMapper.test.ts[2m > [22mInventoryMapper[2m > [22mtoDTO()[2m > [22mdebe mapear dominio a DTO[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/InventoryMapper.test.ts[2m > [22mInventoryMapper[2m > [22mtoDTO()[2m > [22mdebe retornar null si item es null[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/InventoryMapper.test.ts[2m > [22mInventoryMapper[2m > [22mtoDomainList()[2m > [22mdebe mapear lista de DTOs[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/InventoryMapper.test.ts[2m > [22mInventoryMapper[2m > [22mtoDomainList()[2m > [22mdebe retornar array vac├¡o si no es array[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/AssignInventoryUseCase.test.ts[2m > [22mAssignInventoryUseCase[2m > [22mdebe asignar inventario con datos v├ílidos[32m 4[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/AssignInventoryUseCase.test.ts[2m > [22mAssignInventoryUseCase[2m > [22mdebe lanzar error si locationId falta[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/AssignInventoryUseCase.test.ts[2m > [22mAssignInventoryUseCase[2m > [22mdebe lanzar error si inventoryId falta[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/AssignInventoryUseCase.test.ts[2m > [22mAssignInventoryUseCase[2m > [22mdebe lanzar error si qty es 0[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/AssignInventoryUseCase.test.ts[2m > [22mAssignInventoryUseCase[2m > [22mdebe lanzar error si qty es negativo[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.test.ts[2m > [22mReservation - Alert de expiraci├│n[2m > [22mgetRemainingMinutes() debe retornar minutos restantes cuando la reserva est├í en curso[32m 5[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.test.ts[2m > [22mReservation - Alert de expiraci├│n[2m > [22mgetRemainingMinutes() debe retornar 0 si la reserva ya termin├│[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.test.ts[2m > [22mReservation - Alert de expiraci├│n[2m > [22mgetRemainingMinutes() debe retornar minutos totales si la reserva a├║n no empieza[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.test.ts[2m > [22mReservation - Alert de expiraci├│n[2m > [22misAboutToExpire(threshold) debe retornar true cuando quedan menos minutos que el umbral[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.test.ts[2m > [22mReservation - Alert de expiraci├│n[2m > [22misAboutToExpire(threshold) debe retornar false cuando quedan m├ís minutos que el umbral[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.test.ts[2m > [22mReservation - Alert de expiraci├│n[2m > [22misAboutToExpire() debe usar umbral por defecto de 10 minutos[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.test.ts[2m > [22mReservation - Alert de expiraci├│n[2m > [22misAboutToExpire() debe retornar false para reservas canceladas[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Reservation.test.ts[2m > [22mReservation - Alert de expiraci├│n[2m > [22misAboutToExpire() debe retornar false para reservas ya finalizadas[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/auth/RegisterUseCase.test.ts[2m > [22mRegisterUseCase[2m > [22mdebe registrar usuario con datos v├ílidos[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/auth/RegisterUseCase.test.ts[2m > [22mRegisterUseCase[2m > [22mdebe lanzar error si email est├í vac├¡o[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/auth/RegisterUseCase.test.ts[2m > [22mRegisterUseCase[2m > [22mdebe lanzar error si password est├í vac├¡o[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/auth/RegisterUseCase.test.ts[2m > [22mRegisterUseCase[2m > [22mdebe lanzar error si name est├í vac├¡o[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/auth/RegisterUseCase.test.ts[2m > [22mRegisterUseCase[2m > [22mdebe lanzar error si email es inv├ílido[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/auth/RegisterUseCase.test.ts[2m > [22mRegisterUseCase[2m > [22mdebe lanzar error si password tiene menos de 6 caracteres[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/auth/RegisterUseCase.test.ts[2m > [22mRegisterUseCase[2m > [22mdebe lanzar error si nombre es solo espacios[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/auth/RegisterUseCase.test.ts[2m > [22mRegisterUseCase[2m > [22mdebe aceptar password de exactamente 6 caracteres[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/GetSpaceAvailabilityUseCase.test.ts[2m > [22mGetSpaceAvailabilityUseCase[2m > [22mdebe retornar disponibilidad con datos v├ílidos[32m 4[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/GetSpaceAvailabilityUseCase.test.ts[2m > [22mGetSpaceAvailabilityUseCase[2m > [22mdebe lanzar error si spaceId falta[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/GetSpaceAvailabilityUseCase.test.ts[2m > [22mGetSpaceAvailabilityUseCase[2m > [22mdebe lanzar error si date falta[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/GetSpaceAvailabilityUseCase.test.ts[2m > [22mGetSpaceAvailabilityUseCase[2m > [22mdebe retornar busySlots vac├¡o si no hay resultado[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/LocationMapper.test.ts[2m > [22mLocationMapper[2m > [22mtoDomain()[2m > [22mdebe mapear DTO est├índar a dominio[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/LocationMapper.test.ts[2m > [22mLocationMapper[2m > [22mtoDomain()[2m > [22mdebe usar spaceId si id no existe[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/LocationMapper.test.ts[2m > [22mLocationMapper[2m > [22mtoDomain()[2m > [22mdebe usar spaceName si name no existe[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/LocationMapper.test.ts[2m > [22mLocationMapper[2m > [22mtoDomain()[2m > [22mdebe usar imageUrl como fallback de image[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/LocationMapper.test.ts[2m > [22mLocationMapper[2m > [22mtoDomain()[2m > [22mdebe usar imageURL como fallback[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/LocationMapper.test.ts[2m > [22mLocationMapper[2m > [22mtoDomain()[2m > [22mdebe usar maxCapacity como fallback de capacity[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/LocationMapper.test.ts[2m > [22mLocationMapper[2m > [22mtoDomain()[2m > [22mdebe usar amenities como fallback de tags[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/LocationMapper.test.ts[2m > [22mLocationMapper[2m > [22mtoDomain()[2m > [22mdebe retornar null si dto es null[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/LocationMapper.test.ts[2m > [22mLocationMapper[2m > [22mtoDomain()[2m > [22mdebe asignar defaults para campos faltantes[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/LocationMapper.test.ts[2m > [22mLocationMapper[2m > [22mtoDTO()[2m > [22mdebe mapear dominio a DTO[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/LocationMapper.test.ts[2m > [22mLocationMapper[2m > [22mtoDTO()[2m > [22mdebe retornar null si location es null[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/LocationMapper.test.ts[2m > [22mLocationMapper[2m > [22mtoDomainList()[2m > [22mdebe mapear lista de DTOs[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/LocationMapper.test.ts[2m > [22mLocationMapper[2m > [22mtoDomainList()[2m > [22mdebe retornar array vac├¡o si no es array[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/GetLocationsUseCase.test.ts[2m > [22mGetLocationsUseCase[2m > [22mdebe retornar todas las ubicaciones sin filtros[32m 4[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/GetLocationsUseCase.test.ts[2m > [22mGetLocationsUseCase[2m > [22mdebe retornar todas las ubicaciones con filtros vac├¡os[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/GetLocationsUseCase.test.ts[2m > [22mGetLocationsUseCase[2m > [22mdebe buscar ubicaciones cuando hay filtros[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/GetLocationsUseCase.test.ts[2m > [22mGetLocationsUseCase[2m > [22mdebe buscar con filtro cityId[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/UserMapper.test.ts[2m > [22mUserMapper[2m > [22mtoDomain()[2m > [22mdebe mapear DTO a dominio correctamente[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/UserMapper.test.ts[2m > [22mUserMapper[2m > [22mtoDomain()[2m > [22mdebe usar username si name no existe[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/UserMapper.test.ts[2m > [22mUserMapper[2m > [22mtoDomain()[2m > [22mdebe usar fullName si name y username no existen[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/UserMapper.test.ts[2m > [22mUserMapper[2m > [22mtoDomain()[2m > [22mdebe asignar nombre vac├¡o si no hay alias[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/UserMapper.test.ts[2m > [22mUserMapper[2m > [22mtoDomain()[2m > [22mdebe asignar role "user" por defecto[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/UserMapper.test.ts[2m > [22mUserMapper[2m > [22mtoDomain()[2m > [22mdebe retornar null si dto es null[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/UserMapper.test.ts[2m > [22mUserMapper[2m > [22mtoDTO()[2m > [22mdebe mapear dominio a DTO[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/UserMapper.test.ts[2m > [22mUserMapper[2m > [22mtoDTO()[2m > [22mdebe retornar null si user es null[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/UserMapper.test.ts[2m > [22mUserMapper[2m > [22mtoDomainList()[2m > [22mdebe mapear lista de DTOs[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/UserMapper.test.ts[2m > [22mUserMapper[2m > [22mtoDomainList()[2m > [22mdebe retornar array vac├¡o si input no es array[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/UserMapper.test.ts[2m > [22mUserMapper[2m > [22mtoDTOList()[2m > [22mdebe mapear lista de Users[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/UserMapper.test.ts[2m > [22mUserMapper[2m > [22mtoDTOList()[2m > [22mdebe retornar array vac├¡o si input no es array[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Location.test.ts[2m > [22mLocation Entity[2m > [22mconstructor[2m > [22mdebe crear una ubicaci├│n con todas las propiedades[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Location.test.ts[2m > [22mLocation Entity[2m > [22mconstructor[2m > [22mdebe asignar amenities vac├¡o por defecto[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Location.test.ts[2m > [22mLocation Entity[2m > [22mconstructor[2m > [22mdebe aceptar cityId null[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Location.test.ts[2m > [22mLocation Entity[2m > [22misMeetingRoom()[2m > [22mdebe retornar true si type es sala[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Location.test.ts[2m > [22mLocation Entity[2m > [22misMeetingRoom()[2m > [22mdebe retornar false si type no es sala[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Location.test.ts[2m > [22mLocation Entity[2m > [22mhasAmenity()[2m > [22mdebe retornar true si tiene la amenidad[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Location.test.ts[2m > [22mLocation Entity[2m > [22mhasAmenity()[2m > [22mdebe retornar false si no tiene la amenidad[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Location.test.ts[2m > [22mLocation Entity[2m > [22mcanAccommodate()[2m > [22mdebe retornar true si caben las personas[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Location.test.ts[2m > [22mLocation Entity[2m > [22mcanAccommodate()[2m > [22mdebe retornar true si hay menos personas que capacidad[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Location.test.ts[2m > [22mLocation Entity[2m > [22mcanAccommodate()[2m > [22mdebe retornar false si no caben las personas[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Location.test.ts[2m > [22mLocation Entity[2m > [22mgetDisplayInfo()[2m > [22mdebe retornar info de display correcta[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Location.test.ts[2m > [22mLocation Entity[2m > [22mtoJSON()[2m > [22mdebe serializar correctamente[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Location.test.ts[2m > [22mLocation Entity[2m > [22mfromJSON()[2m > [22mdebe deserializar correctamente[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Location.test.ts[2m > [22mLocation Entity[2m > [22mfromJSON()[2m > [22mroundtrip toJSON/fromJSON debe preservar datos[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/reservations/GetUserReservationsUseCase.test.ts[2m > [22mGetUserReservationsUseCase[2m > [22mdebe retornar reservas del usuario[32m 5[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/reservations/GetUserReservationsUseCase.test.ts[2m > [22mGetUserReservationsUseCase[2m > [22mdebe lanzar error si userId est├í vac├¡o[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/DeliveryMapper.test.ts[2m > [22mDeliveryMapper[2m > [22mtoDomain[2m > [22mdebe mapear un DTO del API a entidad Delivery[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/DeliveryMapper.test.ts[2m > [22mDeliveryMapper[2m > [22mtoDomain[2m > [22mdebe manejar campos con snake_case del backend[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/DeliveryMapper.test.ts[2m > [22mDeliveryMapper[2m > [22mtoDomain[2m > [22mdebe retornar null si dto es null[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/DeliveryMapper.test.ts[2m > [22mDeliveryMapper[2m > [22mtoApi[2m > [22mdebe mapear datos del formulario al payload del API[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/DeliveryMapper.test.ts[2m > [22mDeliveryMapper[2m > [22mtoDomainList[2m > [22mdebe mapear un array de DTOs a entidades Delivery[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/infrastructure/mappers/DeliveryMapper.test.ts[2m > [22mDeliveryMapper[2m > [22mtoDomainList[2m > [22mdebe retornar array vac├¡o si input no es array[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/test/integration/dashboard-flow.integration.test.ts[2m > [22mIntegration: Dashboard Flow (UseCase + Mapper + Entity)[2m > [22mgetLocations sin filtros ÔåÆ mapper transforma alias ÔåÆ entities con domain methods[32m 4[2mms[22m[39m
+ [32mÔ£ô[39m src/test/integration/dashboard-flow.integration.test.ts[2m > [22mIntegration: Dashboard Flow (UseCase + Mapper + Entity)[2m > [22mgetLocations con filtro type ÔåÆ search con mapper[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/test/integration/dashboard-flow.integration.test.ts[2m > [22mIntegration: Dashboard Flow (UseCase + Mapper + Entity)[2m > [22mgetInventory sin filtros ÔåÆ mapper con diferentes formatos DTO[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/test/integration/dashboard-flow.integration.test.ts[2m > [22mIntegration: Dashboard Flow (UseCase + Mapper + Entity)[2m > [22mgetInventory con cityId ÔåÆ getByCityId[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/test/integration/dashboard-flow.integration.test.ts[2m > [22mIntegration: Dashboard Flow (UseCase + Mapper + Entity)[2m > [22massignInventory ÔåÆ removeInventory flow[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/test/integration/dashboard-flow.integration.test.ts[2m > [22mIntegration: Dashboard Flow (UseCase + Mapper + Entity)[2m > [22mgetDisplayInfo devuelve formato correcto tras mapeo[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Delivery.test.ts[2m > [22mDelivery Entity[2m > [22mdebe crear una entidad Delivery con todas las propiedades[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Delivery.test.ts[2m > [22mDelivery Entity[2m > [22mdebe crear Delivery con fecha por defecto (ahora) si no se provee[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Delivery.test.ts[2m > [22mDelivery Entity[2m > [22mdebe crear Delivery con notas vac├¡as[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Delivery.test.ts[2m > [22mDelivery Entity[2m > [22mhasNotes() debe retornar true si hay novedades[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Delivery.test.ts[2m > [22mDelivery Entity[2m > [22mhasNotes() debe retornar false si no hay novedades[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Delivery.test.ts[2m > [22mDelivery Entity[2m > [22misValid() debe retornar true si todos los campos requeridos est├ín presentes[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Delivery.test.ts[2m > [22mDelivery Entity[2m > [22misValid() debe retornar false si falta locationId[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Delivery.test.ts[2m > [22mDelivery Entity[2m > [22misValid() debe retornar false si falta userId[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Delivery.test.ts[2m > [22mDelivery Entity[2m > [22misValid() debe retornar false si falta managerId[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Delivery.test.ts[2m > [22mDelivery Entity[2m > [22mtoJSON() debe retornar un objeto serializable[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/Delivery.test.ts[2m > [22mDelivery Entity[2m > [22mfromJSON() debe crear una instancia desde un objeto plano[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/InventoryItem.test.ts[2m > [22mInventoryItem Entity[2m > [22mconstructor[2m > [22mdebe crear un item con todas las propiedades[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/InventoryItem.test.ts[2m > [22mInventoryItem Entity[2m > [22mconstructor[2m > [22mdebe asignar available true por defecto[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/InventoryItem.test.ts[2m > [22mInventoryItem Entity[2m > [22misAvailable()[2m > [22mdebe retornar true si available es true y quantity > 0[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/InventoryItem.test.ts[2m > [22mInventoryItem Entity[2m > [22misAvailable()[2m > [22mdebe retornar false si available es false[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/InventoryItem.test.ts[2m > [22mInventoryItem Entity[2m > [22misAvailable()[2m > [22mdebe retornar false si quantity es 0[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/InventoryItem.test.ts[2m > [22mInventoryItem Entity[2m > [22mhasSufficientQuantity()[2m > [22mdebe retornar true si hay suficiente cantidad[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/InventoryItem.test.ts[2m > [22mInventoryItem Entity[2m > [22mhasSufficientQuantity()[2m > [22mdebe retornar true si se pide menos de lo disponible[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/InventoryItem.test.ts[2m > [22mInventoryItem Entity[2m > [22mhasSufficientQuantity()[2m > [22mdebe retornar false si se pide m├ís de lo disponible[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/InventoryItem.test.ts[2m > [22mInventoryItem Entity[2m > [22mgetAvailableQuantity()[2m > [22mdebe retornar quantity si available es true[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/InventoryItem.test.ts[2m > [22mInventoryItem Entity[2m > [22mgetAvailableQuantity()[2m > [22mdebe retornar 0 si available es false[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/InventoryItem.test.ts[2m > [22mInventoryItem Entity[2m > [22mgetDisplayInfo()[2m > [22mdebe retornar info de display correcta[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/InventoryItem.test.ts[2m > [22mInventoryItem Entity[2m > [22mgetDisplayInfo()[2m > [22mdebe mostrar 0 disponibles si no est├í disponible[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/InventoryItem.test.ts[2m > [22mInventoryItem Entity[2m > [22mtoJSON()[2m > [22mdebe serializar correctamente[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/InventoryItem.test.ts[2m > [22mInventoryItem Entity[2m > [22mfromJSON()[2m > [22mdebe deserializar correctamente[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/InventoryItem.test.ts[2m > [22mInventoryItem Entity[2m > [22mfromJSON()[2m > [22mroundtrip toJSON/fromJSON debe preservar datos[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/test/integration/reservation-flow.integration.test.ts[2m > [22mIntegration: Reservation Flow (UseCase + Mapper + Entity)[2m > [22mcrear reserva ÔåÆ mapper normaliza status "created" ÔåÆ entity activo[32m 3[2mms[22m[39m
+ [32mÔ£ô[39m src/test/integration/reservation-flow.integration.test.ts[2m > [22mIntegration: Reservation Flow (UseCase + Mapper + Entity)[2m > [22mcrear ÔåÆ consultar reservas del usuario[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/test/integration/reservation-flow.integration.test.ts[2m > [22mIntegration: Reservation Flow (UseCase + Mapper + Entity)[2m > [22mcrear ÔåÆ cancelar ÔåÆ verificar estado[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/test/integration/reservation-flow.integration.test.ts[2m > [22mIntegration: Reservation Flow (UseCase + Mapper + Entity)[2m > [22mcrear ÔåÆ verificar disponibilidad del espacio[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/User.test.ts[2m > [22mUser Entity[2m > [22mconstructor[2m > [22mdebe crear un usuario con todas las propiedades[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/User.test.ts[2m > [22mUser Entity[2m > [22mconstructor[2m > [22mdebe asignar role "user" por defecto[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/User.test.ts[2m > [22mUser Entity[2m > [22misAdmin()[2m > [22mdebe retornar true si role es admin[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/User.test.ts[2m > [22mUser Entity[2m > [22misAdmin()[2m > [22mdebe retornar false si role es user[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/User.test.ts[2m > [22mUser Entity[2m > [22misRegularUser()[2m > [22mdebe retornar true si role es user[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/User.test.ts[2m > [22mUser Entity[2m > [22misRegularUser()[2m > [22mdebe retornar false si role es admin[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/User.test.ts[2m > [22mUser Entity[2m > [22mgetDisplayName()[2m > [22mdebe retornar el nombre si existe[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/User.test.ts[2m > [22mUser Entity[2m > [22mgetDisplayName()[2m > [22mdebe retornar el email si nombre est├í vac├¡o[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/User.test.ts[2m > [22mUser Entity[2m > [22misValid()[2m > [22mdebe retornar true con todas las propiedades[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/User.test.ts[2m > [22mUser Entity[2m > [22misValid()[2m > [22mdebe retornar false si id est├í vac├¡o[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/User.test.ts[2m > [22mUser Entity[2m > [22misValid()[2m > [22mdebe retornar false si email est├í vac├¡o[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/User.test.ts[2m > [22mUser Entity[2m > [22misValid()[2m > [22mdebe retornar false si name est├í vac├¡o[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/User.test.ts[2m > [22mUser Entity[2m > [22mtoJSON()[2m > [22mdebe serializar correctamente[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/User.test.ts[2m > [22mUser Entity[2m > [22mfromJSON()[2m > [22mdebe deserializar correctamente[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/entities/User.test.ts[2m > [22mUser Entity[2m > [22mfromJSON()[2m > [22mroundtrip toJSON/fromJSON debe preservar datos[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/GetInventoryUseCase.test.ts[2m > [22mGetInventoryUseCase[2m > [22mdebe retornar todos los items sin par├ímetros[32m 2[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/GetInventoryUseCase.test.ts[2m > [22mGetInventoryUseCase[2m > [22mdebe retornar todos los items con objeto vac├¡o[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/dashboard/GetInventoryUseCase.test.ts[2m > [22mGetInventoryUseCase[2m > [22mdebe filtrar por cityId[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/auth/LogoutUseCase.test.ts[2m > [22mLogoutUseCase[2m > [22mdebe ejecutar logout correctamente[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/auth/LogoutUseCase.test.ts[2m > [22mLogoutUseCase[2m > [22misAuthenticated debe retornar estado del repositorio[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/auth/LogoutUseCase.test.ts[2m > [22mLogoutUseCase[2m > [22misAuthenticated debe retornar false si no hay sesi├│n[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/test/integration/auth-flow.integration.test.ts[2m > [22mIntegration: Auth Flow (UseCase + Mapper + Entity)[2m > [22mlogin ÔåÆ mapper ÔåÆ entity flow completo[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/test/integration/auth-flow.integration.test.ts[2m > [22mIntegration: Auth Flow (UseCase + Mapper + Entity)[2m > [22mregister ÔåÆ mapper (username alias) ÔåÆ entity flow[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/test/integration/auth-flow.integration.test.ts[2m > [22mIntegration: Auth Flow (UseCase + Mapper + Entity)[2m > [22mlogin ÔåÆ getStoredUser flow completo[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/test/integration/auth-flow.integration.test.ts[2m > [22mIntegration: Auth Flow (UseCase + Mapper + Entity)[2m > [22mlogin ÔåÆ logout ÔåÆ isAuthenticated flow completo[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/test/integration/auth-flow.integration.test.ts[2m > [22mIntegration: Auth Flow (UseCase + Mapper + Entity)[2m > [22mlogin con email inv├ílido debe fallar en el UseCase antes de llegar al repo[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/errors/AuthenticationError.test.ts[2m > [22mAuthenticationError[2m > [22mdebe crear error con mensaje y c├│digo[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/errors/AuthenticationError.test.ts[2m > [22mAuthenticationError[2m > [22mdebe usar AUTH_ERROR como c├│digo por defecto[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/errors/AuthenticationError.test.ts[2m > [22mAuthenticationError[2m > [22mdebe ser instancia de Error[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/errors/AuthenticationError.test.ts[2m > [22mInvalidCredentialsError[2m > [22mdebe crear error con mensaje por defecto[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/errors/AuthenticationError.test.ts[2m > [22mInvalidCredentialsError[2m > [22mdebe aceptar mensaje personalizado[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/errors/AuthenticationError.test.ts[2m > [22mInvalidCredentialsError[2m > [22mdebe ser instancia de AuthenticationError[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/errors/AuthenticationError.test.ts[2m > [22mTokenExpiredError[2m > [22mdebe crear error con mensaje por defecto[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/errors/AuthenticationError.test.ts[2m > [22mTokenExpiredError[2m > [22mdebe aceptar mensaje personalizado[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/errors/AuthenticationError.test.ts[2m > [22mTokenExpiredError[2m > [22mdebe ser instancia de AuthenticationError[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/errors/AuthenticationError.test.ts[2m > [22mUnauthorizedError[2m > [22mdebe crear error con mensaje por defecto[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/errors/AuthenticationError.test.ts[2m > [22mUnauthorizedError[2m > [22mdebe aceptar mensaje personalizado[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/errors/AuthenticationError.test.ts[2m > [22mUnauthorizedError[2m > [22mdebe ser instancia de AuthenticationError[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/errors/AuthenticationError.test.ts[2m > [22mRegistrationError[2m > [22mdebe crear error con mensaje por defecto[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/errors/AuthenticationError.test.ts[2m > [22mRegistrationError[2m > [22mdebe aceptar mensaje personalizado[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/core/domain/errors/AuthenticationError.test.ts[2m > [22mRegistrationError[2m > [22mdebe ser instancia de AuthenticationError[32m 0[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/auth/GetCurrentUserUseCase.test.ts[2m > [22mGetCurrentUserUseCase[2m > [22mdebe retornar el usuario almacenado[32m 1[2mms[22m[39m
+ [32mÔ£ô[39m src/application/use-cases/auth/GetCurrentUserUseCase.test.ts[2m > [22mGetCurrentUserUseCase[2m > [22mdebe retornar null si no hay usuario almacenado[32m 0[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m46 passed[39m[22m[90m (46)[39m
+[2m      Tests [22m [1m[32m391 passed[39m[22m[90m (391)[39m
+[2m   Start at [22m 09:39:52
+[2m   Duration [22m 15.14s[2m (transform 4.27s, setup 13.45s, import 10.42s, tests 2.53s, environment 106.90s)[22m
+

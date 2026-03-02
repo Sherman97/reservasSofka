@@ -3,6 +3,8 @@ package com.reservas.sk.bookings_service.adapters.out.messaging;
 import com.reservas.sk.bookings_service.application.port.out.ReservationEventPublisherPort;
 import com.reservas.sk.bookings_service.application.usecase.ReservationCancelledEvent;
 import com.reservas.sk.bookings_service.application.usecase.ReservationCreatedEvent;
+import com.reservas.sk.bookings_service.application.usecase.ReservationDeliveredEvent;
+import com.reservas.sk.bookings_service.application.usecase.ReservationReturnedEvent;
 import com.reservas.sk.bookings_service.infrastructure.config.RabbitProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -33,6 +35,24 @@ public class RabbitReservationEventPublisherAdapter implements ReservationEventP
         rabbitTemplate.convertAndSend(
                 rabbitProperties.getExchange(),
                 rabbitProperties.getReservationCancelledRoutingKey(),
+                event
+        );
+    }
+
+    @Override
+    public void publishReservationDelivered(ReservationDeliveredEvent event) {
+        rabbitTemplate.convertAndSend(
+                rabbitProperties.getExchange(),
+                rabbitProperties.getReservationDeliveredRoutingKey(),
+                event
+        );
+    }
+
+    @Override
+    public void publishReservationReturned(ReservationReturnedEvent event) {
+        rabbitTemplate.convertAndSend(
+                rabbitProperties.getExchange(),
+                rabbitProperties.getReservationReturnedRoutingKey(),
                 event
         );
     }

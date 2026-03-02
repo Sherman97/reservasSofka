@@ -12,6 +12,9 @@ import type { CancelReservationUseCase } from '../../../application/use-cases/re
 import type { GetSpaceAvailabilityUseCase } from '../../../application/use-cases/dashboard/GetSpaceAvailabilityUseCase';
 import type { AssignInventoryUseCase } from '../../../application/use-cases/dashboard/AssignInventoryUseCase';
 import type { RemoveInventoryUseCase } from '../../../application/use-cases/dashboard/RemoveInventoryUseCase';
+import type { SubmitDeliveryUseCase } from '../../../application/use-cases/delivery/SubmitDeliveryUseCase';
+import type { DeliverReservationUseCase } from '../../../application/use-cases/reservations/DeliverReservationUseCase';
+import type { ReturnReservationUseCase } from '../../../application/use-cases/reservations/ReturnReservationUseCase';
 import type { IWebSocketService } from '../../../core/ports/services/IWebSocketService';
 
 type ContainerType = typeof container;
@@ -62,6 +65,8 @@ export interface ReservationDependencies {
     getUserReservationsUseCase: GetUserReservationsUseCase;
     cancelReservationUseCase: CancelReservationUseCase;
     getSpaceAvailabilityUseCase: GetSpaceAvailabilityUseCase;
+    deliverReservationUseCase: DeliverReservationUseCase;
+    returnReservationUseCase: ReturnReservationUseCase;
     webSocketService: IWebSocketService;
 }
 
@@ -74,6 +79,8 @@ export const useReservationDependencies = (): ReservationDependencies => {
         getUserReservationsUseCase: c.get('getUserReservationsUseCase'),
         cancelReservationUseCase: c.get('cancelReservationUseCase'),
         getSpaceAvailabilityUseCase: c.get('getSpaceAvailabilityUseCase'),
+        deliverReservationUseCase: c.get('deliverReservationUseCase'),
+        returnReservationUseCase: c.get('returnReservationUseCase'),
         webSocketService: c.get('webSocketService'),
     };
 };
@@ -92,6 +99,17 @@ export const useDashboardDependencies = (): DashboardDependencies => {
         getInventoryUseCase: c.get('getInventoryUseCase'),
         assignInventoryUseCase: c.get('assignInventoryUseCase'),
         removeInventoryUseCase: c.get('removeInventoryUseCase'),
+    };
+};
+
+export interface DeliveryDependencies {
+    submitDeliveryUseCase: SubmitDeliveryUseCase;
+}
+
+export const useDeliveryDependencies = (): DeliveryDependencies => {
+    const c = useContainer();
+    return {
+        submitDeliveryUseCase: c.get('submitDeliveryUseCase'),
     };
 };
 

@@ -1,4 +1,4 @@
-﻿package com.reservas.sk.bookings_service.application.port.out;
+package com.reservas.sk.bookings_service.application.port.out;
 
 import com.reservas.sk.bookings_service.domain.model.Reservation;
 import com.reservas.sk.bookings_service.domain.model.ReservationEquipment;
@@ -46,6 +46,20 @@ public interface BookingPersistencePort {
     List<ReservationEquipment> findReservationEquipments(long reservationId);
 
     void updateReservationCancellation(long reservationId, String status, String cancellationReason);
+
+    void updateReservationStatus(long reservationId, String status);
+
+    void markReservationEquipmentsDelivered(long reservationId, long deliveredBy, Instant deliveredAt, String novelty);
+
+    void markReservationEquipmentsReturned(long reservationId, long returnedBy, Instant returnedAt, String novelty);
+
+    void insertReservationHandoverLog(long reservationId,
+                                      long spaceId,
+                                      long userId,
+                                      long staffId,
+                                      String action,
+                                      String novelty,
+                                      Instant eventAt);
 }
 
 

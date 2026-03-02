@@ -24,7 +24,6 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     environment:
-      NODE_ENV: production
       PORT: 3001
       DB_HOST: mariadb
       DB_PORT: 3306
@@ -35,7 +34,6 @@ services:
       - "3001:3001"
     volumes:
       - ./:/app
-      - /app/node_modules
     depends_on:
       mariadb:
         condition: service_healthy

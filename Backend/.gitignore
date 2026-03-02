@@ -25,6 +25,10 @@ Desktop.ini
 # =========================
 .gradle/
 **/.gradle/
+.gradle-local/
+**/.gradle-local/
+.grandle-local/
+.gradel/
 !gradle/wrapper/gradle-wrapper.jar
 
 # Java / JVM build outputs
