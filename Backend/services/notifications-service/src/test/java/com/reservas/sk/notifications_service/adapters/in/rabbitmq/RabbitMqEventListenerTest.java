@@ -1,23 +1,26 @@
 package com.reservas.sk.notifications_service.adapters.in.rabbitmq;
 
-import com.reservas.sk.notifications_service.application.service.InAppNotificationService;
-import com.reservas.sk.notifications_service.domain.Reserva;
+import com.reservas.sk.notifications_service.adapters.in.rabbit.RabbitEventListenerAdapter;
+import com.reservas.sk.notifications_service.application.port.in.EventBroadcastUseCase;
+import com.reservas.sk.notifications_service.application.service.ReservationReminderApplicationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 
-import java.time.LocalDateTime;
+import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
 class RabbitMqEventListenerTest {
     @Mock
-    private InAppNotificationService inAppNotificationService;
+    private EventBroadcastUseCase eventBroadcastUseCase;
+    @Mock
+    private ReservationReminderApplicationService reservationReminderApplicationService;
+
     @InjectMocks
-    private RabbitMqEventListener rabbitMqEventListener;
+    private RabbitEventListenerAdapter rabbitMqEventListener;
 
     @BeforeEach
     void setUp() {
@@ -25,27 +28,27 @@ class RabbitMqEventListenerTest {
     }
 
     @Test
-    void consumeReservationEventYDispararServicio() throws Exception {
-        LocalDateTime fin = LocalDateTime.now().plusMinutes(15);
-        Reserva reserva = new Reserva(1L, "Sala A", fin, true, false, false);
+    void consumeEvent_disparaBroadcastYReminderService() {
+        Map<String, Object> payload = Map.of(
+                "reservationId", 1L,
+                "userId", 2L,
+                "spaceId", 3L,
+                "endAt", "2026-03-01T20:00:00Z"
+        );
 
-        // Simular que se consume un evento de RabbitMQ
-        rabbitMqEventListener.onReservationCreated(reserva);
+        rabbitMqEventListener.onEvent(payload, "bookings.reservation.created");
 
-        // Verificar que el servicio fue llamado
-        verify(inAppNotificationService, atLeastOnce()).notificar15MinAntes(reserva);
+        verify(eventBroadcastUseCase, times(1)).broadcast("bookings.reservation.created", payload);
+        verify(reservationReminderApplicationService, times(1))
+                .handleEvent("bookings.reservation.created", payload);
     }
 
     @Test
-    void consumeReservationEventCanceledNoDispara() throws Exception {
-        LocalDateTime fin = LocalDateTime.now().plusMinutes(15);
-        Reserva reservaCancelada = new Reserva(2L, "Sala B", fin, false, false, false);
+    void consumeEvent_conPayloadNulo_disparaConNuloSinExplotar() {
+        rabbitMqEventListener.onEvent(null, "bookings.reservation.cancelled");
 
-        // Simular que se consume un evento de cancelación
-        rabbitMqEventListener.onReservationCanceled(reservaCancelada);
-
-        // Verificar que no dispara notificaciones para reservas canceladas
-        verify(inAppNotificationService, never()).notificar15MinAntes(reservaCancelada);
+        verify(eventBroadcastUseCase, times(1)).broadcast("bookings.reservation.cancelled", null);
+        verify(reservationReminderApplicationService, times(1))
+                .handleEvent("bookings.reservation.cancelled", null);
     }
 }
-
