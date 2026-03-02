@@ -98,8 +98,8 @@ describe('Reservation - Alert de expiración', () => {
         expect(reservation.isAboutToExpire(15)).toBe(false);
     });
 
-    it('isAboutToExpire() debe usar umbral por defecto de 10 minutos', () => {
-        const now = new Date('2026-02-26T10:52:00');
+    it('isAboutToExpire() debe usar umbral por defecto de 2 minutos', () => {
+        const now = new Date('2026-02-26T10:58:30');
         vi.setSystemTime(now);
 
         const reservation = new Reservation({
@@ -112,7 +112,7 @@ describe('Reservation - Alert de expiración', () => {
             status: 'active',
         });
 
-        // Quedan 8 min, umbral default 10 => true
+        // Quedan ~1.5 min, umbral default 2 => true
         expect(reservation.isAboutToExpire()).toBe(true);
     });
 
