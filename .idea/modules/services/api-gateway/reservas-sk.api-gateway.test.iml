@@ -6,7 +6,7 @@
     <content url="file://$MODULE_DIR$/../../../../Backend/services/api-gateway/src/test">
       <sourceFolder url="file://$MODULE_DIR$/../../../../Backend/services/api-gateway/src/test/java" isTestSource="true" />
     </content>
-    <orderEntry type="jdk" jdkName="17" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="reservas-sk.api-gateway.main" />
     <orderEntry type="library" name="Gradle: org.springframework.cloud:spring-cloud-starter-gateway:4.2.0" level="project" />
@@ -101,9 +101,10 @@
     <orderEntry type="library" name="Gradle: io.netty:netty-transport-classes-epoll:4.1.116.Final" level="project" />
     <orderEntry type="library" name="Gradle: io.netty:netty-transport-native-unix-common:4.1.116.Final" level="project" />
     <orderEntry type="library" name="Gradle: io.netty:netty-codec-socks:4.1.116.Final" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.junit.platform:junit-platform-launcher:1.11.4" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.junit.platform:junit-platform-engine:1.11.4" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.junit.jupiter:junit-jupiter-engine:5.11.4" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.objenesis:objenesis:3.3" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.junit.platform:junit-platform-engine:1.11.4" level="project" />
   </component>
   <component name="TestModuleProperties" production-module="reservas-sk.api-gateway.main" />
 </module>

@@ -4,27 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8096078f-91f3-4936-b176-12145b874104" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/controllers/items.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/controllers/items.controller.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/controllers/locationItems.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/controllers/locationItems.controller.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/db.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/middlewares/auth.middleware.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/routes/items.routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/routes/items.routes.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/routes/locationItems.routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/routes/locationItems.routes.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/server.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/services/items.service.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/services/items.service.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/services/locationItems.service.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/services/locationItems.service.js" afterDir="false" />
-    </list>
+    <list default="true" id="8096078f-91f3-4936-b176-12145b874104" name="Changes" comment="&quot;ajustes para despliegue&quot;" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_C:/Users/german.rojas/Desktop/Nueva carpeta/reservas-sk/Backend" value="39kpETeNvSyPdhLSbkz7fewzjau" />
+    </persistenceIdMap>
+  </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="643" />
+    <option name="cachedIndexableFilesCount" value="349" />
   </component>
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$/Backend">
@@ -51,6 +43,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Sherman97&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Sherman97/reservasSofka.git&quot;,
+    &quot;accountId&quot;: &quot;0cf22f18-07b2-4cce-982c-de9d65ba6305&quot;
+  }
+}</component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
@@ -75,7 +79,7 @@
     &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Rebasing develop&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/test-backend&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/german.rojas/Desktop/Nueva carpeta/reservas-sk&quot;,
@@ -88,7 +92,7 @@
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
     &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -175,11 +179,80 @@
       <workItem from="1771620369830" duration="55000" />
       <workItem from="1771852572847" duration="4014000" />
       <workItem from="1771862407752" duration="689000" />
-      <workItem from="1771864014540" duration="304000" />
+      <workItem from="1771864014540" duration="9796000" />
+      <workItem from="1771946016121" duration="175000" />
+      <workItem from="1772037652876" duration="33000" />
+      <workItem from="1772396907735" duration="1135000" />
+      <workItem from="1772479055197" duration="15000" />
     </task>
+    <task id="LOCAL-00001" summary="&quot;ajustes para despliegue&quot;">
+      <option name="closed" value="true" />
+      <created>1771869140983</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1771869140983</updated>
+    </task>
+    <task id="LOCAL-00002" summary="&quot;ajustes para despliegue&quot;">
+      <option name="closed" value="true" />
+      <created>1771869505943</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1771869505943</updated>
+    </task>
+    <task id="LOCAL-00003" summary="&quot;ajustes para despliegue&quot;">
+      <option name="closed" value="true" />
+      <created>1771870495104</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1771870495104</updated>
+    </task>
+    <task id="LOCAL-00004" summary="&quot;ajustes para despliegue&quot;">
+      <option name="closed" value="true" />
+      <created>1771870648887</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1771870648887</updated>
+    </task>
+    <task id="LOCAL-00005" summary="&quot;ajustes para despliegue&quot;">
+      <option name="closed" value="true" />
+      <created>1771870829664</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1771870829664</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+    <option name="exactExcludedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/Frontend/src/core/domain/entities/Reservation.test.js" />
+        <option value="$PROJECT_DIR$/Frontend/src/core/domain/entities/InventoryItem.test.js" />
+        <option value="$PROJECT_DIR$/Frontend/src/core/domain/entities/User.test.js" />
+        <option value="$PROJECT_DIR$/Frontend/src/core/domain/entities/Location.test.js" />
+        <option value="$PROJECT_DIR$/Frontend/src/application/use-cases/reservations/CancelReservationUseCase.test.js" />
+        <option value="$PROJECT_DIR$/Frontend/src/core/domain/errors/AuthenticationError.test.js" />
+        <option value="$PROJECT_DIR$/Frontend/src/application/use-cases/auth/LoginUseCase.test.js" />
+        <option value="$PROJECT_DIR$/Frontend/src/application/use-cases/auth/RegisterUseCase.test.js" />
+      </list>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="&quot;ajustes para despliegue&quot;" />
+    <option name="LAST_COMMIT_MESSAGE" value="&quot;ajustes para despliegue&quot;" />
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
   </component>
 </project>

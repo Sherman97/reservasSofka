@@ -7,7 +7,7 @@
       <sourceFolder url="file://$MODULE_DIR$/../../../../Backend/services/api-gateway/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../../../../Backend/services/api-gateway/src/main/resources" type="java-resource" />
     </content>
-    <orderEntry type="jdk" jdkName="17" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Gradle: org.springframework.cloud:spring-cloud-starter-gateway:4.2.0" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.cloud:spring-cloud-starter:4.2.0" level="project" />
