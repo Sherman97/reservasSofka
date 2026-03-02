@@ -20,7 +20,7 @@ describe('useReservationAlert', () => {
     });
 
     it('debe detectar una reserva que está a punto de expirar', () => {
-        const now = new Date('2026-02-26T10:52:00');
+        const now = new Date('2026-02-26T10:58:30');
         vi.setSystemTime(now);
 
         const reservation = new Reservation({
@@ -80,7 +80,7 @@ describe('useReservationAlert', () => {
     });
 
     it('debe permitir descartar una alerta', () => {
-        const now = new Date('2026-02-26T10:52:00');
+        const now = new Date('2026-02-26T10:58:30');
         vi.setSystemTime(now);
 
         const reservation = new Reservation({
@@ -142,12 +142,12 @@ describe('useReservationAlert', () => {
 
         const { result } = renderHook(() => useReservationAlert([reservation]));
 
-        // Con 20 min restantes, umbral default 10, no alerta
+        // Con 20 min restantes, umbral default 2, no alerta
         expect(result.current.hasAlerts).toBe(false);
 
-        // Avanzar reloj a 10:52 (8 min restantes)
+        // Avanzar reloj a 10:58:30 (~1.5 min restantes)
         act(() => {
-            vi.setSystemTime(new Date('2026-02-26T10:52:00'));
+            vi.setSystemTime(new Date('2026-02-26T10:58:30'));
             vi.advanceTimersByTime(60000); // trigger interval
         });
 

@@ -11,7 +11,7 @@ interface UseReservationAlertReturn {
 
 export const useReservationAlert = (
     reservations: Reservation[],
-    thresholdMinutes: number = 10
+    thresholdMinutes: number = 2
 ): UseReservationAlertReturn => {
     const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
     const [, setTick] = useState(0); // force re-render on interval

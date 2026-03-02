@@ -90,7 +90,7 @@ export class Reservation {
         return Math.ceil(diffMs / (1000 * 60));
     }
 
-    isAboutToExpire(thresholdMinutes: number = 10): boolean {
+    isAboutToExpire(thresholdMinutes: number = 2): boolean {
         if (this.isCancelled() || this.isPast()) return false;
         const remaining = this.getRemainingMinutes();
         return remaining > 0 && remaining <= thresholdMinutes;
