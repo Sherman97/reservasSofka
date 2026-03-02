@@ -5,15 +5,27 @@ import com.reservas.sk.notifications_service.domain.ReservaRepository;
 import com.reservas.sk.notifications_service.domain.NotificacionSender;
 import org.slf4j.Logger;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
+
 public class InAppNotificationService {
     private final ReservaRepository reservaRepository;
     private final NotificacionSender notificacionSender;
     private final Logger logger;
+    private final Clock clock;
 
     public InAppNotificationService(ReservaRepository reservaRepository, NotificacionSender notificacionSender, Logger logger) {
+        this(reservaRepository, notificacionSender, logger, Clock.systemDefaultZone());
+    }
+
+    public InAppNotificationService(ReservaRepository reservaRepository,
+                                    NotificacionSender notificacionSender,
+                                    Logger logger,
+                                    Clock clock) {
         this.reservaRepository = reservaRepository;
         this.notificacionSender = notificacionSender;
         this.logger = logger;
+        this.clock = clock;
     }
 
     // Implementación completa del servicio de notificaciones in-app
@@ -39,7 +51,7 @@ public class InAppNotificationService {
 
     public void notificarIncluyeNombreYFechaYTiempoExtra(Reserva reserva) {
         String mensaje = "Reserva de " + reserva.getNombreRecurso() + ". Fin: " + reserva.getFechaFin();
-        if (reserva.getFechaFin().isBefore(java.time.LocalDateTime.now())) {
+        if (reserva.getFechaFin().isBefore(now())) {
             mensaje += ". Tiempo extra: " + calcularTiempoExtra(reserva.getFechaFin(), 0);
         }
         enviarNotificacion(reserva, mensaje);
@@ -73,7 +85,7 @@ public class InAppNotificationService {
     }
 
     public void notificarSoloEnHorarioLaboral(Reserva reserva) {
-        if (estaEnHorarioLaboral(java.time.LocalDateTime.now())) {
+        if (estaEnHorarioLaboral(now())) {
             enviarNotificacion(reserva, "Notificación en horario laboral");
         } else {
             logger.info("Fuera de horario laboral, no se notifica");
@@ -88,21 +100,25 @@ public class InAppNotificationService {
     // Métodos auxiliares
     private boolean esValidaParaNotificar(Reserva reserva, int minutosAntes) {
         if (!reserva.isActiva() || reserva.isModificada() || reserva.isEntregada()) return false;
-        java.time.LocalDateTime ahora = java.time.LocalDateTime.now();
-        java.time.LocalDateTime noti = reserva.getFechaFin().minusMinutes(minutosAntes);
+        LocalDateTime ahora = now();
+        LocalDateTime noti = reserva.getFechaFin().minusMinutes(minutosAntes);
         return ahora.isAfter(noti.minusSeconds(1)) && ahora.isBefore(noti.plusSeconds(60)) && estaEnHorarioLaboral(ahora);
     }
 
-    private boolean estaEnHorarioLaboral(java.time.LocalDateTime fecha) {
+    private boolean estaEnHorarioLaboral(LocalDateTime fecha) {
         java.time.DayOfWeek dia = fecha.getDayOfWeek();
         int hora = fecha.getHour();
         return (dia.getValue() >= 1 && dia.getValue() <= 5) && (hora >= 8 && hora < 17);
     }
 
-    private String calcularTiempoExtra(java.time.LocalDateTime fin, int minutosExtra) {
-        java.time.Duration dur = java.time.Duration.between(fin, java.time.LocalDateTime.now().plusMinutes(minutosExtra));
+    private String calcularTiempoExtra(LocalDateTime fin, int minutosExtra) {
+        java.time.Duration dur = java.time.Duration.between(fin, now().plusMinutes(minutosExtra));
         long min = dur.toMinutes();
         return min + " minutos";
+    }
+
+    private LocalDateTime now() {
+        return LocalDateTime.now(clock);
     }
 
     private void enviarNotificacion(Reserva reserva, String mensaje) {
