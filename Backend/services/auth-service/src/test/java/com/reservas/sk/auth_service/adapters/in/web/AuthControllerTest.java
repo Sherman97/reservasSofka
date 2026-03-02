@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reservas.sk.auth_service.adapters.in.web.dto.RegisterRequest;
 import com.reservas.sk.auth_service.adapters.in.web.dto.LoginRequest;
 import com.reservas.sk.auth_service.application.port.in.AuthUseCase;
+import com.reservas.sk.auth_service.application.port.out.TokenPort;
 import com.reservas.sk.auth_service.application.usecase.AuthResult;
 import com.reservas.sk.auth_service.application.usecase.LoginCommand;
 import com.reservas.sk.auth_service.application.usecase.RegisterCommand;
@@ -14,6 +15,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -40,6 +42,8 @@ class AuthControllerTest {
     private AuthUseCase authUseCase;
     @Autowired
     private AuthHttpMapper authHttpMapper;
+    @MockBean
+    private TokenPort tokenPort;
 
     private RegisterRequest validRegisterRequest;
     private LoginRequest validLoginRequest;
