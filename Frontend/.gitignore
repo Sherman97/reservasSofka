@@ -25,3 +25,5 @@ dist-ssr
 
 # Test reports & coverage
 reports/
+html/
+docs/

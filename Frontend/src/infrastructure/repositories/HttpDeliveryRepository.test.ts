@@ -1,9 +1,11 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { HttpDeliveryRepository } from './HttpDeliveryRepository';
 import { Delivery } from '../../core/domain/entities/Delivery';
 import type { IHttpClient } from '../../core/ports/services/IHttpClient';
 
 describe('HttpDeliveryRepository', () => {
+    beforeEach(() => { vi.spyOn(console, 'error').mockImplementation(() => {}); });
+    afterEach(() => { vi.restoreAllMocks(); });
     function createMockHttpClient(overrides: Partial<IHttpClient> = {}): IHttpClient {
         return {
             get: vi.fn(), post: vi.fn(), put: vi.fn(), patch: vi.fn(), delete: vi.fn(),

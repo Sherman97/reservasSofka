@@ -234,6 +234,16 @@
     color: #3182ce;
 }
 
+.res-status-in-progress {
+    background-color: #fefce8;
+    color: #ca8a04;
+}
+
+.res-status-completed {
+    background-color: #f0fdf4;
+    color: #16a34a;
+}
+
 .card-actions {
     display: flex;
     gap: 0.5rem;
@@ -299,4 +309,207 @@
     .search-input {
         width: 100%;
     }
+}
+
+/* Deliver / Return Buttons */
+.btn-deliver-res {
+    background: #fefce8;
+    border: none;
+    font-size: 1rem;
+    color: #ca8a04;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-deliver-res:hover {
+    background-color: #fef08a;
+    transform: scale(1.1);
+}
+
+.btn-return-res {
+    background: #f0fdf4;
+    border: none;
+    font-size: 1rem;
+    color: #16a34a;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-return-res:hover {
+    background-color: #bbf7d0;
+    transform: scale(1.1);
+}
+
+/* Handover Modal */
+.handover-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease;
+}
+
+.handover-modal {
+    background: white;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.3s ease;
+}
+
+.handover-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #edf2f7;
+}
+
+.handover-modal-icon {
+    font-size: 1.5rem;
+}
+
+.handover-modal-header h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1a202c;
+    flex: 1;
+}
+
+.handover-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    color: #a0aec0;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.handover-modal-close:hover {
+    background: #f7fafc;
+    color: #4a5568;
+}
+
+.handover-modal-body {
+    padding: 1.5rem;
+}
+
+.handover-modal-description {
+    color: #4a5568;
+    font-size: 0.95rem;
+    margin: 0 0 1.25rem 0;
+    line-height: 1.5;
+}
+
+.handover-modal-label {
+    display: block;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.handover-modal-textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+.handover-modal-textarea:focus {
+    border-color: #3182ce;
+    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+}
+
+.handover-modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #edf2f7;
+}
+
+.btn-handover-cancel {
+    padding: 0.6rem 1.25rem;
+    border: 1px solid #e2e8f0;
+    background: white;
+    color: #4a5568;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-handover-cancel:hover {
+    background: #f7fafc;
+}
+
+.btn-handover-confirm {
+    padding: 0.6rem 1.25rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    color: white;
+    transition: all 0.2s;
+}
+
+.btn-handover-confirm.btn-deliver {
+    background: #d97706;
+}
+
+.btn-handover-confirm.btn-deliver:hover {
+    background: #b45309;
+}
+
+.btn-handover-confirm.btn-return {
+    background: #16a34a;
+}
+
+.btn-handover-confirm.btn-return:hover {
+    background: #15803d;
+}
+
+.btn-handover-confirm:disabled,
+.btn-handover-cancel:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }

@@ -5,13 +5,18 @@ import '../../styles/reservations/Reservations.css';
  * ReservationCard - UI Component
  * Displays a single reservation with details and actions
  */
-export const ReservationCard = ({ reservation, onCancel }) => {
+export const ReservationCard = ({ reservation, onCancel, onDeliver, onReturn }) => {
     const isUpcoming = reservation.isUpcoming();
     const isCancelled = reservation.isCancelled();
     const isPast = reservation.isPast();
+    const isInProgress = reservation.isInProgress();
+    const isConfirmed = reservation.isConfirmed();
+    const isCompleted = reservation.isCompleted();
 
     const getStatusClass = () => {
         if (isCancelled) return 'res-status-cancelled';
+        if (isInProgress) return 'res-status-in-progress';
+        if (isCompleted) return 'res-status-completed';
         if (isUpcoming) return 'res-status-upcoming';
         if (isPast) return 'res-status-past';
         return 'res-status-active';
@@ -19,6 +24,8 @@ export const ReservationCard = ({ reservation, onCancel }) => {
 
     const getStatusText = () => {
         if (isCancelled) return 'Cancelada';
+        if (isInProgress) return 'En Progreso';
+        if (isCompleted) return 'Completada';
         if (isUpcoming) return 'Próxima';
         if (isPast) return 'Pasada';
         return 'En curso';
@@ -69,6 +76,28 @@ export const ReservationCard = ({ reservation, onCancel }) => {
                 </span>
 
                 <div className="card-actions">
+                    {/* Deliver button: available when reservation is confirmed/active and upcoming or ongoing */}
+                    {isConfirmed && !isCancelled && !isCompleted && onDeliver && (
+                        <button
+                            className="btn-deliver-res"
+                            onClick={() => onDeliver(reservation)}
+                            title="Registrar Entrega"
+                        >
+                            📦
+                        </button>
+                    )}
+
+                    {/* Return button: available when reservation is in_progress */}
+                    {isInProgress && onReturn && (
+                        <button
+                            className="btn-return-res"
+                            onClick={() => onReturn(reservation)}
+                            title="Registrar Devolución"
+                        >
+                            ✅
+                        </button>
+                    )}
+
                     {isUpcoming && !isCancelled && (
                         <button
                             className="btn-cancel-res"
