@@ -1,4 +1,4 @@
-package com.reservas.sk.bookings_service.adapters.in.web.dto;
+﻿package com.reservas.sk.bookings_service.adapters.in.web.dto;
 
 // Human Check 🛡️: se agrega errorCode para que frontend distinga errores sin depender del texto.
 public record ApiResponse<T>(boolean ok, T data, String message, String errorCode) {
