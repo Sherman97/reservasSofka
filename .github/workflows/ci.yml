@@ -107,4 +107,4 @@ jobs:
             exit 0
           fi
 
-          npm test
+          npx vitest run
