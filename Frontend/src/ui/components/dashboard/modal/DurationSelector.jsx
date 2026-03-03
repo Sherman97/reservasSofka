@@ -39,7 +39,8 @@ export const DurationSelector = ({
     loadingSlots = false,
     hasTimeConflict = false,
     selectedDate = null,
-    slotsUpdatedFlag = false
+    slotsUpdatedFlag = false,
+    successMessage = null
 }) => {
     const hasBusySlots = busySlots.length > 0;
 
@@ -60,7 +61,7 @@ export const DurationSelector = ({
                     />
                 </div>
 
-                <div className="time-separator">{"->"}</div>
+                <div className="time-separator">→</div>
 
                 <div className="time-input-group">
                     <label htmlFor="endTime">FIN</label>
@@ -76,9 +77,9 @@ export const DurationSelector = ({
                 </div>
             </div>
 
-            {hasTimeConflict && (
+            {hasTimeConflict && !successMessage && (
                 <div className="time-conflict-warning">
-                    <span className="conflict-icon">[!]</span>
+                    <span className="conflict-icon">⚠️</span>
                     <span>El horario seleccionado se solapa con una reserva existente</span>
                 </div>
             )}
@@ -88,11 +89,11 @@ export const DurationSelector = ({
                 <div className={`time-slots-section ${slotsUpdatedFlag ? 'slots-updated' : ''}`}>
                     {slotsUpdatedFlag && (
                         <div className="slots-updated-banner">
-                            <span>ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾ Disponibilidad actualizada en tiempo real</span>
+                            <span>🔄 Disponibilidad actualizada en tiempo real</span>
                         </div>
                     )}
                     <div className="time-slots-header">
-                        <span className="time-slots-title">Disponibilidad del dÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­a</span>
+                        <span className="time-slots-title">Disponibilidad del día</span>
                         {loadingSlots && <span className="time-slots-loading">Cargando...</span>}
                     </div>
 
@@ -146,12 +147,13 @@ export const DurationSelector = ({
                             ))}
                         </div>
                     )}
+
                 </div>
             )}
 
             <div className="time-info">
-                <span className="info-icon">ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¹ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â</span>
-                <span>Horario disponible: 8:00 AM - 6:00 PM</span>
+                <span className="info-icon">ℹ️</span>
+                <span>solo se puede reservar de: 8:00 AM - 6:00 PM</span>
             </div>
         </div>
     );

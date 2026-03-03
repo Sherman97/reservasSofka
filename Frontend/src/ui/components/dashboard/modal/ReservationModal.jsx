@@ -1,5 +1,6 @@
-﻿import React from 'react';
+import React from 'react';
 import { Calendar } from './Calendar';
+import { EquipmentSelector } from './EquipmentSelector';
 import { DurationSelector } from './DurationSelector';
 import '../../../styles/dashboard/ReservationModal.css';
 
@@ -8,10 +9,12 @@ export const ReservationModal = ({
     item,
     currentDate,
     selectedDate,
+    selectedEquipment = [],
     startTime,
     endTime,
     availability,
     onDateSelect,
+    onEquipmentToggle,
     onStartTimeChange,
     onEndTimeChange,
     onPreviousMonth,
@@ -20,6 +23,7 @@ export const ReservationModal = ({
     onConfirm,
     canConfirm,
     loading,
+    error = null,
     busySlots = [],
     loadingSlots = false,
     hasTimeConflict = false,
@@ -31,22 +35,38 @@ export const ReservationModal = ({
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <button className="modal-close" onClick={onClose}>x</button>
+                <button className="modal-close" onClick={onClose}>✕</button>
 
                 <div className="modal-header">
                     <div className="modal-item-info">
                         <img src={item.image} alt={item.title} className="modal-item-image" />
                         <div className="modal-item-details">
                             <h2>{item.title}</h2>
-                            <p className="modal-item-location">Ubicacion: {item.location || 'Sede Central'}</p>
+                            <p className="modal-item-location">📍 {item.location || 'Sede Central'}</p>
+                            {/* Check item type safely */}
                             {(item.type === 'location' || item._type === 'location') && (
-                                <p className="modal-item-type">Tipo: Locacion</p>
+                                <p className="modal-item-type">🏢 Locación</p>
                             )}
                         </div>
                     </div>
                 </div>
 
                 <div className="modal-body">
+
+                    {successMessage && (
+                        <div className="modal-success-banner">
+                            <span className="success-icon">✅</span>
+                            <span>{successMessage}</span>
+                        </div>
+                    )}
+
+                    {!successMessage && error && (
+                        <div className="modal-error-banner">
+                            <span className="error-icon">⚠️</span>
+                            <span>{error}</span>
+                        </div>
+                    )}
+
                     <div className="modal-columns">
                         <div className="modal-left-column">
                             <div className="modal-section">
@@ -75,6 +95,18 @@ export const ReservationModal = ({
                                     hasTimeConflict={hasTimeConflict}
                                     selectedDate={selectedDate}
                                     slotsUpdatedFlag={slotsUpdatedFlag}
+                                    item={item}
+                                    successMessage={successMessage}
+                                />
+
+                            </div>
+
+                            <div className="modal-section">
+                                <h3>Equipos Adicionales</h3>
+                                <EquipmentSelector
+                                    selectedEquipment={selectedEquipment}
+                                    onEquipmentToggle={onEquipmentToggle}
+                                    item={item}
                                 />
                             </div>
                         </div>

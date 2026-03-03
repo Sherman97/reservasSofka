@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.1'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'jacoco'
 }
 
 group = 'com.reservas.sk'
@@ -28,6 +29,77 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+subprojects {
+    apply plugin: 'jacoco'
+
+    tasks.withType(Test).configureEach {
+        useJUnitPlatform()
+        finalizedBy tasks.named('jacocoTestReport')
+    }
+
+    tasks.withType(JacocoReport).configureEach {
+        reports {
+            xml.required = true
+            html.required = true
+        }
+    }
+}
+
+tasks.register('jacocoRootReport', JacocoReport) {
+    dependsOn subprojects.collect { it.tasks.named('test') }
+
+    additionalSourceDirs.from(files(subprojects.collect { it.sourceSets.main.allSource.srcDirs }))
+    sourceDirectories.from(files(subprojects.collect { it.sourceSets.main.allSource.srcDirs }))
+    classDirectories.from(files(subprojects.collect { it.sourceSets.main.output }))
+    executionData.from(fileTree(project.rootDir) {
+        include 'services/*/build/jacoco/test.exec'
+        include 'services/*/build/jacoco/*.exec'
+    })
+
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+tasks.register('jacocoRootCoverageVerification', JacocoCoverageVerification) {
+    dependsOn tasks.named('jacocoRootReport')
+
+    additionalSourceDirs.from(files(subprojects.collect { it.sourceSets.main.allSource.srcDirs }))
+    sourceDirectories.from(files(subprojects.collect { it.sourceSets.main.allSource.srcDirs }))
+    classDirectories.from(files(subprojects.collect { it.sourceSets.main.output }))
+    executionData.from(fileTree(project.rootDir) {
+        include 'services/*/build/jacoco/test.exec'
+        include 'services/*/build/jacoco/*.exec'
+    })
+
+    violationRules {
+        rule {
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.25
+            }
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.15
+            }
+        }
+    }
+}
+
+tasks.named('check') {
+    dependsOn tasks.named('jacocoRootCoverageVerification')
+}
+subprojects {
+    plugins.withId('java') {
+        dependencies {
+            add('testRuntimeOnly', 'org.junit.platform:junit-platform-launcher')
+        }
+    }
 }
 
 

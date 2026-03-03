@@ -64,7 +64,6 @@ reservas-sk/
       notifications-service/
       database/
     docker-compose.yml
-    docker-compose.app.yml
   Frontend/
 ```
 
@@ -97,6 +96,9 @@ npm install
 npm run dev
 ```
 
+## 📜 Licencia
+
+ISC License
 ## Documentacion Tecnica
 
 - Detalle completo del backend: `Backend/README.md`

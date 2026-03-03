@@ -1,5 +1,9 @@
-# Human Check 🛡️: ignorar archivos locales de IDE/Gradle que no deben versionarse.
 .idea/
+.gradle/
+**/.gradle/
+node_modules/
+# Human Check 🛡️: ignorar archivos locales de IDE/Gradle que no deben versionarse.
+**/.idea/
 *.iml
 
 # Gradle cache
@@ -11,3 +15,19 @@
 Thumbs.db
 .vscode/
 
+.github/
+
+Backend/.gradle/
+Backend/.idea/
+Backend/gradle/
+
+Frontend/node_modules/
+Frontend/dist/
+Frontend/docs/
+Frontend/html/
+Frontend/reports/
+
+.idea/
+
+.idea/
+.idea/
