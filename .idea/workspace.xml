@@ -4,20 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8096078f-91f3-4936-b176-12145b874104" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/controllers/items.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/controllers/items.controller.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/controllers/locationItems.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/controllers/locationItems.controller.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/db.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/middlewares/auth.middleware.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/routes/items.routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/routes/items.routes.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/routes/locationItems.routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/routes/locationItems.routes.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/server.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/services/items.service.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/services/items.service.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/services/inventory-service/src/services/locationItems.service.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/services/inventory-service/src/services/locationItems.service.js" afterDir="false" />
-    </list>
+    <list default="true" id="8096078f-91f3-4936-b176-12145b874104" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -51,6 +38,12 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Sherman97/reservasSofka.git",
+    "accountId": "0cf22f18-07b2-4cce-982c-de9d65ba6305"
+  }
+}]]></component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
@@ -64,35 +57,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Rebasing develop&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/german.rojas/Desktop/Nueva carpeta/reservas-sk&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Artifacts&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "Qa",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/german.rojas/Desktop/Nueva carpeta/reservas-sk",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Artifacts",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "run.configurations.included.in.services": "true",
+    "settings.editor.selected.configurable": "preferences.keymap",
+    "to.speed.mode.migration.done": "true",
+    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.3.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\german.rojas\Desktop\Nueva carpeta\reservas-sk\Backend" />
@@ -181,5 +175,9 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
