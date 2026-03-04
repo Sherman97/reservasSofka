@@ -25,15 +25,13 @@ export default defineConfig({
     video: 'retain-on-failure',
   },
 
-  /* Levanta el dev server automáticamente en local; en CI el frontend ya corre via Docker */
-  webServer: process.env.CI
-    ? undefined
-    : {
-        command: 'npm run dev',
-        url: 'http://localhost:5173',
-        reuseExistingServer: true,
-        timeout: 30_000,
-      },
+  /* En local levanta el dev server; en CI reutiliza el que ya corre via Docker */
+  webServer: {
+    command: 'npm run dev',
+    url: 'http://localhost:5173',
+    reuseExistingServer: true,
+    timeout: 30_000,
+  },
 
   projects: [
     {
