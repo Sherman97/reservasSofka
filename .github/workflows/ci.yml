@@ -108,3 +108,105 @@ jobs:
           fi
 
           npm test
+
+  # ── Pruebas de Caja Negra — E2E (Playwright) ──────────────
+  e2e-tests:
+    name: E2E Tests (Playwright)
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Start full stack
+        run: |
+          docker compose -f docker-compose.prod.yml -f docker-compose.override.yml \
+            up -d --build
+          echo "Waiting for all services to be healthy..."
+
+          # Wait for database migrations
+          docker compose -f docker-compose.prod.yml -f docker-compose.override.yml \
+            wait --timeout 120 database || true
+
+          # Wait for frontend
+          for i in $(seq 1 120); do
+            if curl -sf http://localhost:5173 > /dev/null 2>&1; then
+              echo "Frontend is ready after ${i}s"
+              break
+            fi
+            if [ "$i" -eq 120 ]; then
+              echo "Frontend did not become ready in 120s"
+              docker compose -f docker-compose.prod.yml -f docker-compose.override.yml logs frontend
+              exit 1
+            fi
+            sleep 1
+          done
+
+          # Wait for auth-service through gateway
+          for i in $(seq 1 90); do
+            if curl -sf http://localhost:3000/auth/login > /dev/null 2>&1 || \
+               curl -sf http://localhost:3001/health > /dev/null 2>&1; then
+              echo "Auth service is ready after ${i}s"
+              break
+            fi
+            if [ "$i" -eq 90 ]; then
+              echo "Auth service not ready in 90s"
+              docker compose -f docker-compose.prod.yml -f docker-compose.override.yml logs auth-service api-gateway
+              exit 1
+            fi
+            sleep 1
+          done
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        working-directory: Frontend
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Install Playwright browsers
+        working-directory: Frontend
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright E2E tests
+        working-directory: Frontend
+        run: npx playwright test
+        env:
+          BASE_URL: http://localhost:5173
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: Frontend/reports/e2e-html/
+          retention-days: 14
+
+      - name: Upload test screenshots/videos
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-traces
+          path: Frontend/test-results/
+          retention-days: 7
+
+      - name: Show service logs on failure
+        if: failure()
+        run: |
+          docker compose -f docker-compose.prod.yml -f docker-compose.override.yml \
+            logs --tail=150
+
+      - name: Tear down
+        if: always()
+        run: |
+          docker compose -f docker-compose.prod.yml -f docker-compose.override.yml \
+            down -v
