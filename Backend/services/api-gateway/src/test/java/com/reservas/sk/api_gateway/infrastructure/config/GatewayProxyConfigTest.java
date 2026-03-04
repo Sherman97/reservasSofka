@@ -1,5 +1,6 @@
 package com.reservas.sk.api_gateway.infrastructure.config;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,6 +12,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Tag("integration")
 @SpringBootTest(properties = {
         "gateway.routes.auth=http://auth-service:3001",
         "gateway.routes.bookings=http://bookings-service:3003",

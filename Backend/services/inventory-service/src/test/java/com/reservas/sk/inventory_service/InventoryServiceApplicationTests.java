@@ -4,11 +4,13 @@ import com.reservas.sk.inventory_service.application.port.out.EquipmentEventPubl
 import com.reservas.sk.inventory_service.application.usecase.EquipmentCreatedEvent;
 import com.reservas.sk.inventory_service.application.usecase.EquipmentDeletedEvent;
 import com.reservas.sk.inventory_service.application.usecase.EquipmentUpdatedEvent;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 
+@Tag("integration")
 @SpringBootTest(properties = {
         "spring.datasource.url=jdbc:h2:mem:inventory_ctx;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",

@@ -1,6 +1,6 @@
 # TEST PLAN — Reservas Sofka
 
-> **Versión:** 1.0  
+> **Versión:** 1.1  
 > **Fecha:** 4 de marzo de 2026  
 > **Proyecto:** Sistema de Reservas Sofka (Microservicios + SPA React)  
 > **Autores:** Equipo de Desarrollo Reservas SK
@@ -397,57 +397,167 @@ assert_json_field "Campo ok=True" "$BODY" "['ok']" "True"
 
 ### 7.1 Arquitectura del Pipeline
 
-El archivo `.github/workflows/ci.yml` define **4 jobs** que se ejecutan con la siguiente dependencia:
+El archivo `.github/workflows/ci.yml` define **5 jobs** visualmente diferenciados que separan las pruebas de componente de las de integración mediante **JUnit 5 tags** (`@Tag("integration")`) y **tasks Gradle** independientes (`componentTest`, `integrationTest`):
 
 ```
-┌─────────────────────┐     ┌────────────────────┐
-│  backend             │     │  frontend           │
-│  (6 servicios ×      │     │  (lint + npm test)  │
-│   ./gradlew test)    │     │                     │
-└──────┬──────────────┘     └─────────┬──────────┘
-       │                              │
-       ▼                              │
-┌─────────────────────┐               │
-│  blackbox-tests     │               │
-│  (docker compose +  │               │
-│   curl tests API)   │               │
-└─────────────────────┘               │
-       │                              │
-       ▼                              ▼
-┌─────────────────────────────────────────────┐
-│  e2e-tests (Playwright)                     │
-│  (stack completo + navegador Chromium)      │
-│  needs: [backend, frontend]                 │
-└─────────────────────────────────────────────┘
+┌──────────────────────────┐   ┌──────────────────────────┐   ┌─────────────────────┐
+│ 🧩 component-tests       │   │ 🔗 integration-tests     │   │ 🌐 frontend          │
+│  (6 servicios × matrix)  │   │  (6 servicios × matrix)  │   │  (lint + npm test)   │
+│  ./gradlew componentTest │   │  ./gradlew integrationTest│   │                     │
+│  excludeTags=integration │   │  includeTags=integration  │   │                     │
+└──────────┬───────────────┘   └──────────┬───────────────┘   └─────────┬───────────┘
+           │                              │                             │
+           ▼                              ▼                             │
+┌─────────────────────────────────────────────┐                         │
+│ 📦 blackbox-tests                           │                         │
+│  (docker compose up + test-user-creation.sh │                         │
+│   ejecutado DENTRO de contenedor Docker)    │                         │
+│  needs: [component-tests, integration-tests]│                         │
+└──────────────────────┬──────────────────────┘                         │
+                       │                                                │
+                       ▼                                                ▼
+┌──────────────────────────────────────────────────────────────────────────┐
+│ 🎭 e2e-tests (Playwright)                                               │
+│  (stack completo + navegador Chromium)                                   │
+│  needs: [component-tests, integration-tests, frontend]                   │
+└──────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 7.2 Job 1: `backend` — Pruebas de Componente (Aisladas)
+### 7.2 Mecanismo de separación — JUnit 5 Tags + Gradle Tasks
+
+La diferenciación entre pruebas de componente e integración se implementa en **tres capas**:
+
+#### Capa 1: Anotaciones JUnit 5 en los tests
+
+Los tests que levantan contexto de Spring pesado (`@SpringBootTest`, `@DataJpaTest`, `@JdbcTest`) están anotados con `@Tag("integration")`. Los demás (unitarios, `@WebMvcTest`, Mockito puro) no tienen tag y se consideran tests de componente.
+
+```java
+// Test de INTEGRACIÓN — levanta contexto real de Spring + H2
+@Tag("integration")
+@SpringBootTest(properties = {"spring.datasource.url=jdbc:h2:mem:auth_ctx;..."})
+class AuthServiceApplicationTests { ... }
+
+@Tag("integration")
+@DataJpaTest
+class UserPersistenceAdapterTest { ... }
+
+@Tag("integration")
+@JdbcTest
+class JdbcBookingPersistenceAdapterTest { ... }
+
+// Test de COMPONENTE — sin tag, web slice aislado o Mockito puro
+@WebMvcTest(value = AuthController.class, ...)
+class AuthControllerTest { ... }
+
+class AuthApplicationServiceTest { ... }  // @Mock + @InjectMocks
+```
+
+#### Capa 2: Tasks Gradle separados
+
+En `Backend/build.gradle` (bloque `subprojects`):
+
+```groovy
+subprojects {
+    tasks.register('componentTest', Test) {
+        description = 'Runs component tests (excludes integration)'
+        group = 'verification'
+        useJUnitPlatform {
+            excludeTags 'integration'
+        }
+    }
+
+    tasks.register('integrationTest', Test) {
+        description = 'Runs integration tests only'
+        group = 'verification'
+        useJUnitPlatform {
+            includeTags 'integration'
+        }
+    }
+}
+```
+
+#### Capa 3: Jobs separados en GitHub Actions
+
+Cada tipo de test tiene su propio job visible en la UI de GitHub Actions, con iconos y nombres distintos.
+
+### 7.3 Tests con `@Tag("integration")` — Inventario
+
+| Servicio | Test de integración | Anotación |
+|---|---|---|
+| auth-service | `AuthServiceApplicationTests` | `@Tag("integration")` + `@SpringBootTest` |
+| auth-service | `UserPersistenceAdapterTest` | `@Tag("integration")` + `@DataJpaTest` |
+| bookings-service | `BookingsServiceApplicationTests` | `@Tag("integration")` + `@SpringBootTest` |
+| bookings-service | `JdbcBookingPersistenceAdapterTest` | `@Tag("integration")` + `@JdbcTest` |
+| inventory-service | `InventoryServiceApplicationTests` | `@Tag("integration")` + `@SpringBootTest` |
+| inventory-service | `JdbcInventoryPersistenceAdapterTest` | `@Tag("integration")` + `@JdbcTest` |
+| locations-service | `LocationsServiceApplicationTests` | `@Tag("integration")` + `@SpringBootTest` |
+| locations-service | `JdbcLocationsPersistenceAdapterTest` | `@Tag("integration")` + `@JdbcTest` |
+| api-gateway | `ApiGatewayApplicationTests` | `@Tag("integration")` + `@SpringBootTest` |
+| api-gateway | `GatewayProxyConfigTest` | `@Tag("integration")` + `@SpringBootTest` |
+| api-gateway | `HealthControllerTest` | `@Tag("integration")` + `@SpringBootTest` |
+
+### 7.4 Job 1: `component-tests` — Pruebas de Componente (Sin Spring Context pesado)
 
 ```yaml
 jobs:
-  backend:
+  component-tests:
+    name: "🧩 Component Tests (${{ matrix.service }})"
     strategy:
       matrix:
         service: [auth-service, bookings-service, api-gateway, ...]
     steps:
-      - ./gradlew --no-daemon test
+      - ./gradlew --no-daemon componentTest  # excludeTags 'integration'
 ```
 
-**Qué ejecuta:** Todos los tests JUnit de cada microservicio — incluyendo:
+**Qué ejecuta:** Tests que NO tienen `@Tag("integration")`:
 
 | Tipo de test | Aislamiento | Ejemplo |
 |---|---|---|
-| `@WebMvcTest` (componente) | Solo web layer; servicios mockeados | `AuthControllerTest` |
-| Unitarios con Mockito | Sin Spring context; todo mockeado | `AuthApplicationServiceTest` |
-| `@SpringBootTest` (smoke) | Context completo, sin DB | `AuthServiceApplicationTests` |
+| Unitarios con Mockito | Sin Spring context | `AuthApplicationServiceTest` |
+| `@WebMvcTest` (web slice) | Solo web layer; servicios mockeados | `AuthControllerTest` |
+| Adapters con mock | Sin infraestructura | `JwtTokenAdapterTest` |
+| Exception handlers | Mockito puro | `GlobalExceptionHandlerTest` |
 
-**Característica clave:** Cada servicio se ejecuta **en paralelo** (`fail-fast: false`) y **no necesita infraestructura** (ni BD, ni RabbitMQ). Son pruebas de componente aisladas.
+**Característica clave:** Cada servicio se ejecuta **en paralelo** (`fail-fast: false`) y **no necesita infraestructura** (ni BD, ni RabbitMQ). Son rápidos (~5-15s por servicio).
 
-### 7.3 Job 2: `frontend` — Pruebas de Componente + Integración (Frontend)
+### 7.5 Job 2: `integration-tests` — Pruebas de Integración (Spring Context + BD)
+
+```yaml
+jobs:
+  integration-tests:
+    name: "🔗 Integration Tests (${{ matrix.service }})"
+    strategy:
+      matrix:
+        service: [auth-service, bookings-service, api-gateway, ...]
+    steps:
+      - ./gradlew --no-daemon integrationTest  # includeTags 'integration'
+```
+
+**Qué ejecuta:** Solo tests anotados con `@Tag("integration")`:
+
+| Tipo de test | Aislamiento | Ejemplo |
+|---|---|---|
+| `@SpringBootTest` (context load) | Context completo con H2 | `AuthServiceApplicationTests` |
+| `@DataJpaTest` (JPA slice) | Persistence layer + H2 | `UserPersistenceAdapterTest` |
+| `@JdbcTest` (JDBC slice) | JDBC + H2 in-memory | `JdbcBookingPersistenceAdapterTest` |
+
+**Diferencia clave con component-tests:**
+
+| Aspecto | 🧩 Component Tests | 🔗 Integration Tests |
+|---|---|---|
+| Spring Context | No, o solo web slice | Completo o persistence slice |
+| Base de datos | Ninguna | H2 in-memory |
+| Gradle task | `componentTest` | `integrationTest` |
+| JUnit tag | Sin tag | `@Tag("integration")` |
+| Velocidad | ~5s por servicio | ~15-30s por servicio |
+| Qué detecta | Errores de lógica, mapeo HTTP | Errores de persistencia, config, wiring |
+
+### 7.6 Job 3: `frontend` — Pruebas de Componente + Integración (Frontend)
 
 ```yaml
 jobs:
   frontend:
+    name: "🌐 Frontend"
     steps:
       - npm run lint
       - npm test
@@ -461,37 +571,51 @@ jobs:
 | Componente (render, screen, fireEvent) | ~300 | jsdom + mocked hooks |
 | Integración multi-capa | ~50 | Fakes con lógica real |
 
-### 7.4 Job 3: `blackbox-tests` — Pruebas de Integración / Caja Negra
+### 7.7 Job 4: `blackbox-tests` — Pruebas de Caja Negra API (dentro de contenedor)
 
 ```yaml
 jobs:
   blackbox-tests:
-    needs: [backend]  # Solo ejecuta si los tests de componente pasan
+    name: "📦 Black-Box Tests (API)"
+    needs: [component-tests, integration-tests]
     steps:
-      - docker compose up -d mariadb rabbitmq database auth-service
-      - bash Backend/tests/blackbox/test-user-creation.sh
+      - docker compose up -d mariadb rabbitmq database auth-service api-gateway
+      - docker run --rm \
+          --network <backend_network> \
+          -e AUTH_URL=http://auth-service:3001 \
+          -v Backend/tests/blackbox:/tests:ro \
+          python:3.12-slim \
+          bash -c "apt-get install curl && bash /tests/test-user-creation.sh"
       - docker compose down -v
 ```
 
-**Qué ejecuta:** Pruebas HTTP reales contra servicios containerizados.
+**Qué ejecuta:** Pruebas HTTP reales contra servicios containerizados, con el script de tests ejecutándose **dentro de un contenedor Docker** conectado a la red interna de backend.
+
+**Ejecución dentro del contenedor:**
+- Se usa `docker run` con un contenedor `python:3.12-slim` conectado a la red Docker interna (`backend_network`)
+- El script usa `AUTH_URL=http://auth-service:3001` (hostname interno de Docker, no localhost)
+- El script se monta como volumen read-only desde `Backend/tests/blackbox/`
+- Esto garantiza que las pruebas se ejecutan en el **mismo entorno de red** que los servicios
 
 **Diferencia clave con los jobs anteriores:**
 
-| Aspecto | Jobs 1–2 (Componente) | Job 3 (Integración/BB) |
+| Aspecto | Jobs 1–3 (Componente/Integración) | Job 4 (Caja Negra API) |
 |---|---|---|
-| Infraestructura | Ninguna | MariaDB + RabbitMQ + Liquibase |
+| Infraestructura | Ninguna o H2 in-memory | MariaDB + RabbitMQ + Liquibase reales |
 | Servicios | Ninguno levantado | auth-service real en Docker |
-| Mocks | Mockito / vi.fn() | Ningún mock |
-| Comunicación de puertos | Simulada | Real (HTTP → Service → DB) |
+| Mocks | Mockito / vi.fn() / H2 | Ningún mock |
+| Ejecución | JVM / Node.js del runner | **Dentro de contenedor Docker** |
+| Comunicación | Simulada o in-process | Real (HTTP → Service → DB) |
 | Velocidad | ~30s total | ~2-3 min |
 | Falla por | Lógica incorrecta | Config, red, SQL, serialización |
 
-### 7.5 Job 4: `e2e-tests` — Pruebas de Caja Negra E2E (Playwright)
+### 7.8 Job 5: `e2e-tests` — Pruebas de Caja Negra E2E (Playwright)
 
 ```yaml
 jobs:
   e2e-tests:
-    needs: [backend, frontend]
+    name: "🎭 E2E Tests (Playwright)"
+    needs: [component-tests, integration-tests, frontend]
     steps:
       - docker compose up -d --build           # Stack completo
       - npx playwright install --with-deps chromium
@@ -502,20 +626,42 @@ jobs:
 
 **Qué ejecuta:** Tests de Playwright que abren un navegador Chromium real, interactúan con la UI y verifican el flujo completo del usuario.
 
-| Aspecto | Caja Negra API (Job 3) | E2E Playwright (Job 4) |
+| Aspecto | Caja Negra API (Job 4) | E2E Playwright (Job 5) |
 |---|---|---|
-| Cliente | `curl` (HTTP directo) | Chromium (navegador real) |
+| Cliente | `curl` (HTTP directo, dentro de contenedor) | Chromium (navegador real) |
 | Qué testea | Contrato API backend | UI + API + integración completa |
 | Stack levantado | Solo auth-service + infra | **Todo** (front + back + infra) |
 | Artefactos | Logs en consola | HTML report + screenshots + videos |
 
-### 7.6 Flujo de ejecución
+### 7.9 Flujo de ejecución
 
 1. **Push/PR** a `main` o `develop` → CI se activa
-2. **Paralelo:** `backend` (6 jobs × 1 servicio) + `frontend` (1 job)
-3. **Secuencial:** Si `backend` pasa → `blackbox-tests` levanta Docker y corre caja negra API
-4. **Secuencial:** Si `backend` + `frontend` pasan → `e2e-tests` levanta stack completo + Playwright
+2. **Paralelo:** `component-tests` (6 jobs × 1 servicio) + `integration-tests` (6 jobs × 1 servicio) + `frontend` (1 job)
+3. **Secuencial:** Si `component-tests` + `integration-tests` pasan → `blackbox-tests` levanta Docker y ejecuta caja negra API **dentro de contenedor**
+4. **Secuencial:** Si `component-tests` + `integration-tests` + `frontend` pasan → `e2e-tests` levanta stack completo + Playwright
 5. **Resultado:** Si todo pasa → PR puede mergearse; si falla → CI bloquea el merge
+
+### 7.10 Visualización en GitHub Actions
+
+En la UI de GitHub Actions, los jobs se muestran visualmente diferenciados:
+
+```
+✅ 🧩 Component Tests (auth-service)
+✅ 🧩 Component Tests (bookings-service)
+✅ 🧩 Component Tests (api-gateway)
+✅ 🧩 Component Tests (inventory-service)
+✅ 🧩 Component Tests (locations-service)
+✅ 🧩 Component Tests (notifications-service)
+✅ 🔗 Integration Tests (auth-service)
+✅ 🔗 Integration Tests (bookings-service)
+✅ 🔗 Integration Tests (api-gateway)
+✅ 🔗 Integration Tests (inventory-service)
+✅ 🔗 Integration Tests (locations-service)
+✅ 🔗 Integration Tests (notifications-service)
+✅ 🌐 Frontend
+✅ 📦 Black-Box Tests (API)
+✅ 🎭 E2E Tests (Playwright)
+```
 
 ---
 
@@ -636,7 +782,8 @@ jobs:
 | Mockito | 5.x (Spring Boot managed) | Mocking: `@Mock`, `@InjectMocks`, `when/verify` |
 | Spring Boot Test | 3.x | `@SpringBootTest`, `@WebMvcTest`, `MockMvc` |
 | JaCoCo | 0.8.x | Cobertura de código (multi-module report) |
-| Gradle | 8.x | Build tool con task `test` |
+| Gradle | 8.x | Build tool con tasks `componentTest` / `integrationTest` |
+| JUnit 5 Tags | 5.x | `@Tag("integration")` para separar tipos de test |
 
 ### 10.2 Frontend
 
@@ -669,96 +816,96 @@ jobs:
 <details>
 <summary><strong>auth-service (21 tests, 7 archivos)</strong></summary>
 
-| Archivo | Tipo |
-|---------|------|
-| `AuthServiceApplicationTests.java` | Smoke (@SpringBootTest) |
-| `AuthControllerTest.java` | Componente (@WebMvcTest) |
-| `AuthApplicationServiceTest.java` | Unitario (Mockito) |
-| `UserPersistenceAdapterTest.java` | Integración (adapter) |
-| `SecurityAdaptersTest.java` | Unitario (adapter) |
-| `JwtAuthenticationFilterTest.java` | Unitario (seguridad) |
-| `GlobalExceptionHandlerTest.java` | Unitario (handler) |
+| Archivo | Tipo | Tag |
+|---------|------|-----|
+| `AuthServiceApplicationTests.java` | Smoke (@SpringBootTest) | `@Tag("integration")` |
+| `AuthControllerTest.java` | Componente (@WebMvcTest) | — |
+| `AuthApplicationServiceTest.java` | Unitario (Mockito) | — |
+| `UserPersistenceAdapterTest.java` | Integración (@DataJpaTest) | `@Tag("integration")` |
+| `SecurityAdaptersTest.java` | Unitario (adapter) | — |
+| `JwtAuthenticationFilterTest.java` | Unitario (seguridad) | — |
+| `GlobalExceptionHandlerTest.java` | Unitario (handler) | — |
 
 </details>
 
 <details>
 <summary><strong>bookings-service (51 tests, 11 archivos)</strong></summary>
 
-| Archivo | Tipo |
-|---------|------|
-| `BookingsServiceApplicationTests.java` | Smoke |
-| `BookingApplicationServiceTest.java` | Unitario |
-| `BookingControllerTest.java` | Componente (@WebMvcTest) |
-| `BookingControllerUnitTest.java` | Unitario |
-| `JdbcBookingPersistenceAdapterTest.java` | Integración (JDBC) |
-| `JdbcBookingPersistenceAdapterUnitTest.java` | Unitario |
-| `RabbitReservationEventPublisherAdapterTest.java` | Integración (RabbitMQ) |
-| `NoOpReservationEventPublisherAdapterTest.java` | Unitario |
-| `JwtTokenAdapterTest.java` | Unitario |
-| `JwtAuthenticationFilterTest.java` | Unitario |
-| `GlobalExceptionHandlerTest.java` | Unitario |
+| Archivo | Tipo | Tag |
+|---------|------|-----|
+| `BookingsServiceApplicationTests.java` | Smoke | `@Tag("integration")` |
+| `BookingApplicationServiceTest.java` | Unitario | — |
+| `BookingControllerTest.java` | Componente (@WebMvcTest) | — |
+| `BookingControllerUnitTest.java` | Unitario | — |
+| `JdbcBookingPersistenceAdapterTest.java` | Integración (@JdbcTest) | `@Tag("integration")` |
+| `JdbcBookingPersistenceAdapterUnitTest.java` | Unitario | — |
+| `RabbitReservationEventPublisherAdapterTest.java` | Integración (RabbitMQ) | — |
+| `NoOpReservationEventPublisherAdapterTest.java` | Unitario | — |
+| `JwtTokenAdapterTest.java` | Unitario | — |
+| `JwtAuthenticationFilterTest.java` | Unitario | — |
+| `GlobalExceptionHandlerTest.java` | Unitario | — |
 
 </details>
 
 <details>
 <summary><strong>locations-service (35 tests, 11 archivos)</strong></summary>
 
-| Archivo | Tipo |
-|---------|------|
-| `LocationsServiceApplicationTests.java` | Smoke |
-| `LocationsApplicationServiceTest.java` | Unitario |
-| `LocationsControllerTest.java` | Componente (@WebMvcTest) |
-| `LocationsControllerUnitTest.java` | Unitario |
-| `SpacesControllerTest.java` | Componente (@WebMvcTest) |
-| `JdbcLocationsPersistenceAdapterTest.java` | Integración (JDBC) |
-| `RabbitLocationEventPublisherAdapterTest.java` | Integración (RabbitMQ) |
-| `NoOpLocationEventPublisherAdapterTest.java` | Unitario |
-| `JwtTokenAdapterTest.java` | Unitario |
-| `JwtAuthenticationFilterTest.java` | Unitario |
-| `GlobalExceptionHandlerTest.java` | Unitario |
+| Archivo | Tipo | Tag |
+|---------|------|-----|
+| `LocationsServiceApplicationTests.java` | Smoke | `@Tag("integration")` |
+| `LocationsApplicationServiceTest.java` | Unitario | — |
+| `LocationsControllerTest.java` | Componente (@WebMvcTest) | — |
+| `LocationsControllerUnitTest.java` | Unitario | — |
+| `SpacesControllerTest.java` | Componente (@WebMvcTest) | — |
+| `JdbcLocationsPersistenceAdapterTest.java` | Integración (@JdbcTest) | `@Tag("integration")` |
+| `RabbitLocationEventPublisherAdapterTest.java` | Integración (RabbitMQ) | — |
+| `NoOpLocationEventPublisherAdapterTest.java` | Unitario | — |
+| `JwtTokenAdapterTest.java` | Unitario | — |
+| `JwtAuthenticationFilterTest.java` | Unitario | — |
+| `GlobalExceptionHandlerTest.java` | Unitario | — |
 
 </details>
 
 <details>
 <summary><strong>inventory-service (31 tests, 10 archivos)</strong></summary>
 
-| Archivo | Tipo |
-|---------|------|
-| `InventoryServiceApplicationTests.java` | Smoke |
-| `InventoryApplicationServiceTest.java` | Unitario |
-| `EquipmentsControllerTest.java` | Componente (@WebMvcTest) |
-| `EquipmentsControllerUnitTest.java` | Unitario |
-| `JdbcInventoryPersistenceAdapterTest.java` | Integración (JDBC) |
-| `RabbitEquipmentEventPublisherAdapterTest.java` | Integración (RabbitMQ) |
-| `NoOpEquipmentEventPublisherAdapterTest.java` | Unitario |
-| `JwtTokenAdapterTest.java` | Unitario |
-| `SecurityConfigTest.java` | Componente |
-| `GlobalExceptionHandlerTest.java` | Unitario |
+| Archivo | Tipo | Tag |
+|---------|------|-----|
+| `InventoryServiceApplicationTests.java` | Smoke | `@Tag("integration")` |
+| `InventoryApplicationServiceTest.java` | Unitario | — |
+| `EquipmentsControllerTest.java` | Componente (@WebMvcTest) | — |
+| `EquipmentsControllerUnitTest.java` | Unitario | — |
+| `JdbcInventoryPersistenceAdapterTest.java` | Integración (@JdbcTest) | `@Tag("integration")` |
+| `RabbitEquipmentEventPublisherAdapterTest.java` | Integración (RabbitMQ) | — |
+| `NoOpEquipmentEventPublisherAdapterTest.java` | Unitario | — |
+| `JwtTokenAdapterTest.java` | Unitario | — |
+| `SecurityConfigTest.java` | Componente | — |
+| `GlobalExceptionHandlerTest.java` | Unitario | — |
 
 </details>
 
 <details>
 <summary><strong>notifications-service (28 tests, 6 archivos)</strong></summary>
 
-| Archivo | Tipo |
-|---------|------|
-| `NotificationsServiceApplicationTests.java` | Smoke |
-| `ReservationReminderApplicationServiceTest.java` | Unitario |
-| `InAppNotificationServiceTest.java` | Unitario |
-| `EventBroadcastApplicationServiceTest.java` | Unitario |
-| `RabbitMqEventListenerTest.java` | Integración (RabbitMQ) |
-| `StompWebSocketBroadcastAdapterTest.java` | Integración (WebSocket) |
+| Archivo | Tipo | Tag |
+|---------|------|-----|
+| `NotificationsServiceApplicationTests.java` | Smoke | — |
+| `ReservationReminderApplicationServiceTest.java` | Unitario | — |
+| `InAppNotificationServiceTest.java` | Unitario | — |
+| `EventBroadcastApplicationServiceTest.java` | Unitario | — |
+| `RabbitMqEventListenerTest.java` | Integración (RabbitMQ) | — |
+| `StompWebSocketBroadcastAdapterTest.java` | Integración (WebSocket) | — |
 
 </details>
 
 <details>
 <summary><strong>api-gateway (3 tests, 3 archivos)</strong></summary>
 
-| Archivo | Tipo |
-|---------|------|
-| `ApiGatewayApplicationTests.java` | Smoke |
-| `HealthControllerTest.java` | Componente |
-| `GatewayProxyConfigTest.java` | Componente |
+| Archivo | Tipo | Tag |
+|---------|------|-----|
+| `ApiGatewayApplicationTests.java` | Smoke | `@Tag("integration")` |
+| `HealthControllerTest.java` | Componente | `@Tag("integration")` |
+| `GatewayProxyConfigTest.java` | Componente | `@Tag("integration")` |
 
 </details>
 
@@ -831,7 +978,7 @@ jobs:
 
 1. **Pirámide de testing bien formada:** 59% unitarios, 33% componente, 6% integración, 2% E2E — proporción saludable según ISTQB y Google Testing Blog.
 2. **Cobertura alta:** >90% de líneas en backend y >95% en frontend. Superan ampliamente los umbrales mínimos.
-3. **Separación clara componente vs. integración en CI:** Los jobs `backend`/`frontend` ejecutan tests aislados sin infraestructura; `blackbox-tests` y `e2e-tests` levantan el stack real.
+3. **Separación clara y visual componente vs. integración en CI:** Los jobs `component-tests` y `integration-tests` se ejecutan como **jobs independientes** en GitHub Actions, diferenciados con iconos (🧩 y 🔗), usando JUnit 5 `@Tag("integration")` y Gradle tasks separados (`componentTest` / `integrationTest`). Los jobs `blackbox-tests` y `e2e-tests` levantan el stack real.
 4. **Caja blanca + caja negra coexisten:** Los tests unitarios/componente (caja blanca) verifican lógica interna; los tests HTTP con curl y Playwright (caja negra) validan el contrato público y la experiencia de usuario.
 5. **Arquitectura hexagonal facilita el testing:** Los puertos se mockean fácilmente para tests de componente; los adapters se testean con integración parcial.
 6. **Integridad del sistema completa:** Las pruebas E2E con Playwright cierran el circuito verificando que Frontend → API Gateway → Microservicios → BD funcionan juntos a través de la UI real del usuario.
@@ -842,6 +989,13 @@ jobs:
 2. Agregar más tests E2E de Playwright para flujos de reservas (crear, cancelar, entregar).
 3. Agregar contract testing (Pact) entre frontend y backend para validar schemas de API.
 4. Evaluar visual regression testing con Playwright (screenshot comparison).
+
+### Historial de cambios
+
+| Versión | Fecha | Cambios |
+|---------|-------|---------|
+| 1.0 | 2026-03-04 | Versión inicial del Test Plan |
+| 1.1 | 2026-03-04 | Pipeline CI actualizado: separación visual de pruebas de componente (`componentTest`) e integración (`integrationTest`) en jobs independientes con JUnit 5 `@Tag("integration")`; pruebas de caja negra ejecutándose dentro de contenedor Docker |
 
 ---
 
