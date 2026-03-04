@@ -20,24 +20,62 @@ const TEST_USER = {
   password: 'SecurePass123!',
 };
 
-/** Helper: login rápido reutilizable con reintento */
+/**
+ * Helper: login vía API (más rápido y confiable que por UI, ideal para CI).
+ * Inyecta token + user en localStorage y navega al dashboard.
+ * Fallback a UI login si la API falla.
+ */
 async function login(page: import('@playwright/test').Page) {
-  await page.goto('/login');
-  await page.locator('#email').fill(TEST_USER.email);
-  await page.locator('#password').fill(TEST_USER.password);
-  await page.locator('button[type="submit"]').click();
+  const baseURL = process.env.BASE_URL || 'http://localhost:5173';
 
-  // Primer intento
+  // 1. Intentar login vía API directa (rápido, sin UI)
   try {
-    await expect(page).toHaveURL(/\/dashboard/, { timeout: 15_000 });
-    return;
+    const resp = await page.request.post(`${baseURL}/auth/login`, {
+      data: { email: TEST_USER.email, password: TEST_USER.password },
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (resp.ok()) {
+      const body = await resp.json();
+      const token = body?.data?.token || body?.token;
+      const user = body?.data?.user || body?.user;
+
+      if (token) {
+        // Navegar a una página para establecer el origen en localStorage
+        await page.goto('/login', { waitUntil: 'domcontentloaded' });
+
+        // Inyectar token y user en localStorage
+        await page.evaluate(({ t, u }) => {
+          localStorage.setItem('token', t);
+          if (u) localStorage.setItem('user', JSON.stringify(u));
+        }, { t: token, u: user });
+
+        // Navegar al dashboard
+        await page.goto('/dashboard');
+        await page.waitForLoadState('networkidle').catch(() => {});
+
+        // Verificar que llegamos al dashboard
+        const url = page.url();
+        if (url.includes('/dashboard')) return;
+      }
+    }
   } catch {
-    // Reintento: puede que el backend esté lento
-    await page.goto('/login');
-    await page.locator('#email').fill(TEST_USER.email);
-    await page.locator('#password').fill(TEST_USER.password);
-    await page.locator('button[type="submit"]').click();
-    await expect(page).toHaveURL(/\/dashboard/, { timeout: 20_000 });
+    // API directa falló, usar fallback por UI
+  }
+
+  // 2. Fallback: login por UI con retry
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      await page.goto('/login');
+      await page.locator('#email').fill(TEST_USER.email);
+      await page.locator('#password').fill(TEST_USER.password);
+      await page.locator('button[type="submit"]').click();
+      await expect(page).toHaveURL(/\/dashboard/, { timeout: 20_000 });
+      return;
+    } catch {
+      if (attempt === 2) throw new Error('Login failed after all attempts');
+      await page.waitForTimeout(2000);
+    }
   }
 }
 
