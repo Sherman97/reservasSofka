@@ -8,11 +8,16 @@ COPY src ./src
 RUN gradle clean bootJar --no-daemon
 
 FROM docker.io/library/eclipse-temurin:17-jre-alpine
+
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
 WORKDIR /app
-COPY --from=builder /app/build/libs/*.jar app.jar
+COPY --from=builder --chown=appuser:appgroup /app/build/libs/*.jar app.jar
+
+USER appuser
 
 EXPOSE 3005
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app/app.jar"]
 
 
 
