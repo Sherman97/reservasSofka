@@ -94,4 +94,49 @@ class JdbcInventoryPersistenceAdapterTest {
         assertThat(filtered.get(0).getStatus()).isEqualTo("available");
         assertThat(filtered.get(0).getName()).isEqualTo("Projector");
     }
+
+    @Test
+    void listEquipmentsWithoutFiltersReturnsAll() {
+        adapter.insertEquipment(1L, "Mic", null, null, null, "available", null, null);
+        adapter.insertEquipment(2L, "Camera", null, null, null, "maintenance", null, null);
+
+        List<Equipment> all = adapter.listEquipments(null, null);
+
+        assertThat(all).hasSize(2);
+    }
+
+    @Test
+    void updateEquipmentUpdatesOnlyProvidedFields() {
+        long id = adapter.insertEquipment(1L, "Laptop", "SN-11", "BAR-11", "Lenovo", "available", "n1", "img1");
+
+        adapter.updateEquipment(id, "Laptop Pro", null, null, null, "maintenance", null, null);
+
+        Equipment updated = adapter.findEquipmentById(id).orElseThrow();
+        assertThat(updated.getName()).isEqualTo("Laptop Pro");
+        assertThat(updated.getStatus()).isEqualTo("maintenance");
+        assertThat(updated.getSerial()).isEqualTo("SN-11");
+        assertThat(updated.getBarcode()).isEqualTo("BAR-11");
+    }
+
+    @Test
+    void updateEquipmentWithNoFieldsDoesNothing() {
+        long id = adapter.insertEquipment(1L, "Laptop", "SN-11", "BAR-11", "Lenovo", "available", "n1", "img1");
+
+        adapter.updateEquipment(id, null, null, null, null, null, null, null);
+
+        Equipment same = adapter.findEquipmentById(id).orElseThrow();
+        assertThat(same.getName()).isEqualTo("Laptop");
+        assertThat(same.getStatus()).isEqualTo("available");
+    }
+
+    @Test
+    void deleteEquipmentRemovesRowAndReturnsAffected() {
+        long id = adapter.insertEquipment(1L, "Tablet", null, null, null, "available", null, null);
+
+        int affected = adapter.deleteEquipment(id);
+        Optional<Equipment> missing = adapter.findEquipmentById(id);
+
+        assertThat(affected).isEqualTo(1);
+        assertThat(missing).isEmpty();
+    }
 }

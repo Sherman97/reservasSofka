@@ -1,0 +1,553 @@
+# ============================================================
+# Reservas SK — Docker Compose (Stack Completo)
+# Backend (6 microservicios) + Frontend + Infraestructura
+# ============================================================
+
+services:
+
+  # ── Infraestructura ────────────────────────────────────────
+
+  mariadb:
+    image: docker.io/library/mariadb:11.4
+    container_name: reservas-mariadb
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+      MARIADB_DATABASE: ${DB_NAME:-app_db}
+      MARIADB_USER: ${DB_USER:-app_user}
+      MARIADB_PASSWORD: ${DB_PASSWORD:-123456}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "127.0.0.1", "-p${DB_ROOT_PASSWORD:-root}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 15s
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    cap_add:
+      - DAC_OVERRIDE
+      - SETGID
+      - SETUID
+      - CHOWN
+      - FOWNER
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          memory: 256M
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      app.service: "mariadb"
+      app.role: "database"
+      app.project: "reservas-sk"
+
+  rabbitmq:
+    image: docker.io/library/rabbitmq:3.13-management-alpine
+    container_name: reservas-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 20s
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    cap_add:
+      - SETGID
+      - SETUID
+      - DAC_OVERRIDE
+      - CHOWN
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 384M
+        reservations:
+          memory: 192M
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      app.service: "rabbitmq"
+      app.role: "message-broker"
+      app.project: "reservas-sk"
+
+  database:
+    image: docker.io/liquibase/liquibase:4.30
+    container_name: reservas-liquibase
+    command:
+      - --url=jdbc:mariadb://mariadb:3306/${DB_NAME:-app_db}
+      - --username=${DB_USER:-app_user}
+      - --password=${DB_PASSWORD:-123456}
+      - --search-path=/liquibase/changelog
+      - --changelog-file=db.changelog-master.yaml
+      - update
+    volumes:
+      - ./Backend/services/database/liquibase/changelog:/liquibase/changelog:ro
+    networks:
+      - backend_network
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    restart: on-failure
+    read_only: true
+    cap_drop:
+      - ALL
+    deploy:
+      resources:
+        limits:
+          cpus: "0.3"
+          memory: 256M
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      app.service: "liquibase"
+      app.role: "migrations"
+      app.project: "reservas-sk"
+
+  # ── Backend — Microservicios ───────────────────────────────
+
+  auth-service:
+    container_name: reservas-auth
+    build:
+      context: ./Backend/services/auth-service
+      dockerfile: Dockerfile
+    environment:
+      PORT: 3001
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_USER: ${DB_USER:-app_user}
+      DB_PASSWORD: ${DB_PASSWORD:-123456}
+      DB_NAME: ${DB_NAME:-app_db}
+      JWT_SECRET: ${JWT_SECRET:-R3s3rv4sSK_S3cur3_JWT_S3cr3t_K3y!}
+      RABBITMQ_ENABLED: ${RABBITMQ_ENABLED:-true}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+      RABBITMQ_EXCHANGE: ${RABBITMQ_EXCHANGE:-reservas.events}
+    networks:
+      - backend_network
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      database:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3001/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:size=64M
+    cap_drop:
+      - ALL
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 384M
+        reservations:
+          memory: 192M
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      app.service: "auth-service"
+      app.role: "authentication"
+      app.port: "3001"
+      app.project: "reservas-sk"
+
+  bookings-service:
+    container_name: reservas-bookings
+    build:
+      context: ./Backend/services/bookings-service
+      dockerfile: Dockerfile
+    environment:
+      PORT: 3003
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_USER: ${DB_USER:-app_user}
+      DB_PASSWORD: ${DB_PASSWORD:-123456}
+      DB_NAME: ${DB_NAME:-app_db}
+      JWT_SECRET: ${JWT_SECRET:-R3s3rv4sSK_S3cur3_JWT_S3cr3t_K3y!}
+      RABBITMQ_ENABLED: ${RABBITMQ_ENABLED:-true}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+      RABBITMQ_EXCHANGE: ${RABBITMQ_EXCHANGE:-reservas.events}
+      WEBSOCKET_ALLOWED_ORIGINS: ${WEBSOCKET_ALLOWED_ORIGINS:-*}
+    networks:
+      - backend_network
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      database:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3003/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:size=64M
+    cap_drop:
+      - ALL
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 384M
+        reservations:
+          memory: 192M
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      app.service: "bookings-service"
+      app.role: "reservations"
+      app.port: "3003"
+      app.project: "reservas-sk"
+
+  locations-service:
+    container_name: reservas-locations
+    build:
+      context: ./Backend/services/locations-service
+      dockerfile: Dockerfile
+    environment:
+      PORT: 3004
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_USER: ${DB_USER:-app_user}
+      DB_PASSWORD: ${DB_PASSWORD:-123456}
+      DB_NAME: ${DB_NAME:-app_db}
+      JWT_SECRET: ${JWT_SECRET:-R3s3rv4sSK_S3cur3_JWT_S3cr3t_K3y!}
+      RABBITMQ_ENABLED: ${RABBITMQ_ENABLED:-true}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+      RABBITMQ_EXCHANGE: ${RABBITMQ_EXCHANGE:-reservas.events}
+    networks:
+      - backend_network
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      database:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3004/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:size=64M
+    cap_drop:
+      - ALL
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 384M
+        reservations:
+          memory: 192M
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      app.service: "locations-service"
+      app.role: "locations"
+      app.port: "3004"
+      app.project: "reservas-sk"
+
+  inventory-service:
+    container_name: reservas-inventory
+    build:
+      context: ./Backend/services/inventory-service
+      dockerfile: Dockerfile
+    environment:
+      PORT: 3005
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_USER: ${DB_USER:-app_user}
+      DB_PASSWORD: ${DB_PASSWORD:-123456}
+      DB_NAME: ${DB_NAME:-app_db}
+      JWT_SECRET: ${JWT_SECRET:-R3s3rv4sSK_S3cur3_JWT_S3cr3t_K3y!}
+      RABBITMQ_ENABLED: ${RABBITMQ_ENABLED:-true}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+      RABBITMQ_EXCHANGE: ${RABBITMQ_EXCHANGE:-reservas.events}
+    networks:
+      - backend_network
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      database:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3005/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:size=64M
+    cap_drop:
+      - ALL
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 384M
+        reservations:
+          memory: 192M
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      app.service: "inventory-service"
+      app.role: "inventory"
+      app.port: "3005"
+      app.project: "reservas-sk"
+
+  notifications-service:
+    container_name: reservas-notifications
+    build:
+      context: ./Backend/services/notifications-service
+      dockerfile: Dockerfile
+    environment:
+      PORT: 3006
+      WEBSOCKET_ALLOWED_ORIGINS: ${WEBSOCKET_ALLOWED_ORIGINS:-*}
+      RABBITMQ_ENABLED: ${RABBITMQ_ENABLED:-true}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+      RABBITMQ_EXCHANGE: ${RABBITMQ_EXCHANGE:-reservas.events}
+      RABBITMQ_QUEUE: ${RABBITMQ_QUEUE:-notifications.events.q}
+      RABBITMQ_ROUTING_KEYS: ${RABBITMQ_ROUTING_KEYS:-auth.user.created,bookings.reservation.created,bookings.reservation.cancelled,inventory.equipment.created,inventory.equipment.updated,inventory.equipment.deleted,locations.city.created,locations.city.updated,locations.city.deleted,locations.space.created,locations.space.updated,locations.space.deleted}
+    networks:
+      - backend_network
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3006/notifications/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:size=64M
+    cap_drop:
+      - ALL
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 384M
+        reservations:
+          memory: 192M
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      app.service: "notifications-service"
+      app.role: "notifications"
+      app.port: "3006"
+      app.project: "reservas-sk"
+
+  api-gateway:
+    container_name: reservas-gateway
+    build:
+      context: ./Backend/services/api-gateway
+      dockerfile: Dockerfile
+    environment:
+      PORT: 3000
+      AUTH_URL: http://auth-service:3001
+      BOOKINGS_URL: http://bookings-service:3003
+      INVENTORY_URL: http://inventory-service:3005
+      LOCATIONS_URL: http://locations-service:3004
+      NOTIFICATIONS_URL: http://notifications-service:3006
+      NOTIFICATIONS_WS_URL: ws://notifications-service:3006
+    networks:
+      - backend_network
+      - frontend_network
+    depends_on:
+      auth-service:
+        condition: service_healthy
+      bookings-service:
+        condition: service_healthy
+      locations-service:
+        condition: service_healthy
+      inventory-service:
+        condition: service_healthy
+      notifications-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:size=64M
+    cap_drop:
+      - ALL
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 384M
+        reservations:
+          memory: 192M
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      app.service: "api-gateway"
+      app.role: "gateway"
+      app.port: "3000"
+      app.project: "reservas-sk"
+
+  # ── Frontend ───────────────────────────────────────────────
+
+  frontend:
+    container_name: reservas-frontend
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
+        VITE_BOOKINGS_URL: ${VITE_BOOKINGS_URL:-http://localhost:8080}
+        VITE_BOOKINGS_WS_URL: ${VITE_BOOKINGS_WS_URL:-ws://localhost:8080/bookings/ws}
+    ports:
+      - "${FRONTEND_PORT:-8080}:8080"
+    networks:
+      - frontend_network
+    depends_on:
+      api-gateway:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx:size=32M
+      - /var/run:size=1M
+      - /tmp:size=16M
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+      - DAC_OVERRIDE
+    deploy:
+      resources:
+        limits:
+          cpus: "0.3"
+          memory: 128M
+        reservations:
+          memory: 64M
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      app.service: "frontend"
+      app.role: "spa"
+      app.port: "80"
+      app.project: "reservas-sk"
+
+# ── Redes ──────────────────────────────────────────────────
+
+networks:
+  backend_network:
+    driver: bridge
+    labels:
+      app.network: "backend"
+      app.project: "reservas-sk"
+  frontend_network:
+    driver: bridge
+    labels:
+      app.network: "frontend"
+      app.project: "reservas-sk"
+
+# ── Volumenes ──────────────────────────────────────────────
+
+volumes:
+  mariadb_data:
+    labels:
+      app.volume: "mariadb-data"
+      app.project: "reservas-sk"
+  rabbitmq_data:
+    labels:
+      app.volume: "rabbitmq-data"
+      app.project: "reservas-sk"
