@@ -3,6 +3,7 @@ package com.reservas.sk.bookings_service.adapters.out.persistence;
 import com.reservas.sk.bookings_service.domain.model.Reservation;
 import com.reservas.sk.bookings_service.domain.model.ReservationEquipment;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("integration")
 @JdbcTest
 class JdbcBookingPersistenceAdapterTest {
 

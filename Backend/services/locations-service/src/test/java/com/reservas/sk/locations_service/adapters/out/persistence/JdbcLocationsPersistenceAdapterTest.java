@@ -3,6 +3,7 @@ package com.reservas.sk.locations_service.adapters.out.persistence;
 import com.reservas.sk.locations_service.domain.model.City;
 import com.reservas.sk.locations_service.domain.model.Space;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
@@ -13,6 +14,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("integration")
 @JdbcTest
 class JdbcLocationsPersistenceAdapterTest {
 

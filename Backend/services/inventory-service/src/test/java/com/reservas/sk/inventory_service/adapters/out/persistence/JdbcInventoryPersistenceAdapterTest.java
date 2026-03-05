@@ -2,6 +2,7 @@ package com.reservas.sk.inventory_service.adapters.out.persistence;
 
 import com.reservas.sk.inventory_service.domain.model.Equipment;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
@@ -12,6 +13,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("integration")
 @JdbcTest
 class JdbcInventoryPersistenceAdapterTest {
 
