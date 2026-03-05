@@ -39,21 +39,5 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-tasks.register('componentTest', Test) {
-    description = 'Runs component tests (excludes integration)'
-    group = 'verification'
-    useJUnitPlatform {
-        excludeTags 'integration'
-    }
-}
-
-tasks.register('integrationTest', Test) {
-    description = 'Runs integration tests only'
-    group = 'verification'
-    useJUnitPlatform {
-        includeTags 'integration'
-    }
-}
-
 
 

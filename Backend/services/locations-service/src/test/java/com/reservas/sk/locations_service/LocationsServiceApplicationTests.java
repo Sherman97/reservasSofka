@@ -15,9 +15,9 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 
-@Tag("integration")
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Tag("integration")
 @SpringBootTest(properties = {
         "spring.datasource.url=jdbc:h2:mem:locations_ctx;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",
