@@ -82,19 +82,23 @@ subprojects {
         finalizedBy tasks.named('jacocoTestReport')
     }
 
-    tasks.register('componentTest', Test) {
-        description = 'Runs component tests (excludes integration)'
-        group = 'verification'
-        useJUnitPlatform {
-            excludeTags 'integration'
+    if (tasks.findByName('componentTest') == null) {
+        tasks.register('componentTest', Test) {
+            description = 'Runs component tests (excludes integration)'
+            group = 'verification'
+            useJUnitPlatform {
+                excludeTags 'integration'
+            }
         }
     }
 
-    tasks.register('integrationTest', Test) {
-        description = 'Runs integration tests only'
-        group = 'verification'
-        useJUnitPlatform {
-            includeTags 'integration'
+    if (tasks.findByName('integrationTest') == null) {
+        tasks.register('integrationTest', Test) {
+            description = 'Runs integration tests only'
+            group = 'verification'
+            useJUnitPlatform {
+                includeTags 'integration'
+            }
         }
     }
 
