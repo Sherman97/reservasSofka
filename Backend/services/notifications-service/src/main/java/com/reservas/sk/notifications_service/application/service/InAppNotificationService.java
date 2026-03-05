@@ -14,7 +14,11 @@ public class InAppNotificationService {
     private final Logger logger;
     private final Clock clock;
 
-    public InAppNotificationService(ReservaRepository reservaRepository, NotificacionSender notificacionSender, Logger logger) {
+    public InAppNotificationService(
+            ReservaRepository reservaRepository,
+            NotificacionSender notificacionSender,
+            Logger logger
+    ) {
         this(reservaRepository, notificacionSender, logger, Clock.systemDefaultZone());
     }
 
@@ -31,13 +35,21 @@ public class InAppNotificationService {
     // Implementación completa del servicio de notificaciones in-app
     public void notificar15MinAntes(Reserva reserva) {
         if (esValidaParaNotificar(reserva, 15)) {
-            enviarNotificacion(reserva, "Faltan 15 minutos para que finalice tu reserva de " + reserva.getNombreRecurso() + ". Fin: " + reserva.getFechaFin());
+            String mensaje = "Faltan 15 minutos para que finalice tu reserva de "
+                    + reserva.getNombreRecurso()
+                    + ". Fin: "
+                    + reserva.getFechaFin();
+            enviarNotificacion(reserva, mensaje);
         }
     }
 
     public void notificar5MinAntes(Reserva reserva) {
         if (esValidaParaNotificar(reserva, 5)) {
-            enviarNotificacion(reserva, "Faltan 5 minutos para que finalice tu reserva de " + reserva.getNombreRecurso() + ". Fin: " + reserva.getFechaFin());
+            String mensaje = "Faltan 5 minutos para que finalice tu reserva de "
+                    + reserva.getNombreRecurso()
+                    + ". Fin: "
+                    + reserva.getFechaFin();
+            enviarNotificacion(reserva, mensaje);
         }
     }
 
@@ -45,7 +57,11 @@ public class InAppNotificationService {
         if (reserva.isActiva() && !reserva.isEntregada() && !reserva.isModificada() &&
             estaEnHorarioLaboral(reserva.getFechaFin().plusMinutes(10))) {
             String tiempoExtra = calcularTiempoExtra(reserva.getFechaFin(), 10);
-            enviarNotificacion(reserva, "Han pasado 10 minutos desde el fin de tu reserva de " + reserva.getNombreRecurso() + ". Tiempo extra: " + tiempoExtra);
+            String mensaje = "Han pasado 10 minutos desde el fin de tu reserva de "
+                    + reserva.getNombreRecurso()
+                    + ". Tiempo extra: "
+                    + tiempoExtra;
+            enviarNotificacion(reserva, mensaje);
         }
     }
 
@@ -102,7 +118,9 @@ public class InAppNotificationService {
         if (!reserva.isActiva() || reserva.isModificada() || reserva.isEntregada()) return false;
         LocalDateTime ahora = now();
         LocalDateTime noti = reserva.getFechaFin().minusMinutes(minutosAntes);
-        return ahora.isAfter(noti.minusSeconds(1)) && ahora.isBefore(noti.plusSeconds(60)) && estaEnHorarioLaboral(ahora);
+        return ahora.isAfter(noti.minusSeconds(1))
+                && ahora.isBefore(noti.plusSeconds(60))
+                && estaEnHorarioLaboral(ahora);
     }
 
     private boolean estaEnHorarioLaboral(LocalDateTime fecha) {

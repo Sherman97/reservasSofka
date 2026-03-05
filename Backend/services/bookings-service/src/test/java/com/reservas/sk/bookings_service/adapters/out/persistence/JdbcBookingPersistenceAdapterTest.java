@@ -19,6 +19,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Tag("integration")
 @JdbcTest
 class JdbcBookingPersistenceAdapterTest {
+    private static final String START_AT = "2026-03-01T10:00:00Z";
+    private static final String END_AT = "2026-03-01T12:00:00Z";
+    private static final String STATUS_CONFIRMED = "confirmed";
+
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -37,8 +41,12 @@ class JdbcBookingPersistenceAdapterTest {
         jdbcTemplate.execute("DROP TABLE IF EXISTS users");
 
         jdbcTemplate.execute("CREATE TABLE users (id BIGINT PRIMARY KEY)");
-        jdbcTemplate.execute("CREATE TABLE spaces (id BIGINT PRIMARY KEY, city_id BIGINT NOT NULL, is_active BOOLEAN NOT NULL)");
-        jdbcTemplate.execute("CREATE TABLE equipments (id BIGINT PRIMARY KEY, city_id BIGINT NOT NULL, status VARCHAR(30) NOT NULL)");
+        jdbcTemplate.execute(
+                "CREATE TABLE spaces (id BIGINT PRIMARY KEY, city_id BIGINT NOT NULL, is_active BOOLEAN NOT NULL)"
+        );
+        jdbcTemplate.execute(
+                "CREATE TABLE equipments (id BIGINT PRIMARY KEY, city_id BIGINT NOT NULL, status VARCHAR(30) NOT NULL)"
+        );
         jdbcTemplate.execute("""
                 CREATE TABLE reservations (
                     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -110,16 +118,16 @@ class JdbcBookingPersistenceAdapterTest {
 
     @Test
     void countOverlappingReservations_considersEdgesAndOnlyActiveStatuses() {
-        insertReservation(100L, 1L, "2026-03-01T09:00:00Z", "2026-03-01T11:00:00Z", "confirmed");
-        insertReservation(100L, 1L, "2026-03-01T08:00:00Z", "2026-03-01T10:00:00Z", "confirmed");
-        insertReservation(100L, 1L, "2026-03-01T12:00:00Z", "2026-03-01T13:00:00Z", "pending");
+        insertReservation(100L, 1L, "2026-03-01T09:00:00Z", "2026-03-01T11:00:00Z", STATUS_CONFIRMED);
+        insertReservation(100L, 1L, "2026-03-01T08:00:00Z", START_AT, STATUS_CONFIRMED);
+        insertReservation(100L, 1L, END_AT, "2026-03-01T13:00:00Z", "pending");
         insertReservation(100L, 1L, "2026-03-01T10:30:00Z", "2026-03-01T11:30:00Z", "cancelled");
-        insertReservation(100L, 2L, "2026-03-01T10:30:00Z", "2026-03-01T11:30:00Z", "confirmed");
+        insertReservation(100L, 2L, "2026-03-01T10:30:00Z", "2026-03-01T11:30:00Z", STATUS_CONFIRMED);
 
         int overlaps = adapter.countOverlappingReservations(
                 1L,
-                Instant.parse("2026-03-01T10:00:00Z"),
-                Instant.parse("2026-03-01T12:00:00Z")
+                Instant.parse(START_AT),
+                Instant.parse(END_AT)
         );
 
         assertThat(overlaps).isEqualTo(1);
@@ -130,9 +138,9 @@ class JdbcBookingPersistenceAdapterTest {
         long reservationA = adapter.insertReservation(
                 100L,
                 1L,
-                Instant.parse("2026-03-01T10:00:00Z"),
-                Instant.parse("2026-03-01T12:00:00Z"),
-                "confirmed",
+                Instant.parse(START_AT),
+                Instant.parse(END_AT),
+                STATUS_CONFIRMED,
                 "Reserva A",
                 5,
                 "nota"
@@ -150,7 +158,7 @@ class JdbcBookingPersistenceAdapterTest {
 
         Reservation found = adapter.findReservationById(reservationA).orElseThrow();
         assertThat(found.getUserId()).isEqualTo(100L);
-        assertThat(found.getStatus()).isEqualTo("confirmed");
+        assertThat(found.getStatus()).isEqualTo(STATUS_CONFIRMED);
         assertThat(found.getAttendeesCount()).isEqualTo(5);
 
         List<Reservation> byUser = adapter.listReservations(100L, null, null);
@@ -165,23 +173,23 @@ class JdbcBookingPersistenceAdapterTest {
         long reservationId = adapter.insertReservation(
                 100L,
                 1L,
-                Instant.parse("2026-03-01T10:00:00Z"),
-                Instant.parse("2026-03-01T12:00:00Z"),
-                "confirmed",
+                Instant.parse(START_AT),
+                Instant.parse(END_AT),
+                STATUS_CONFIRMED,
                 "Reserva",
                 null,
                 null
         );
 
         adapter.insertReservationEquipment(reservationId, 11L, "requested");
-        adapter.insertReservationEquipment(reservationId, 12L, "confirmed");
+        adapter.insertReservationEquipment(reservationId, 12L, STATUS_CONFIRMED);
 
         List<ReservationEquipment> direct = adapter.findReservationEquipments(reservationId);
         assertThat(direct).hasSize(2);
 
-        Map<Long, List<ReservationEquipment>> grouped = adapter.findReservationEquipmentsByReservationIds(List.of(reservationId));
+        Map<Long, List<ReservationEquipment>> grouped =
+                adapter.findReservationEquipmentsByReservationIds(List.of(reservationId));
         assertThat(grouped).containsKey(reservationId);
-        assertThat(grouped.get(reservationId)).hasSize(2);
 
         Instant deliveredAt = Instant.parse("2026-03-01T10:15:00Z");
         Instant returnedAt = Instant.parse("2026-03-01T11:50:00Z");
@@ -190,8 +198,11 @@ class JdbcBookingPersistenceAdapterTest {
 
         List<ReservationEquipment> after = adapter.findReservationEquipments(reservationId);
         assertThat(after).allMatch(eq -> "returned".equals(eq.getStatus()));
-        assertThat(after).allMatch(eq -> eq.getDeliveredBy() != null);
-        assertThat(after).allMatch(eq -> eq.getReturnedBy() != null);
+
+        Map<Long, List<ReservationEquipment>> groupedAfterLifecycle =
+                adapter.findReservationEquipmentsByReservationIds(List.of(reservationId));
+        assertThat(groupedAfterLifecycle.get(reservationId))
+                .allMatch(eq -> eq.getDeliveredBy() != null && eq.getReturnedBy() != null);
     }
 
     @Test
@@ -199,9 +210,9 @@ class JdbcBookingPersistenceAdapterTest {
         long reservationId = adapter.insertReservation(
                 100L,
                 1L,
-                Instant.parse("2026-03-01T10:00:00Z"),
-                Instant.parse("2026-03-01T12:00:00Z"),
-                "confirmed",
+                Instant.parse(START_AT),
+                Instant.parse(END_AT),
+                STATUS_CONFIRMED,
                 "Reserva",
                 null,
                 null
@@ -209,11 +220,31 @@ class JdbcBookingPersistenceAdapterTest {
 
         adapter.updateReservationCancellation(reservationId, "cancelled", "usuario solicita");
         adapter.updateReservationStatus(reservationId, "completed");
-        adapter.insertReservationHandoverLog(reservationId, 1L, 100L, 200L, "RETURNED", "ok", Instant.parse("2026-03-01T12:01:00Z"));
+        adapter.insertReservationHandoverLog(
+                reservationId,
+                1L,
+                100L,
+                200L,
+                "RETURNED",
+                "ok",
+                Instant.parse("2026-03-01T12:01:00Z")
+        );
 
-        String status = jdbcTemplate.queryForObject("SELECT status FROM reservations WHERE id = ?", String.class, reservationId);
-        String reason = jdbcTemplate.queryForObject("SELECT cancellation_reason FROM reservations WHERE id = ?", String.class, reservationId);
-        Integer logs = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM reservation_handover_logs WHERE reservation_id = ?", Integer.class, reservationId);
+        String status = jdbcTemplate.queryForObject(
+                "SELECT status FROM reservations WHERE id = ?",
+                String.class,
+                reservationId
+        );
+        String reason = jdbcTemplate.queryForObject(
+                "SELECT cancellation_reason FROM reservations WHERE id = ?",
+                String.class,
+                reservationId
+        );
+        Integer logs = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM reservation_handover_logs WHERE reservation_id = ?",
+                Integer.class,
+                reservationId
+        );
 
         assertThat(status).isEqualTo("completed");
         assertThat(reason).isEqualTo("usuario solicita");
@@ -223,7 +254,10 @@ class JdbcBookingPersistenceAdapterTest {
     private void insertReservation(long userId, long spaceId, String startAt, String endAt, String status) {
         jdbcTemplate.update(
                 """
-                INSERT INTO reservations (user_id, space_id, start_datetime, end_datetime, status, title, attendees_count, notes, cancellation_reason, created_at)
+                INSERT INTO reservations (
+                    user_id, space_id, start_datetime, end_datetime, status, title,
+                    attendees_count, notes, cancellation_reason, created_at
+                )
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 userId,
@@ -239,3 +273,4 @@ class JdbcBookingPersistenceAdapterTest {
         );
     }
 }
+

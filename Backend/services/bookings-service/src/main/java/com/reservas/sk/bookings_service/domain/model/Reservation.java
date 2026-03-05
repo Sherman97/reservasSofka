@@ -40,7 +40,7 @@ public class Reservation {
         this.notes = notes;
         this.cancellationReason = cancellationReason;
         this.createdAt = createdAt;
-        this.equipments = equipments;
+        this.equipments = equipments == null ? List.of() : List.copyOf(equipments);
     }
 
     public Long getId() { return id; }
@@ -54,7 +54,7 @@ public class Reservation {
     public String getNotes() { return notes; }
     public String getCancellationReason() { return cancellationReason; }
     public Instant getCreatedAt() { return createdAt; }
-    public List<ReservationEquipment> getEquipments() { return equipments; }
+    public List<ReservationEquipment> getEquipments() { return List.copyOf(equipments); }
 }
 
 

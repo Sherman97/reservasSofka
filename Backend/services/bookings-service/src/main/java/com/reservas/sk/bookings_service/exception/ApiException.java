@@ -4,6 +4,8 @@ import org.springframework.http.HttpStatus;
 
 // Human Check 🛡️: incluye errorCode para mapear errores de negocio de forma estable.
 public class ApiException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
+
     private final HttpStatus status;
     private final String errorCode;
 

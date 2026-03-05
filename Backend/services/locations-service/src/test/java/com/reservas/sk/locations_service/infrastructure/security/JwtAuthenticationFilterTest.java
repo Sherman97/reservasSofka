@@ -17,9 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class JwtAuthenticationFilterTest {
+    private static final String ASSERT_MSG = "PMD UnitTestAssertionsShouldIncludeMessage";
 
     private TokenPort tokenPort;
     private JwtAuthenticationFilter filter;
@@ -49,9 +51,9 @@ class JwtAuthenticationFilterTest {
         filter.doFilter(request, response, chain);
 
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        assertNotNull(authentication);
+        assertNotNull(authentication, ASSERT_MSG);
         assertInstanceOf(UsernamePasswordAuthenticationToken.class, authentication);
-        assertEquals(principal, authentication.getPrincipal());
+        assertEquals(principal, authentication.getPrincipal(), ASSERT_MSG);
     }
 
     @Test
@@ -68,6 +70,32 @@ class JwtAuthenticationFilterTest {
 
         filter.doFilter(request, response, chain);
 
-        assertNull(SecurityContextHolder.getContext().getAuthentication());
+        assertNull(SecurityContextHolder.getContext().getAuthentication(), ASSERT_MSG);
+    }
+
+    @Test
+    void doFilterInternal_sinAuthorization_noAutentica() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockFilterChain chain = new MockFilterChain();
+
+        filter.doFilter(request, response, chain);
+
+        assertNull(SecurityContextHolder.getContext().getAuthentication(), ASSERT_MSG);
+        verifyNoInteractions(tokenPort);
+    }
+
+    @Test
+    void doFilterInternal_conAuthorizationSinBearer_noAutentica() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Authorization", "Token abc");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockFilterChain chain = new MockFilterChain();
+
+        filter.doFilter(request, response, chain);
+
+        assertNull(SecurityContextHolder.getContext().getAuthentication(), ASSERT_MSG);
+        verifyNoInteractions(tokenPort);
     }
 }
+

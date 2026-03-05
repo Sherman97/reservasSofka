@@ -3,16 +3,31 @@ package com.reservas.sk.locations_service.application.service;
 import com.reservas.sk.locations_service.application.port.in.LocationsUseCase;
 import com.reservas.sk.locations_service.application.port.out.LocationEventPublisherPort;
 import com.reservas.sk.locations_service.application.port.out.LocationsPersistencePort;
-import com.reservas.sk.locations_service.application.usecase.*;
+import com.reservas.sk.locations_service.application.usecase.CityCreatedEvent;
+import com.reservas.sk.locations_service.application.usecase.CityDeletedEvent;
+import com.reservas.sk.locations_service.application.usecase.CityUpdatedEvent;
+import com.reservas.sk.locations_service.application.usecase.CreateCityCommand;
+import com.reservas.sk.locations_service.application.usecase.CreateSpaceCommand;
+import com.reservas.sk.locations_service.application.usecase.ListSpacesQuery;
+import com.reservas.sk.locations_service.application.usecase.SpaceCreatedEvent;
+import com.reservas.sk.locations_service.application.usecase.SpaceDeletedEvent;
+import com.reservas.sk.locations_service.application.usecase.SpaceUpdatedEvent;
+import com.reservas.sk.locations_service.application.usecase.UpdateCityCommand;
+import com.reservas.sk.locations_service.application.usecase.UpdateSpaceCommand;
 import com.reservas.sk.locations_service.domain.model.City;
 import com.reservas.sk.locations_service.domain.model.Space;
 import com.reservas.sk.locations_service.exception.ApiException;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@SuppressFBWarnings(
+        value = "EI_EXPOSE_REP2",
+        justification = "Ports are Spring-managed dependencies."
+)
 // Human Check 🛡️: se agregan codigos de error y validacion ante posibles errores al crear la locacion y demas
 public class LocationsApplicationService implements LocationsUseCase {
     private final LocationsPersistencePort persistencePort;
