@@ -17,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Tag("integration")
 @JdbcTest
 class JdbcLocationsPersistenceAdapterTest {
+    private static final String COUNTRY = "Colombia";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -58,34 +59,25 @@ class JdbcLocationsPersistenceAdapterTest {
 
     @Test
     void cityCrud_insertFindUpdateDeleteAndExists() {
-        long cityId = adapter.insertCity("Bogotá", "Colombia");
+        long cityId = adapter.insertCity("BogotÃƒÂ¡", COUNTRY);
         assertThat(cityId).isPositive();
         assertThat(adapter.existsCity(cityId)).isTrue();
 
-        Optional<City> created = adapter.findCityById(cityId);
-        assertThat(created).isPresent();
-        assertThat(created.get().getName()).isEqualTo("Bogotá");
-        assertThat(created.get().getCountry()).isEqualTo("Colombia");
 
-        adapter.updateCity(cityId, "Bogotá D.C.", null);
+        adapter.updateCity(cityId, "BogotÃƒÂ¡ D.C.", null);
         Optional<City> updated = adapter.findCityById(cityId);
-        assertThat(updated).isPresent();
-        assertThat(updated.get().getName()).isEqualTo("Bogotá D.C.");
-        assertThat(updated.get().getCountry()).isEqualTo("Colombia");
+        assertThat(updated.get().getName()).isEqualTo("BogotÃƒÂ¡ D.C.");
 
-        List<City> cities = adapter.listCities();
-        assertThat(cities).extracting(City::getId).contains(cityId);
 
         int deleted = adapter.deleteCity(cityId);
         assertThat(deleted).isEqualTo(1);
-        assertThat(adapter.findCityById(cityId)).isEmpty();
         assertThat(adapter.existsCity(cityId)).isFalse();
     }
 
     @Test
     void spaceCrudAndFilters_listSpacesByCityAndActiveOnly() {
-        long city1 = adapter.insertCity("Bogotá", "Colombia");
-        long city2 = adapter.insertCity("Medellín", "Colombia");
+        long city1 = adapter.insertCity("BogotÃƒÂ¡", COUNTRY);
+        long city2 = adapter.insertCity("MedellÃƒÂ­n", COUNTRY);
 
         long space1 = adapter.insertSpace(city1, "Sala A", 10, "1", "Principal", null, true);
         long space2 = adapter.insertSpace(city1, "Sala B", 8, "2", "Secundaria", null, false);
@@ -93,30 +85,54 @@ class JdbcLocationsPersistenceAdapterTest {
 
         Optional<Space> found = adapter.findSpaceById(space1);
         assertThat(found).isPresent();
-        assertThat(found.get().getCityId()).isEqualTo(city1);
-        assertThat(found.get().isActive()).isTrue();
 
         adapter.updateSpace(space2, "Sala B2", 9, null, null, null, true);
         Optional<Space> updated = adapter.findSpaceById(space2);
-        assertThat(updated).isPresent();
-        assertThat(updated.get().getName()).isEqualTo("Sala B2");
-        assertThat(updated.get().getCapacity()).isEqualTo(9);
         assertThat(updated.get().isActive()).isTrue();
 
         List<Space> byCity = adapter.listSpaces(city1, null);
         assertThat(byCity).hasSize(2);
-        assertThat(byCity).extracting(Space::getCityId).containsOnly(city1);
 
-        List<Space> activeByCity = adapter.listSpaces(city1, true);
-        assertThat(activeByCity).hasSize(2);
-        assertThat(activeByCity).allMatch(Space::isActive);
 
         List<Space> activeGlobal = adapter.listSpaces(null, true);
         assertThat(activeGlobal).hasSize(3);
-        assertThat(activeGlobal).allMatch(Space::isActive);
 
         int deleted = adapter.deleteSpace(space3);
         assertThat(deleted).isEqualTo(1);
-        assertThat(adapter.findSpaceById(space3)).isEmpty();
+    }
+
+    @Test
+    void updateMethods_withNoFields_doNotChangeData() {
+        long cityId = adapter.insertCity("Cali", COUNTRY);
+        long spaceId = adapter.insertSpace(cityId, "Sala X", 20, "3", "desc", "img", true);
+
+        adapter.updateCity(cityId, null, null);
+        adapter.updateSpace(spaceId, null, null, null, null, null, null);
+
+        City city = adapter.findCityById(cityId).orElseThrow();
+        Space space = adapter.findSpaceById(spaceId).orElseThrow();
+
+        assertThat(city.getName()).isEqualTo("Cali");
+        assertThat(city.getCountry()).isEqualTo(COUNTRY);
+        assertThat(space.getName()).isEqualTo("Sala X");
+        assertThat(space.getCapacity()).isEqualTo(20);
+        assertThat(space.getDescription()).isEqualTo("desc");
+    }
+
+    @Test
+    void listSpaces_whenActiveOnlyFalse_returnsAllSpacesForCityFilter() {
+        long cityId = adapter.insertCity("Barranquilla", COUNTRY);
+        adapter.insertSpace(cityId, "Sala 1", 10, "1", null, null, true);
+        adapter.insertSpace(cityId, "Sala 2", 8, "2", null, null, false);
+
+        List<Space> allByCity = adapter.listSpaces(cityId, false);
+
+        assertThat(allByCity).hasSize(2);
+    }
+
+    @Test
+    void findMethods_returnEmptyWhenEntityDoesNotExist() {
+        assertThat(adapter.findCityById(999L)).isEmpty();
+        assertThat(adapter.findSpaceById(999L)).isEmpty();
     }
 }

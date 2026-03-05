@@ -1,6 +1,10 @@
 package com.reservas.sk.locations_service.application.port.in;
 
-import com.reservas.sk.locations_service.application.usecase.*;
+import com.reservas.sk.locations_service.application.usecase.CreateCityCommand;
+import com.reservas.sk.locations_service.application.usecase.CreateSpaceCommand;
+import com.reservas.sk.locations_service.application.usecase.ListSpacesQuery;
+import com.reservas.sk.locations_service.application.usecase.UpdateCityCommand;
+import com.reservas.sk.locations_service.application.usecase.UpdateSpaceCommand;
 import com.reservas.sk.locations_service.domain.model.City;
 import com.reservas.sk.locations_service.domain.model.Space;
 

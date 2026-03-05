@@ -7,6 +7,8 @@ import com.reservas.sk.bookings_service.adapters.in.web.dto.ReservationResponse;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.SpaceAvailabilityResponse;
 import com.reservas.sk.bookings_service.application.port.in.BookingUseCase;
 import com.reservas.sk.bookings_service.application.usecase.AuthenticatedUser;
+import com.reservas.sk.bookings_service.application.usecase.CreateReservationCommand;
+import com.reservas.sk.bookings_service.application.usecase.HandoverReservationCommand;
 import com.reservas.sk.bookings_service.domain.model.Reservation;
 import com.reservas.sk.bookings_service.domain.model.ReservationEquipment;
 import com.reservas.sk.bookings_service.domain.model.SpaceAvailability;
@@ -27,6 +29,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class BookingControllerUnitTest {
+    private static final String ASSERT_MSG = "PMD UnitTestAssertionsShouldIncludeMessage";
+    private static final String STATUS_CONFIRMED = "confirmed";
+    private static final String STATUS_CANCELLED = "cancelled";
 
     private BookingUseCase bookingUseCase;
     private BookingHttpMapper mapper;
@@ -45,78 +50,102 @@ class BookingControllerUnitTest {
 
         var response = controller.checkAvailability(10L, "2026-03-01T10:00:00Z", "2026-03-01T11:00:00Z");
 
-        assertTrue(response.ok());
+        assertTrue(response.ok(), ASSERT_MSG);
         SpaceAvailabilityResponse data = response.data();
-        assertTrue(data.available());
-        assertEquals(0, data.overlappingReservations());
+        assertTrue(data.available(), ASSERT_MSG);
+        assertEquals(0, data.overlappingReservations(), ASSERT_MSG);
     }
 
     @Test
     void createReservation_usesAuthenticatedUserAndReturnsCreated() {
-        Reservation reservation = reservation(33L, "confirmed");
+        Reservation reservation = reservation(33L, STATUS_CONFIRMED);
         when(bookingUseCase.createReservation(any())).thenReturn(reservation);
 
+        CreateReservationRequest request = new CreateReservationRequest(
+                10L,
+                "2026-03-01T10:00:00Z",
+                "2026-03-01T11:00:00Z",
+                "Titulo",
+                4,
+                "nota",
+                List.of(1L, 2L)
+        );
         var response = controller.createReservation(
-                new CreateReservationRequest(10L, "2026-03-01T10:00:00Z", "2026-03-01T11:00:00Z", "Titulo", 4, "nota", List.of(1L, 2L)),
+                request,
                 new AuthenticatedUser(88L, "u@test.com")
         );
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertTrue(response.getBody().ok());
-        assertEquals(33L, response.getBody().data().id());
+        assertEquals(HttpStatus.CREATED, response.getStatusCode(), ASSERT_MSG);
+        assertTrue(response.getBody().ok(), ASSERT_MSG);
+        assertEquals(33L, response.getBody().data().id(), ASSERT_MSG);
 
-        ArgumentCaptor<com.reservas.sk.bookings_service.application.usecase.CreateReservationCommand> captor =
-                ArgumentCaptor.forClass(com.reservas.sk.bookings_service.application.usecase.CreateReservationCommand.class);
+        ArgumentCaptor<CreateReservationCommand> captor =
+                ArgumentCaptor.forClass(CreateReservationCommand.class);
         verify(bookingUseCase).createReservation(captor.capture());
-        assertEquals(88L, captor.getValue().userId());
+        assertEquals(88L, captor.getValue().userId(), ASSERT_MSG);
     }
 
     @Test
     void listAndGetById_returnMappedPayloads() {
-        when(bookingUseCase.listReservations(any())).thenReturn(List.of(reservation(1L, "confirmed"), reservation(2L, "cancelled")));
-        when(bookingUseCase.getReservationById(1L)).thenReturn(reservation(1L, "confirmed"));
+        when(bookingUseCase.listReservations(any())).thenReturn(
+                List.of(
+                        reservation(1L, STATUS_CONFIRMED),
+                        reservation(2L, STATUS_CANCELLED)
+                )
+        );
+        when(bookingUseCase.getReservationById(1L)).thenReturn(reservation(1L, STATUS_CONFIRMED));
 
-        var list = controller.listReservations(9L, 10L, "confirmed");
+        var list = controller.listReservations(9L, 10L, STATUS_CONFIRMED);
         var one = controller.getById(1L);
 
-        assertEquals(2, list.data().size());
-        assertEquals(1L, one.data().id());
+        assertEquals(2, list.data().size(), ASSERT_MSG);
+        assertEquals(1L, one.data().id(), ASSERT_MSG);
     }
 
     @Test
     void cancel_usesReasonAndSupportsNullRequest() {
-        when(bookingUseCase.cancelReservation(7L, "motivo")).thenReturn(reservation(7L, "cancelled"));
-        when(bookingUseCase.cancelReservation(8L, null)).thenReturn(reservation(8L, "cancelled"));
+        when(bookingUseCase.cancelReservation(7L, "motivo")).thenReturn(reservation(7L, STATUS_CANCELLED));
+        when(bookingUseCase.cancelReservation(8L, null)).thenReturn(reservation(8L, STATUS_CANCELLED));
 
         ReservationResponse withReason = controller.cancel(7L, new CancelReservationRequest("motivo")).data();
         ReservationResponse withoutBody = controller.cancel(8L, null).data();
 
-        assertEquals("cancelled", withReason.status());
-        assertEquals("cancelled", withoutBody.status());
+        assertEquals(STATUS_CANCELLED, withReason.status(), ASSERT_MSG);
+        assertEquals(STATUS_CANCELLED, withoutBody.status(), ASSERT_MSG);
     }
 
     @Test
-    void deliverAndReturn_useAuthenticatedStaffAndOptionalNovelty() {
+    void deliver_usesAuthenticatedStaffAndNovelty() {
         when(bookingUseCase.deliverReservation(any())).thenReturn(reservation(9L, "in_progress"));
+
+        var delivered = controller.deliver(
+                9L,
+                new HandoverReservationRequest("ok"),
+                new AuthenticatedUser(99L, "staff@test.com")
+        );
+
+        assertEquals("in_progress", delivered.data().status(), ASSERT_MSG);
+
+        ArgumentCaptor<HandoverReservationCommand> captor =
+                ArgumentCaptor.forClass(HandoverReservationCommand.class);
+        verify(bookingUseCase).deliverReservation(captor.capture());
+        assertEquals(99L, captor.getValue().staffId(), ASSERT_MSG);
+        assertEquals("ok", captor.getValue().novelty(), ASSERT_MSG);
+    }
+
+    @Test
+    void return_usesAuthenticatedStaffAndNullNoveltyWhenRequestMissing() {
         when(bookingUseCase.returnReservation(any())).thenReturn(reservation(9L, "completed"));
 
-        var delivered = controller.deliver(9L, new HandoverReservationRequest("ok"), new AuthenticatedUser(99L, "staff@test.com"));
         var returned = controller.markReturned(9L, null, new AuthenticatedUser(99L, "staff@test.com"));
 
-        assertEquals("in_progress", delivered.data().status());
-        assertEquals("completed", returned.data().status());
+        assertEquals("completed", returned.data().status(), ASSERT_MSG);
 
-        ArgumentCaptor<com.reservas.sk.bookings_service.application.usecase.HandoverReservationCommand> captor =
-                ArgumentCaptor.forClass(com.reservas.sk.bookings_service.application.usecase.HandoverReservationCommand.class);
-        verify(bookingUseCase).deliverReservation(captor.capture());
-        assertEquals(99L, captor.getValue().staffId());
-        assertEquals("ok", captor.getValue().novelty());
-
-        ArgumentCaptor<com.reservas.sk.bookings_service.application.usecase.HandoverReservationCommand> captorReturn =
-                ArgumentCaptor.forClass(com.reservas.sk.bookings_service.application.usecase.HandoverReservationCommand.class);
+        ArgumentCaptor<HandoverReservationCommand> captorReturn =
+                ArgumentCaptor.forClass(HandoverReservationCommand.class);
         verify(bookingUseCase).returnReservation(captorReturn.capture());
-        assertEquals(99L, captorReturn.getValue().staffId());
-        assertNull(captorReturn.getValue().novelty());
+        assertEquals(99L, captorReturn.getValue().staffId(), ASSERT_MSG);
+        assertNull(captorReturn.getValue().novelty(), ASSERT_MSG);
     }
 
     private Reservation reservation(long id, String status) {
@@ -136,3 +165,5 @@ class BookingControllerUnitTest {
         );
     }
 }
+
+

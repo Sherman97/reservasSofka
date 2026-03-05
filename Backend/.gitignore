@@ -10,8 +10,9 @@ Desktop.ini
 # =========================
 .vscode/
 .idea/
+**/.ai/
 *.iml
-
+.ai/
 # IntelliJ local files (extra safety)
 **/.idea/
 **/.idea/workspace.xml

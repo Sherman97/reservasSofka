@@ -1,12 +1,16 @@
 package com.reservas.sk.auth_service;
 
 import com.reservas.sk.auth_service.application.port.out.UserEventPublisherPort;
+import com.reservas.sk.auth_service.application.port.out.UserPersistencePort;
 import com.reservas.sk.auth_service.application.usecase.UserCreatedEvent;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Tag("integration")
 @SpringBootTest(properties = {
@@ -18,9 +22,13 @@ import org.springframework.context.annotation.Bean;
 		"app.jwt.secret=test-secret-key-for-auth-service-1234567890-abcdef"
 })
 class AuthServiceApplicationTests {
+    private static final String ASSERT_MSG = "PMD UnitTestAssertionsShouldIncludeMessage";
+	@Autowired
+	private UserPersistencePort userPersistencePort;
 
 	@Test
 	void contextLoads() {
+		assertNotNull(userPersistencePort, ASSERT_MSG);
 	}
 
 	@TestConfiguration
@@ -36,4 +44,5 @@ class AuthServiceApplicationTests {
 	}
 
 }
+
 
