@@ -1,6 +1,7 @@
 package com.reservas.sk.auth_service.adapters.out.persistence;
 
 import com.reservas.sk.auth_service.domain.model.User;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("integration")
 @DataJpaTest
 @Import(UserPersistenceAdapter.class)
 @TestPropertySource(properties = "spring.jpa.hibernate.ddl-auto=create-drop")

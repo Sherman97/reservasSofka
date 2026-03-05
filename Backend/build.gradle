@@ -39,6 +39,22 @@ subprojects {
         finalizedBy tasks.named('jacocoTestReport')
     }
 
+    tasks.register('componentTest', Test) {
+        description = 'Runs component tests (excludes integration)'
+        group = 'verification'
+        useJUnitPlatform {
+            excludeTags 'integration'
+        }
+    }
+
+    tasks.register('integrationTest', Test) {
+        description = 'Runs integration tests only'
+        group = 'verification'
+        useJUnitPlatform {
+            includeTags 'integration'
+        }
+    }
+
     tasks.withType(JacocoReport).configureEach {
         reports {
             xml.required = true

@@ -5,11 +5,13 @@ import com.reservas.sk.bookings_service.application.usecase.ReservationCancelled
 import com.reservas.sk.bookings_service.application.usecase.ReservationCreatedEvent;
 import com.reservas.sk.bookings_service.application.usecase.ReservationDeliveredEvent;
 import com.reservas.sk.bookings_service.application.usecase.ReservationReturnedEvent;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 
+@Tag("integration")
 @SpringBootTest(properties = {
         "spring.datasource.url=jdbc:h2:mem:bookings_ctx;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",

@@ -7,10 +7,6 @@ const SignupPage = () => {
         <div className="signup-container">
             <div className="signup-left">
                 <div className="overlay">
-                    <div className="brand">
-                        <span className="brand-icon">📅</span>
-                        <span className="brand-text">Booking Platform</span>
-                    </div>
                     <h1>Gestiona tus recursos internos en un solo lugar.</h1>
                     <p>Reserva salas de conferencias, equipos tecnológicos y espacios de trabajo con facilidad y rapidez.</p>
                 </div>
