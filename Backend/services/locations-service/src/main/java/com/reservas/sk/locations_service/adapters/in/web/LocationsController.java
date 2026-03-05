@@ -1,17 +1,40 @@
 package com.reservas.sk.locations_service.adapters.in.web;
 
-import com.reservas.sk.locations_service.adapters.in.web.dto.*;
+import com.reservas.sk.locations_service.adapters.in.web.dto.ApiResponse;
+import com.reservas.sk.locations_service.adapters.in.web.dto.CityResponse;
+import com.reservas.sk.locations_service.adapters.in.web.dto.CreateCityRequest;
+import com.reservas.sk.locations_service.adapters.in.web.dto.CreateSpaceRequest;
+import com.reservas.sk.locations_service.adapters.in.web.dto.SpaceResponse;
+import com.reservas.sk.locations_service.adapters.in.web.dto.UpdateCityRequest;
+import com.reservas.sk.locations_service.adapters.in.web.dto.UpdateSpaceRequest;
 import com.reservas.sk.locations_service.application.port.in.LocationsUseCase;
-import com.reservas.sk.locations_service.application.usecase.*;
+import com.reservas.sk.locations_service.application.usecase.CreateCityCommand;
+import com.reservas.sk.locations_service.application.usecase.CreateSpaceCommand;
+import com.reservas.sk.locations_service.application.usecase.ListSpacesQuery;
+import com.reservas.sk.locations_service.application.usecase.UpdateCityCommand;
+import com.reservas.sk.locations_service.application.usecase.UpdateSpaceCommand;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/locations")
+@SuppressFBWarnings(
+        value = "EI_EXPOSE_REP2",
+        justification = "Controller dependencies are injected and managed by Spring."
+)
 public class LocationsController {
     private final LocationsUseCase useCase;
     private final LocationsHttpMapper mapper;

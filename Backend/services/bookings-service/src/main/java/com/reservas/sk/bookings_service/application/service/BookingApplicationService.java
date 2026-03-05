@@ -16,6 +16,7 @@ import com.reservas.sk.bookings_service.domain.model.ReservationEquipment;
 import com.reservas.sk.bookings_service.domain.model.SpaceAvailability;
 import com.reservas.sk.bookings_service.domain.service.DateTimeService;
 import com.reservas.sk.bookings_service.exception.ApiException;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,10 +30,21 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 @Service
+@SuppressFBWarnings(
+        value = "EI_EXPOSE_REP2",
+        justification = "Ports are injected dependencies managed by Spring."
+)
 public class BookingApplicationService implements BookingUseCase {
-    private static final List<String> RESERVATION_ACTIVE_STATUSES = List.of("pending", "confirmed", "in_progress");
+    private static final String STATUS_PENDING = "pending";
+    private static final String STATUS_CONFIRMED = "confirmed";
+    private static final String STATUS_IN_PROGRESS = "in_progress";
+    private static final String STATUS_COMPLETED = "completed";
+    private static final String STATUS_CANCELLED = "cancelled";
+    private static final List<String> RESERVATION_ACTIVE_STATUSES =
+            List.of(STATUS_PENDING, STATUS_CONFIRMED, STATUS_IN_PROGRESS);
     private static final Logger log = LoggerFactory.getLogger(BookingApplicationService.class);
 
     private final BookingPersistencePort persistencePort;
@@ -92,7 +104,7 @@ public class BookingApplicationService implements BookingUseCase {
             if (!equipmentIds.isEmpty()) {
                 List<Long> existing = persistencePort.findExistingEquipmentIds(equipmentIds);
                 if (existing.size() != equipmentIds.size()) {
-                    HashSet<Long> existingSet = new HashSet<>(existing);
+                    Set<Long> existingSet = new HashSet<>(existing);
                     List<Long> missing = equipmentIds.stream()
                             .filter(id -> !existingSet.contains(id))
                             .toList();
@@ -117,7 +129,7 @@ public class BookingApplicationService implements BookingUseCase {
                     spaceId,
                     startAt,
                     endAt,
-                    "confirmed",
+                    STATUS_CONFIRMED,
                     normalizeNullable(command.title()),
                     command.attendeesCount(),
                     normalizeNullable(command.notes())
@@ -143,7 +155,9 @@ public class BookingApplicationService implements BookingUseCase {
             try {
                 persistencePort.releaseSpaceReservationLock(spaceId);
             } catch (Exception ex) {
-                log.warn("No se pudo liberar lock de espacio. spaceId={}", spaceId, ex);
+                if (log.isWarnEnabled()) {
+                    log.warn("No se pudo liberar lock de espacio. spaceId={}", spaceId, ex);
+                }
             }
         }
     }
@@ -181,11 +195,11 @@ public class BookingApplicationService implements BookingUseCase {
     public Reservation cancelReservation(Long reservationId, String reason) {
         Reservation existing = getReservationById(reservationId);
 
-        if ("cancelled".equalsIgnoreCase(existing.getStatus())) {
+        if (STATUS_CANCELLED.equalsIgnoreCase(existing.getStatus())) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "La reserva ya esta cancelada");
         }
 
-        persistencePort.updateReservationCancellation(existing.getId(), "cancelled", normalizeNullable(reason));
+        persistencePort.updateReservationCancellation(existing.getId(), STATUS_CANCELLED, normalizeNullable(reason));
         Reservation cancelled = getReservationById(existing.getId());
         safePublishReservationCancelled(new ReservationCancelledEvent(
                 cancelled.getId(),
@@ -209,7 +223,7 @@ public class BookingApplicationService implements BookingUseCase {
         assertHandoverAllowed(existing, List.of("confirmed", "in_progress"), "La reserva no puede marcarse como entregada");
 
         Instant now = Instant.now();
-        persistencePort.updateReservationStatus(existing.getId(), "in_progress");
+        persistencePort.updateReservationStatus(existing.getId(), STATUS_IN_PROGRESS);
         persistencePort.markReservationEquipmentsDelivered(existing.getId(), staffId, now, novelty);
         persistencePort.insertReservationHandoverLog(
                 existing.getId(),
@@ -246,7 +260,7 @@ public class BookingApplicationService implements BookingUseCase {
         assertHandoverAllowed(existing, List.of("in_progress", "confirmed"), "La reserva no puede marcarse como devuelta");
 
         Instant now = Instant.now();
-        persistencePort.updateReservationStatus(existing.getId(), "completed");
+        persistencePort.updateReservationStatus(existing.getId(), STATUS_COMPLETED);
         persistencePort.markReservationEquipmentsReturned(existing.getId(), staffId, now, novelty);
         persistencePort.insertReservationHandoverLog(
                 existing.getId(),
@@ -276,7 +290,9 @@ public class BookingApplicationService implements BookingUseCase {
         try {
             eventPublisherPort.publishReservationCreated(event);
         } catch (Exception ex) {
-            log.warn("No se pudo publicar evento de reserva creada. reservationId={}", event.reservationId(), ex);
+            if (log.isWarnEnabled()) {
+                log.warn("No se pudo publicar evento de reserva creada. reservationId={}", event.reservationId(), ex);
+            }
         }
     }
 
@@ -284,7 +300,9 @@ public class BookingApplicationService implements BookingUseCase {
         try {
             eventPublisherPort.publishReservationCancelled(event);
         } catch (Exception ex) {
-            log.warn("No se pudo publicar evento de reserva cancelada. reservationId={}", event.reservationId(), ex);
+            if (log.isWarnEnabled()) {
+                log.warn("No se pudo publicar evento de reserva cancelada. reservationId={}", event.reservationId(), ex);
+            }
         }
     }
 
@@ -292,7 +310,9 @@ public class BookingApplicationService implements BookingUseCase {
         try {
             eventPublisherPort.publishReservationDelivered(event);
         } catch (Exception ex) {
-            log.warn("No se pudo publicar evento de reserva entregada. reservationId={}", event.reservationId(), ex);
+            if (log.isWarnEnabled()) {
+                log.warn("No se pudo publicar evento de reserva entregada. reservationId={}", event.reservationId(), ex);
+            }
         }
     }
 
@@ -300,7 +320,9 @@ public class BookingApplicationService implements BookingUseCase {
         try {
             eventPublisherPort.publishReservationReturned(event);
         } catch (Exception ex) {
-            log.warn("No se pudo publicar evento de reserva devuelta. reservationId={}", event.reservationId(), ex);
+            if (log.isWarnEnabled()) {
+                log.warn("No se pudo publicar evento de reserva devuelta. reservationId={}", event.reservationId(), ex);
+            }
         }
     }
 
@@ -339,7 +361,7 @@ public class BookingApplicationService implements BookingUseCase {
             return List.of();
         }
 
-        LinkedHashSet<Long> uniqueIds = new LinkedHashSet<>();
+        Set<Long> uniqueIds = new LinkedHashSet<>();
         for (Long equipmentId : equipmentIds) {
             if (equipmentId == null || equipmentId <= 0) {
                 throw new ApiException(HttpStatus.BAD_REQUEST, "equipmentIds contiene valores invalidos");
@@ -364,8 +386,8 @@ public class BookingApplicationService implements BookingUseCase {
         }
         String normalized = status.trim().toLowerCase(Locale.ROOT);
         if (!RESERVATION_ACTIVE_STATUSES.contains(normalized) &&
-                !"completed".equals(normalized) &&
-                !"cancelled".equals(normalized)) {
+                !STATUS_COMPLETED.equals(normalized) &&
+                !STATUS_CANCELLED.equals(normalized)) {
             throw new ApiException(HttpStatus.BAD_REQUEST,
                     "status invalido. Use: pending, confirmed, in_progress, completed, cancelled");
         }

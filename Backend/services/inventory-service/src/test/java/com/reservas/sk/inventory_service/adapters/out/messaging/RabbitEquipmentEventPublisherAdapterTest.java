@@ -14,6 +14,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class RabbitEquipmentEventPublisherAdapterTest {
+    private static final String EXCHANGE = "reservas.events";
 
     private RabbitTemplate rabbitTemplate;
     private RabbitEquipmentEventPublisherAdapter adapter;
@@ -23,7 +24,7 @@ class RabbitEquipmentEventPublisherAdapterTest {
         rabbitTemplate = mock(RabbitTemplate.class);
 
         RabbitProperties properties = new RabbitProperties();
-        properties.setExchange("reservas.events");
+        properties.setExchange(EXCHANGE);
         properties.setEquipmentCreatedRoutingKey("inventory.equipment.created");
         properties.setEquipmentUpdatedRoutingKey("inventory.equipment.updated");
         properties.setEquipmentDeletedRoutingKey("inventory.equipment.deleted");
@@ -41,8 +42,11 @@ class RabbitEquipmentEventPublisherAdapterTest {
         adapter.publishEquipmentUpdated(updated);
         adapter.publishEquipmentDeleted(deleted);
 
-        verify(rabbitTemplate).convertAndSend("reservas.events", "inventory.equipment.created", created);
-        verify(rabbitTemplate).convertAndSend("reservas.events", "inventory.equipment.updated", updated);
-        verify(rabbitTemplate).convertAndSend("reservas.events", "inventory.equipment.deleted", deleted);
+        verify(rabbitTemplate).convertAndSend(EXCHANGE, "inventory.equipment.created", created);
+        verify(rabbitTemplate).convertAndSend(EXCHANGE, "inventory.equipment.updated", updated);
+        verify(rabbitTemplate).convertAndSend(EXCHANGE, "inventory.equipment.deleted", deleted);
     }
 }
+
+
+

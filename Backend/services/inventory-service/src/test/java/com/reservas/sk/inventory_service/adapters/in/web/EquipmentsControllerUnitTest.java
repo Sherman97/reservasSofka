@@ -20,6 +20,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class EquipmentsControllerUnitTest {
+    private static final String ASSERT_MSG = "PMD UnitTestAssertionsShouldIncludeMessage";
+    private static final String STATUS_AVAILABLE = "available";
 
     private InventoryUseCase useCase;
     private EquipmentsController controller;
@@ -31,26 +33,31 @@ class EquipmentsControllerUnitTest {
     }
 
     @Test
-    void createListGetUpdateDelete_coverMainEndpoints() {
-        when(useCase.createEquipment(any())).thenReturn(equipment(1L, "available"));
-        when(useCase.listEquipments(any())).thenReturn(List.of(equipment(1L, "available"), equipment(2L, "maintenance")));
-        when(useCase.getEquipmentById(1L)).thenReturn(equipment(1L, "available"));
+    void createListAndGet_coverMainEndpoints() {
+        when(useCase.createEquipment(any())).thenReturn(equipment(1L, STATUS_AVAILABLE));
+        when(useCase.listEquipments(any())).thenReturn(List.of(equipment(1L, STATUS_AVAILABLE), equipment(2L, "maintenance")));
+        when(useCase.getEquipmentById(1L)).thenReturn(equipment(1L, STATUS_AVAILABLE));
+
+        var created = controller.create(new CreateEquipmentRequest(5L, "Laptop", "SN", "BC", "Lenovo", STATUS_AVAILABLE, "ok", null));
+        var listed = controller.list(5L, STATUS_AVAILABLE);
+        var fetched = controller.getById(1L);
+
+        assertEquals(HttpStatus.CREATED, created.getStatusCode(), ASSERT_MSG);
+        assertTrue(created.getBody().ok(), ASSERT_MSG);
+        assertEquals(2, listed.data().size(), ASSERT_MSG);
+        assertEquals(1L, fetched.data().id(), ASSERT_MSG);
+    }
+
+    @Test
+    void updateAndDelete_coverMainEndpoints() {
         when(useCase.updateEquipment(any(), any())).thenReturn(equipment(1L, "retired"));
         when(useCase.deleteEquipment(1L)).thenReturn(new DeleteEquipmentResult(1L));
 
-        var created = controller.create(new CreateEquipmentRequest(5L, "Laptop", "SN", "BC", "Lenovo", "available", "ok", null));
-        var listed = controller.list(5L, "available");
-        var fetched = controller.getById(1L);
         var updated = controller.update(1L, new UpdateEquipmentRequest("Laptop", "SN", "BC", "Lenovo", "retired", "ok", null));
         var deleted = controller.delete(1L);
 
-        assertEquals(HttpStatus.CREATED, created.getStatusCode());
-        assertTrue(created.getBody().ok());
-        assertEquals(2, listed.data().size());
-        assertEquals(1L, fetched.data().id());
-        assertEquals("retired", updated.data().status());
-        assertEquals(1L, deleted.data().get("id"));
-
+        assertEquals("retired", updated.data().status(), ASSERT_MSG);
+        assertEquals(1L, deleted.data().get("id"), ASSERT_MSG);
         verify(useCase).deleteEquipment(1L);
     }
 
@@ -70,3 +77,5 @@ class EquipmentsControllerUnitTest {
         );
     }
 }
+
+

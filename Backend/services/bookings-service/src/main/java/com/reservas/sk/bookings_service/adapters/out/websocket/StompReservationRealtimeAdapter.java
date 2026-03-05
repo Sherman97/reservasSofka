@@ -3,12 +3,17 @@ package com.reservas.sk.bookings_service.adapters.out.websocket;
 import com.reservas.sk.bookings_service.application.port.out.ReservationRealtimePort;
 import com.reservas.sk.bookings_service.application.usecase.ReservationCancelledEvent;
 import com.reservas.sk.bookings_service.application.usecase.ReservationCreatedEvent;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 @Component
+@SuppressFBWarnings(
+        value = "EI_EXPOSE_REP2",
+        justification = "Spring messaging template is injected and managed by the container."
+)
 public class StompReservationRealtimeAdapter implements ReservationRealtimePort {
     private final SimpMessagingTemplate messagingTemplate;
 

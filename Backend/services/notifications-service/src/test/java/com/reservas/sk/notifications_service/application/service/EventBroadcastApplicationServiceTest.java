@@ -14,6 +14,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class EventBroadcastApplicationServiceTest {
+    private static final String ASSERT_MSG = "PMD UnitTestAssertionsShouldIncludeMessage";
 
     private WebSocketBroadcastPort webSocketBroadcastPort;
     private EventBroadcastApplicationService service;
@@ -62,9 +63,10 @@ class EventBroadcastApplicationServiceTest {
 
         verify(webSocketBroadcastPort).publish(captor.capture());
         NotificationEvent event = captor.getValue();
-        assertEquals(routingKey, event.routingKey());
-        assertEquals(expectedChannel, event.channel());
-        assertEquals(payload, event.payload());
-        assertNotNull(event.occurredAt());
+        assertEquals(routingKey, event.routingKey(), ASSERT_MSG);
+        assertEquals(expectedChannel, event.channel(), ASSERT_MSG);
+        assertEquals(payload, event.payload(), ASSERT_MSG);
+        assertNotNull(event.occurredAt(), ASSERT_MSG);
     }
 }
+

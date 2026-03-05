@@ -4,6 +4,7 @@ import com.reservas.sk.locations_service.application.port.out.TokenPort;
 import com.reservas.sk.locations_service.application.usecase.AuthenticatedUser;
 import com.reservas.sk.locations_service.exception.ApiException;
 import com.reservas.sk.locations_service.infrastructure.config.JwtProperties;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -16,6 +17,10 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 
 @Component
+@SuppressFBWarnings(
+        value = "EI_EXPOSE_REP2",
+        justification = "Configuration properties are injected by Spring container."
+)
 public class JwtTokenAdapter implements TokenPort {
     private final JwtProperties jwtProperties;
     private SecretKey secretKey;

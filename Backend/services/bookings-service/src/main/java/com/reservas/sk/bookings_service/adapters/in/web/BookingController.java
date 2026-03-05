@@ -1,18 +1,29 @@
 package com.reservas.sk.bookings_service.adapters.in.web;
 
-import com.reservas.sk.bookings_service.adapters.in.web.dto.*;
+import com.reservas.sk.bookings_service.adapters.in.web.dto.ApiResponse;
+import com.reservas.sk.bookings_service.adapters.in.web.dto.CancelReservationRequest;
+import com.reservas.sk.bookings_service.adapters.in.web.dto.CreateReservationRequest;
+import com.reservas.sk.bookings_service.adapters.in.web.dto.HandoverReservationRequest;
+import com.reservas.sk.bookings_service.adapters.in.web.dto.ReservationResponse;
+import com.reservas.sk.bookings_service.adapters.in.web.dto.SpaceAvailabilityResponse;
 import com.reservas.sk.bookings_service.application.port.in.BookingUseCase;
 import com.reservas.sk.bookings_service.application.usecase.AuthenticatedUser;
 import com.reservas.sk.bookings_service.application.usecase.CheckSpaceAvailabilityQuery;
 import com.reservas.sk.bookings_service.application.usecase.CreateReservationCommand;
 import com.reservas.sk.bookings_service.application.usecase.HandoverReservationCommand;
 import com.reservas.sk.bookings_service.application.usecase.ListReservationsQuery;
-import com.reservas.sk.bookings_service.exception.ApiException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
