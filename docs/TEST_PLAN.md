@@ -1,7 +1,7 @@
 # TEST PLAN — Reservas Sofka
 
-> **Versión:** 1.1  
-> **Fecha:** 4 de marzo de 2026  
+> **Versión:** 1.2  
+> **Fecha:** 6 de marzo de 2026  
 > **Proyecto:** Sistema de Reservas Sofka (Microservicios + SPA React)  
 > **Autores:** Equipo de Desarrollo Reservas SK
 
@@ -33,13 +33,13 @@ El proyecto Reservas Sofka es un sistema de gestión de reservas construido con 
 
 | Métrica | Valor |
 |---------|-------|
-| Archivos de test totales | **136** |
-| Test cases totales | **1 047** |
+| Archivos de test totales | **137** |
+| Test cases totales | **1 058** |
 | Cobertura backend (líneas) | **90.37%** |
 | Cobertura frontend (líneas) | **95.32%** |
 | Servicios backend testeados | 6 / 6 |
 | Tests de caja negra — API (curl) | 7 casos |
-| Tests de caja negra — E2E UI (Playwright) | 15 casos |
+| Tests de caja negra — E2E UI (Playwright) — HU Transición de Estado | **11 casos** |
 
 ---
 
@@ -252,9 +252,9 @@ Se subdivide en **dos tipos** para cubrir la integridad completa del sistema:
 | Aspecto | Detalle |
 |---------|--------|
 | **Herramienta** | Playwright (Chromium headless) |
-| **Qué valida** | Flujo completo del usuario a través de la UI: renderizado, formularios, navegación, auth guard, interacción con API real |
+| **Qué valida** | Flujo completo a través de la UI para la HU de **transición de estado de reservas**: badge "Próxima", `HandoverModal` de entrega/devolución con novedades, confirmación y cambio a "Completada" |
 | **Servicios levantados** | **Stack completo**: Frontend (Nginx) + API Gateway + todos los microservicios + MariaDB + RabbitMQ |
-| **Archivos** | `Frontend/e2e/auth-flow.spec.ts` (11 tests), `Frontend/e2e/reservations-flow.spec.ts` (4 tests) |
+| **Archivo** | `Frontend/e2e/status-transition-flow.spec.ts` (11 tests, TC-BB-031–TC-BB-041) |
 
 **Integridad del sistema verificada con Playwright:**
 ```
@@ -265,7 +265,7 @@ Usuario → Navegador (Chromium) → Frontend (React/Nginx:5173)
                         → inventory-service (:3005)
 ```
 
-Esto cierra el circuito completo de integridad: las pruebas de Playwright son **las únicas que validan que la UI, el routing frontend, la autenticación, el almacenamiento en localStorage y la comunicación HTTP con el backend funcionan juntos correctamente**.
+Esto cierra el circuito completo de integridad: las pruebas de Playwright validan que **`ReservationCard` (badge de estado), `HandoverModal` (novedades y confirmación) y la integración con `bookings-service`** funcionan correctamente de extremo a extremo a través de la UI real del usuario.
 
 ---
 
@@ -679,31 +679,25 @@ En la UI de GitHub Actions, los jobs se muestran visualmente diferenciados:
 | TC-BB-006 | Login post-registro | Usuario creado en TC-BB-001 | `{"email":"<unique>@test.com","password":"securePass123"}` | `POST /auth/login` | HTTP 200, `ok: true` | Alta |
 | TC-BB-007 | Acceso autenticado | Token obtenido en TC-BB-001 | Header: `Authorization: Bearer <token>` | `GET /auth/me` | HTTP 200, `data.email == "<unique>@test.com"` | Alta |
 
-### 8.2 Test Cases — Caja Negra E2E: Flujo de Autenticación (Playwright)
+### 8.2 Test Cases — Caja Negra E2E: Transición de Estado (Playwright)
+
+Cubre la HU de transición de estado de reservas: **"Próxima" → "En Progreso"** (evento del backend) y **"En Progreso" → "Cerrado"** (HandoverModal con novedades). Todos los tests son caja negra pura: solo interactúan con el DOM mediante selectores CSS/ARIA. Se ejecutan en el job `e2e-tests` del CI contra el stack completo (Docker Compose).
 
 | TC-ID | Nombre | Precondición | Acción en UI | Resultado Esperado | Prioridad |
 |-------|--------|-------------|-------------|-------------------|----------|
-| TC-E2E-001 | Login page carga | Stack levantado | Navegar a `/login` | Inputs `#email`, `#password`, botón "Iniciar Sesión" visibles | Alta |
-| TC-E2E-002 | Navegación login → signup | En `/login` | Click en "Regístrate aquí" | URL cambia a `/signup`, formulario de registro visible | Media |
-| TC-E2E-003 | Validación campos vacíos | En `/signup` | Click submit sin llenar | NO navega a `/dashboard` | Alta |
-| TC-E2E-004 | Passwords no coinciden | En `/signup` | Llenar con passwords distintos + submit | NO navega a `/dashboard` | Alta |
-| TC-E2E-005 | Registro exitoso | Stack completo, email único | Llenar formulario completo + submit | URL = `/dashboard`, `localStorage.token` existe | Alta |
-| TC-E2E-006 | Login con usuario creado | Usuario de TC-E2E-005 existe | Llenar login + submit | URL = `/dashboard`, token en localStorage | Alta |
-| TC-E2E-007 | Login con password incorrecto | Usuario existe | Llenar login con password malo + submit | `.error-message` visible, URL sigue en `/login` | Alta |
-| TC-E2E-008 | Ruta protegida /dashboard | Sin token en localStorage | Navegar a `/dashboard` | Redirige a `/login` | Alta |
-| TC-E2E-009 | Ruta protegida /my-reservations | Sin token en localStorage | Navegar a `/my-reservations` | Redirige a `/login` | Media |
-| TC-E2E-010 | Dashboard carga contenido | Login exitoso | Navegar post-login | Muestra "Resultados" o "No se encontraron" o "Cargando" | Alta |
-| TC-E2E-011 | Registro duplicado | Email ya registrado | Llenar signup con mismo email + submit | `.error-message` visible, NO navega a dashboard | Alta |
+| TC-BB-031 | Setup — Registrar usuario para tests de transición | Stack completo levantado | Completar formulario de signup | URL = `/dashboard`, usuario registrado | Alta |
+| TC-BB-032 | Badge "Próxima" visible en tarjeta de reserva futura | Login exitoso | Navegar a `/my-reservations` | `.res-status-upcoming` visible con texto "Próxima" | Alta |
+| TC-BB-033 | Botón de entrega (📦) no disponible en reservas "Próximas" | Login exitoso, reservas próximas presentes | Inspeccionar tarjetas con badge "Próxima" | `.btn-deliver-res` NO visible en dichas tarjetas | Alta |
+| TC-BB-034 | HandoverModal de entrega se abre desde "En Progreso" | Reserva en estado "En Progreso" presente | Click en `.btn-deliver-res` | `.handover-modal` visible, título = "Registrar Entrega" | Alta |
+| TC-BB-035 | Modal de entrega describe cambio a "En progreso" | Modal de entrega abierto | Leer descripción del modal | Descripción contiene "en progreso" | Alta |
+| TC-BB-036 | Campo de novedad acepta texto libre | Modal de entrega abierto | Escribir en `#novelty-input` | Textarea muestra el texto escrito | Media |
+| TC-BB-037 | Cancelar el modal no cambia estado de la reserva | Modal de entrega abierto | Click en `btn-handover-cancel` | Modal cierra, `.btn-deliver-res` sigue visible | Alta |
+| TC-BB-038 | Confirmar entrega con novedad — sistema responde | Reserva "En Progreso" presente | Llenar novedad + click en `btn-handover-confirm` | Modal cierra o muestra "Procesando..." | Alta |
+| TC-BB-039 | Confirmar entrega sin novedad es válido | Modal de entrega abierto (campo vacío) | Click en `btn-handover-confirm` sin llenar textarea | Modal procesa sin error de validación | Alta |
+| TC-BB-040 | HandoverModal de devolución se abre desde "En Progreso" | Reserva con `.btn-return-res` visible | Click en `.btn-return-res` | `.handover-modal` visible, título = "Registrar Devolución" | Alta |
+| TC-BB-041 | Modal de devolución describe cambio a "Completada" | Modal de devolución abierto | Leer descripción del modal | Descripción contiene "completada" | Alta |
 
-### 8.3 Test Cases — Caja Negra E2E: Flujo de Reservas (Playwright)
-
-| TC-ID | Nombre | Precondición | Acción en UI | Resultado Esperado | Prioridad |
-|-------|--------|-------------|-------------|-------------------|----------|
-| TC-E2E-020 | Dashboard muestra inventario | Login exitoso | Esperar carga del dashboard | Muestra "Resultados" o estado vacío | Alta |
-| TC-E2E-021 | Navegación a Mis Reservas | Login exitoso | Click en enlace o navegar a `/my-reservations` | URL = `/my-reservations` | Media |
-| TC-E2E-022 | Mis Reservas muestra lista | Login exitoso | Navegar a `/my-reservations` | Muestra reservas o estado vacío | Media |
-
-### 8.4 Test Cases — Caja Blanca: auth-service (Unitarios)
+### 8.3 Test Cases — Caja Blanca: auth-service (Unitarios)
 
 | TC-ID | Nombre | Técnica | Clase bajo test | Qué verifica |
 |-------|--------|---------|-----------------|-------------|
@@ -717,7 +711,7 @@ En la UI de GitHub Actions, los jobs se muestran visualmente diferenciados:
 | TC-WB-008 | JWT filter acepta token válido | Seguridad | `JwtAuthenticationFilter` | Security context populated |
 | TC-WB-009 | JWT filter rechaza token inválido | Seguridad | `JwtAuthenticationFilter` | Chain continues without auth |
 
-### 8.5 Test Cases — Caja Blanca: Frontend (Unitarios + Componente)
+### 8.4 Test Cases — Caja Blanca: Frontend (Unitarios + Componente)
 
 | TC-ID | Nombre | Tipo | Archivo | Qué verifica |
 |-------|--------|------|---------|-------------|
@@ -767,8 +761,8 @@ En la UI de GitHub Actions, los jobs se muestran visualmente diferenciados:
 | Componente | ~40 | ~300 | ~340 | 33% |
 | Integración | ~9 | ~50 | ~59 | 6% |
 | Caja Negra — API (curl) | 7 | 0 | 7 | <1% |
-| Caja Negra — E2E UI (Playwright) | 0 | 15 | 15 | 1% |
-| **Total** | **169** | **871** | **1 047** | 100% |
+| Caja Negra — E2E UI — HU Transición de Estado | 0 | 11 | 11 | 1% |
+| **Total** | **169** | **882** | **1 058** | 100% |
 
 ---
 
@@ -950,12 +944,11 @@ En la UI de GitHub Actions, los jobs se muestran visualmente diferenciados:
 
 `Backend/tests/blackbox/test-user-creation.sh`
 
-### 11.4 Caja Negra E2E (Playwright) — 15 tests en 2 archivos
+### 11.4 Caja Negra E2E (Playwright) — HU Transición de Estado — 11 tests en 1 archivo
 
 | Archivo | Tests | Flujo verificado |
 |---------|-------|------------------|
-| `Frontend/e2e/auth-flow.spec.ts` | 11 | Login, signup, validación, auth guard, duplicados |
-| `Frontend/e2e/reservations-flow.spec.ts` | 4 | Dashboard, inventario, mis reservas |
+| `Frontend/e2e/status-transition-flow.spec.ts` | 11 | **Transición de estado:** badge "Próxima", `HandoverModal` de entrega/devolución, campo de novedades, confirmar/cancelar — TC-BB-031 a TC-BB-041 |
 
 ---
 
@@ -976,19 +969,19 @@ En la UI de GitHub Actions, los jobs se muestran visualmente diferenciados:
 
 ### Fortalezas de la estrategia actual
 
-1. **Pirámide de testing bien formada:** 59% unitarios, 33% componente, 6% integración, 2% E2E — proporción saludable según ISTQB y Google Testing Blog.
+1. **Pirámide de testing bien formada:** 58% unitarios, 32% componente, 6% integración, 2% E2E — proporción saludable según ISTQB y Google Testing Blog.
 2. **Cobertura alta:** >90% de líneas en backend y >95% en frontend. Superan ampliamente los umbrales mínimos.
 3. **Separación clara y visual componente vs. integración en CI:** Los jobs `component-tests` y `integration-tests` se ejecutan como **jobs independientes** en GitHub Actions, diferenciados con iconos (🧩 y 🔗), usando JUnit 5 `@Tag("integration")` y Gradle tasks separados (`componentTest` / `integrationTest`). Los jobs `blackbox-tests` y `e2e-tests` levantan el stack real.
 4. **Caja blanca + caja negra coexisten:** Los tests unitarios/componente (caja blanca) verifican lógica interna; los tests HTTP con curl y Playwright (caja negra) validan el contrato público y la experiencia de usuario.
 5. **Arquitectura hexagonal facilita el testing:** Los puertos se mockean fácilmente para tests de componente; los adapters se testean con integración parcial.
 6. **Integridad del sistema completa:** Las pruebas E2E con Playwright cierran el circuito verificando que Frontend → API Gateway → Microservicios → BD funcionan juntos a través de la UI real del usuario.
+7. **Cobertura de flujo de transición de estado:** Se agregaron 11 tests de caja negra E2E (`status-transition-flow.spec.ts`) cubriendo la HU de transición "Próxima → En Progreso → Cerrado", verificando el badge de estado, el `HandoverModal` con novedades y la lógica de entrega/devolución del espacio.
 
 ### Áreas de mejora identificadas
 
 1. Subir los umbrales de cobertura en CI (actualmente LINE ≥ 25% es demasiado permisivo vs. el 90% real).
-2. Agregar más tests E2E de Playwright para flujos de reservas (crear, cancelar, entregar).
-3. Agregar contract testing (Pact) entre frontend y backend para validar schemas de API.
-4. Evaluar visual regression testing con Playwright (screenshot comparison).
+2. Agregar contract testing (Pact) entre frontend y backend para validar schemas de API.
+3. Evaluar visual regression testing con Playwright (screenshot comparison).
 
 ### Historial de cambios
 
@@ -996,8 +989,9 @@ En la UI de GitHub Actions, los jobs se muestran visualmente diferenciados:
 |---------|-------|---------|
 | 1.0 | 2026-03-04 | Versión inicial del Test Plan |
 | 1.1 | 2026-03-04 | Pipeline CI actualizado: separación visual de pruebas de componente (`componentTest`) e integración (`integrationTest`) en jobs independientes con JUnit 5 `@Tag("integration")`; pruebas de caja negra ejecutándose dentro de contenedor Docker |
+| 1.2 | 2026-03-06 | Nuevo spec de caja negra E2E `status-transition-flow.spec.ts` (11 tests, TC-BB-031–TC-BB-041) para la HU de transición de estado "Próxima → En Progreso → Cerrado": badge de estado, HandoverModal de entrega/devolución, campo de novedades. Totales actualizados: 1 058 tests, 26 E2E Playwright, 137 archivos de test |
 
 ---
 
 > **Documento generado como parte de la estrategia de QA del proyecto Reservas Sofka.**  
-> **Próxima revisión programada:** Sprint siguiente al 4 de marzo de 2026.
+> **Próxima revisión programada:** Sprint siguiente al 6 de marzo de 2026.
