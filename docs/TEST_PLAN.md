@@ -609,39 +609,14 @@ jobs:
 | Velocidad | ~30s total | ~2-3 min |
 | Falla por | Lógica incorrecta | Config, red, SQL, serialización |
 
-### 7.8 Job 5: `e2e-tests` — Pruebas de Caja Negra E2E (Playwright)
 
-```yaml
-jobs:
-  e2e-tests:
-    name: "🎭 E2E Tests (Playwright)"
-    needs: [component-tests, integration-tests, frontend]
-    steps:
-      - docker compose up -d --build           # Stack completo
-      - npx playwright install --with-deps chromium
-      - npx playwright test                    # 15 tests E2E
-      - actions/upload-artifact (report+traces)
-      - docker compose down -v
-```
-
-**Qué ejecuta:** Tests de Playwright que abren un navegador Chromium real, interactúan con la UI y verifican el flujo completo del usuario.
-
-| Aspecto | Caja Negra API (Job 4) | E2E Playwright (Job 5) |
-|---|---|---|
-| Cliente | `curl` (HTTP directo, dentro de contenedor) | Chromium (navegador real) |
-| Qué testea | Contrato API backend | UI + API + integración completa |
-| Stack levantado | Solo auth-service + infra | **Todo** (front + back + infra) |
-| Artefactos | Logs en consola | HTML report + screenshots + videos |
-
-### 7.9 Flujo de ejecución
 
 1. **Push/PR** a `main` o `develop` → CI se activa
 2. **Paralelo:** `component-tests` (6 jobs × 1 servicio) + `integration-tests` (6 jobs × 1 servicio) + `frontend` (1 job)
 3. **Secuencial:** Si `component-tests` + `integration-tests` pasan → `blackbox-tests` levanta Docker y ejecuta caja negra API **dentro de contenedor**
-4. **Secuencial:** Si `component-tests` + `integration-tests` + `frontend` pasan → `e2e-tests` levanta stack completo + Playwright
-5. **Resultado:** Si todo pasa → PR puede mergearse; si falla → CI bloquea el merge
+4. **Resultado:** Si todo pasa → PR puede mergearse; si falla → CI bloquea el merge
 
-### 7.10 Visualización en GitHub Actions
+### 7.9 Visualización en GitHub Actions
 
 En la UI de GitHub Actions, los jobs se muestran visualmente diferenciados:
 
@@ -660,7 +635,6 @@ En la UI de GitHub Actions, los jobs se muestran visualmente diferenciados:
 ✅ 🔗 Integration Tests (notifications-service)
 ✅ 🌐 Frontend
 ✅ 📦 Black-Box Tests (API)
-✅ 🎭 E2E Tests (Playwright)
 ```
 
 ---
@@ -993,3 +967,4 @@ npx newman run Backend/tests/blackbox/reservas-api.postman_collection.json
 
 > **Documento generado como parte de la estrategia de QA del proyecto Reservas Sofka.**  
 > **Próxima revisión programada:** Sprint siguiente al 6 de marzo de 2026.
+
