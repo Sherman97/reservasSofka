@@ -39,7 +39,7 @@ El proyecto Reservas Sofka es un sistema de gestión de reservas construido con 
 | Cobertura frontend (líneas) | **95.32%** |
 | Servicios backend testeados | 6 / 6 |
 | Tests de caja negra — API (curl) | 7 casos |
-| Tests de caja negra — E2E UI (Playwright) — HU Transición de Estado | **11 casos** |
+| Tests de caja negra — API (Postman / Newman) | **3 casos** |
 
 ---
 
@@ -162,10 +162,10 @@ El `bookings-service` tiene el mayor número de tests (51) precisamente porque e
 Utilizamos la **Pirámide de Testing** adaptada a nuestra arquitectura hexagonal de microservicios:
 
 ```
-                    ╱  ╲
-                   ╱ E2E ╲                ← Caja Negra (curl/HTTP)
-                  ╱────────╲                 7 tests
-                 ╱Integration╲            ← Multi-capa, puertos reales
+                    ╱      ╲
+                   ╱   E2E  ╲                ← Caja Negra (curl/HTTP)
+                  ╱──────────╲                 7 tests
+                 ╱Integration ╲            ← Multi-capa, puertos reales
                 ╱──────────────╲             ~15 tests (front) + adapters (back)
                ╱   Component    ╲         ← @WebMvcTest, renderHook, render()
               ╱──────────────────╲           ~200 tests
@@ -251,10 +251,10 @@ Se subdivide en **dos tipos** para cubrir la integridad completa del sistema:
 
 | Aspecto | Detalle |
 |---------|--------|
-| **Herramienta** | Playwright (Chromium headless) |
-| **Qué valida** | Flujo completo a través de la UI para la HU de **transición de estado de reservas**: badge "Próxima", `HandoverModal` de entrega/devolución con novedades, confirmación y cambio a "Completada" |
+| **Herramienta** | Postman Collection / Newman CLI |
+| **Qué valida** | Caja negra API pura interactuando directamente con el backend: Autenticación (`POST /auth/register`) y Reservas (`POST /api/bookings`, `GET /api/bookings`). Se ejecutan a través de Newman. |
 | **Servicios levantados** | **Stack completo**: Frontend (Nginx) + API Gateway + todos los microservicios + MariaDB + RabbitMQ |
-| **Archivo** | `Frontend/e2e/status-transition-flow.spec.ts` (11 tests, TC-BB-031–TC-BB-041) |
+| **Archivo** | `Backend/tests/blackbox/reservas-api.postman_collection.json` (3 tests: TC-BB-030 a TC-BB-032) |
 
 **Integridad del sistema verificada con Playwright:**
 ```
@@ -265,7 +265,7 @@ Usuario → Navegador (Chromium) → Frontend (React/Nginx:5173)
                         → inventory-service (:3005)
 ```
 
-Esto cierra el circuito completo de integridad: las pruebas de Playwright validan que **`ReservationCard` (badge de estado), `HandoverModal` (novedades y confirmación) y la integración con `bookings-service`** funcionan correctamente de extremo a extremo a través de la UI real del usuario.
+Esto complementa la integridad del sistema: las pruebas de Postman (Newman) validan la **comunicación HTTP y los contratos de API directamente contra el hub expuesto** en un entorno Dockerizado, comprobando la integración del API Gateway con los microservicios de backend reales (p. ej. `bookings-service`, `auth-service`).
 
 ---
 
@@ -679,23 +679,15 @@ En la UI de GitHub Actions, los jobs se muestran visualmente diferenciados:
 | TC-BB-006 | Login post-registro | Usuario creado en TC-BB-001 | `{"email":"<unique>@test.com","password":"securePass123"}` | `POST /auth/login` | HTTP 200, `ok: true` | Alta |
 | TC-BB-007 | Acceso autenticado | Token obtenido en TC-BB-001 | Header: `Authorization: Bearer <token>` | `GET /auth/me` | HTTP 200, `data.email == "<unique>@test.com"` | Alta |
 
-### 8.2 Test Cases — Caja Negra E2E: Transición de Estado (Playwright)
+### 8.2 Test Cases — Caja Negra API (Postman / Newman)
 
-Cubre la HU de transición de estado de reservas: **"Próxima" → "En Progreso"** (evento del backend) y **"En Progreso" → "Cerrado"** (HandoverModal con novedades). Todos los tests son caja negra pura: solo interactúan con el DOM mediante selectores CSS/ARIA. Se ejecutan en el job `e2e-tests` del CI contra el stack completo (Docker Compose).
+Cubre endpoints fundamentales (autenticación y flujo de reservas) como pruebas puras de API usando Colecciones de Postman ejecutadas vía Newman. Estas pruebas validan respuestas HTTP integrándose directamente con el backend dockerizado a través del API Gateway.
 
-| TC-ID | Nombre | Precondición | Acción en UI | Resultado Esperado | Prioridad |
-|-------|--------|-------------|-------------|-------------------|----------|
-| TC-BB-031 | Setup — Registrar usuario para tests de transición | Stack completo levantado | Completar formulario de signup | URL = `/dashboard`, usuario registrado | Alta |
-| TC-BB-032 | Badge "Próxima" visible en tarjeta de reserva futura | Login exitoso | Navegar a `/my-reservations` | `.res-status-upcoming` visible con texto "Próxima" | Alta |
-| TC-BB-033 | Botón de entrega (📦) no disponible en reservas "Próximas" | Login exitoso, reservas próximas presentes | Inspeccionar tarjetas con badge "Próxima" | `.btn-deliver-res` NO visible en dichas tarjetas | Alta |
-| TC-BB-034 | HandoverModal de entrega se abre desde "En Progreso" | Reserva en estado "En Progreso" presente | Click en `.btn-deliver-res` | `.handover-modal` visible, título = "Registrar Entrega" | Alta |
-| TC-BB-035 | Modal de entrega describe cambio a "En progreso" | Modal de entrega abierto | Leer descripción del modal | Descripción contiene "en progreso" | Alta |
-| TC-BB-036 | Campo de novedad acepta texto libre | Modal de entrega abierto | Escribir en `#novelty-input` | Textarea muestra el texto escrito | Media |
-| TC-BB-037 | Cancelar el modal no cambia estado de la reserva | Modal de entrega abierto | Click en `btn-handover-cancel` | Modal cierra, `.btn-deliver-res` sigue visible | Alta |
-| TC-BB-038 | Confirmar entrega con novedad — sistema responde | Reserva "En Progreso" presente | Llenar novedad + click en `btn-handover-confirm` | Modal cierra o muestra "Procesando..." | Alta |
-| TC-BB-039 | Confirmar entrega sin novedad es válido | Modal de entrega abierto (campo vacío) | Click en `btn-handover-confirm` sin llenar textarea | Modal procesa sin error de validación | Alta |
-| TC-BB-040 | HandoverModal de devolución se abre desde "En Progreso" | Reserva con `.btn-return-res` visible | Click en `.btn-return-res` | `.handover-modal` visible, título = "Registrar Devolución" | Alta |
-| TC-BB-041 | Modal de devolución describe cambio a "Completada" | Modal de devolución abierto | Leer descripción del modal | Descripción contiene "completada" | Alta |
+| TC-ID | Nombre | Precondición | Acción (Postman Request) | Resultado Esperado | Prioridad |
+|-------|--------|-------------|--------|-------------------|----------|
+| TC-BB-030 | Caja negra API — `POST /auth/register` crea usuario y retorna JWT | Stack levantado | `POST /auth/register` (body JSON) | HTTP 201, `ok: true`, token válido (3 partes) | Alta |
+| TC-BB-031 | Caja negra API — `POST /bookings/reservations` crea reserva | Usuario registrado, variable `API_TOKEN` seteada | `POST /bookings/reservations` (header auth) | HTTP 201, `ok: true`, ID de location devuelto coincide | Alta |
+| TC-BB-032 | Caja negra API — `GET /bookings/reservations` consulta reservas | Reserva creada, variable `API_TOKEN` seteada | `GET /bookings/reservations` (header auth) | HTTP 200, array con datos, encuentra locationId reservado | Alta |
 
 ### 8.3 Test Cases — Caja Blanca: auth-service (Unitarios)
 
@@ -757,12 +749,12 @@ Cubre la HU de transición de estado de reservas: **"Próxima" → "En Progreso"
 
 | Nivel | Backend | Frontend | Total | % |
 |-------|---------|----------|-------|---|
-| Unitarios | ~120 | ~500 | ~620 | 59% |
+| Unitarios | ~120 | ~500 | ~620 | 60% |
 | Componente | ~40 | ~300 | ~340 | 33% |
 | Integración | ~9 | ~50 | ~59 | 6% |
 | Caja Negra — API (curl) | 7 | 0 | 7 | <1% |
-| Caja Negra — E2E UI — HU Transición de Estado | 0 | 11 | 11 | 1% |
-| **Total** | **169** | **882** | **1 058** | 100% |
+| Caja Negra — API (Postman/Newman) | 3 | 0 | 3 | <1% |
+| **Total** | **172** | **850** | **1029** | 100% |
 
 ---
 
@@ -944,11 +936,17 @@ Cubre la HU de transición de estado de reservas: **"Próxima" → "En Progreso"
 
 `Backend/tests/blackbox/test-user-creation.sh`
 
-### 11.4 Caja Negra E2E (Playwright) — HU Transición de Estado — 11 tests en 1 archivo
+### 11.4 Caja Negra API (Postman / Newman) — 3 tests en 1 colección
 
 | Archivo | Tests | Flujo verificado |
 |---------|-------|------------------|
-| `Frontend/e2e/status-transition-flow.spec.ts` | 11 | **Transición de estado:** badge "Próxima", `HandoverModal` de entrega/devolución, campo de novedades, confirmar/cancelar — TC-BB-031 a TC-BB-041 |
+| `Backend/tests/blackbox/reservas-api.postman_collection.json` | 3 | **API pura**: Creación de usuario (`POST /auth/register`), Creación de reserva (`POST /bookings/reservations`) y Consulta de reservas (`GET /bookings/reservations`) |
+
+**Ejecución:**
+```bash
+# Desde la raíz del proyecto, ejecuta Newman apuntando al archivo exacto:
+npx newman run Backend/tests/blackbox/reservas-api.postman_collection.json
+```
 
 ---
 

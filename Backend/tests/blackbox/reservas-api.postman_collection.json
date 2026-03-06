@@ -1,0 +1,192 @@
+{
+  "info": {
+    "name": "Reservas API - Pruebas de Caja Negra",
+    "description": "Pruebas de caja negra puras a nivel de API para Auth y Bookings",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "TC-BB-030: Crear Usuario (POST /auth/register)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "pm.test(\"Response ok is true\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.ok).to.be.true;",
+              "});",
+              "pm.test(\"JWT Token is returned with 3 parts\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    var token = jsonData.data ? jsonData.data.token : jsonData.token;",
+              "    pm.environment.set(\"API_TOKEN\", token);",
+              "    pm.expect(token).to.be.a(\"string\");",
+              "    pm.expect(token.split('.').length).to.eql(3);",
+              "});",
+              "pm.test(\"Returned email matches\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    var email = jsonData.data && jsonData.data.user ? jsonData.data.user.email : (jsonData.user ? jsonData.user.email : jsonData.data.email);",
+              "    pm.expect(email).to.eql(pm.environment.get(\"USER_EMAIL\"));",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "let timestamp = Date.now();",
+              "pm.environment.set(\"USER_EMAIL\", \"bb_postman_\" + timestamp + \"@test.com\");",
+              "pm.environment.set(\"USER_NAME\", \"Postman BB User \" + timestamp);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"{{USER_NAME}}\",\n  \"email\": \"{{USER_EMAIL}}\",\n  \"password\": \"SecurePass123!\"\n}"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/auth/register",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "auth",
+            "register"
+          ]
+        }
+      }
+    },
+    {
+      "name": "TC-BB-031: Crear Reserva (POST /bookings/reservations)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "pm.test(\"Response ok is true\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.ok).to.be.true;",
+              "});",
+              "pm.test(\"Returned spaceId matches\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    var returnedLocationId = jsonData.data && jsonData.data.space ? jsonData.data.space.id : (jsonData.data && jsonData.data.spaceId ? jsonData.data.spaceId : jsonData.data.id);",
+              "    pm.expect(returnedLocationId).to.not.be.undefined;",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "let now = new Date();",
+              "now.setFullYear(now.getFullYear() + Math.floor(Math.random() * 5) + 1);",
+              "now.setHours(10, 0, 0, 0);",
+              "pm.environment.set(\"START_TIME\", now.toISOString());",
+              "now.setHours(12, 0, 0, 0);",
+              "pm.environment.set(\"END_TIME\", now.toISOString());"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{API_TOKEN}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"spaceId\": 1,\n  \"startAt\": \"{{START_TIME}}\",\n  \"endAt\": \"{{END_TIME}}\",\n  \"title\": \"Postman E2E Auto\",\n  \"attendeesCount\": 4,\n  \"notes\": \"Creado desde Postman Newman\"\n}"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/bookings/reservations",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "bookings",
+            "reservations"
+          ]
+        }
+      }
+    },
+    {
+      "name": "TC-BB-032: Listar Reservas (GET /bookings/reservations)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Response ok is true\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.ok).to.be.true;",
+              "});",
+              "pm.test(\"Data is an array with at least 1 item\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.data).to.be.an(\"array\");",
+              "    pm.expect(jsonData.data.length).to.be.at.least(1);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{API_TOKEN}}"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/bookings/reservations",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "bookings",
+            "reservations"
+          ]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ]
+}
