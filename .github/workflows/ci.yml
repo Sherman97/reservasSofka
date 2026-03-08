@@ -12,11 +12,11 @@ concurrency:
 
 jobs:
 
-  # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-  #  PRUEBAS DE COMPONENTE â€” Backend (sin Spring context pesado)
-  # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  # ════════════════════════════════════════════════════════════
+  #  PRUEBAS DE COMPONENTE — Backend (sin Spring context pesado)
+  # ════════════════════════════════════════════════════════════
   component-tests:
-    name: "\U0001F9E9 Component Tests (${{ matrix.service }})"
+    name: "🧩 Component Tests (${{ matrix.service }})"
     runs-on: ubuntu-latest
 
     strategy:
@@ -51,11 +51,11 @@ jobs:
           chmod +x ./gradlew
           ./gradlew --no-daemon componentTest
 
-  # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-  #  PRUEBAS DE INTEGRACIÃ“N â€” Backend (SpringBootTest, DB, etc.)
-  # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  # ════════════════════════════════════════════════════════════
+  #  PRUEBAS DE INTEGRACIÓN — Backend (SpringBootTest, DB, etc.)
+  # ════════════════════════════════════════════════════════════
   integration-tests:
-    name: "\U0001F517 Integration Tests (${{ matrix.service }})"
+    name: "🔗 Integration Tests (${{ matrix.service }})"
     runs-on: ubuntu-latest
 
     strategy:
@@ -90,11 +90,11 @@ jobs:
           chmod +x ./gradlew
           ./gradlew --no-daemon integrationTest
 
-  # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-  #  FRONTEND â€” Lint + Unit Tests
-  # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  # ════════════════════════════════════════════════════════════
+  #  FRONTEND — Lint + Unit Tests
+  # ════════════════════════════════════════════════════════════
   frontend:
-    name: "\U0001F310 Frontend"
+    name: "🌐 Frontend"
     runs-on: ubuntu-latest
 
     defaults:
@@ -111,18 +111,7 @@ jobs:
         with:
           node-version: 20
 
-      - name: Detect frontend
-        run: |
-          echo "Working dir: $(pwd)"
-          if [ ! -f package.json ]; then
-            echo "No package.json in Frontend/. Skipping frontend."
-            echo "SKIP=true" >> $GITHUB_ENV
-          else
-            echo "SKIP=false" >> $GITHUB_ENV
-          fi
-
       - name: Install
-        if: env.SKIP != 'true'
         run: |
           if [ -f package-lock.json ]; then
             npm ci
@@ -131,109 +120,47 @@ jobs:
           fi
 
       - name: Lint
-        if: env.SKIP != 'true'
         run: npm run lint --if-present
 
       - name: Test
-        if: env.SKIP != 'true'
         run: |
           if ! node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts.test ? 0 : 1)"; then
             echo "No test script, skipping"
             exit 0
           fi
-
-          if node -e "const p=require('./package.json'); const t=(p.scripts&&p.scripts.test)||''; process.exit(t.includes('no test specified') ? 0 : 1)"; then
-            echo "Placeholder test script detected (no test specified). Skipping"
-            exit 0
-          fi
-
           npm test
 
-  # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-  #  PRUEBAS DE CAJA NEGRA â€” API (dentro de contenedor Docker)
-  # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  # ════════════════════════════════════════════════════════════
+  #  PRUEBAS DE CAJA NEGRA — API (Postman / Newman)
+  # ════════════════════════════════════════════════════════════
   blackbox-tests:
-    name: "\U0001F4E6 Black-Box Tests (API)"
+    name: "📦 Black-Box Tests (API)"
     runs-on: ubuntu-latest
-    needs: [component-tests, integration-tests]
+    needs: [component-tests, integration-tests, frontend]
     timeout-minutes: 15
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Start backend services
-        run: |
-          docker compose -f docker-compose.prod.yml -f docker-compose.override.yml \
-            up -d --build mariadb rabbitmq database auth-service api-gateway
-
-          echo "Waiting for database migrations..."
-          docker compose -f docker-compose.prod.yml -f docker-compose.override.yml \
-            wait --timeout 120 database || true
-
-          echo "Waiting for auth-service to be healthy..."
-          for i in $(seq 1 90); do
-            if curl -sf http://localhost:3001/health > /dev/null 2>&1; then
-              echo "Auth service is ready after ${i}s"
-              break
-            fi
-            if [ "$i" -eq 90 ]; then
-              echo "Auth service not ready in 90s"
-              docker compose -f docker-compose.prod.yml -f docker-compose.override.yml \
-                logs auth-service api-gateway database
-              exit 1
-            fi
-            sleep 1
-          done
-
-      - name: Run black-box tests inside container
-        run: |
-          docker run --rm \
-            --network $(docker network ls --filter name=backend_network -q | head -1) \
-            -e AUTH_URL=http://auth-service:3001 \
-            -v "${{ github.workspace }}/Backend/tests/blackbox:/tests:ro" \
-            python:3.12-slim \
-            bash -c "apt-get update -qq && apt-get install -y -qq curl > /dev/null 2>&1 && bash /tests/test-user-creation.sh"
-
-      - name: Show service logs on failure
-        if: failure()
-        run: |
-          docker compose -f docker-compose.prod.yml -f docker-compose.override.yml \
-            logs --tail=100
-
-      - name: Tear down
-        if: always()
-        run: |
-          docker compose -f docker-compose.prod.yml -f docker-compose.override.yml \
-            down -v
-
-  # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-  # ------------------------------------------------------------
-  #  PRUEBAS DE CAJA NEGRA — API (Postman / Newman)
-  # ------------------------------------------------------------
-  api-e2e-tests:
-    name: "?? API Tests (Newman)"
-    runs-on: ubuntu-latest
-    needs: [component-tests, integration-tests, frontend]
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Start backend
+      - name: Start services
         run: |
           docker compose -f docker-compose.prod.yml -f docker-compose.override.yml \
             up -d --build
-          echo "Waiting for proxy to be healthy..."
+          echo "Waiting for services to be healthy..."
 
+          # Wait for database migrations
+          docker compose -f docker-compose.prod.yml -f docker-compose.override.yml \
+            wait --timeout 120 database || true
+
+          # Wait for backend through gateway
           for i in $(seq 1 90); do
             if curl -sf http://localhost:3000/auth/login > /dev/null 2>&1 || \
                curl -sf http://localhost:3001/health > /dev/null 2>&1; then
               echo "API is ready after ${i}s"
               break
             fi
-            if [ "" -eq 90 ]; then
+            if [ "$i" -eq 90 ]; then
               echo "API not ready in 90s"
               docker compose -f docker-compose.prod.yml -f docker-compose.override.yml logs api-gateway auth-service bookings-service
               exit 1
@@ -246,11 +173,10 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install Newman
-        run: npm i -g newman
-
       - name: Run Newman Tests
-        run: npx newman run Backend/tests/blackbox/reservas-api.postman_collection.json
+        run: |
+          npm i -g newman
+          newman run Backend/tests/blackbox/reservas-api.postman_collection.json
 
       - name: Tear down
         if: always()
