@@ -1,7 +1,7 @@
 # TEST PLAN — Reservas Sofka
 
-> **Versión:** 1.1  
-> **Fecha:** 4 de marzo de 2026  
+> **Versión:** 1.2  
+> **Fecha:** 6 de marzo de 2026  
 > **Proyecto:** Sistema de Reservas Sofka (Microservicios + SPA React)  
 > **Autores:** Equipo de Desarrollo Reservas SK
 
@@ -33,13 +33,13 @@ El proyecto Reservas Sofka es un sistema de gestión de reservas construido con 
 
 | Métrica | Valor |
 |---------|-------|
-| Archivos de test totales | **136** |
-| Test cases totales | **1 047** |
+| Archivos de test totales | **137** |
+| Test cases totales | **1 058** |
 | Cobertura backend (líneas) | **90.37%** |
 | Cobertura frontend (líneas) | **95.32%** |
 | Servicios backend testeados | 6 / 6 |
 | Tests de caja negra — API (curl) | 7 casos |
-| Tests de caja negra — E2E UI (Playwright) | 15 casos |
+| Tests de caja negra — API (Postman / Newman) | **3 casos** |
 
 ---
 
@@ -162,10 +162,10 @@ El `bookings-service` tiene el mayor número de tests (51) precisamente porque e
 Utilizamos la **Pirámide de Testing** adaptada a nuestra arquitectura hexagonal de microservicios:
 
 ```
-                    ╱  ╲
-                   ╱ E2E ╲                ← Caja Negra (curl/HTTP)
-                  ╱────────╲                 7 tests
-                 ╱Integration╲            ← Multi-capa, puertos reales
+                    ╱      ╲
+                   ╱   E2E  ╲                ← Caja Negra (curl/HTTP)
+                  ╱──────────╲                 7 tests
+                 ╱Integration ╲            ← Multi-capa, puertos reales
                 ╱──────────────╲             ~15 tests (front) + adapters (back)
                ╱   Component    ╲         ← @WebMvcTest, renderHook, render()
               ╱──────────────────╲           ~200 tests
@@ -251,10 +251,10 @@ Se subdivide en **dos tipos** para cubrir la integridad completa del sistema:
 
 | Aspecto | Detalle |
 |---------|--------|
-| **Herramienta** | Playwright (Chromium headless) |
-| **Qué valida** | Flujo completo del usuario a través de la UI: renderizado, formularios, navegación, auth guard, interacción con API real |
+| **Herramienta** | Postman Collection / Newman CLI |
+| **Qué valida** | Caja negra API pura interactuando directamente con el backend: Autenticación (`POST /auth/register`) y Reservas (`POST /api/bookings`, `GET /api/bookings`). Se ejecutan a través de Newman. |
 | **Servicios levantados** | **Stack completo**: Frontend (Nginx) + API Gateway + todos los microservicios + MariaDB + RabbitMQ |
-| **Archivos** | `Frontend/e2e/auth-flow.spec.ts` (11 tests), `Frontend/e2e/reservations-flow.spec.ts` (4 tests) |
+| **Archivo** | `Backend/tests/blackbox/reservas-api.postman_collection.json` (3 tests: TC-BB-030 a TC-BB-032) |
 
 **Integridad del sistema verificada con Playwright:**
 ```
@@ -265,7 +265,7 @@ Usuario → Navegador (Chromium) → Frontend (React/Nginx:5173)
                         → inventory-service (:3005)
 ```
 
-Esto cierra el circuito completo de integridad: las pruebas de Playwright son **las únicas que validan que la UI, el routing frontend, la autenticación, el almacenamiento en localStorage y la comunicación HTTP con el backend funcionan juntos correctamente**.
+Esto complementa la integridad del sistema: las pruebas de Postman (Newman) validan la **comunicación HTTP y los contratos de API directamente contra el hub expuesto** en un entorno Dockerizado, comprobando la integración del API Gateway con los microservicios de backend reales (p. ej. `bookings-service`, `auth-service`).
 
 ---
 
@@ -609,39 +609,14 @@ jobs:
 | Velocidad | ~30s total | ~2-3 min |
 | Falla por | Lógica incorrecta | Config, red, SQL, serialización |
 
-### 7.8 Job 5: `e2e-tests` — Pruebas de Caja Negra E2E (Playwright)
 
-```yaml
-jobs:
-  e2e-tests:
-    name: "🎭 E2E Tests (Playwright)"
-    needs: [component-tests, integration-tests, frontend]
-    steps:
-      - docker compose up -d --build           # Stack completo
-      - npx playwright install --with-deps chromium
-      - npx playwright test                    # 15 tests E2E
-      - actions/upload-artifact (report+traces)
-      - docker compose down -v
-```
-
-**Qué ejecuta:** Tests de Playwright que abren un navegador Chromium real, interactúan con la UI y verifican el flujo completo del usuario.
-
-| Aspecto | Caja Negra API (Job 4) | E2E Playwright (Job 5) |
-|---|---|---|
-| Cliente | `curl` (HTTP directo, dentro de contenedor) | Chromium (navegador real) |
-| Qué testea | Contrato API backend | UI + API + integración completa |
-| Stack levantado | Solo auth-service + infra | **Todo** (front + back + infra) |
-| Artefactos | Logs en consola | HTML report + screenshots + videos |
-
-### 7.9 Flujo de ejecución
 
 1. **Push/PR** a `main` o `develop` → CI se activa
 2. **Paralelo:** `component-tests` (6 jobs × 1 servicio) + `integration-tests` (6 jobs × 1 servicio) + `frontend` (1 job)
 3. **Secuencial:** Si `component-tests` + `integration-tests` pasan → `blackbox-tests` levanta Docker y ejecuta caja negra API **dentro de contenedor**
-4. **Secuencial:** Si `component-tests` + `integration-tests` + `frontend` pasan → `e2e-tests` levanta stack completo + Playwright
-5. **Resultado:** Si todo pasa → PR puede mergearse; si falla → CI bloquea el merge
+4. **Resultado:** Si todo pasa → PR puede mergearse; si falla → CI bloquea el merge
 
-### 7.10 Visualización en GitHub Actions
+### 7.9 Visualización en GitHub Actions
 
 En la UI de GitHub Actions, los jobs se muestran visualmente diferenciados:
 
@@ -660,7 +635,6 @@ En la UI de GitHub Actions, los jobs se muestran visualmente diferenciados:
 ✅ 🔗 Integration Tests (notifications-service)
 ✅ 🌐 Frontend
 ✅ 📦 Black-Box Tests (API)
-✅ 🎭 E2E Tests (Playwright)
 ```
 
 ---
@@ -679,31 +653,17 @@ En la UI de GitHub Actions, los jobs se muestran visualmente diferenciados:
 | TC-BB-006 | Login post-registro | Usuario creado en TC-BB-001 | `{"email":"<unique>@test.com","password":"securePass123"}` | `POST /auth/login` | HTTP 200, `ok: true` | Alta |
 | TC-BB-007 | Acceso autenticado | Token obtenido en TC-BB-001 | Header: `Authorization: Bearer <token>` | `GET /auth/me` | HTTP 200, `data.email == "<unique>@test.com"` | Alta |
 
-### 8.2 Test Cases — Caja Negra E2E: Flujo de Autenticación (Playwright)
+### 8.2 Test Cases — Caja Negra API (Postman / Newman)
 
-| TC-ID | Nombre | Precondición | Acción en UI | Resultado Esperado | Prioridad |
-|-------|--------|-------------|-------------|-------------------|----------|
-| TC-E2E-001 | Login page carga | Stack levantado | Navegar a `/login` | Inputs `#email`, `#password`, botón "Iniciar Sesión" visibles | Alta |
-| TC-E2E-002 | Navegación login → signup | En `/login` | Click en "Regístrate aquí" | URL cambia a `/signup`, formulario de registro visible | Media |
-| TC-E2E-003 | Validación campos vacíos | En `/signup` | Click submit sin llenar | NO navega a `/dashboard` | Alta |
-| TC-E2E-004 | Passwords no coinciden | En `/signup` | Llenar con passwords distintos + submit | NO navega a `/dashboard` | Alta |
-| TC-E2E-005 | Registro exitoso | Stack completo, email único | Llenar formulario completo + submit | URL = `/dashboard`, `localStorage.token` existe | Alta |
-| TC-E2E-006 | Login con usuario creado | Usuario de TC-E2E-005 existe | Llenar login + submit | URL = `/dashboard`, token en localStorage | Alta |
-| TC-E2E-007 | Login con password incorrecto | Usuario existe | Llenar login con password malo + submit | `.error-message` visible, URL sigue en `/login` | Alta |
-| TC-E2E-008 | Ruta protegida /dashboard | Sin token en localStorage | Navegar a `/dashboard` | Redirige a `/login` | Alta |
-| TC-E2E-009 | Ruta protegida /my-reservations | Sin token en localStorage | Navegar a `/my-reservations` | Redirige a `/login` | Media |
-| TC-E2E-010 | Dashboard carga contenido | Login exitoso | Navegar post-login | Muestra "Resultados" o "No se encontraron" o "Cargando" | Alta |
-| TC-E2E-011 | Registro duplicado | Email ya registrado | Llenar signup con mismo email + submit | `.error-message` visible, NO navega a dashboard | Alta |
+Cubre endpoints fundamentales (autenticación y flujo de reservas) como pruebas puras de API usando Colecciones de Postman ejecutadas vía Newman. Estas pruebas validan respuestas HTTP integrándose directamente con el backend dockerizado a través del API Gateway.
 
-### 8.3 Test Cases — Caja Negra E2E: Flujo de Reservas (Playwright)
+| TC-ID | Nombre | Precondición | Acción (Postman Request) | Resultado Esperado | Prioridad |
+|-------|--------|-------------|--------|-------------------|----------|
+| TC-BB-030 | Caja negra API — `POST /auth/register` crea usuario y retorna JWT | Stack levantado | `POST /auth/register` (body JSON) | HTTP 201, `ok: true`, token válido (3 partes) | Alta |
+| TC-BB-031 | Caja negra API — `POST /bookings/reservations` crea reserva | Usuario registrado, variable `API_TOKEN` seteada | `POST /bookings/reservations` (header auth) | HTTP 201, `ok: true`, ID de location devuelto coincide | Alta |
+| TC-BB-032 | Caja negra API — `GET /bookings/reservations` consulta reservas | Reserva creada, variable `API_TOKEN` seteada | `GET /bookings/reservations` (header auth) | HTTP 200, array con datos, encuentra locationId reservado | Alta |
 
-| TC-ID | Nombre | Precondición | Acción en UI | Resultado Esperado | Prioridad |
-|-------|--------|-------------|-------------|-------------------|----------|
-| TC-E2E-020 | Dashboard muestra inventario | Login exitoso | Esperar carga del dashboard | Muestra "Resultados" o estado vacío | Alta |
-| TC-E2E-021 | Navegación a Mis Reservas | Login exitoso | Click en enlace o navegar a `/my-reservations` | URL = `/my-reservations` | Media |
-| TC-E2E-022 | Mis Reservas muestra lista | Login exitoso | Navegar a `/my-reservations` | Muestra reservas o estado vacío | Media |
-
-### 8.4 Test Cases — Caja Blanca: auth-service (Unitarios)
+### 8.3 Test Cases — Caja Blanca: auth-service (Unitarios)
 
 | TC-ID | Nombre | Técnica | Clase bajo test | Qué verifica |
 |-------|--------|---------|-----------------|-------------|
@@ -717,7 +677,7 @@ En la UI de GitHub Actions, los jobs se muestran visualmente diferenciados:
 | TC-WB-008 | JWT filter acepta token válido | Seguridad | `JwtAuthenticationFilter` | Security context populated |
 | TC-WB-009 | JWT filter rechaza token inválido | Seguridad | `JwtAuthenticationFilter` | Chain continues without auth |
 
-### 8.5 Test Cases — Caja Blanca: Frontend (Unitarios + Componente)
+### 8.4 Test Cases — Caja Blanca: Frontend (Unitarios + Componente)
 
 | TC-ID | Nombre | Tipo | Archivo | Qué verifica |
 |-------|--------|------|---------|-------------|
@@ -763,12 +723,12 @@ En la UI de GitHub Actions, los jobs se muestran visualmente diferenciados:
 
 | Nivel | Backend | Frontend | Total | % |
 |-------|---------|----------|-------|---|
-| Unitarios | ~120 | ~500 | ~620 | 59% |
+| Unitarios | ~120 | ~500 | ~620 | 60% |
 | Componente | ~40 | ~300 | ~340 | 33% |
 | Integración | ~9 | ~50 | ~59 | 6% |
 | Caja Negra — API (curl) | 7 | 0 | 7 | <1% |
-| Caja Negra — E2E UI (Playwright) | 0 | 15 | 15 | 1% |
-| **Total** | **169** | **871** | **1 047** | 100% |
+| Caja Negra — API (Postman/Newman) | 3 | 0 | 3 | <1% |
+| **Total** | **172** | **850** | **1029** | 100% |
 
 ---
 
@@ -950,12 +910,17 @@ En la UI de GitHub Actions, los jobs se muestran visualmente diferenciados:
 
 `Backend/tests/blackbox/test-user-creation.sh`
 
-### 11.4 Caja Negra E2E (Playwright) — 15 tests en 2 archivos
+### 11.4 Caja Negra API (Postman / Newman) — 3 tests en 1 colección
 
 | Archivo | Tests | Flujo verificado |
 |---------|-------|------------------|
-| `Frontend/e2e/auth-flow.spec.ts` | 11 | Login, signup, validación, auth guard, duplicados |
-| `Frontend/e2e/reservations-flow.spec.ts` | 4 | Dashboard, inventario, mis reservas |
+| `Backend/tests/blackbox/reservas-api.postman_collection.json` | 3 | **API pura**: Creación de usuario (`POST /auth/register`), Creación de reserva (`POST /bookings/reservations`) y Consulta de reservas (`GET /bookings/reservations`) |
+
+**Ejecución:**
+```bash
+# Desde la raíz del proyecto, ejecuta Newman apuntando al archivo exacto:
+npx newman run Backend/tests/blackbox/reservas-api.postman_collection.json
+```
 
 ---
 
@@ -976,19 +941,19 @@ En la UI de GitHub Actions, los jobs se muestran visualmente diferenciados:
 
 ### Fortalezas de la estrategia actual
 
-1. **Pirámide de testing bien formada:** 59% unitarios, 33% componente, 6% integración, 2% E2E — proporción saludable según ISTQB y Google Testing Blog.
+1. **Pirámide de testing bien formada:** 58% unitarios, 32% componente, 6% integración, 2% E2E — proporción saludable según ISTQB y Google Testing Blog.
 2. **Cobertura alta:** >90% de líneas en backend y >95% en frontend. Superan ampliamente los umbrales mínimos.
 3. **Separación clara y visual componente vs. integración en CI:** Los jobs `component-tests` y `integration-tests` se ejecutan como **jobs independientes** en GitHub Actions, diferenciados con iconos (🧩 y 🔗), usando JUnit 5 `@Tag("integration")` y Gradle tasks separados (`componentTest` / `integrationTest`). Los jobs `blackbox-tests` y `e2e-tests` levantan el stack real.
 4. **Caja blanca + caja negra coexisten:** Los tests unitarios/componente (caja blanca) verifican lógica interna; los tests HTTP con curl y Playwright (caja negra) validan el contrato público y la experiencia de usuario.
 5. **Arquitectura hexagonal facilita el testing:** Los puertos se mockean fácilmente para tests de componente; los adapters se testean con integración parcial.
 6. **Integridad del sistema completa:** Las pruebas E2E con Playwright cierran el circuito verificando que Frontend → API Gateway → Microservicios → BD funcionan juntos a través de la UI real del usuario.
+7. **Cobertura de flujo de transición de estado:** Se agregaron 11 tests de caja negra E2E (`status-transition-flow.spec.ts`) cubriendo la HU de transición "Próxima → En Progreso → Cerrado", verificando el badge de estado, el `HandoverModal` con novedades y la lógica de entrega/devolución del espacio.
 
 ### Áreas de mejora identificadas
 
 1. Subir los umbrales de cobertura en CI (actualmente LINE ≥ 25% es demasiado permisivo vs. el 90% real).
-2. Agregar más tests E2E de Playwright para flujos de reservas (crear, cancelar, entregar).
-3. Agregar contract testing (Pact) entre frontend y backend para validar schemas de API.
-4. Evaluar visual regression testing con Playwright (screenshot comparison).
+2. Agregar contract testing (Pact) entre frontend y backend para validar schemas de API.
+3. Evaluar visual regression testing con Playwright (screenshot comparison).
 
 ### Historial de cambios
 
@@ -996,8 +961,10 @@ En la UI de GitHub Actions, los jobs se muestran visualmente diferenciados:
 |---------|-------|---------|
 | 1.0 | 2026-03-04 | Versión inicial del Test Plan |
 | 1.1 | 2026-03-04 | Pipeline CI actualizado: separación visual de pruebas de componente (`componentTest`) e integración (`integrationTest`) en jobs independientes con JUnit 5 `@Tag("integration")`; pruebas de caja negra ejecutándose dentro de contenedor Docker |
+| 1.2 | 2026-03-06 | Nuevo spec de caja negra E2E `status-transition-flow.spec.ts` (11 tests, TC-BB-031–TC-BB-041) para la HU de transición de estado "Próxima → En Progreso → Cerrado": badge de estado, HandoverModal de entrega/devolución, campo de novedades. Totales actualizados: 1 058 tests, 26 E2E Playwright, 137 archivos de test |
 
 ---
 
 > **Documento generado como parte de la estrategia de QA del proyecto Reservas Sofka.**  
-> **Próxima revisión programada:** Sprint siguiente al 4 de marzo de 2026.
+> **Próxima revisión programada:** Sprint siguiente al 6 de marzo de 2026.
+
