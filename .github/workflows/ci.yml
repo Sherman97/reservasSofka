@@ -151,23 +151,45 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Run Trivy FS Scan
+      - name: Generate Trivy SARIF
         uses: aquasecurity/trivy-action@0.28.0
         with:
           scan-type: fs
           scan-ref: ${{ matrix.path }}
           format: sarif
-          output: trivy-${{ matrix.target }}.sarif
+          output: ${{ runner.temp }}/trivy-${{ matrix.target }}.sarif
+          severity: HIGH,CRITICAL
+          exit-code: "0"
+          ignore-unfixed: true
+
+      - name: Check SARIF file
+        id: sarif
+        shell: bash
+        run: |
+          SARIF_PATH="${{ runner.temp }}/trivy-${{ matrix.target }}.sarif"
+          if [ -f "$SARIF_PATH" ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "SARIF file not found: $SARIF_PATH"
+          fi
+
+      - name: Upload SARIF
+        if: always() && steps.sarif.outputs.exists == 'true'
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ${{ runner.temp }}/trivy-${{ matrix.target }}.sarif
+          category: trivy-${{ matrix.target }}
+
+      - name: Enforce vulnerability policy
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: ${{ matrix.path }}
+          format: table
           severity: HIGH,CRITICAL
           exit-code: "1"
           ignore-unfixed: true
-
-      - name: Upload SARIF
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: trivy-${{ matrix.target }}.sarif
-          category: trivy-${{ matrix.target }}
 
   blackbox-tests:
     name: "Black-Box Tests (API)"
