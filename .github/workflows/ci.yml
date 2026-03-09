@@ -152,7 +152,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Generate Trivy SARIF
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@master
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         with:
           scan-type: fs
           scan-ref: ${{ matrix.path }}
@@ -182,7 +184,9 @@ jobs:
           category: trivy-${{ matrix.target }}
 
       - name: Enforce vulnerability policy
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@master
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         with:
           scan-type: fs
           scan-ref: ${{ matrix.path }}
