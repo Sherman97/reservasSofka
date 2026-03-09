@@ -17,6 +17,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class RabbitLocationEventPublisherAdapterTest {
+    private static final String EXCHANGE = "reservas.events";
 
     private RabbitTemplate rabbitTemplate;
     private RabbitLocationEventPublisherAdapter adapter;
@@ -26,7 +27,7 @@ class RabbitLocationEventPublisherAdapterTest {
         rabbitTemplate = mock(RabbitTemplate.class);
 
         RabbitProperties properties = new RabbitProperties();
-        properties.setExchange("reservas.events");
+        properties.setExchange(EXCHANGE);
         properties.setCityCreatedRoutingKey("locations.city.created");
         properties.setCityUpdatedRoutingKey("locations.city.updated");
         properties.setCityDeletedRoutingKey("locations.city.deleted");
@@ -38,26 +39,35 @@ class RabbitLocationEventPublisherAdapterTest {
     }
 
     @Test
-    void publishesAllLocationEventsWithConfiguredRoutingKeys() {
+    void publishesCityEventsWithConfiguredRoutingKeys() {
         CityCreatedEvent cityCreated = new CityCreatedEvent(1L, "Bogota", "Colombia", Instant.now());
         CityUpdatedEvent cityUpdated = new CityUpdatedEvent(1L, "Bogota D.C.", "Colombia", Instant.now());
         CityDeletedEvent cityDeleted = new CityDeletedEvent(1L, Instant.now());
-        SpaceCreatedEvent spaceCreated = new SpaceCreatedEvent(10L, 1L, "Sala A", true, Instant.now());
-        SpaceUpdatedEvent spaceUpdated = new SpaceUpdatedEvent(10L, 1L, "Sala B", false, Instant.now());
-        SpaceDeletedEvent spaceDeleted = new SpaceDeletedEvent(10L, 1L, Instant.now());
 
         adapter.publishCityCreated(cityCreated);
         adapter.publishCityUpdated(cityUpdated);
         adapter.publishCityDeleted(cityDeleted);
+
+        verify(rabbitTemplate).convertAndSend(EXCHANGE, "locations.city.created", cityCreated);
+        verify(rabbitTemplate).convertAndSend(EXCHANGE, "locations.city.updated", cityUpdated);
+        verify(rabbitTemplate).convertAndSend(EXCHANGE, "locations.city.deleted", cityDeleted);
+    }
+
+    @Test
+    void publishesSpaceEventsWithConfiguredRoutingKeys() {
+        SpaceCreatedEvent spaceCreated = new SpaceCreatedEvent(10L, 1L, "Sala A", true, Instant.now());
+        SpaceUpdatedEvent spaceUpdated = new SpaceUpdatedEvent(10L, 1L, "Sala B", false, Instant.now());
+        SpaceDeletedEvent spaceDeleted = new SpaceDeletedEvent(10L, 1L, Instant.now());
+
         adapter.publishSpaceCreated(spaceCreated);
         adapter.publishSpaceUpdated(spaceUpdated);
         adapter.publishSpaceDeleted(spaceDeleted);
 
-        verify(rabbitTemplate).convertAndSend("reservas.events", "locations.city.created", cityCreated);
-        verify(rabbitTemplate).convertAndSend("reservas.events", "locations.city.updated", cityUpdated);
-        verify(rabbitTemplate).convertAndSend("reservas.events", "locations.city.deleted", cityDeleted);
-        verify(rabbitTemplate).convertAndSend("reservas.events", "locations.space.created", spaceCreated);
-        verify(rabbitTemplate).convertAndSend("reservas.events", "locations.space.updated", spaceUpdated);
-        verify(rabbitTemplate).convertAndSend("reservas.events", "locations.space.deleted", spaceDeleted);
+        verify(rabbitTemplate).convertAndSend(EXCHANGE, "locations.space.created", spaceCreated);
+        verify(rabbitTemplate).convertAndSend(EXCHANGE, "locations.space.updated", spaceUpdated);
+        verify(rabbitTemplate).convertAndSend(EXCHANGE, "locations.space.deleted", spaceDeleted);
     }
 }
+
+
+

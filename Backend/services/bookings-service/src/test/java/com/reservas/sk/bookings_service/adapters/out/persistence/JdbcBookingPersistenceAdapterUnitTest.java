@@ -17,13 +17,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class JdbcBookingPersistenceAdapterUnitTest {
+    private static final String ASSERT_MSG = "PMD UnitTestAssertionsShouldIncludeMessage";
 
     private JdbcTemplate jdbcTemplate;
     private JdbcBookingPersistenceAdapter adapter;
@@ -39,7 +40,7 @@ class JdbcBookingPersistenceAdapterUnitTest {
         when(jdbcTemplate.query(anyString(), org.mockito.ArgumentMatchers.<RowMapper<Integer>>any(), eq(5L)))
                 .thenReturn(List.of(5));
 
-        assertTrue(adapter.userExists(5L));
+        assertTrue(adapter.userExists(5L), ASSERT_MSG);
     }
 
     @Test
@@ -47,7 +48,7 @@ class JdbcBookingPersistenceAdapterUnitTest {
         when(jdbcTemplate.query(anyString(), org.mockito.ArgumentMatchers.<RowMapper<Integer>>any(), eq(5L)))
                 .thenReturn(List.of());
 
-        assertFalse(adapter.userExists(5L));
+        assertFalse(adapter.userExists(5L), ASSERT_MSG);
     }
 
     @Test
@@ -57,19 +58,21 @@ class JdbcBookingPersistenceAdapterUnitTest {
 
         Optional<Long> found = adapter.findSpaceCityId(9L);
 
-        assertTrue(found.isPresent());
-        assertEquals(12L, found.get());
+        assertTrue(found.isPresent(), ASSERT_MSG);
+        assertEquals(12L, found.get(), ASSERT_MSG);
 
         when(jdbcTemplate.query(anyString(), org.mockito.ArgumentMatchers.<RowMapper<Long>>any(), eq(10L)))
                 .thenReturn(List.of());
-        assertTrue(adapter.findSpaceCityId(10L).isEmpty());
+        assertTrue(adapter.findSpaceCityId(10L).isEmpty(), ASSERT_MSG);
     }
 
     @Test
     void equipmentLookupMethods_returnEmptyWithoutQueryWhenIdsMissing() {
-        assertTrue(adapter.findExistingEquipmentIds(List.of()).isEmpty());
-        assertTrue(adapter.findUnavailableEquipmentIds(null).isEmpty());
-        assertTrue(adapter.findEquipmentIdsOutsideCity(List.of(), 1L).isEmpty());
+        assertTrue(adapter.findExistingEquipmentIds(List.of()).isEmpty(), ASSERT_MSG);
+        assertTrue(adapter.findExistingEquipmentIds(null).isEmpty(), ASSERT_MSG);
+        assertTrue(adapter.findUnavailableEquipmentIds(null).isEmpty(), ASSERT_MSG);
+        assertTrue(adapter.findEquipmentIdsOutsideCity(null, 1L).isEmpty(), ASSERT_MSG);
+        assertTrue(adapter.findEquipmentIdsOutsideCity(List.of(), 1L).isEmpty(), ASSERT_MSG);
     }
 
     @Test
@@ -79,20 +82,33 @@ class JdbcBookingPersistenceAdapterUnitTest {
         boolean acquired = adapter.acquireSpaceReservationLock(44L, 5);
         adapter.releaseSpaceReservationLock(44L);
 
-        assertTrue(acquired);
+        assertTrue(acquired, ASSERT_MSG);
 
         ArgumentCaptor<String> lockNameCaptor = ArgumentCaptor.forClass(String.class);
         verify(jdbcTemplate).queryForObject(eq("SELECT RELEASE_LOCK(?)"), eq(Integer.class), lockNameCaptor.capture());
-        assertEquals("bookings:space:44", lockNameCaptor.getValue());
+        assertEquals("bookings:space:44", lockNameCaptor.getValue(), ASSERT_MSG);
     }
 
     @Test
     void acquireLock_returnsFalseForNullOrZero() {
         when(jdbcTemplate.queryForObject(anyString(), eq(Integer.class), anyString(), anyInt())).thenReturn(null);
-        assertFalse(adapter.acquireSpaceReservationLock(1L, 1));
+        assertFalse(adapter.acquireSpaceReservationLock(1L, 1), ASSERT_MSG);
 
         when(jdbcTemplate.queryForObject(anyString(), eq(Integer.class), anyString(), anyInt())).thenReturn(0);
-        assertFalse(adapter.acquireSpaceReservationLock(1L, 1));
+        assertFalse(adapter.acquireSpaceReservationLock(1L, 1), ASSERT_MSG);
+    }
+
+    @Test
+    void countOverlappingReservations_returnsZeroWhenQueryReturnsNull() {
+        when(jdbcTemplate.queryForObject(anyString(), eq(Integer.class), anyLong(), any(), any())).thenReturn(null);
+
+        int result = adapter.countOverlappingReservations(
+                1L,
+                Instant.parse("2026-03-01T10:00:00Z"),
+                Instant.parse("2026-03-01T11:00:00Z")
+        );
+
+        assertEquals(0, result, ASSERT_MSG);
     }
 
     @Test
@@ -103,7 +119,12 @@ class JdbcBookingPersistenceAdapterUnitTest {
         adapter.markReservationEquipmentsReturned(1L, 2L, Instant.parse("2026-03-01T10:10:00Z"), "ok");
         adapter.insertReservationHandoverLog(1L, 2L, 3L, 4L, "DELIVERED", "ok", Instant.parse("2026-03-01T10:20:00Z"));
 
-        verify(jdbcTemplate).update(eq("UPDATE reservations SET status = ?, cancellation_reason = ? WHERE id = ?"), eq("cancelled"), eq("motivo"), eq(1L));
+        verify(jdbcTemplate).update(
+                eq("UPDATE reservations SET status = ?, cancellation_reason = ? WHERE id = ?"),
+                eq("cancelled"),
+                eq("motivo"),
+                eq(1L)
+        );
         verify(jdbcTemplate).update(eq("UPDATE reservations SET status = ? WHERE id = ?"), eq("completed"), eq(1L));
         verify(jdbcTemplate).update(
                 org.mockito.ArgumentMatchers.contains("SET status = 'delivered'"),
@@ -124,6 +145,41 @@ class JdbcBookingPersistenceAdapterUnitTest {
 
     @Test
     void findReservationEquipmentsByReservationIds_emptyInputReturnsEmptyMap() {
-        assertTrue(adapter.findReservationEquipmentsByReservationIds(List.of()).isEmpty());
+        assertTrue(adapter.findReservationEquipmentsByReservationIds(List.of()).isEmpty(), ASSERT_MSG);
+    }
+
+    @Test
+    void findReservationById_returnsEmptyWhenQueryReturnsNoRows() {
+        when(jdbcTemplate.query(anyString(), org.mockito.ArgumentMatchers.<RowMapper<Object>>any(), eq(999L)))
+                .thenReturn(List.of());
+
+        assertTrue(adapter.findReservationById(999L).isEmpty(), ASSERT_MSG);
+    }
+
+    @Test
+    void listReservations_withSpaceFilterAndBlankStatus_usesOnlySpaceWhereClause() {
+        when(jdbcTemplate.query(anyString(), org.mockito.ArgumentMatchers.<RowMapper<Object>>any(), eq(7L)))
+                .thenReturn(List.of());
+
+        adapter.listReservations(null, 7L, "   ");
+
+        verify(jdbcTemplate).query(
+                contains("space_id = ?"),
+                org.mockito.ArgumentMatchers.<RowMapper<Object>>any(),
+                eq(7L)
+        );
+    }
+
+    @Test
+    void listReservations_withoutFilters_doesNotIncludeWhereClause() {
+        when(jdbcTemplate.query(
+                anyString(),
+                org.mockito.ArgumentMatchers.<RowMapper<Object>>any(),
+                org.mockito.ArgumentMatchers.<Object[]>any())
+        )
+                .thenReturn(List.of());
+
+        assertTrue(adapter.listReservations(null, null, "   ").isEmpty(), ASSERT_MSG);
     }
 }
+

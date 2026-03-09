@@ -6,12 +6,17 @@ import com.reservas.sk.bookings_service.application.usecase.ReservationCreatedEv
 import com.reservas.sk.bookings_service.application.usecase.ReservationDeliveredEvent;
 import com.reservas.sk.bookings_service.application.usecase.ReservationReturnedEvent;
 import com.reservas.sk.bookings_service.infrastructure.config.RabbitProperties;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Component
 @ConditionalOnProperty(prefix = "app.rabbit", name = "enabled", havingValue = "true")
+@SuppressFBWarnings(
+        value = "EI_EXPOSE_REP2",
+        justification = "Spring-managed dependencies are injected and not defensively copied."
+)
 public class RabbitReservationEventPublisherAdapter implements ReservationEventPublisherPort {
     private final RabbitTemplate rabbitTemplate;
     private final RabbitProperties rabbitProperties;

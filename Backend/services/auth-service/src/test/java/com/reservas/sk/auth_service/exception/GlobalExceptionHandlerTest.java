@@ -15,6 +15,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class GlobalExceptionHandlerTest {
+    private static final String ASSERT_MSG = "PMD UnitTestAssertionsShouldIncludeMessage";
 
     private final GlobalExceptionHandler handler = new GlobalExceptionHandler();
 
@@ -22,8 +23,18 @@ class GlobalExceptionHandlerTest {
     void handlesApiException_withFallbackCode() {
         ApiException ex = new ApiException(HttpStatus.CONFLICT, "error", " ");
         var response = handler.handleApiException(ex);
-        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
-        assertEquals("BUSINESS_ERROR", response.getBody().errorCode());
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode(), ASSERT_MSG);
+        assertEquals("BUSINESS_ERROR", response.getBody().errorCode(), ASSERT_MSG);
+    }
+
+    @Test
+    void handlesApiException_withProvidedCode() {
+        ApiException ex = new ApiException(HttpStatus.BAD_REQUEST, "error", "CUSTOM_CODE");
+
+        var response = handler.handleApiException(ex);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode(), ASSERT_MSG);
+        assertEquals("CUSTOM_CODE", response.getBody().errorCode(), ASSERT_MSG);
     }
 
     @Test
@@ -34,23 +45,47 @@ class GlobalExceptionHandlerTest {
         when(bindingResult.getFieldErrors()).thenReturn(List.of(new FieldError("obj", "name", "name requerido")));
 
         var validation = handler.handleValidation(validationEx);
-        assertEquals(HttpStatus.BAD_REQUEST, validation.getStatusCode());
-        assertEquals("VALIDATION_ERROR", validation.getBody().errorCode());
+        assertEquals(HttpStatus.BAD_REQUEST, validation.getStatusCode(), ASSERT_MSG);
+        assertEquals("VALIDATION_ERROR", validation.getBody().errorCode(), ASSERT_MSG);
 
         var missing = handler.handleMissingParam(new MissingServletRequestParameterException("id", "Long"));
-        assertEquals("MISSING_PARAMETER", missing.getBody().errorCode());
+        assertEquals("MISSING_PARAMETER", missing.getBody().errorCode(), ASSERT_MSG);
 
-        var mismatch = handler.handleTypeMismatch(new MethodArgumentTypeMismatchException("x", Long.class, "id", null, new IllegalArgumentException()));
-        assertEquals("INVALID_PARAMETER_TYPE", mismatch.getBody().errorCode());
+        MethodArgumentTypeMismatchException mismatchException =
+                new MethodArgumentTypeMismatchException(
+                        "x",
+                        Long.class,
+                        "id",
+                        null,
+                        new IllegalArgumentException()
+                );
+        var mismatch = handler.handleTypeMismatch(mismatchException);
+        assertEquals("INVALID_PARAMETER_TYPE", mismatch.getBody().errorCode(), ASSERT_MSG);
 
-        var invalidBody = handler.handleInvalidBody(new org.springframework.http.converter.HttpMessageNotReadableException("bad json"));
-        assertEquals("INVALID_JSON", invalidBody.getBody().errorCode());
+        org.springframework.http.converter.HttpMessageNotReadableException invalidJsonException =
+                new org.springframework.http.converter.HttpMessageNotReadableException("bad json");
+        var invalidBody = handler.handleInvalidBody(invalidJsonException);
+        assertEquals("INVALID_JSON", invalidBody.getBody().errorCode(), ASSERT_MSG);
     }
 
     @Test
     void handlesUnexpectedException() {
         var response = handler.handleUnexpected(new RuntimeException("boom"));
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("INTERNAL_ERROR", response.getBody().errorCode());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode(), ASSERT_MSG);
+        assertEquals("INTERNAL_ERROR", response.getBody().errorCode(), ASSERT_MSG);
+    }
+
+    @Test
+    void handlesValidation_withoutFieldError_usesDefaultMessage() {
+        MethodArgumentNotValidException validationEx = mock(MethodArgumentNotValidException.class);
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(validationEx.getBindingResult()).thenReturn(bindingResult);
+        when(bindingResult.getFieldErrors()).thenReturn(List.of());
+
+        var response = handler.handleValidation(validationEx);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode(), ASSERT_MSG);
+        assertEquals("Datos invalidos", response.getBody().message(), ASSERT_MSG);
     }
 }
+

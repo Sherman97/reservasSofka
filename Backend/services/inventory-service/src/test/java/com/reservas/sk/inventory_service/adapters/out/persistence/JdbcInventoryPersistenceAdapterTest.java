@@ -16,6 +16,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Tag("integration")
 @JdbcTest
 class JdbcInventoryPersistenceAdapterTest {
+    private static final String EQUIPMENT_NAME = "Laptop";
+    private static final String SERIAL = "SN-11";
+    private static final String BARCODE = "BAR-11";
+    private static final String STATUS_AVAILABLE = "available";
+    private static final String STATUS_MAINTENANCE = "maintenance";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -66,11 +71,11 @@ class JdbcInventoryPersistenceAdapterTest {
     void insertAndFindByIdPersistEquipmentData() {
         long id = adapter.insertEquipment(
                 1L,
-                "Laptop",
-                "SN-11",
-                "BAR-11",
+                EQUIPMENT_NAME,
+                SERIAL,
+                BARCODE,
                 "Lenovo",
-                "available",
+                STATUS_AVAILABLE,
                 "Operativo",
                 null
         );
@@ -79,28 +84,28 @@ class JdbcInventoryPersistenceAdapterTest {
 
         assertThat(found).isPresent();
         assertThat(found.get().getCityId()).isEqualTo(1L);
-        assertThat(found.get().getName()).isEqualTo("Laptop");
-        assertThat(found.get().getStatus()).isEqualTo("available");
+        assertThat(found.get().getName()).isEqualTo(EQUIPMENT_NAME);
+        assertThat(found.get().getStatus()).isEqualTo(STATUS_AVAILABLE);
     }
 
     @Test
     void listEquipmentsAppliesCityAndStatusFilters() {
-        adapter.insertEquipment(1L, "Projector", null, null, null, "available", null, null);
-        adapter.insertEquipment(1L, "Speaker", null, null, null, "maintenance", null, null);
-        adapter.insertEquipment(2L, "Tablet", null, null, null, "available", null, null);
+        adapter.insertEquipment(1L, "Projector", null, null, null, STATUS_AVAILABLE, null, null);
+        adapter.insertEquipment(1L, "Speaker", null, null, null, STATUS_MAINTENANCE, null, null);
+        adapter.insertEquipment(2L, "Tablet", null, null, null, STATUS_AVAILABLE, null, null);
 
-        List<Equipment> filtered = adapter.listEquipments(1L, "available");
+        List<Equipment> filtered = adapter.listEquipments(1L, STATUS_AVAILABLE);
 
         assertThat(filtered).hasSize(1);
         assertThat(filtered.get(0).getCityId()).isEqualTo(1L);
-        assertThat(filtered.get(0).getStatus()).isEqualTo("available");
+        assertThat(filtered.get(0).getStatus()).isEqualTo(STATUS_AVAILABLE);
         assertThat(filtered.get(0).getName()).isEqualTo("Projector");
     }
 
     @Test
     void listEquipmentsWithoutFiltersReturnsAll() {
-        adapter.insertEquipment(1L, "Mic", null, null, null, "available", null, null);
-        adapter.insertEquipment(2L, "Camera", null, null, null, "maintenance", null, null);
+        adapter.insertEquipment(1L, "Mic", null, null, null, STATUS_AVAILABLE, null, null);
+        adapter.insertEquipment(2L, "Camera", null, null, null, STATUS_MAINTENANCE, null, null);
 
         List<Equipment> all = adapter.listEquipments(null, null);
 
@@ -109,31 +114,31 @@ class JdbcInventoryPersistenceAdapterTest {
 
     @Test
     void updateEquipmentUpdatesOnlyProvidedFields() {
-        long id = adapter.insertEquipment(1L, "Laptop", "SN-11", "BAR-11", "Lenovo", "available", "n1", "img1");
+        long id = adapter.insertEquipment(1L, EQUIPMENT_NAME, SERIAL, BARCODE, "Lenovo", STATUS_AVAILABLE, "n1", "img1");
 
-        adapter.updateEquipment(id, "Laptop Pro", null, null, null, "maintenance", null, null);
+        adapter.updateEquipment(id, "Laptop Pro", null, null, null, STATUS_MAINTENANCE, null, null);
 
         Equipment updated = adapter.findEquipmentById(id).orElseThrow();
         assertThat(updated.getName()).isEqualTo("Laptop Pro");
-        assertThat(updated.getStatus()).isEqualTo("maintenance");
-        assertThat(updated.getSerial()).isEqualTo("SN-11");
-        assertThat(updated.getBarcode()).isEqualTo("BAR-11");
+        assertThat(updated.getStatus()).isEqualTo(STATUS_MAINTENANCE);
+        assertThat(updated.getSerial()).isEqualTo(SERIAL);
+        assertThat(updated.getBarcode()).isEqualTo(BARCODE);
     }
 
     @Test
     void updateEquipmentWithNoFieldsDoesNothing() {
-        long id = adapter.insertEquipment(1L, "Laptop", "SN-11", "BAR-11", "Lenovo", "available", "n1", "img1");
+        long id = adapter.insertEquipment(1L, EQUIPMENT_NAME, SERIAL, BARCODE, "Lenovo", STATUS_AVAILABLE, "n1", "img1");
 
         adapter.updateEquipment(id, null, null, null, null, null, null, null);
 
         Equipment same = adapter.findEquipmentById(id).orElseThrow();
-        assertThat(same.getName()).isEqualTo("Laptop");
-        assertThat(same.getStatus()).isEqualTo("available");
+        assertThat(same.getName()).isEqualTo(EQUIPMENT_NAME);
+        assertThat(same.getStatus()).isEqualTo(STATUS_AVAILABLE);
     }
 
     @Test
     void deleteEquipmentRemovesRowAndReturnsAffected() {
-        long id = adapter.insertEquipment(1L, "Tablet", null, null, null, "available", null, null);
+        long id = adapter.insertEquipment(1L, "Tablet", null, null, null, STATUS_AVAILABLE, null, null);
 
         int affected = adapter.deleteEquipment(id);
         Optional<Equipment> missing = adapter.findEquipmentById(id);
@@ -142,3 +147,4 @@ class JdbcInventoryPersistenceAdapterTest {
         assertThat(missing).isEmpty();
     }
 }
+

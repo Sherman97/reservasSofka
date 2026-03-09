@@ -3,13 +3,12 @@ package com.reservas.sk.bookings_service.adapters.out.persistence;
 import com.reservas.sk.bookings_service.application.port.out.BookingPersistencePort;
 import com.reservas.sk.bookings_service.domain.model.Reservation;
 import com.reservas.sk.bookings_service.domain.model.ReservationEquipment;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -20,15 +19,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
+@SuppressFBWarnings(
+        value = "EI_EXPOSE_REP2",
+        justification = "Spring-managed dependencies are injected and not defensively copied."
+)
 public class JdbcBookingPersistenceAdapter implements BookingPersistencePort {
     private static final String ACTIVE_RESERVATION_FILTER = "status IN ('pending','confirmed','in_progress')";
+    private static final String STATUS_AVAILABLE = "available";
+    private static final String COLUMN_STATUS = "status";
+    private static final String COLUMN_DELIVERED_BY = "delivered_by";
+    private static final String COLUMN_RETURNED_BY = "returned_by";
+    private static final String SQL_CLOSE_IN_CLAUSE = ")\n";
+    private static final int RESERVATION_QUERY_CAPACITY = 256;
 
     private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert reservationInsert;
 
     public JdbcBookingPersistenceAdapter(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        this.reservationInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("reservations")
+                .usingGeneratedKeyColumns("id");
     }
 
     @Override
@@ -77,12 +91,11 @@ public class JdbcBookingPersistenceAdapter implements BookingPersistencePort {
         }
 
         String placeholders = String.join(",", Collections.nCopies(equipmentIds.size(), "?"));
+        String sql = "SELECT id\n"
+                + "FROM equipments\n"
+                + "WHERE id IN (" + placeholders + SQL_CLOSE_IN_CLAUSE;
         return jdbcTemplate.query(
-                """
-                SELECT id
-                FROM equipments
-                WHERE id IN (%s)
-                """.formatted(placeholders),
+                sql,
                 (rs, rowNum) -> rs.getLong("id"),
                 equipmentIds.toArray()
         );
@@ -95,13 +108,12 @@ public class JdbcBookingPersistenceAdapter implements BookingPersistencePort {
         }
 
         String placeholders = String.join(",", Collections.nCopies(equipmentIds.size(), "?"));
+        String sql = "SELECT id\n"
+                + "FROM equipments\n"
+                + "WHERE id IN (" + placeholders + SQL_CLOSE_IN_CLAUSE
+                + "  AND status <> '" + STATUS_AVAILABLE + "'\n";
         return jdbcTemplate.query(
-                """
-                SELECT id
-                FROM equipments
-                WHERE id IN (%s)
-                  AND status <> 'available'
-                """.formatted(placeholders),
+                sql,
                 (rs, rowNum) -> rs.getLong("id"),
                 equipmentIds.toArray()
         );
@@ -116,14 +128,13 @@ public class JdbcBookingPersistenceAdapter implements BookingPersistencePort {
         String placeholders = String.join(",", Collections.nCopies(equipmentIds.size(), "?"));
         List<Object> params = new ArrayList<>(equipmentIds);
         params.add(cityId);
+        String sql = "SELECT id\n"
+                + "FROM equipments\n"
+                + "WHERE id IN (" + placeholders + SQL_CLOSE_IN_CLAUSE
+                + "  AND city_id <> ?\n";
 
         return jdbcTemplate.query(
-                """
-                SELECT id
-                FROM equipments
-                WHERE id IN (%s)
-                  AND city_id <> ?
-                """.formatted(placeholders),
+                sql,
                 (rs, rowNum) -> rs.getLong("id"),
                 params.toArray()
         );
@@ -159,32 +170,17 @@ public class JdbcBookingPersistenceAdapter implements BookingPersistencePort {
                                   String title,
                                   Integer attendeesCount,
                                   String notes) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(
-                    """
-                    INSERT INTO reservations (user_id, space_id, start_datetime, end_datetime, status, title, attendees_count, notes)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    Statement.RETURN_GENERATED_KEYS
-            );
-            ps.setLong(1, userId);
-            ps.setLong(2, spaceId);
-            ps.setTimestamp(3, Timestamp.from(startAt));
-            ps.setTimestamp(4, Timestamp.from(endAt));
-            ps.setString(5, status);
-            ps.setString(6, title);
-            if (attendeesCount == null) {
-                ps.setNull(7, java.sql.Types.INTEGER);
-            } else {
-                ps.setInt(7, attendeesCount);
-            }
-            ps.setString(8, notes);
-            return ps;
-        }, keyHolder);
-
-        Number key = keyHolder.getKey();
-        return key == null ? 0L : key.longValue();
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("user_id", userId)
+                .addValue("space_id", spaceId)
+                .addValue("start_datetime", Timestamp.from(startAt))
+                .addValue("end_datetime", Timestamp.from(endAt))
+                .addValue(COLUMN_STATUS, status)
+                .addValue("title", title)
+                .addValue("attendees_count", attendeesCount)
+                .addValue("notes", notes);
+        Number key = reservationInsert.executeAndReturnKey(params);
+        return key.longValue();
     }
 
     @Override
@@ -202,7 +198,8 @@ public class JdbcBookingPersistenceAdapter implements BookingPersistencePort {
 
     @Override
     public List<Reservation> listReservations(Long userId, Long spaceId, String status) {
-        StringBuilder sql = new StringBuilder(
+        StringBuilder sql = new StringBuilder(RESERVATION_QUERY_CAPACITY);
+        sql.append(
                 """
                 SELECT id, user_id, space_id, start_datetime, end_datetime, status,
                        title, attendees_count, notes, cancellation_reason, created_at
@@ -259,23 +256,23 @@ public class JdbcBookingPersistenceAdapter implements BookingPersistencePort {
         }
 
         String placeholders = String.join(",", Collections.nCopies(reservationIds.size(), "?"));
+        String sql = "SELECT id, reservation_id, equipment_id, status, delivered_at, delivered_by,\n"
+                + "       returned_at, returned_by, condition_notes\n"
+                + "FROM reservation_equipments\n"
+                + "WHERE reservation_id IN (" + placeholders + SQL_CLOSE_IN_CLAUSE
+                + "ORDER BY id ASC\n";
         List<Map<String, Object>> rows = jdbcTemplate.queryForList(
-                """
-                SELECT id, reservation_id, equipment_id, status, delivered_at, delivered_by,
-                       returned_at, returned_by, condition_notes
-                FROM reservation_equipments
-                WHERE reservation_id IN (%s)
-                ORDER BY id ASC
-                """.formatted(placeholders),
+                sql,
                 reservationIds.toArray()
         );
 
-        Map<Long, List<ReservationEquipment>> grouped = new HashMap<>();
-        for (Map<String, Object> row : rows) {
-            Long reservationId = ((Number) row.get("reservation_id")).longValue();
-            grouped.computeIfAbsent(reservationId, ignored -> new ArrayList<>()).add(toReservationEquipment(row));
-        }
-        return grouped;
+        return rows.stream().collect(
+                Collectors.groupingBy(
+                        row -> ((Number) row.get("reservation_id")).longValue(),
+                        HashMap::new,
+                        Collectors.mapping(this::toReservationEquipment, Collectors.toList())
+                )
+        );
     }
 
     @Override
@@ -292,11 +289,11 @@ public class JdbcBookingPersistenceAdapter implements BookingPersistencePort {
                         rs.getLong("id"),
                         rs.getLong("reservation_id"),
                         rs.getLong("equipment_id"),
-                        rs.getString("status"),
+                        rs.getString(COLUMN_STATUS),
                         toInstant(rs.getTimestamp("delivered_at")),
-                        rs.getObject("delivered_by") == null ? null : rs.getLong("delivered_by"),
+                        rs.getObject(COLUMN_DELIVERED_BY) == null ? null : rs.getLong(COLUMN_DELIVERED_BY),
                         toInstant(rs.getTimestamp("returned_at")),
-                        rs.getObject("returned_by") == null ? null : rs.getLong("returned_by"),
+                        rs.getObject(COLUMN_RETURNED_BY) == null ? null : rs.getLong(COLUMN_RETURNED_BY),
                         rs.getString("condition_notes")
                 ),
                 reservationId
@@ -405,11 +402,11 @@ public class JdbcBookingPersistenceAdapter implements BookingPersistencePort {
                 ((Number) row.get("id")).longValue(),
                 ((Number) row.get("reservation_id")).longValue(),
                 ((Number) row.get("equipment_id")).longValue(),
-                (String) row.get("status"),
+                (String) row.get(COLUMN_STATUS),
                 toInstant((Timestamp) row.get("delivered_at")),
-                row.get("delivered_by") == null ? null : ((Number) row.get("delivered_by")).longValue(),
+                row.get(COLUMN_DELIVERED_BY) == null ? null : ((Number) row.get(COLUMN_DELIVERED_BY)).longValue(),
                 toInstant((Timestamp) row.get("returned_at")),
-                row.get("returned_by") == null ? null : ((Number) row.get("returned_by")).longValue(),
+                row.get(COLUMN_RETURNED_BY) == null ? null : ((Number) row.get(COLUMN_RETURNED_BY)).longValue(),
                 (String) row.get("condition_notes")
         );
     }
