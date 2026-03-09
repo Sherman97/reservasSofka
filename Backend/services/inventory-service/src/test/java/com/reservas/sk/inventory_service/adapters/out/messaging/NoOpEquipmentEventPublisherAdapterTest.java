@@ -15,8 +15,24 @@ class NoOpEquipmentEventPublisherAdapterTest {
     void noOpMethodsDoNotThrow() {
         NoOpEquipmentEventPublisherAdapter adapter = new NoOpEquipmentEventPublisherAdapter();
 
-        assertDoesNotThrow(() -> adapter.publishEquipmentCreated(new EquipmentCreatedEvent(1L, 2L, "Laptop", "available", Instant.now())));
-        assertDoesNotThrow(() -> adapter.publishEquipmentUpdated(new EquipmentUpdatedEvent(1L, 2L, "Laptop", "maintenance", Instant.now())));
-        assertDoesNotThrow(() -> adapter.publishEquipmentDeleted(new EquipmentDeletedEvent(1L, 2L, Instant.now())));
+        EquipmentCreatedEvent createdEvent = new EquipmentCreatedEvent(
+                1L,
+                2L,
+                "Laptop",
+                "available",
+                Instant.now()
+        );
+        EquipmentUpdatedEvent updatedEvent = new EquipmentUpdatedEvent(
+                1L,
+                2L,
+                "Laptop",
+                "maintenance",
+                Instant.now()
+        );
+        EquipmentDeletedEvent deletedEvent = new EquipmentDeletedEvent(1L, 2L, Instant.now());
+
+        assertDoesNotThrow(() -> adapter.publishEquipmentCreated(createdEvent));
+        assertDoesNotThrow(() -> adapter.publishEquipmentUpdated(updatedEvent));
+        assertDoesNotThrow(() -> adapter.publishEquipmentDeleted(deletedEvent));
     }
 }

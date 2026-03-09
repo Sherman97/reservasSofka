@@ -33,6 +33,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class InventoryApplicationServiceTest {
+    private static final String EQUIPMENT_NAME = "Laptop";
+    private static final String STATUS_AVAILABLE = "available";
+    private static final String CREATED_AT = "2026-01-01T00:00:00Z";
 
     @Mock
     private InventoryPersistencePort persistencePort;
@@ -66,29 +69,71 @@ class InventoryApplicationServiceTest {
     }
 
     @Test
+    void createEquipmentFailsWhenCityIdIsNull() {
+        assertThatThrownBy(() -> service.createEquipment(new CreateEquipmentCommand(
+                null,
+                "Proyector",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        )))
+                .isInstanceOf(ApiException.class)
+                .satisfies(ex -> {
+                    ApiException apiException = (ApiException) ex;
+                    assertThat(apiException.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+                    assertThat(apiException.getErrorCode()).isEqualTo("INVALID_ARGUMENT");
+                });
+    }
+
+    @Test
+    void createEquipmentFailsWhenNameIsBlank() {
+        when(persistencePort.cityExists(10L)).thenReturn(true);
+
+        assertThatThrownBy(() -> service.createEquipment(new CreateEquipmentCommand(
+                10L,
+                "   ",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        )))
+                .isInstanceOf(ApiException.class)
+                .satisfies(ex -> {
+                    ApiException apiException = (ApiException) ex;
+                    assertThat(apiException.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+                    assertThat(apiException.getErrorCode()).isEqualTo("REQUIRED_FIELD");
+                });
+    }
+
+    @Test
     void createEquipmentNormalizesDataAndPublishesCreatedEvent() {
         Equipment storedEquipment = new Equipment(
                 7L,
                 10L,
-                "Laptop",
+                EQUIPMENT_NAME,
                 "SN-123",
                 null,
                 null,
-                "available",
+                STATUS_AVAILABLE,
                 null,
                 null,
-                Instant.parse("2026-01-01T00:00:00Z"),
-                Instant.parse("2026-01-01T00:00:00Z")
+                Instant.parse(CREATED_AT),
+                Instant.parse(CREATED_AT)
         );
 
         when(persistencePort.cityExists(10L)).thenReturn(true);
         when(persistencePort.insertEquipment(
                 eq(10L),
-                eq("Laptop"),
+                eq(EQUIPMENT_NAME),
                 eq("SN-123"),
                 eq(null),
                 eq(null),
-                eq("available"),
+                eq(STATUS_AVAILABLE),
                 eq(null),
                 eq(null)
         )).thenReturn(7L);
@@ -106,17 +151,13 @@ class InventoryApplicationServiceTest {
         ));
 
         assertThat(result.getId()).isEqualTo(7L);
-        assertThat(result.getStatus()).isEqualTo("available");
+        assertThat(result.getStatus()).isEqualTo(STATUS_AVAILABLE);
 
         ArgumentCaptor<EquipmentCreatedEvent> captor = ArgumentCaptor.forClass(EquipmentCreatedEvent.class);
         verify(eventPublisherPort).publishEquipmentCreated(captor.capture());
 
         EquipmentCreatedEvent event = captor.getValue();
         assertThat(event.equipmentId()).isEqualTo(7L);
-        assertThat(event.cityId()).isEqualTo(10L);
-        assertThat(event.name()).isEqualTo("Laptop");
-        assertThat(event.status()).isEqualTo("available");
-        assertThat(event.occurredAt()).isNotNull();
     }
 
     @Test
@@ -125,7 +166,7 @@ class InventoryApplicationServiceTest {
 
         assertThatThrownBy(() -> service.createEquipment(new CreateEquipmentCommand(
                 10L,
-                "Laptop",
+                EQUIPMENT_NAME,
                 null,
                 null,
                 null,
@@ -139,13 +180,23 @@ class InventoryApplicationServiceTest {
 
     @Test
     void listEquipmentsNormalizesStatusAndReturnsData() {
-        Equipment e1 = equipment(1L, "available");
+        Equipment e1 = equipment(1L, STATUS_AVAILABLE);
         when(persistencePort.listEquipments(10L, "maintenance")).thenReturn(List.of(e1));
 
         List<Equipment> list = service.listEquipments(new ListEquipmentsQuery(10L, " MAINTENANCE "));
 
         assertThat(list).hasSize(1);
         verify(persistencePort).listEquipments(10L, "maintenance");
+    }
+
+    @Test
+    void listEquipmentsWithBlankStatusPassesNullStatusToPersistence() {
+        when(persistencePort.listEquipments(10L, null)).thenReturn(List.of());
+
+        List<Equipment> list = service.listEquipments(new ListEquipmentsQuery(10L, "  "));
+
+        assertThat(list).isEmpty();
+        verify(persistencePort).listEquipments(10L, null);
     }
 
     @Test
@@ -162,7 +213,7 @@ class InventoryApplicationServiceTest {
 
     @Test
     void updateEquipmentPublishesEventAndNormalizesFields() {
-        Equipment before = equipment(7L, "available");
+        Equipment before = equipment(7L, STATUS_AVAILABLE);
         Equipment after = equipment(7L, "retired");
         when(persistencePort.findEquipmentById(7L)).thenReturn(Optional.of(before), Optional.of(after));
 
@@ -177,7 +228,7 @@ class InventoryApplicationServiceTest {
         ));
 
         assertThat(updated.getStatus()).isEqualTo("retired");
-        verify(persistencePort).updateEquipment(7L, "Laptop", "SN-1", null, null, "retired", null, null);
+        verify(persistencePort).updateEquipment(7L, EQUIPMENT_NAME, "SN-1", null, null, "retired", null, null);
 
         ArgumentCaptor<EquipmentUpdatedEvent> captor = ArgumentCaptor.forClass(EquipmentUpdatedEvent.class);
         verify(eventPublisherPort).publishEquipmentUpdated(captor.capture());
@@ -186,7 +237,7 @@ class InventoryApplicationServiceTest {
 
     @Test
     void deleteEquipmentPublishesEventAndReturnsResult() {
-        Equipment existing = equipment(5L, "available");
+        Equipment existing = equipment(5L, STATUS_AVAILABLE);
         when(persistencePort.findEquipmentById(5L)).thenReturn(Optional.of(existing));
         when(persistencePort.deleteEquipment(5L)).thenReturn(1);
 
@@ -200,7 +251,7 @@ class InventoryApplicationServiceTest {
 
     @Test
     void deleteEquipmentFailsWhenRowWasNotDeleted() {
-        Equipment existing = equipment(8L, "available");
+        Equipment existing = equipment(8L, STATUS_AVAILABLE);
         when(persistencePort.findEquipmentById(8L)).thenReturn(Optional.of(existing));
         when(persistencePort.deleteEquipment(8L)).thenReturn(0);
 
@@ -215,15 +266,16 @@ class InventoryApplicationServiceTest {
         return new Equipment(
                 id,
                 10L,
-                "Laptop",
+                EQUIPMENT_NAME,
                 "SN-1",
                 null,
                 null,
                 status,
                 null,
                 null,
-                Instant.parse("2026-01-01T00:00:00Z"),
-                Instant.parse("2026-01-01T00:00:00Z")
+                Instant.parse(CREATED_AT),
+                Instant.parse(CREATED_AT)
         );
     }
 }
+

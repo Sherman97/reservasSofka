@@ -17,9 +17,48 @@ class NoOpReservationEventPublisherAdapterTest {
     void noOpMethodsDoNotThrow() {
         NoOpReservationEventPublisherAdapter adapter = new NoOpReservationEventPublisherAdapter();
 
-        assertDoesNotThrow(() -> adapter.publishReservationCreated(new ReservationCreatedEvent(1L, 2L, 3L, "confirmed", "2026-03-01T10:00:00Z", "2026-03-01T11:00:00Z", List.of(), Instant.now())));
-        assertDoesNotThrow(() -> adapter.publishReservationCancelled(new ReservationCancelledEvent(1L, 2L, 3L, "cancelled", "x", Instant.now())));
-        assertDoesNotThrow(() -> adapter.publishReservationDelivered(new ReservationDeliveredEvent(1L, 2L, 3L, 9L, "in_progress", null, "2026-03-01T11:00:00Z", Instant.now())));
-        assertDoesNotThrow(() -> adapter.publishReservationReturned(new ReservationReturnedEvent(1L, 2L, 3L, 9L, "completed", null, "2026-03-01T11:00:00Z", Instant.now())));
+        ReservationCreatedEvent createdEvent = new ReservationCreatedEvent(
+                1L,
+                2L,
+                3L,
+                "confirmed",
+                "2026-03-01T10:00:00Z",
+                "2026-03-01T11:00:00Z",
+                List.of(),
+                Instant.now()
+        );
+        ReservationCancelledEvent cancelledEvent = new ReservationCancelledEvent(
+                1L,
+                2L,
+                3L,
+                "cancelled",
+                "x",
+                Instant.now()
+        );
+        ReservationDeliveredEvent deliveredEvent = new ReservationDeliveredEvent(
+                1L,
+                2L,
+                3L,
+                9L,
+                "in_progress",
+                null,
+                "2026-03-01T11:00:00Z",
+                Instant.now()
+        );
+        ReservationReturnedEvent returnedEvent = new ReservationReturnedEvent(
+                1L,
+                2L,
+                3L,
+                9L,
+                "completed",
+                null,
+                "2026-03-01T11:00:00Z",
+                Instant.now()
+        );
+
+        assertDoesNotThrow(() -> adapter.publishReservationCreated(createdEvent));
+        assertDoesNotThrow(() -> adapter.publishReservationCancelled(cancelledEvent));
+        assertDoesNotThrow(() -> adapter.publishReservationDelivered(deliveredEvent));
+        assertDoesNotThrow(() -> adapter.publishReservationReturned(returnedEvent));
     }
 }

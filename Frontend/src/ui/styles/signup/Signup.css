@@ -7,38 +7,42 @@
     color: #212529;
 }
 
-/* Left components (Blue side) */
+/* Left components (Image background like login) */
 .signup-left {
     flex: 1;
-    background-color: #0d6efd;
-    /* Blue color */
+    background-image: url('../../../assets/FondoSofka_13.jpg');
+    background-size: cover;
+    background-position: center;
+    background-position-x: 486px;
     color: white;
     padding: 4rem;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-end;
     position: relative;
     overflow: hidden;
-    /* For potential background shapes */
+}
+
+.signup-left::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 .signup-left .overlay {
     position: relative;
     z-index: 1;
     max-width: 600px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
 }
 
 .brand {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-bottom: 4rem;
-    position: absolute;
-    top: 0;
+    margin-bottom: 2rem;
 }
 
 .brand-icon {
@@ -64,8 +68,6 @@
     font-size: 1.25rem;
     opacity: 0.9;
     max-width: 500px;
-    margin-bottom: auto;
-    /* Push bottom elements down */
 }
 
 .carousel-indicators {
@@ -256,17 +258,67 @@
 }
 
 /* Responsive */
+@media (max-width: 1200px) {
+    .signup-left {
+        background-position-x: 200px;
+    }
+
+    .signup-left h1 {
+        font-size: 2.5rem;
+    }
+}
+
 @media (max-width: 900px) {
     .signup-container {
         flex-direction: column;
     }
 
     .signup-left {
-        display: none;
-        /* Hide on mobile like login */
+        min-height: 30vh;
+        background-position-x: center;
+        padding: 2rem;
+        justify-content: flex-end;
+    }
+
+    .signup-left h1 {
+        font-size: 2rem;
+    }
+
+    .signup-left p {
+        font-size: 1rem;
     }
 
     .signup-right {
         padding: 1.5rem;
+    }
+
+    .signup-form-wrapper {
+        margin-top: 1rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .signup-left {
+        min-height: 20vh;
+        padding: 1.5rem;
+    }
+
+    .signup-left h1 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .signup-left p {
+        font-size: 0.9rem;
+        display: none;
+    }
+
+    .brand {
+        position: static;
+        margin-bottom: 1rem;
+    }
+
+    .signup-form-wrapper {
+        margin-top: 0.5rem;
     }
 }

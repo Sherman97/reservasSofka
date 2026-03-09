@@ -16,6 +16,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class RabbitReservationEventPublisherAdapterTest {
+    private static final String EXCHANGE = "reservas.events";
 
     private RabbitTemplate rabbitTemplate;
     private RabbitReservationEventPublisherAdapter adapter;
@@ -25,7 +26,7 @@ class RabbitReservationEventPublisherAdapterTest {
         rabbitTemplate = mock(RabbitTemplate.class);
 
         RabbitProperties properties = new RabbitProperties();
-        properties.setExchange("reservas.events");
+        properties.setExchange(EXCHANGE);
         properties.setReservationCreatedRoutingKey("bookings.reservation.created");
         properties.setReservationCancelledRoutingKey("bookings.reservation.cancelled");
         properties.setReservationDeliveredRoutingKey("bookings.reservation.delivered");
@@ -36,19 +37,54 @@ class RabbitReservationEventPublisherAdapterTest {
 
     @Test
     void publishesAllReservationEventsWithConfiguredRoutingKeys() {
-        ReservationCreatedEvent created = new ReservationCreatedEvent(1L, 2L, 3L, "confirmed", "2026-03-01T10:00:00Z", "2026-03-01T11:00:00Z", List.of(9L), Instant.now());
-        ReservationCancelledEvent cancelled = new ReservationCancelledEvent(1L, 2L, 3L, "cancelled", "motivo", Instant.now());
-        ReservationDeliveredEvent delivered = new ReservationDeliveredEvent(1L, 2L, 3L, 77L, "in_progress", "ok", "2026-03-01T11:00:00Z", Instant.now());
-        ReservationReturnedEvent returned = new ReservationReturnedEvent(1L, 2L, 3L, 77L, "completed", "ok", "2026-03-01T11:00:00Z", Instant.now());
+        ReservationCreatedEvent created = new ReservationCreatedEvent(
+                1L,
+                2L,
+                3L,
+                "confirmed",
+                "2026-03-01T10:00:00Z",
+                "2026-03-01T11:00:00Z",
+                List.of(9L),
+                Instant.now()
+        );
+        ReservationCancelledEvent cancelled = new ReservationCancelledEvent(
+                1L,
+                2L,
+                3L,
+                "cancelled",
+                "motivo",
+                Instant.now()
+        );
+        ReservationDeliveredEvent delivered = new ReservationDeliveredEvent(
+                1L,
+                2L,
+                3L,
+                77L,
+                "in_progress",
+                "ok",
+                "2026-03-01T11:00:00Z",
+                Instant.now()
+        );
+        ReservationReturnedEvent returned = new ReservationReturnedEvent(
+                1L,
+                2L,
+                3L,
+                77L,
+                "completed",
+                "ok",
+                "2026-03-01T11:00:00Z",
+                Instant.now()
+        );
 
         adapter.publishReservationCreated(created);
         adapter.publishReservationCancelled(cancelled);
         adapter.publishReservationDelivered(delivered);
         adapter.publishReservationReturned(returned);
 
-        verify(rabbitTemplate).convertAndSend("reservas.events", "bookings.reservation.created", created);
-        verify(rabbitTemplate).convertAndSend("reservas.events", "bookings.reservation.cancelled", cancelled);
-        verify(rabbitTemplate).convertAndSend("reservas.events", "bookings.reservation.delivered", delivered);
-        verify(rabbitTemplate).convertAndSend("reservas.events", "bookings.reservation.returned", returned);
+        verify(rabbitTemplate).convertAndSend(EXCHANGE, "bookings.reservation.created", created);
+        verify(rabbitTemplate).convertAndSend(EXCHANGE, "bookings.reservation.cancelled", cancelled);
+        verify(rabbitTemplate).convertAndSend(EXCHANGE, "bookings.reservation.delivered", delivered);
+        verify(rabbitTemplate).convertAndSend(EXCHANGE, "bookings.reservation.returned", returned);
     }
 }
+
