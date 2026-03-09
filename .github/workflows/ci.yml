@@ -15,6 +15,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+
+  # ════════════════════════════════════════════════════════════
+  #  PRUEBAS DE COMPONENTE — Backend (sin Spring context pesado)
+  # ════════════════════════════════════════════════════════════
   component-tests:
     name: "🧩 Component Tests (${{ matrix.service }})"
     runs-on: ubuntu-latest
@@ -51,6 +55,9 @@ jobs:
           chmod +x ./gradlew
           ./gradlew --no-daemon componentTest
 
+  # ════════════════════════════════════════════════════════════
+  #  PRUEBAS DE INTEGRACIÓN — Backend (SpringBootTest, DB, etc.)
+  # ════════════════════════════════════════════════════════════
   integration-tests:
     name: "🔗 Integration Tests (${{ matrix.service }})"
     runs-on: ubuntu-latest
@@ -87,6 +94,9 @@ jobs:
           chmod +x ./gradlew
           ./gradlew --no-daemon integrationTest
 
+  # ════════════════════════════════════════════════════════════
+  #  FRONTEND — Lint + Unit Tests
+  # ════════════════════════════════════════════════════════════
   frontend:
     name: "🌐 Frontend"
     runs-on: ubuntu-latest
@@ -124,6 +134,9 @@ jobs:
           fi
           npm test
 
+  # ------------------------------------------------------------
+  #  VULNERABILITY SCAN (Trivy + SARIF)
+  # ------------------------------------------------------------
   vulnerability-scan:
     name: "🛡️ Vulnerability Scan (${{ matrix.target }})"
     runs-on: ubuntu-latest
@@ -195,6 +208,9 @@ jobs:
           exit-code: "1"
           ignore-unfixed: true
 
+  # ════════════════════════════════════════════════════════════
+  #  PRUEBAS DE CAJA NEGRA — API (Postman / Newman)
+  # ════════════════════════════════════════════════════════════
   blackbox-tests:
     name: "📦 Black-Box Tests (API)"
     runs-on: ubuntu-latest
