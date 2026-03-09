@@ -612,20 +612,33 @@ jobs:
 En la UI de GitHub Actions, los jobs se muestran visualmente diferenciados:
 
 ```
-✅ 🧩 Component Tests (auth-service)
-✅ 🧩 Component Tests (bookings-service)
-✅ 🧩 Component Tests (api-gateway)
-✅ 🧩 Component Tests (inventory-service)
-✅ 🧩 Component Tests (locations-service)
-✅ 🧩 Component Tests (notifications-service)
-✅ 🔗 Integration Tests (auth-service)
-✅ 🔗 Integration Tests (bookings-service)
-✅ 🔗 Integration Tests (api-gateway)
-✅ 🔗 Integration Tests (inventory-service)
-✅ 🔗 Integration Tests (locations-service)
-✅ 🔗 Integration Tests (notifications-service)
-✅ 🌐 Frontend
 ✅ 📦 Black-Box Tests (API)
+```
+
+### 7.10 Evidencia de Ejecución en CI
+
+A continuación se muestra la evidencia de la ejecución del pipeline en GitHub Actions, validando tanto el flujo exitoso como el comportamiento ante fallos.
+
+#### 7.10.1 Ejecución Exitosa (All Green)
+Cuando todos los tests pasan, el pipeline completa todas las etapas, permitiendo la integración de los cambios.
+
+![CI Success Evidence](images/ci_success.png)
+*Figura: Pipeline completado exitosamente (Component, Integration, Frontend y Black-Box tests).*
+
+#### 7.10.2 Ejecución Fallida (Bloqueo)
+En caso de que algún test falle, el pipeline se detiene y marca la etapa correspondiente en rojo. Los jobs dependientes (como Black-Box tests) se omiten para evitar falsos positivos.
+
+![CI Failure Evidence](images/ci_failure.png)
+*Figura: Visualización de un fallo en los tests de ejecución paralela, lo cual dispara el bloqueo del PR.*
+
+### 7.11 Política de Bloqueo de Fusión (Merge Blocking)
+
+Para garantizar la estabilidad de las ramas principales (`main` y `develop`), se ha establecido la siguiente regla crítica de calidad:
+
+> [!IMPORTANT]
+> **Bloqueo de PR**: Ningún Pull Request está habilitado para ser fusionado (Merge) si el pipeline de `CI` reporta un fallo en cualquiera de sus etapas. GitHub muestra el botón de mezcla deshabilitado hasta que se corrijan los tests y el estado pase a ✅ (Success).
+
+Esto asegura que el código en producción siempre mantenga los estándares de calidad definidos y no rompa funcionalidades existentes.
 ```
 
 ---
