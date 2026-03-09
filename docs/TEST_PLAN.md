@@ -35,7 +35,7 @@ El proyecto Reservas Sofka es un sistema de gestión de reservas construido con 
 |---------|-------|
 | Archivos de test totales | **137** |
 | Test cases totales | **1 058** |
-| Cobertura backend (líneas) | **90.37%** |
+| Cobertura backend (líneas) | **93.55%** |
 | Cobertura frontend (líneas) | **95.32%** |
 | Servicios backend testeados | 6 / 6 |
 | Tests de caja negra — API (curl) | 7 casos |
@@ -339,8 +339,8 @@ it('should throw if email is empty', async () => {
 
 | Técnica | Aplicación | Ejemplo |
 |---------|-----------|---------|
-| **Cobertura de sentencias** | JaCoCo (back), V8 (front) miden % de líneas ejecutadas | 90.37% backend, 95.32% frontend |
-| **Cobertura de branches** | Asegurar que ambos caminos de un `if` se ejecuten | 70.91% backend, 83.47% frontend |
+| **Cobertura de sentencias** | JaCoCo (back), V8 (front) miden % de líneas ejecutadas | 93.55% backend, 95.32% frontend |
+| **Cobertura de branches** | Asegurar que ambos caminos de un `if` se ejecuten | 84.82% backend, 83.47% frontend |
 | **Verificación de interacciones** | `verify()` en Mockito, `expect(mock).toHaveBeenCalled()` en Vitest | `verify(eventPublisher, times(1)).publish(any())` |
 | **Inyección de errores** | Simular excepciones en dependencias internas | `when(port.save()).thenThrow(new RuntimeException())` |
 
@@ -696,15 +696,15 @@ Cubre endpoints fundamentales (autenticación y flujo de reservas) como pruebas 
 
 ### 9.1 Backend — Cobertura JaCoCo
 
-| Servicio | Líneas | Branches | Tests |
-|----------|--------|----------|-------|
-| auth-service | ~92% | ~75% | 21 |
-| bookings-service | ~91% | ~72% | 51 |
-| locations-service | ~90% | ~70% | 35 |
-| inventory-service | ~90% | ~69% | 31 |
-| notifications-service | ~74% | ~60% | 28 |
-| api-gateway | ~95% | ~80% | 3 |
-| **Promedio ponderado** | **90.37%** | **70.91%** | **169** |
+| Servicio | Líneas | Branches | Tests | Checkstyle | PMD | SpotBugs |
+|----------|--------|----------|-------|------------|-----|----------|
+| auth-service | 86.13% | 90.91% | 34 | 0 | 0 | 5 |
+| bookings-service | 96.70% | 85.90% | 73 | 0 | 0 | 0 |
+| locations-service | 95.00% | 84.62% | 49 | 0 | 0 | 0 |
+| inventory-service | 95.44% | 85.71% | 43 | 0 | 0 | 8 |
+| notifications-service | 86.99% | 81.03% | 36 | 1 | 0 | 4 |
+| api-gateway | 89.80% | 100.00% | 13 | 0 | 0 | 0 |
+| **Promedio ponderado** | **93.55%** | **84.82%** | **248** | **1** | **0** | **17** |
 
 **Umbrales configurados:** LINE ≥ 25%, BRANCH ≥ 15% (mínimos, ampliamente superados).
 
@@ -771,10 +771,10 @@ Cubre endpoints fundamentales (autenticación y flujo de reservas) como pruebas 
 
 ## 11. Inventario de Tests
 
-### 11.1 Backend — 169 tests en 48 archivos
+### 11.1 Backend — 248 tests
 
 <details>
-<summary><strong>auth-service (21 tests, 7 archivos)</strong></summary>
+<summary><strong>auth-service (34 tests)</strong></summary>
 
 | Archivo | Tipo | Tag |
 |---------|------|-----|
@@ -789,7 +789,7 @@ Cubre endpoints fundamentales (autenticación y flujo de reservas) como pruebas 
 </details>
 
 <details>
-<summary><strong>bookings-service (51 tests, 11 archivos)</strong></summary>
+<summary><strong>bookings-service (73 tests)</strong></summary>
 
 | Archivo | Tipo | Tag |
 |---------|------|-----|
@@ -808,7 +808,7 @@ Cubre endpoints fundamentales (autenticación y flujo de reservas) como pruebas 
 </details>
 
 <details>
-<summary><strong>locations-service (35 tests, 11 archivos)</strong></summary>
+<summary><strong>locations-service (49 tests)</strong></summary>
 
 | Archivo | Tipo | Tag |
 |---------|------|-----|
@@ -827,7 +827,7 @@ Cubre endpoints fundamentales (autenticación y flujo de reservas) como pruebas 
 </details>
 
 <details>
-<summary><strong>inventory-service (31 tests, 10 archivos)</strong></summary>
+<summary><strong>inventory-service (43 tests)</strong></summary>
 
 | Archivo | Tipo | Tag |
 |---------|------|-----|
@@ -845,7 +845,7 @@ Cubre endpoints fundamentales (autenticación y flujo de reservas) como pruebas 
 </details>
 
 <details>
-<summary><strong>notifications-service (28 tests, 6 archivos)</strong></summary>
+<summary><strong>notifications-service (36 tests)</strong></summary>
 
 | Archivo | Tipo | Tag |
 |---------|------|-----|
@@ -859,7 +859,7 @@ Cubre endpoints fundamentales (autenticación y flujo de reservas) como pruebas 
 </details>
 
 <details>
-<summary><strong>api-gateway (3 tests, 3 archivos)</strong></summary>
+<summary><strong>api-gateway (13 tests)</strong></summary>
 
 | Archivo | Tipo | Tag |
 |---------|------|-----|
@@ -931,8 +931,8 @@ npx newman run Backend/tests/blackbox/reservas-api.postman_collection.json
 | 1 | Tests de caja negra lentos bloquean CI | Medio | Media | `timeout-minutes: 15`; ejecutan solo si los unitarios pasan (`needs: [backend]`) |
 | 2 | Docker Compose falla en CI | Alto | Baja | Step de logs en failure; healthcheck con retry de 90s |
 | 3 | Tests flaky por datos residuales | Alto | Media | `docker compose down -v` limpia volúmenes; emails con timestamp único |
-| 4 | Cobertura de branches baja en backend (71%) | Medio | Alta | Incrementar tests de condiciones edge; subir umbrales JaCoCo gradualmente |
-| 5 | notifications-service con menor cobertura (74%) | Medio | Media | Priorizar tests de `RabbitMqEventListener` y `WebSocket` adapter |
+| 4 | Warnings acumulados de SpotBugs (17) en backend | Medio | Alta | Reducir deuda técnica por servicio y convertir findings recurrentes en tareas de sprint |
+| 5 | notifications-service con menor cobertura de ramas (81.03%) | Medio | Media | Priorizar tests de escenarios edge en adapters de eventos y WebSocket |
 | 6 | Tests E2E Playwright sensibles a tiempos de carga | Medio | Media | Timeouts generosos (15s para navegación), retries en CI, screenshots/videos en failure |
 
 ---
@@ -967,4 +967,3 @@ npx newman run Backend/tests/blackbox/reservas-api.postman_collection.json
 
 > **Documento generado como parte de la estrategia de QA del proyecto Reservas Sofka.**  
 > **Próxima revisión programada:** Sprint siguiente al 6 de marzo de 2026.
-
