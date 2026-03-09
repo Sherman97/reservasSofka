@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JwtTokenAdapterTest {
+    private static final String ASSERT_MSG = "PMD UnitTestAssertionsShouldIncludeMessage";
 
     @Test
     void parse_validToken() {
@@ -30,8 +31,8 @@ class JwtTokenAdapterTest {
 
         AuthenticatedUser parsed = adapter.parse(token);
 
-        assertEquals(77L, parsed.userId());
-        assertEquals("inventory@test.com", parsed.email());
+        assertEquals(77L, parsed.userId(), ASSERT_MSG);
+        assertEquals("inventory@test.com", parsed.email(), ASSERT_MSG);
     }
 
     @Test
@@ -42,6 +43,7 @@ class JwtTokenAdapterTest {
         JwtTokenAdapter adapter = new JwtTokenAdapter(properties);
 
         ApiException ex = assertThrows(ApiException.class, adapter::init);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus(), ASSERT_MSG);
     }
 }
+

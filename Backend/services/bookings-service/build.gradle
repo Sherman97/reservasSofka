@@ -25,6 +25,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.8.6'
 
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
@@ -38,6 +39,26 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+if (tasks.findByName('componentTest') == null) {
+    tasks.register('componentTest', Test) {
+        description = 'Runs component tests (excludes integration)'
+        group = 'verification'
+        useJUnitPlatform {
+            excludeTags 'integration'
+        }
+    }
+}
+
+if (tasks.findByName('integrationTest') == null) {
+    tasks.register('integrationTest', Test) {
+        description = 'Runs integration tests only'
+        group = 'verification'
+        useJUnitPlatform {
+            includeTags 'integration'
+        }
+    }
 }
 
 

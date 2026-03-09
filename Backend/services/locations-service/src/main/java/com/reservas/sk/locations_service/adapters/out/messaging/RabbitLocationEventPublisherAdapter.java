@@ -8,12 +8,17 @@ import com.reservas.sk.locations_service.application.usecase.SpaceCreatedEvent;
 import com.reservas.sk.locations_service.application.usecase.SpaceDeletedEvent;
 import com.reservas.sk.locations_service.application.usecase.SpaceUpdatedEvent;
 import com.reservas.sk.locations_service.infrastructure.config.RabbitProperties;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Component
 @ConditionalOnProperty(prefix = "app.rabbit", name = "enabled", havingValue = "true")
+@SuppressFBWarnings(
+        value = "EI_EXPOSE_REP2",
+        justification = "Spring-managed dependencies are injected and not copied."
+)
 public class RabbitLocationEventPublisherAdapter implements LocationEventPublisherPort {
     private final RabbitTemplate rabbitTemplate;
     private final RabbitProperties rabbitProperties;

@@ -3,14 +3,13 @@ package com.reservas.sk.notifications_service.adapters.out.websocket;
 import com.reservas.sk.notifications_service.domain.model.NotificationEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.time.Instant;
 import java.util.Map;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class StompWebSocketBroadcastAdapterTest {
     private SimpMessagingTemplate messagingTemplate;

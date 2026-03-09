@@ -17,13 +17,18 @@ Thumbs.db
 
 .github/
 
+# AI tooling local metadata
+.ai/
+**/.ai/
+.codex/
+**/.codex/
+
 Backend/.gradle/
 Backend/.idea/
 Backend/gradle/
 
 Frontend/node_modules/
 Frontend/dist/
-Frontend/docs/
 Frontend/html/
 Frontend/reports/
 
