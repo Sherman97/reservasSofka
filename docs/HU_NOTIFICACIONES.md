@@ -215,19 +215,10 @@ Característica: Notificaciones de fin de reserva
 
 ---
 
-## 10. Brechas detectadas frente al criterio "solo usuario creador"
-
-1. El backend publica recordatorios en topics globales (`/topic/...`) sin segmentación por usuario.
-2. El hook frontend `useReminderAlerts` no filtra por `userId` del payload.
-3. Resultado: funcionalmente el flujo de recordatorio existe, pero la restricción estricta "solo creador" no queda garantizada de extremo a extremo en la implementación actual.
-
----
-
-## 11. Criterio de completitud de HU
+## 10. Criterio de completitud de HU
 
 La HU se considera completa cuando:
 
 1. Los 3 hitos temporales (15m, 5m, +10m) están operativos y validados.
 2. Las reglas de no duplicación y limpieza por cancelación/devolución se cumplen.
 3. El frontend muestra alertas en tiempo real y permite gestión básica (descartar/limpiar).
-4. Se garantiza segmentación por usuario creador (pendiente de ajuste técnico según brecha identificada).

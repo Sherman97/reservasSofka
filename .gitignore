@@ -20,6 +20,8 @@ Thumbs.db
 # AI tooling local metadata
 .ai/
 **/.ai/
+.codex/
+**/.codex/
 
 Backend/.gradle/
 Backend/.idea/
