@@ -328,7 +328,12 @@
     border-radius: 8px;
     font-size: 1rem;
     background-color: #f8f9fa;
+    color: #1a202c;
+    width: 100%;
+    box-sizing: border-box;
     transition: all 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
 }
 
 .time-input-group input[type="time"]:focus {
@@ -449,6 +454,7 @@
     display: flex;
     gap: 2px;
     width: 100%;
+    overflow: visible;
 }
 
 .time-slot {
@@ -458,13 +464,18 @@
     align-items: center;
     gap: 4px;
     cursor: default;
+    min-width: 0;
+    overflow: visible;
 }
 
 .time-slot-label {
-    font-size: 0.6rem;
-    color: #94a3b8;
-    font-weight: 500;
+    font-size: 0.62rem;
+    color: #64748b;
+    font-weight: 600;
     white-space: nowrap;
+    overflow: visible;
+    display: block;
+    line-height: 1.2;
 }
 
 .time-slot-bar {

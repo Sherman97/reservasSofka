@@ -24,6 +24,7 @@ import { AssignInventoryUseCase } from '../../../application/use-cases/dashboard
 import { RemoveInventoryUseCase } from '../../../application/use-cases/dashboard/RemoveInventoryUseCase';
 import { GetUserReservationsUseCase } from '../../../application/use-cases/reservations/GetUserReservationsUseCase';
 import { CancelReservationUseCase } from '../../../application/use-cases/reservations/CancelReservationUseCase';
+import { UpdateReservationUseCase } from '../../../application/use-cases/reservations/UpdateReservationUseCase';
 import { GetCurrentUserUseCase } from '../../../application/use-cases/auth/GetCurrentUserUseCase';
 import { GetSpaceAvailabilityUseCase } from '../../../application/use-cases/dashboard/GetSpaceAvailabilityUseCase';
 import { SubmitDeliveryUseCase } from '../../../application/use-cases/delivery/SubmitDeliveryUseCase';
@@ -54,6 +55,7 @@ export interface DependencyMap {
     removeInventoryUseCase: RemoveInventoryUseCase;
     getUserReservationsUseCase: GetUserReservationsUseCase;
     cancelReservationUseCase: CancelReservationUseCase;
+    updateReservationUseCase: UpdateReservationUseCase;
     getSpaceAvailabilityUseCase: GetSpaceAvailabilityUseCase;
     submitDeliveryUseCase: SubmitDeliveryUseCase;
     deliverReservationUseCase: DeliverReservationUseCase;
@@ -115,6 +117,7 @@ class DIContainer {
         this.dependencies.removeInventoryUseCase = new RemoveInventoryUseCase(locationRepository);
         this.dependencies.getUserReservationsUseCase = new GetUserReservationsUseCase(reservationRepository);
         this.dependencies.cancelReservationUseCase = new CancelReservationUseCase(reservationRepository);
+        this.dependencies.updateReservationUseCase = new UpdateReservationUseCase(reservationRepository);
         this.dependencies.getSpaceAvailabilityUseCase = new GetSpaceAvailabilityUseCase(reservationRepository);
         this.dependencies.submitDeliveryUseCase = new SubmitDeliveryUseCase(deliveryRepository);
         this.dependencies.deliverReservationUseCase = new DeliverReservationUseCase(reservationRepository);

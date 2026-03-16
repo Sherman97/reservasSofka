@@ -5,7 +5,7 @@ import { ReservationCard } from './ReservationCard';
  * ReservationList - UI Component
  * Renders a list of reservations
  */
-export const ReservationList = ({ reservations = [], onCancel, onDeliver, onReturn }) => {
+export const ReservationList = ({ reservations = [], onCancel, onUpdate, onDeliver, onReturn }) => {
     if (!reservations || reservations.length === 0) {
         return (
             <div className="empty-state">
@@ -21,6 +21,7 @@ export const ReservationList = ({ reservations = [], onCancel, onDeliver, onRetu
                     key={res.id}
                     reservation={res}
                     onCancel={onCancel}
+                    onUpdate={onUpdate}
                     onDeliver={onDeliver}
                     onReturn={onReturn}
                 />
