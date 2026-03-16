@@ -194,6 +194,7 @@ export const MyReservationsPage = () => {
                 />
 
                 <UpdateReservationModal
+                    key={updateModal.reservation?.id ?? 'update-modal'}
                     isOpen={updateModal.isOpen}
                     onClose={handleCloseUpdate}
                     onConfirm={handleConfirmUpdate}

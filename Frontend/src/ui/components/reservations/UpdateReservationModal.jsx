@@ -1,58 +1,55 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import '../../styles/reservations/Reservations.css';
 
 /**
  * UpdateReservationModal - UI Component
- * Allows editing the reservation's title, attendees, notes, and TIME only.
- * The original date is preserved — only the start/end time can be changed.
+ * Allows editing attendees, notes, and time only.
+ * NOTE: The parent must pass a key={reservation?.id} so that React resets
+ * the component's state whenever a different reservation is selected.
  */
+const pad = (n) => n.toString().padStart(2, '0');
+
+const parseReservation = (reservation) => {
+    if (!reservation) return { attendeesCount: 1, notes: '', startTime: '', endTime: '', originalStartDate: '', originalEndDate: '', displayDate: '' };
+
+    const start = reservation.startAt ? new Date(reservation.startAt) : null;
+    const end = reservation.endAt ? new Date(reservation.endAt) : null;
+
+    return {
+        attendeesCount: reservation.attendeesCount || 1,
+        notes: reservation.notes || '',
+        startTime: start ? `${pad(start.getHours())}:${pad(start.getMinutes())}` : '',
+        endTime: end ? `${pad(end.getHours())}:${pad(end.getMinutes())}` : '',
+        originalStartDate: start
+            ? `${start.getFullYear()}-${pad(start.getMonth() + 1)}-${pad(start.getDate())}`
+            : '',
+        originalEndDate: end
+            ? `${end.getFullYear()}-${pad(end.getMonth() + 1)}-${pad(end.getDate())}`
+            : '',
+        displayDate: start
+            ? start.toLocaleDateString('es-CO', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+            : '',
+    };
+};
+
 export const UpdateReservationModal = ({ isOpen, onClose, onConfirm, reservation }) => {
-    const [attendeesCount, setAttendeesCount] = useState(1);
-    const [notes, setNotes] = useState('');
-    const [startTime, setStartTime] = useState('');
-    const [endTime, setEndTime] = useState('');
-    const [originalStartDate, setOriginalStartDate] = useState('');
-    const [originalEndDate, setOriginalEndDate] = useState('');
-    const [displayDate, setDisplayDate] = useState('');
+    const initial = useMemo(() => parseReservation(reservation), [reservation]);
 
-    useEffect(() => {
-        if (isOpen && reservation) {
-            setAttendeesCount(reservation.attendeesCount || 1);
-            setNotes(reservation.notes || '');
-
-            const pad = (n) => n.toString().padStart(2, '0');
-
-            if (reservation.startAt) {
-                const d = new Date(reservation.startAt);
-                const dateStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-                setOriginalStartDate(dateStr);
-                setStartTime(`${pad(d.getHours())}:${pad(d.getMinutes())}`);
-                setDisplayDate(d.toLocaleDateString('es-CO', {
-                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-                }));
-            }
-
-            if (reservation.endAt) {
-                const d = new Date(reservation.endAt);
-                const dateStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-                setOriginalEndDate(dateStr);
-                setEndTime(`${pad(d.getHours())}:${pad(d.getMinutes())}`);
-            }
-        }
-    }, [isOpen, reservation]);
+    const [attendeesCount, setAttendeesCount] = useState(initial.attendeesCount);
+    const [notes, setNotes] = useState(initial.notes);
+    const [startTime, setStartTime] = useState(initial.startTime);
+    const [endTime, setEndTime] = useState(initial.endTime);
 
     if (!isOpen || !reservation) return null;
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
         const buildISO = (dateStr, timeStr) => new Date(`${dateStr}T${timeStr}:00`).toISOString();
-
         onConfirm({
             attendeesCount: Number(attendeesCount),
             notes,
-            startAt: buildISO(originalStartDate, startTime),
-            endAt: buildISO(originalEndDate, endTime),
+            startAt: buildISO(initial.originalStartDate, startTime),
+            endAt: buildISO(initial.originalEndDate, endTime),
         });
     };
 
@@ -72,7 +69,7 @@ export const UpdateReservationModal = ({ isOpen, onClose, onConfirm, reservation
                     {/* Read-only date info */}
                     <div style={{ marginBottom: '1.25rem', padding: '0.75rem 1rem', background: '#f0f4f8', borderRadius: '8px', fontSize: '0.9rem', color: '#4a5568' }}>
                         <span style={{ fontWeight: 600 }}>📅 Fecha: </span>
-                        <span style={{ textTransform: 'capitalize' }}>{displayDate}</span>
+                        <span style={{ textTransform: 'capitalize' }}>{initial.displayDate}</span>
                         <div style={{ fontSize: '0.75rem', color: '#718096', marginTop: '0.25rem' }}>
                             La fecha no puede modificarse. Solo ajusta la hora de inicio y fin.
                         </div>
