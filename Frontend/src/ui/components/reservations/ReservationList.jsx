@@ -21,7 +21,7 @@ export const ReservationList = ({ reservations = [], onCancel, onUpdate, onDeliv
                     key={res.id}
                     reservation={res}
                     onCancel={onCancel}
-                    onUpdate={onUpdate}
+                    onEdit={onUpdate}
                     onDeliver={onDeliver}
                     onReturn={onReturn}
                 />

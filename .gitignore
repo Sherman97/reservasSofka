@@ -31,7 +31,7 @@ Frontend/node_modules/
 Frontend/dist/
 Frontend/html/
 Frontend/reports/
-
+.agent/
 .idea/
 
 .idea/
