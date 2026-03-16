@@ -6,7 +6,7 @@ import '../../styles/reservations/Reservations.css';
  * Displays a single reservation with details and actions.
  * Automatically transitions status from "Próxima" to "En Progreso" when startAt arrives.
  */
-export const ReservationCard = ({ reservation, onCancel, onDeliver, onReturn }) => {
+export const ReservationCard = ({ reservation, onCancel, onUpdate, onDeliver, onReturn }) => {
     // Periodic re-render to detect time-based status transitions
     const [, setTick] = useState(0);
     useEffect(() => {
@@ -105,6 +105,17 @@ export const ReservationCard = ({ reservation, onCancel, onDeliver, onReturn }) 
                             title="Registrar Devolución"
                         >
                             ✅
+                        </button>
+                    )}
+
+                    {isUpcoming && !isCancelled && onUpdate && (
+                        <button
+                            className="btn-edit-res"
+                            onClick={() => onUpdate(reservation)}
+                            title="Editar Reserva"
+                            style={{marginRight: '8px', cursor: 'pointer'}} // added simple inline styles to match existing app style or use className
+                        >
+                            ✏️
                         </button>
                     )}
 

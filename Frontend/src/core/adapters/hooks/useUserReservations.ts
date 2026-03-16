@@ -18,7 +18,7 @@ interface UseUserReservationsReturn {
 }
 
 export const useUserReservations = (): UseUserReservationsReturn => {
-    const { getUserReservationsUseCase, cancelReservationUseCase, deliverReservationUseCase, returnReservationUseCase } = useReservationDependencies();
+    const { getUserReservationsUseCase, cancelReservationUseCase, deliverReservationUseCase, returnReservationUseCase, updateReservationUseCase } = useReservationDependencies();
     const { getCurrentUserUseCase } = useAuthDependencies();
 
     const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -53,6 +53,19 @@ export const useUserReservations = (): UseUserReservationsReturn => {
         } catch (err) {
             console.error('Error cancelling reservation:', err);
             alert((err as Error).message || 'Error al cancelar la reserva');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleUpdateReservation = async (reservationId: string, data: Record<string, unknown>): Promise<void> => {
+        setLoading(true);
+        try {
+            await updateReservationUseCase.execute(reservationId, data);
+            await loadReservations();
+        } catch (err) {
+            console.error('Error updating reservation:', err);
+            throw err; // Re-throw to be handled by UI
         } finally {
             setLoading(false);
         }
@@ -103,6 +116,7 @@ export const useUserReservations = (): UseUserReservationsReturn => {
         reservations: filteredReservations, allReservations: reservations, loading, error,
         searchTerm, activeTab, setActiveTab, handleSearch,
         cancelReservation: handleCancelReservation,
+        updateReservation: handleUpdateReservation,
         deliverReservation: handleDeliverReservation,
         returnReservation: handleReturnReservation,
         reload: loadReservations

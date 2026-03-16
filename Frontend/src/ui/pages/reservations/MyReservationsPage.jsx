@@ -4,6 +4,7 @@ import { useReminderAlerts } from '../../../core/adapters/hooks/useReminderAlert
 import { ReservationFilterBar } from '../../components/reservations/ReservationFilterBar';
 import { ReservationList } from '../../components/reservations/ReservationList';
 import { HandoverModal } from '../../components/reservations/HandoverModal';
+import { UpdateReservationModal } from '../../components/reservations/UpdateReservationModal';
 import { ReminderAlertBanner } from '../../components/reservations/ReminderAlertBanner';
 import { Pagination } from '../../components/common/Pagination';
 import '../../styles/reservations/Reservations.css';
@@ -24,6 +25,7 @@ export const MyReservationsPage = () => {
         setActiveTab,
         handleSearch,
         cancelReservation,
+        updateReservation,
         deliverReservation,
         returnReservation,
         reload
@@ -33,6 +35,7 @@ export const MyReservationsPage = () => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [handoverModal, setHandoverModal] = useState({ isOpen: false, reservation: null, action: null });
+    const [updateModal, setUpdateModal] = useState({ isOpen: false, reservation: null });
     const itemsPerPage = 5;
 
     // Periodic tick to re-evaluate reservation time status
@@ -110,6 +113,27 @@ export const MyReservationsPage = () => {
         handleCloseHandover();
     };
 
+    const handleOpenUpdate = (reservation) => {
+        setUpdateModal({ isOpen: true, reservation });
+    };
+
+    const handleCloseUpdate = () => {
+        setUpdateModal({ isOpen: false, reservation: null });
+    };
+
+    const handleConfirmUpdate = async (data) => {
+        const { reservation } = updateModal;
+        if (!reservation) return;
+
+        try {
+            await updateReservation(reservation.id, data);
+            handleCloseUpdate();
+            reload(); // Refresh the list so next modal open shows updated values
+        } catch (err) {
+            alert(err.message || 'Error al actualizar reserva');
+        }
+    };
+
     return (
         <div className="my-reservations-page">
             <div className="container">
@@ -146,6 +170,7 @@ export const MyReservationsPage = () => {
                         <ReservationList
                             reservations={currentReservations}
                             onCancel={cancelReservation}
+                            onUpdate={handleOpenUpdate}
                             onDeliver={handleOpenDeliver}
                             onReturn={handleOpenReturn}
                         />
@@ -166,6 +191,13 @@ export const MyReservationsPage = () => {
                     onConfirm={handleConfirmHandover}
                     action={handoverModal.action}
                     reservationName={handoverModal.reservation?.locationName || ''}
+                />
+
+                <UpdateReservationModal
+                    isOpen={updateModal.isOpen}
+                    onClose={handleCloseUpdate}
+                    onConfirm={handleConfirmUpdate}
+                    reservation={updateModal.reservation}
                 />
             </div>
         </div>

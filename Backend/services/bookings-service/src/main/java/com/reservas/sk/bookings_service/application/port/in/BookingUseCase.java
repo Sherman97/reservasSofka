@@ -14,6 +14,8 @@ public interface BookingUseCase {
 
     Reservation createReservation(CreateReservationCommand command);
 
+    Reservation updateReservation(com.reservas.sk.bookings_service.application.usecase.UpdateReservationCommand command);
+
     List<Reservation> listReservations(ListReservationsQuery query);
 
     Reservation getReservationById(Long reservationId);

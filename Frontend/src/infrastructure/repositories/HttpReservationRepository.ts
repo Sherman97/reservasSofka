@@ -44,6 +44,29 @@ export class HttpReservationRepository implements IReservationRepository {
         }
     }
 
+    async update(id: string, updateData: Record<string, unknown>): Promise<Reservation> {
+        try {
+            const payload = ReservationMapper.toApi(updateData as unknown as Parameters<typeof ReservationMapper.toApi>[0]);
+            const response = await this.httpClient.put(`/bookings/reservations/${id}`, payload);
+            const raw = response.data as ApiResponse & Record<string, unknown>;
+
+            if (isWrappedResponse(raw)) {
+                if (!raw.ok) throw new Error(raw.message || 'Error updating reservation');
+                const reservation = ReservationMapper.toDomain(raw.data as unknown as Parameters<typeof ReservationMapper.toDomain>[0]);
+                if (!reservation) throw new Error('Error mapping reservation data');
+                return reservation;
+            }
+
+            // Direct object response
+            const reservation = ReservationMapper.toDomain(raw as unknown as Parameters<typeof ReservationMapper.toDomain>[0]);
+            if (!reservation) throw new Error('Error mapping reservation data');
+            return reservation;
+        } catch (error) {
+            console.error('Error in HttpReservationRepository.update:', error);
+            throw error;
+        }
+    }
+
     async getByUserId(userId: string): Promise<Reservation[]> {
         try {
             const response = await this.httpClient.get('/bookings/reservations', {

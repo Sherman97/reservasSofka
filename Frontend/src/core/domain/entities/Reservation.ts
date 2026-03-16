@@ -8,6 +8,8 @@ export interface ReservationProps {
     equipment?: string[];
     status?: string;
     createdAt?: string | Date;
+    attendeesCount?: number;
+    notes?: string;
 }
 
 export class Reservation {
@@ -20,10 +22,13 @@ export class Reservation {
     public readonly equipment: string[];
     public readonly status: string;
     public readonly createdAt: Date;
+    public readonly attendeesCount: number;
+    public readonly notes: string;
 
     constructor({
         id, userId, locationId, locationName, startAt, endAt,
-        equipment = [], status = 'active', createdAt
+        equipment = [], status = 'active', createdAt,
+        attendeesCount = 1, notes = ''
     }: ReservationProps) {
         this.id = id;
         this.userId = userId;
@@ -34,6 +39,8 @@ export class Reservation {
         this.equipment = equipment;
         this.status = status;
         this.createdAt = createdAt ? new Date(createdAt) : new Date();
+        this.attendeesCount = attendeesCount ?? 1;
+        this.notes = notes ?? '';
     }
 
     isActive(): boolean {
@@ -107,7 +114,8 @@ export class Reservation {
             id: this.id, userId: this.userId, locationId: this.locationId,
             locationName: this.locationName, startAt: this.startAt.toISOString(),
             endAt: this.endAt.toISOString(), equipment: this.equipment,
-            status: this.status, createdAt: this.createdAt.toISOString()
+            status: this.status, createdAt: this.createdAt.toISOString(),
+            attendeesCount: this.attendeesCount, notes: this.notes
         };
     }
 

@@ -9,6 +9,7 @@ import type { GetInventoryUseCase } from '../../../application/use-cases/dashboa
 import type { CreateReservationUseCase } from '../../../application/use-cases/dashboard/CreateReservationUseCase';
 import type { GetUserReservationsUseCase } from '../../../application/use-cases/reservations/GetUserReservationsUseCase';
 import type { CancelReservationUseCase } from '../../../application/use-cases/reservations/CancelReservationUseCase';
+import type { UpdateReservationUseCase } from '../../../application/use-cases/reservations/UpdateReservationUseCase';
 import type { GetSpaceAvailabilityUseCase } from '../../../application/use-cases/dashboard/GetSpaceAvailabilityUseCase';
 import type { AssignInventoryUseCase } from '../../../application/use-cases/dashboard/AssignInventoryUseCase';
 import type { RemoveInventoryUseCase } from '../../../application/use-cases/dashboard/RemoveInventoryUseCase';
@@ -64,6 +65,7 @@ export interface ReservationDependencies {
     createReservationUseCase: CreateReservationUseCase;
     getUserReservationsUseCase: GetUserReservationsUseCase;
     cancelReservationUseCase: CancelReservationUseCase;
+    updateReservationUseCase: UpdateReservationUseCase;
     getSpaceAvailabilityUseCase: GetSpaceAvailabilityUseCase;
     deliverReservationUseCase: DeliverReservationUseCase;
     returnReservationUseCase: ReturnReservationUseCase;
@@ -78,6 +80,7 @@ export const useReservationDependencies = (): ReservationDependencies => {
         createReservationUseCase: c.get('createReservationUseCase'),
         getUserReservationsUseCase: c.get('getUserReservationsUseCase'),
         cancelReservationUseCase: c.get('cancelReservationUseCase'),
+        updateReservationUseCase: c.get('updateReservationUseCase'),
         getSpaceAvailabilityUseCase: c.get('getSpaceAvailabilityUseCase'),
         deliverReservationUseCase: c.get('deliverReservationUseCase'),
         returnReservationUseCase: c.get('returnReservationUseCase'),
