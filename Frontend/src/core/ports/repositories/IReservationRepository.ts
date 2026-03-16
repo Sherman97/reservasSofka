@@ -17,6 +17,7 @@ export interface AvailabilityResult {
  */
 export interface IReservationRepository {
     create(reservationData: Record<string, unknown>): Promise<Reservation>;
+    update(id: string, updateData: Record<string, unknown>): Promise<Reservation>;
     getByUserId(userId: string): Promise<Reservation[]>;
     getById(id: string): Promise<Reservation>;
     cancel(id: string): Promise<void>;

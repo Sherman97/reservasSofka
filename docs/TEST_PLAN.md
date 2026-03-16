@@ -247,25 +247,24 @@ Se subdivide en **dos tipos** para cubrir la integridad completa del sistema:
 | **Servicios levantados** | MariaDB, RabbitMQ, Liquibase, auth-service |
 | **Archivo** | `Backend/tests/blackbox/test-user-creation.sh` — 7 test cases |
 
-#### 4.4.2 Caja Negra — E2E UI (Playwright)
+#### 4.4.2 Caja Negra — API (Postman / Newman)
 
 | Aspecto | Detalle |
 |---------|--------|
 | **Herramienta** | Postman Collection / Newman CLI |
-| **Qué valida** | Caja negra API pura interactuando directamente con el backend: Autenticación (`POST /auth/register`) y Reservas (`POST /api/bookings`, `GET /api/bookings`). Se ejecutan a través de Newman. |
+| **Qué valida** | Caja negra API pura interactuando directamente con el backend: Autenticación (`POST /auth/register`) y Reservas (`POST /api/bookings/reservations`, `GET /api/bookings/reservations`). Se ejecutan a través de Newman. |
 | **Servicios levantados** | **Stack completo**: Frontend (Nginx) + API Gateway + todos los microservicios + MariaDB + RabbitMQ |
 | **Archivo** | `Backend/tests/blackbox/reservas-api.postman_collection.json` (3 tests: TC-BB-030 a TC-BB-032) |
 
-**Integridad del sistema verificada con Playwright:**
+**Integridad del sistema verificada con Postman (Newman):**
 ```
-Usuario → Navegador (Chromium) → Frontend (React/Nginx:5173)
-  → API Gateway (:3000) → auth-service (:3001) → MariaDB → RabbitMQ
-                        → bookings-service (:3003)
-                        → locations-service (:3004)
-                        → inventory-service (:3005)
+Postman (Newman CLI) → API Gateway (:3000) → auth-service (:3001) → MariaDB → RabbitMQ
+                                           → bookings-service (:3003)
+                                           → locations-service (:3004)
+                                           → inventory-service (:3005)
 ```
 
-Esto complementa la integridad del sistema: las pruebas de Postman (Newman) validan la **comunicación HTTP y los contratos de API directamente contra el hub expuesto** en un entorno Dockerizado, comprobando la integración del API Gateway con los microservicios de backend reales (p. ej. `bookings-service`, `auth-service`).
+Esto consolida la integridad del sistema: las pruebas de Postman (Newman) validan la **comunicación HTTP y los contratos de API directamente contra el hub expuesto** en un entorno Dockerizado, comprobando la integración del API Gateway con los microservicios de backend reales.
 
 ---
 
@@ -407,20 +406,12 @@ El archivo `.github/workflows/ci.yml` define **5 jobs** visualmente diferenciado
 │  excludeTags=integration │   │  includeTags=integration  │   │                     │
 └──────────┬───────────────┘   └──────────┬───────────────┘   └─────────┬───────────┘
            │                              │                             │
-           ▼                              ▼                             │
-┌─────────────────────────────────────────────┐                         │
-│ 📦 blackbox-tests                           │                         │
-│  (docker compose up + test-user-creation.sh │                         │
-│   ejecutado DENTRO de contenedor Docker)    │                         │
-│  needs: [component-tests, integration-tests]│                         │
-└──────────────────────┬──────────────────────┘                         │
-                       │                                                │
-                       ▼                                                ▼
-┌──────────────────────────────────────────────────────────────────────────┐
-│ 🎭 e2e-tests (Playwright)                                               │
-│  (stack completo + navegador Chromium)                                   │
-│  needs: [component-tests, integration-tests, frontend]                   │
-└──────────────────────────────────────────────────────────────────────────┘
+           ▼                              ▼                             ▼
+┌───────────────────────────────────────────────────────────────────────────┐
+│ 📦 blackbox-tests                                                         │
+│  (docker compose up + Newman CLI ejecutando Postman collection)           │
+│  needs: [component-tests, integration-tests, frontend]                    │
+└───────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### 7.2 Mecanismo de separación — JUnit 5 Tags + Gradle Tasks
@@ -621,20 +612,33 @@ jobs:
 En la UI de GitHub Actions, los jobs se muestran visualmente diferenciados:
 
 ```
-✅ 🧩 Component Tests (auth-service)
-✅ 🧩 Component Tests (bookings-service)
-✅ 🧩 Component Tests (api-gateway)
-✅ 🧩 Component Tests (inventory-service)
-✅ 🧩 Component Tests (locations-service)
-✅ 🧩 Component Tests (notifications-service)
-✅ 🔗 Integration Tests (auth-service)
-✅ 🔗 Integration Tests (bookings-service)
-✅ 🔗 Integration Tests (api-gateway)
-✅ 🔗 Integration Tests (inventory-service)
-✅ 🔗 Integration Tests (locations-service)
-✅ 🔗 Integration Tests (notifications-service)
-✅ 🌐 Frontend
 ✅ 📦 Black-Box Tests (API)
+```
+
+### 7.10 Evidencia de Ejecución en CI
+
+A continuación se muestra la evidencia de la ejecución del pipeline en GitHub Actions, validando tanto el flujo exitoso como el comportamiento ante fallos.
+
+#### 7.10.1 Ejecución Exitosa (All Green)
+Cuando todos los tests pasan, el pipeline completa todas las etapas, permitiendo la integración de los cambios.
+
+![CI Success Evidence](images/ci_success.png)
+*Figura: Pipeline completado exitosamente (Component, Integration, Frontend y Black-Box tests).*
+
+#### 7.10.2 Ejecución Fallida (Bloqueo)
+En caso de que algún test falle, el pipeline se detiene y marca la etapa correspondiente en rojo. Los jobs dependientes (como Black-Box tests) se omiten para evitar falsos positivos.
+
+![CI Failure Evidence](images/ci_failure.png)
+*Figura: Visualización de un fallo en los tests de ejecución paralela, lo cual dispara el bloqueo del PR.*
+
+### 7.11 Política de Bloqueo de Fusión (Merge Blocking)
+
+Para garantizar la estabilidad de las ramas principales (`main` y `develop`), se ha establecido la siguiente regla crítica de calidad:
+
+> [!IMPORTANT]
+> **Bloqueo de PR**: Ningún Pull Request está habilitado para ser fusionado (Merge) si el pipeline de `CI` reporta un fallo en cualquiera de sus etapas. GitHub muestra el botón de mezcla deshabilitado hasta que se corrijan los tests y el estado pase a ✅ (Success).
+
+Esto asegura que el código en producción siempre mantenga los estándares de calidad definidos y no rompa funcionalidades existentes.
 ```
 
 ---
@@ -761,7 +765,7 @@ Cubre endpoints fundamentales (autenticación y flujo de reservas) como pruebas 
 |-------------|-----------|
 | Docker Compose | Levantar stack completo para caja negra |
 | curl + bash | Ejecutar tests HTTP de caja negra (API) |
-| Playwright (Chromium) | Tests E2E de caja negra con navegador real |
+| Postman / Newman | Tests de caja negra API automatizados en CI |
 | GitHub Actions | CI: ejecutar toda la suite en push/PR |
 | MariaDB 11.4 | Base de datos para tests de integración |
 | Liquibase 4.30 | Migraciones de BD en CI |
@@ -961,7 +965,7 @@ npx newman run Backend/tests/blackbox/reservas-api.postman_collection.json
 |---------|-------|---------|
 | 1.0 | 2026-03-04 | Versión inicial del Test Plan |
 | 1.1 | 2026-03-04 | Pipeline CI actualizado: separación visual de pruebas de componente (`componentTest`) e integración (`integrationTest`) en jobs independientes con JUnit 5 `@Tag("integration")`; pruebas de caja negra ejecutándose dentro de contenedor Docker |
-| 1.2 | 2026-03-06 | Nuevo spec de caja negra E2E `status-transition-flow.spec.ts` (11 tests, TC-BB-031–TC-BB-041) para la HU de transición de estado "Próxima → En Progreso → Cerrado": badge de estado, HandoverModal de entrega/devolución, campo de novedades. Totales actualizados: 1 058 tests, 26 E2E Playwright, 137 archivos de test |
+| 1.2 | 2026-03-08 | Migración completa a API testing puro: Eliminación de Playwright (E2E UI) a favor de una suite consolidada de Postman / Newman ejecutada centralmente en el job `blackbox-tests` de CI. |
 
 ---
 

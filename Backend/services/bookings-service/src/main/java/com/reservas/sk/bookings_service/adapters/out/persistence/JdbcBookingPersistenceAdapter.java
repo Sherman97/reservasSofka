@@ -197,6 +197,23 @@ public class JdbcBookingPersistenceAdapter implements BookingPersistencePort {
     }
 
     @Override
+    public void updateReservation(long reservationId, String title, Instant startAt, Instant endAt, Integer attendeesCount, String notes) {
+        jdbcTemplate.update(
+                """
+                UPDATE reservations 
+                SET title = ?, start_datetime = ?, end_datetime = ?, attendees_count = ?, notes = ?
+                WHERE id = ?
+                """,
+                title,
+                Timestamp.from(startAt),
+                Timestamp.from(endAt),
+                attendeesCount,
+                notes,
+                reservationId
+        );
+    }
+
+    @Override
     public List<Reservation> listReservations(Long userId, Long spaceId, String status) {
         StringBuilder sql = new StringBuilder(RESERVATION_QUERY_CAPACITY);
         sql.append(

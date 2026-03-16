@@ -3,6 +3,7 @@ package com.reservas.sk.bookings_service.adapters.in.web;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.ApiResponse;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.CancelReservationRequest;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.CreateReservationRequest;
+import com.reservas.sk.bookings_service.adapters.in.web.dto.UpdateReservationRequest;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.HandoverReservationRequest;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.ReservationResponse;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.SpaceAvailabilityResponse;
@@ -10,6 +11,7 @@ import com.reservas.sk.bookings_service.application.port.in.BookingUseCase;
 import com.reservas.sk.bookings_service.application.usecase.AuthenticatedUser;
 import com.reservas.sk.bookings_service.application.usecase.CheckSpaceAvailabilityQuery;
 import com.reservas.sk.bookings_service.application.usecase.CreateReservationCommand;
+import com.reservas.sk.bookings_service.application.usecase.UpdateReservationCommand;
 import com.reservas.sk.bookings_service.application.usecase.HandoverReservationCommand;
 import com.reservas.sk.bookings_service.application.usecase.ListReservationsQuery;
 import jakarta.validation.Valid;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -70,6 +73,23 @@ public class BookingController {
                                                                    @RequestParam(required = false) String status) {
         var reservations = bookingUseCase.listReservations(new ListReservationsQuery(userId, spaceId, status));
         return ApiResponse.success(reservations.stream().map(mapper::toResponse).toList());
+    }
+
+    @PutMapping("/reservations/{id}")
+    public ResponseEntity<ApiResponse<ReservationResponse>> updateReservation(@PathVariable Long id,
+                                                                              @Valid @RequestBody UpdateReservationRequest request,
+                                                                              @AuthenticationPrincipal AuthenticatedUser user) {
+        var reservation = bookingUseCase.updateReservation(new UpdateReservationCommand(
+                id,
+                user.userId(),
+                request.title(),
+                request.startAt(),
+                request.endAt(),
+                request.attendeesCount(),
+                request.notes()
+        ));
+
+        return ResponseEntity.ok(ApiResponse.success(mapper.toResponse(reservation)));
     }
 
     @GetMapping("/reservations/{id}")

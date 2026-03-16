@@ -58,6 +58,7 @@ export const ItemCard = ({ item }) => {
                     selectedEquipment={reservation.selectedEquipment}
                     startTime={reservation.startTime}
                     endTime={reservation.endTime}
+                    attendeesCount={reservation.attendeesCount}
                     availability={reservation.availability}
                     loading={reservation.loading}
                     busySlots={reservation.busySlots}
@@ -70,6 +71,7 @@ export const ItemCard = ({ item }) => {
                     onEquipmentToggle={reservation.handleEquipmentToggle}
                     onStartTimeChange={reservation.handleStartTimeChange}
                     onEndTimeChange={reservation.handleEndTimeChange}
+                    onAttendeesCountChange={reservation.setAttendeesCount}
                     onPreviousMonth={reservation.goToPreviousMonth}
                     onNextMonth={reservation.goToNextMonth}
                     onClose={reservation.closeModal}
