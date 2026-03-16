@@ -36,7 +36,31 @@ export const MyReservationsPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [handoverModal, setHandoverModal] = useState({ isOpen: false, reservation: null, action: null });
     const [updateModal, setUpdateModal] = useState({ isOpen: false, reservation: null });
+    const [updateError, setUpdateError] = useState(null);
     const itemsPerPage = 5;
+
+    const getErrorMessage = (err) => {
+        if (!err) return 'Error al actualizar reserva';
+        if (typeof err === 'string') return err;
+
+        const backendMessage = err.response?.data?.message;
+        if (typeof backendMessage === 'string' && backendMessage.trim()) {
+            return backendMessage;
+        }
+
+        if (Array.isArray(backendMessage) && backendMessage.length > 0) {
+            return backendMessage.join(' | ');
+        }
+
+        if (backendMessage && typeof backendMessage === 'object') {
+            const values = Object.values(backendMessage).filter(Boolean);
+            if (values.length > 0) {
+                return values.join(' | ');
+            }
+        }
+
+        return err.message || 'Error al actualizar reserva';
+    };
 
     // Periodic tick to re-evaluate reservation time status
     const [tick, setTick] = useState(0);
@@ -114,10 +138,12 @@ export const MyReservationsPage = () => {
     };
 
     const handleOpenUpdate = (reservation) => {
+        setUpdateError(null);
         setUpdateModal({ isOpen: true, reservation });
     };
 
     const handleCloseUpdate = () => {
+        setUpdateError(null);
         setUpdateModal({ isOpen: false, reservation: null });
     };
 
@@ -130,7 +156,7 @@ export const MyReservationsPage = () => {
             handleCloseUpdate();
             reload(); // Refresh the list so next modal open shows updated values
         } catch (err) {
-            alert(err.message || 'Error al actualizar reserva');
+            setUpdateError(getErrorMessage(err));
         }
     };
 
@@ -199,6 +225,7 @@ export const MyReservationsPage = () => {
                     onClose={handleCloseUpdate}
                     onConfirm={handleConfirmUpdate}
                     reservation={updateModal.reservation}
+                    errorMessage={updateError}
                 />
             </div>
         </div>

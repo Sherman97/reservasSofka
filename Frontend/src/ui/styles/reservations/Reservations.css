@@ -264,6 +264,26 @@
     transition: all 0.2s;
 }
 
+.btn-edit-res {
+    background: #eff6ff;
+    border: none;
+    font-size: 1rem;
+    color: #2563eb;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-edit-res:hover {
+    background-color: #dbeafe;
+    transform: scale(1.1);
+}
+
 .btn-cancel-res:hover {
     background-color: #fed7d7;
     transform: scale(1.1);
