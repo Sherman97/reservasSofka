@@ -364,6 +364,7 @@
     align-items: center;
     justify-content: center;
     z-index: 1000;
+    padding: 1rem;
     animation: fadeIn 0.2s ease;
 }
 
@@ -371,9 +372,13 @@
     background: white;
     border-radius: 16px;
     width: 100%;
-    max-width: 480px;
+    max-width: 540px;
+    max-height: 90vh;
+    overflow-y: auto;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     animation: slideUp 0.3s ease;
+    display: flex;
+    flex-direction: column;
 }
 
 .handover-modal-header {
@@ -414,6 +419,8 @@
 
 .handover-modal-body {
     padding: 1.5rem;
+    overflow-y: auto;
+    flex: 1;
 }
 
 .handover-modal-description {

@@ -12,11 +12,13 @@ export const ReservationModal = ({
     selectedEquipment = [],
     startTime,
     endTime,
+    attendeesCount = 1,
     availability,
     onDateSelect,
     onEquipmentToggle,
     onStartTimeChange,
     onEndTimeChange,
+    onAttendeesCountChange,
     onPreviousMonth,
     onNextMonth,
     onClose,
@@ -98,7 +100,17 @@ export const ReservationModal = ({
                                     item={item}
                                     successMessage={successMessage}
                                 />
-
+                                
+                                <div style={{marginTop: '15px'}} className="modal-section-attendees">
+                                    <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '0.9rem', color: '#555'}}>Asistentes:</label>
+                                    <input 
+                                        type="number" 
+                                        min="1" 
+                                        value={attendeesCount} 
+                                        onChange={(e) => onAttendeesCountChange?.(Number(e.target.value))}
+                                        style={{width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd', fontSize: '1rem', transition: 'border-color 0.2s', backgroundColor: '#f9f9f9'}}
+                                    />
+                                </div>
                             </div>
 
                             <div className="modal-section">

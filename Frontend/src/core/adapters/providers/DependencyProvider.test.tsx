@@ -21,6 +21,7 @@ vi.mock('../di/container', () => {
         submitDeliveryUseCase: { execute: vi.fn() },
         deliverReservationUseCase: { execute: vi.fn() },
         returnReservationUseCase: { execute: vi.fn() },
+        updateReservationUseCase: { execute: vi.fn() },
         webSocketService: { connect: vi.fn(), subscribe: vi.fn() }
     };
     return {

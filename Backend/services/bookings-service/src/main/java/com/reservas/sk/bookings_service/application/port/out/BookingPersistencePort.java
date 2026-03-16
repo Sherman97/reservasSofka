@@ -37,6 +37,13 @@ public interface BookingPersistencePort {
 
     void insertReservationEquipment(long reservationId, long equipmentId, String status);
 
+    void updateReservation(long reservationId,
+                           String title,
+                           Instant startAt,
+                           Instant endAt,
+                           Integer attendeesCount,
+                           String notes);
+
     List<Reservation> listReservations(Long userId, Long spaceId, String status);
 
     Optional<Reservation> findReservationById(long reservationId);
