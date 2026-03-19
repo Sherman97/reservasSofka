@@ -46,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(AuthControllerTest.MockBeansConfig.class)
 class AuthControllerTest {
     private static final String ASSERT_MSG = "PMD UnitTestAssertionsShouldIncludeMessage";
-    private static final String JUAN_EMAIL = "juan@email.com";
+    private static final String JUAN_EMAIL = "juan@sofka.com.co";
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -119,6 +119,21 @@ class AuthControllerTest {
     }
 
     @Test
+    void register_400_correoCorporativoInvalido() throws Exception {
+        RegisterRequest invalidRequest = new RegisterRequest("Juan", "juan@gmail.com", "123456");
+
+        MvcResult mvcResult = mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        verify(authUseCase, never()).register(any(RegisterCommand.class));
+        verify(authHttpMapper, never()).toAuthResponse(any());
+        assertEquals(400, mvcResult.getResponse().getStatus(), ASSERT_MSG);
+    }
+
+    @Test
     void login_200_payloadOk() throws Exception {
         AuthResult authResult = Mockito.mock(AuthResult.class);
         AuthResponse authResponse = new AuthResponse(
@@ -158,5 +173,4 @@ class AuthControllerTest {
         assertEquals(401, mvcResult.getResponse().getStatus(), ASSERT_MSG);
     }
 }
-
 

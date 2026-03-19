@@ -33,7 +33,7 @@ import static org.mockito.Mockito.when;
 class AuthApplicationServiceTest {
     private static final String ASSERT_MSG = "PMD UnitTestAssertionsShouldIncludeMessage";
     private static final String RAW_PASSWORD = "1234";
-    private static final String JUAN_EMAIL = "juan@email.com";
+    private static final String JUAN_EMAIL = "juan@sofka.com.co";
     private static final String STORED_HASH = "stored-hash";
     @Mock
     private UserPersistencePort userPersistencePort;
@@ -101,7 +101,7 @@ class AuthApplicationServiceTest {
 
     @Test
     void login_ok_credencialesValidas() {
-        LoginCommand cmd = new LoginCommand("  JUAN@Email.com  ", RAW_PASSWORD);
+        LoginCommand cmd = new LoginCommand("  JUAN@SOFKA.COM.CO  ", RAW_PASSWORD);
         User existingUser = new User(11L, "Juan", JUAN_EMAIL, STORED_HASH, LocalDateTime.now());
 
         when(userPersistencePort.findByEmail(JUAN_EMAIL)).thenReturn(Optional.of(existingUser));
@@ -149,7 +149,7 @@ class AuthApplicationServiceTest {
     }
 
     private RegisterCommand registerCommand() {
-        return new RegisterCommand("  Juan Perez  ", "  JUAN@Email.com  ", RAW_PASSWORD);
+        return new RegisterCommand("  Juan Perez  ", "  JUAN@SOFKA.COM.CO  ", RAW_PASSWORD);
     }
 
     private User storedUser() {
@@ -175,5 +175,3 @@ class AuthApplicationServiceTest {
         return eventCaptor.getValue();
     }
 }
-
-

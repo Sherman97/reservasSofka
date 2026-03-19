@@ -77,12 +77,12 @@ describe('Integration: Auth Flow (UseCase + Mapper + Entity)', () => {
         const registerUseCase = new RegisterUseCase(repo);
 
         const user = await registerUseCase.execute({
-            email: 'new@test.com', password: '123456', name: 'New User'
+            email: 'new.user@sofka.com.co', password: '123456', name: 'New User'
         });
 
         // UserMapper debe haber usado username como fallback
         expect(user).toBeInstanceOf(User);
-        expect(user.email).toBe('new@test.com');
+        expect(user.email).toBe('new.user@sofka.com.co');
         expect(user.name).toBe('New User');
     });
 

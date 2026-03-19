@@ -36,9 +36,9 @@ describe('useSignup', () => {
     it('debe actualizar campos de texto con handleChange', () => {
         const { result } = renderHook(() => useSignup());
         act(() => {
-            result.current.handleChange({ target: { name: 'email', value: 'a@b.com', type: 'text', checked: false } } as React.ChangeEvent<HTMLInputElement>);
+            result.current.handleChange({ target: { name: 'email', value: 'a@sofka.com.co', type: 'text', checked: false } } as React.ChangeEvent<HTMLInputElement>);
         });
-        expect(result.current.formData.email).toBe('a@b.com');
+        expect(result.current.formData.email).toBe('a@sofka.com.co');
     });
 
     it('debe actualizar checkbox con handleChange', () => {
@@ -57,7 +57,7 @@ describe('useSignup', () => {
             result.current.handleChange({ target: { name: 'fullName', value: 'Test User', type: 'text', checked: false } } as React.ChangeEvent<HTMLInputElement>);
         });
         act(() => {
-            result.current.handleChange({ target: { name: 'email', value: 'a@b.com', type: 'text', checked: false } } as React.ChangeEvent<HTMLInputElement>);
+            result.current.handleChange({ target: { name: 'email', value: 'a@sofka.com.co', type: 'text', checked: false } } as React.ChangeEvent<HTMLInputElement>);
         });
         act(() => {
             result.current.handleChange({ target: { name: 'password', value: '123456', type: 'text', checked: false } } as React.ChangeEvent<HTMLInputElement>);
@@ -73,8 +73,8 @@ describe('useSignup', () => {
             await result.current.handleSubmit({ preventDefault: vi.fn() } as unknown as React.FormEvent);
         });
 
-        expect(mockRegisterExecute).toHaveBeenCalledWith({ name: 'Test User', email: 'a@b.com', password: '123456' });
-        expect(mockLoginExecute).toHaveBeenCalledWith({ email: 'a@b.com', password: '123456' });
+        expect(mockRegisterExecute).toHaveBeenCalledWith({ name: 'Test User', email: 'a@sofka.com.co', password: '123456' });
+        expect(mockLoginExecute).toHaveBeenCalledWith({ email: 'a@sofka.com.co', password: '123456' });
         expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
     });
 
