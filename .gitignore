@@ -26,6 +26,8 @@ Thumbs.db
 Backend/.gradle/
 Backend/.idea/
 Backend/gradle/
+Backend/.ai/
+Backend/.github/
 
 Frontend/node_modules/
 Frontend/dist/
@@ -36,3 +38,7 @@ Frontend/reports/
 
 .idea/
 .idea/
+
+CRUD/
+POM/
+ScreenPlay/
