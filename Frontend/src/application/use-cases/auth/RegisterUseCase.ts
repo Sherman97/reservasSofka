@@ -10,9 +10,9 @@ export class RegisterUseCase {
             throw new RegistrationError('Email, contraseña y nombre son requeridos');
         }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@sofka\.com\.co$/i;
         if (!emailRegex.test(userData.email)) {
-            throw new RegistrationError('Email inválido');
+            throw new RegistrationError('El correo corporativo no cumple con el formato válido');
         }
 
         if (userData.password.length < 6) {
