@@ -40,7 +40,7 @@
           "script": {
             "exec": [
               "let timestamp = Date.now();",
-              "pm.environment.set(\"USER_EMAIL\", \"bb_postman_\" + timestamp + \"@test.com\");",
+              "pm.environment.set(\"USER_EMAIL\", \"bb_postman_\" + timestamp + \"@sofka.com.co\");",
               "pm.environment.set(\"USER_NAME\", \"Postman BB User \" + timestamp);"
             ],
             "type": "text/javascript"
