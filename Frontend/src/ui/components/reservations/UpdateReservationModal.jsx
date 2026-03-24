@@ -32,18 +32,26 @@ const parseReservation = (reservation) => {
     };
 };
 
-export const UpdateReservationModal = ({ isOpen, onClose, onConfirm, reservation }) => {
+export const UpdateReservationModal = ({ isOpen, onClose, onConfirm, reservation, errorMessage = null }) => {
     const initial = useMemo(() => parseReservation(reservation), [reservation]);
 
     const [attendeesCount, setAttendeesCount] = useState(initial.attendeesCount);
     const [notes, setNotes] = useState(initial.notes);
     const [startTime, setStartTime] = useState(initial.startTime);
     const [endTime, setEndTime] = useState(initial.endTime);
+    const [localError, setLocalError] = useState(null);
 
     if (!isOpen || !reservation) return null;
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        if (startTime >= endTime) {
+            setLocalError('La hora de inicio debe ser menor que la hora de fin.');
+            return;
+        }
+
+        setLocalError(null);
         const buildISO = (dateStr, timeStr) => new Date(`${dateStr}T${timeStr}:00`).toISOString();
         onConfirm({
             attendeesCount: Number(attendeesCount),
@@ -66,6 +74,20 @@ export const UpdateReservationModal = ({ isOpen, onClose, onConfirm, reservation
                 </div>
 
                 <form className="handover-modal-body" onSubmit={handleSubmit}>
+                    {(localError || errorMessage) && (
+                        <div style={{
+                            marginBottom: '1rem',
+                            padding: '0.75rem 1rem',
+                            background: '#fff5f5',
+                            color: '#c53030',
+                            border: '1px solid #fed7d7',
+                            borderRadius: '8px',
+                            fontSize: '0.9rem'
+                        }}>
+                            {localError || errorMessage}
+                        </div>
+                    )}
+
                     {/* Read-only date info */}
                     <div style={{ marginBottom: '1.25rem', padding: '0.75rem 1rem', background: '#f0f4f8', borderRadius: '8px', fontSize: '0.9rem', color: '#4a5568' }}>
                         <span style={{ fontWeight: 600 }}>📅 Fecha: </span>
@@ -82,7 +104,10 @@ export const UpdateReservationModal = ({ isOpen, onClose, onConfirm, reservation
                                 type="time"
                                 className="handover-modal-textarea"
                                 value={startTime}
-                                onChange={(e) => setStartTime(e.target.value)}
+                                onChange={(e) => {
+                                    setStartTime(e.target.value);
+                                    setLocalError(null);
+                                }}
                                 min="08:00"
                                 max="18:00"
                                 required
@@ -94,7 +119,10 @@ export const UpdateReservationModal = ({ isOpen, onClose, onConfirm, reservation
                                 type="time"
                                 className="handover-modal-textarea"
                                 value={endTime}
-                                onChange={(e) => setEndTime(e.target.value)}
+                                onChange={(e) => {
+                                    setEndTime(e.target.value);
+                                    setLocalError(null);
+                                }}
                                 min="08:00"
                                 max="18:00"
                                 required

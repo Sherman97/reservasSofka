@@ -4,10 +4,9 @@ import '../../styles/reservations/Reservations.css';
 /**
  * ReservationCard - UI Component
  * Displays a single reservation with details and actions.
- * Automatically transitions status from "Próxima" to "En Progreso" when startAt arrives.
+ * Automatically transitions status from "Proxima" to "En Progreso" when startAt arrives.
  */
-export const ReservationCard = ({ reservation, onCancel, onUpdate, onDeliver, onReturn }) => {
-    // Periodic re-render to detect time-based status transitions
+export const ReservationCard = ({ reservation, onCancel, onEdit, onDeliver, onReturn }) => {
     const [, setTick] = useState(0);
     useEffect(() => {
         const interval = setInterval(() => setTick(t => t + 1), 30_000);
@@ -41,12 +40,11 @@ export const ReservationCard = ({ reservation, onCancel, onUpdate, onDeliver, on
         return 'En curso';
     };
 
-    // Determine icon based on type or name
     let icon = '📅';
     const name = (reservation.locationName || '').toLowerCase();
-    if (name.includes('sala') || name.includes('reunión')) icon = '🏢';
+    if (name.includes('sala') || name.includes('reunion')) icon = '🏢';
     if (name.includes('laptop') || name.includes('macbook')) icon = '💻';
-    if (name.includes('kit') || name.includes('cámara')) icon = '📹';
+    if (name.includes('kit') || name.includes('camara')) icon = '📹';
 
     return (
         <div className={`reservation-card ${isCancelled ? 'cancelled' : ''}`}>
@@ -86,45 +84,26 @@ export const ReservationCard = ({ reservation, onCancel, onUpdate, onDeliver, on
                 </span>
 
                 <div className="card-actions">
-                    {/* Deliver button: available only when reservation is in progress (ongoing) */}
                     {(isInProgress || isOngoing) && !isCancelled && !isCompleted && onDeliver && (
-                        <button
-                            className="btn-deliver-res"
-                            onClick={() => onDeliver(reservation)}
-                            title="Registrar Entrega"
-                        >
+                        <button className="btn-deliver-res" onClick={() => onDeliver(reservation)} title="Registrar entrega">
                             📦
                         </button>
                     )}
 
-                    {/* Return button: available when reservation is in_progress */}
                     {isInProgress && onReturn && (
-                        <button
-                            className="btn-return-res"
-                            onClick={() => onReturn(reservation)}
-                            title="Registrar Devolución"
-                        >
+                        <button className="btn-return-res" onClick={() => onReturn(reservation)} title="Registrar devolucion">
                             ✅
                         </button>
                     )}
 
-                    {isUpcoming && !isCancelled && onUpdate && (
-                        <button
-                            className="btn-edit-res"
-                            onClick={() => onUpdate(reservation)}
-                            title="Editar Reserva"
-                            style={{marginRight: '8px', cursor: 'pointer'}} // added simple inline styles to match existing app style or use className
-                        >
+                    {isUpcoming && !isCancelled && onEdit && (
+                        <button className="btn-edit-res" onClick={() => onEdit(reservation)} title="Actualizar horario">
                             ✏️
                         </button>
                     )}
 
                     {isUpcoming && !isCancelled && (
-                        <button
-                            className="btn-cancel-res"
-                            onClick={() => onCancel(reservation.id)}
-                            title="Cancelar Reserva"
-                        >
+                        <button className="btn-cancel-res" onClick={() => onCancel(reservation.id)} title="Cancelar reserva">
                             🗑️
                         </button>
                     )}
