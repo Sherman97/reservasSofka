@@ -4,3 +4,5 @@
 # Scrum | Historias de Usuario | Aprende lo Importante Rápido
 ## https://www.youtube.com/watch?v=FJuq_lrM5Cc    
 
+# Cómo escribir buenas historias de usuario
+## https://www.media.thiga.co/es/historias-de-usuario
