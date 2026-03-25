@@ -1,0 +1,1 @@
+Feature verificar asistencia por QR
