@@ -6,3 +6,6 @@
 
 # Cómo escribir buenas historias de usuario
 ## https://www.media.thiga.co/es/historias-de-usuario
+
+# Explicación de la definición de "listo" (DoR) y componentes clave
+## https://www.atlassian.com/es/agile/project-management/definition-of-ready
