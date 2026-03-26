@@ -21,3 +21,6 @@
 
 # 8 Planning poker: la estrategia integral para la estimación ágil
 ## https://asana.com/es/resources/planning-poker
+
+# 9 La guía definitiva para diagramar la arquitectura del software
+## https://miro.com/es/diagrama/que-es-diagrama-arquitectura-software/
