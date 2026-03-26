@@ -13,3 +13,5 @@
 # SCRUM DoR – Definición de Preparado
 ## https://www.deloitte.com/es/es/services/consulting/blogs/todo-tecnologia/scrum-dor-definicion-de-preparado.html
 
+# ¿Cuál es la diferencia entre la Definición de Hecho (DoD) y la Definición de Listo (DoR)?
+## https://www.scrum.org/resources/blog/what-difference-between-definition-done-dod-and-definition-ready-dor
