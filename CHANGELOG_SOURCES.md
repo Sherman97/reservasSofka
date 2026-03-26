@@ -11,3 +11,6 @@ Se realiza en mermaid con el diagrama de flujo del software integrando la featur
 - Estimación de historias de usuario "https://fastercapital.com/es/contenido/Estimacion-agil--como-estimar-tus-historias-de-usuario-y-sprints.html"
 - Definition of Ready (DoR) and Definition of Done (DoD) "https://blog.adapt.works/diferencias-entre-dor-dod-y-criterios-de-aceptacion/"
 4. Mockups UX/UI "https://contentsquare.com/es-es/guias/diseno-ux/herramientas/"
+-"https://www.bluepixel.mx/es/blog/mejores-herramientas-ux-ui-2025"
+-"https://www.unite.ai/es/best-ai-ux-ui-design-tools/"
+- 
