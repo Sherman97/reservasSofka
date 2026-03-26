@@ -9,3 +9,7 @@
 
 # Explicación de la definición de "listo" (DoR) y componentes clave
 ## https://www.atlassian.com/es/agile/project-management/definition-of-ready
+
+# SCRUM DoR – Definición de Preparado
+## https://www.deloitte.com/es/es/services/consulting/blogs/todo-tecnologia/scrum-dor-definicion-de-preparado.html
+
