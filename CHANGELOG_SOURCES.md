@@ -15,3 +15,6 @@
 
 # ¿Cuál es la diferencia entre la Definición de Hecho (DoD) y la Definición de Listo (DoR)?
 ## https://www.scrum.org/resources/blog/what-difference-between-definition-done-dod-and-definition-ready-dor
+
+# ¿Cuál es la definición de "hecho"?
+## https://www.atlassian.com/es/agile/project-management/definition-of-done
