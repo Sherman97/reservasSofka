@@ -24,3 +24,6 @@
 
 # 9 La guía definitiva para diagramar la arquitectura del software
 ## https://miro.com/es/diagrama/que-es-diagrama-arquitectura-software/
+
+# 10 BDD 101: Cómo escribir un buen Gherkin
+## https://automationpanda.com/2017/01/30/bdd-101-writing-good-gherkin/
