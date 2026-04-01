@@ -1,4 +1,4 @@
-package com.reservas.sk.locations_service.application.service;
+﻿package com.reservas.sk.locations_service.application.service;
 
 import com.reservas.sk.locations_service.application.port.out.LocationEventPublisherPort;
 import com.reservas.sk.locations_service.application.port.out.LocationsPersistencePort;
@@ -102,7 +102,7 @@ class LocationsApplicationServiceTest {
         CreateSpaceCommand cmd = new CreateSpaceCommand(1L, SPACE_1, 10, "1", DESC, IMG, true);
         when(persistencePort.existsCity(1L)).thenReturn(true);
         when(persistencePort.insertSpace(anyLong(), anyString(), anyInt(), any(), any(), any(), anyBoolean())).thenReturn(2L);
-        Space space = new Space(2L, 1L, SPACE_1, 10, "1", DESC, IMG, true, Instant.now(), Instant.now());
+        Space space = new Space(2L, 1L, SPACE_1, 10, "1", DESC, IMG, true, Instant.now(), Instant.now(), null, null, null);
         when(persistencePort.findSpaceById(2L)).thenReturn(Optional.of(space));
 
         Space result = service.createSpace(cmd);
@@ -220,7 +220,7 @@ class LocationsApplicationServiceTest {
     @Test
     void listSpaces_returnsPersistenceResult() {
         when(persistencePort.listSpaces(1L, true)).thenReturn(List.of(
-                new Space(10L, 1L, SPACE_A, 10, "1", null, null, true, Instant.now(), Instant.now())
+                new Space(10L, 1L, SPACE_A, 10, "1", null, null, true, Instant.now(), Instant.now(), null, null, null)
         ));
 
         List<Space> result = service.listSpaces(new ListSpacesQuery(1L, true));
@@ -231,8 +231,8 @@ class LocationsApplicationServiceTest {
 
     @Test
     void updateSpace_ok_publishesEvent() {
-        Space existing = new Space(10L, 1L, SPACE_A, 10, "1", null, null, true, Instant.now(), Instant.now());
-        Space updated = new Space(10L, 1L, SPACE_B, 20, "2", DESC, IMG, false, Instant.now(), Instant.now());
+        Space existing = new Space(10L, 1L, SPACE_A, 10, "1", null, null, true, Instant.now(), Instant.now(), null, null, null);
+        Space updated = new Space(10L, 1L, SPACE_B, 20, "2", DESC, IMG, false, Instant.now(), Instant.now(), null, null, null);
         when(persistencePort.findSpaceById(10L)).thenReturn(Optional.of(existing), Optional.of(updated));
 
         Space result = service.updateSpace(10L, new UpdateSpaceCommand(SPACE_B, 20, "2", DESC, IMG, false));
@@ -244,7 +244,7 @@ class LocationsApplicationServiceTest {
 
     @Test
     void updateSpace_invalidCapacity() {
-        Space existing = new Space(10L, 1L, SPACE_A, 10, "1", null, null, true, Instant.now(), Instant.now());
+        Space existing = new Space(10L, 1L, SPACE_A, 10, "1", null, null, true, Instant.now(), Instant.now(), null, null, null);
         when(persistencePort.findSpaceById(10L)).thenReturn(Optional.of(existing));
 
         ApiException ex = assertThrows(ApiException.class,
@@ -256,7 +256,7 @@ class LocationsApplicationServiceTest {
 
     @Test
     void deleteSpace_ok_publishesEvent() {
-        Space existing = new Space(10L, 1L, SPACE_A, 10, "1", null, null, true, Instant.now(), Instant.now());
+        Space existing = new Space(10L, 1L, SPACE_A, 10, "1", null, null, true, Instant.now(), Instant.now(), null, null, null);
         when(persistencePort.findSpaceById(10L)).thenReturn(Optional.of(existing));
         when(persistencePort.deleteSpace(10L)).thenReturn(1);
 
@@ -267,7 +267,7 @@ class LocationsApplicationServiceTest {
 
     @Test
     void deleteSpace_notFoundOnDelete() {
-        Space existing = new Space(10L, 1L, SPACE_A, 10, "1", null, null, true, Instant.now(), Instant.now());
+        Space existing = new Space(10L, 1L, SPACE_A, 10, "1", null, null, true, Instant.now(), Instant.now(), null, null, null);
         when(persistencePort.findSpaceById(10L)).thenReturn(Optional.of(existing));
         when(persistencePort.deleteSpace(10L)).thenReturn(0);
 
@@ -282,7 +282,7 @@ class LocationsApplicationServiceTest {
         when(persistencePort.existsCity(1L)).thenReturn(true);
         when(persistencePort.insertSpace(anyLong(), anyString(), any(), any(), any(), any(), anyBoolean())).thenReturn(3L);
         when(persistencePort.findSpaceById(3L)).thenReturn(Optional.of(
-                new Space(3L, 1L, "Sala C", 8, null, null, null, true, Instant.now(), Instant.now())
+                new Space(3L, 1L, "Sala C", 8, null, null, null, true, Instant.now(), Instant.now(), null, null, null)
         ));
 
         Space result = service.createSpace(new CreateSpaceCommand(1L, "Sala C", 8, null, null, null, null));
@@ -296,7 +296,7 @@ class LocationsApplicationServiceTest {
         when(persistencePort.existsCity(1L)).thenReturn(true);
         when(persistencePort.insertSpace(anyLong(), anyString(), any(), any(), any(), any(), anyBoolean())).thenReturn(4L);
         when(persistencePort.findSpaceById(4L)).thenReturn(Optional.of(
-                new Space(4L, 1L, "Sala D", 6, null, null, null, false, Instant.now(), Instant.now())
+                new Space(4L, 1L, "Sala D", 6, null, null, null, false, Instant.now(), Instant.now(), null, null, null)
         ));
 
         Space result = service.createSpace(new CreateSpaceCommand(1L, "Sala D", 6, null, null, null, false));

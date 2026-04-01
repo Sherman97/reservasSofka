@@ -239,7 +239,10 @@ public class JdbcLocationsPersistenceAdapter implements LocationsPersistencePort
                 rs.getString("image_url"),
                 rs.getBoolean("is_active"),
                 toInstant(rs.getTimestamp("created_at")),
-                toInstant(rs.getTimestamp("updated_at"))
+                toInstant(rs.getTimestamp("updated_at")),
+                rs.getBytes("qr_code"),
+                rs.getString("qr_token"),
+                rs.getString("qr_etag")
         );
     }
 

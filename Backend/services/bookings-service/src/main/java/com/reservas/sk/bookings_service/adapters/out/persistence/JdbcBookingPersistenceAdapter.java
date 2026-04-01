@@ -219,7 +219,8 @@ public class JdbcBookingPersistenceAdapter implements BookingPersistencePort {
         sql.append(
                 """
                 SELECT id, user_id, space_id, start_datetime, end_datetime, status,
-                       title, attendees_count, notes, cancellation_reason, created_at
+                       title, attendees_count, notes, cancellation_reason, created_at,
+                       qr_token, checked_in_at
                 FROM reservations
                 """
         );
@@ -254,7 +255,8 @@ public class JdbcBookingPersistenceAdapter implements BookingPersistencePort {
         List<Reservation> rows = jdbcTemplate.query(
                 """
                 SELECT id, user_id, space_id, start_datetime, end_datetime, status,
-                       title, attendees_count, notes, cancellation_reason, created_at
+                       title, attendees_count, notes, cancellation_reason, created_at,
+                       qr_token, checked_in_at
                 FROM reservations
                 WHERE id = ?
                 LIMIT 1
@@ -410,7 +412,9 @@ public class JdbcBookingPersistenceAdapter implements BookingPersistencePort {
                 rs.getString("notes"),
                 rs.getString("cancellation_reason"),
                 toInstant(rs.getTimestamp("created_at")),
-                List.of()
+                List.of(),
+                rs.getString("qr_token"),
+                toInstant(rs.getTimestamp("checked_in_at"))
         );
     }
 

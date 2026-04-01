@@ -161,7 +161,9 @@ class BookingControllerUnitTest {
                 "nota",
                 null,
                 Instant.parse("2026-03-01T09:00:00Z"),
-                List.of(new ReservationEquipment(1L, id, 2L, "requested", null, null, null, null, null))
+                List.of(new ReservationEquipment(1L, id, 2L, "requested", null, null, null, null, null)),
+                null,
+                null
         );
     }
 }

@@ -397,7 +397,9 @@ public class BookingApplicationService implements BookingUseCase {
                 reservation.getNotes(),
                 reservation.getCancellationReason(),
                 reservation.getCreatedAt(),
-                equipments
+                equipments,
+                reservation.getQrToken(),
+                reservation.getCheckedInAt()
         );
     }
 

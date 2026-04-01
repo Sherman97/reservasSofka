@@ -59,7 +59,9 @@ class JdbcBookingPersistenceAdapterTest {
                     attendees_count INT,
                     notes VARCHAR(255),
                     cancellation_reason VARCHAR(255),
-                    created_at TIMESTAMP
+                    created_at TIMESTAMP,
+                    qr_token VARCHAR(500),
+                    checked_in_at TIMESTAMP
                 )
                 """);
         jdbcTemplate.execute("""

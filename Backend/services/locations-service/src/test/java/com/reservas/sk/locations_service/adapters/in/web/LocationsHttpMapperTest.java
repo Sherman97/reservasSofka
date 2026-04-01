@@ -31,7 +31,7 @@ class LocationsHttpMapperTest {
 
     @Test
     void toResponse_mapsNullDatesAsNull() {
-        Space space = new Space(2L, 1L, "Sala A", 10, "1", "desc", null, true, null, null);
+        Space space = new Space(2L, 1L, "Sala A", 10, "1", "desc", null, true, null, null, null, null, null);
 
         var response = mapper.toResponse(space);
 
