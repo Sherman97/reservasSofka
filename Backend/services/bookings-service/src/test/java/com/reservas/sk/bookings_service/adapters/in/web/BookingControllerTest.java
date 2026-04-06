@@ -5,6 +5,7 @@ import com.reservas.sk.bookings_service.adapters.in.web.dto.CreateReservationReq
 import com.reservas.sk.bookings_service.adapters.in.web.dto.ReservationResponse;
 import com.reservas.sk.bookings_service.application.port.in.BookingUseCase;
 import com.reservas.sk.bookings_service.application.port.out.TokenPort;
+import com.reservas.sk.bookings_service.application.service.CheckInReservationUseCase;
 import com.reservas.sk.bookings_service.application.usecase.CreateReservationCommand;
 import com.reservas.sk.bookings_service.domain.model.Reservation;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,6 +69,11 @@ class BookingControllerTest {
         public TokenPort tokenPort() {
             return Mockito.mock(TokenPort.class);
         }
+
+        @Bean
+        public CheckInReservationUseCase checkInReservationUseCase() {
+            return Mockito.mock(CheckInReservationUseCase.class);
+        }
     }
 
     @BeforeEach
@@ -81,7 +87,7 @@ class BookingControllerTest {
         Reservation reservation = Mockito.mock(Reservation.class);
         ReservationResponse response = new ReservationResponse(
                 20L, 1L, 1L, "2026-03-01T10:00:00Z", "2026-03-01T12:00:00Z",
-                "confirmed", "Reserva", 2, null, null, "2026-03-01T09:00:00Z", List.of()
+                "confirmed", "Reserva", 2, null, null, "2026-03-01T09:00:00Z", List.of(), null, null
         );
         when(bookingUseCase.createReservation(any(CreateReservationCommand.class))).thenReturn(reservation);
         when(bookingHttpMapper.toResponse(reservation)).thenReturn(response);

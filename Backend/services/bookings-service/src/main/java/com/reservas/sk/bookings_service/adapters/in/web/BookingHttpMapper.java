@@ -25,7 +25,9 @@ public class BookingHttpMapper {
                 reservation.getNotes(),
                 reservation.getCancellationReason(),
                 toIso(reservation.getCreatedAt()),
-                reservation.getEquipments().stream().map(this::toEquipmentResponse).toList()
+                reservation.getEquipments().stream().map(this::toEquipmentResponse).toList(),
+                reservation.getQrToken(),
+                toIso(reservation.getCheckedInAt())
         );
     }
 

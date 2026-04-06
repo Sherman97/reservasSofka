@@ -27,6 +27,8 @@ public interface LocationsPersistencePort {
 
     void updateSpace(long id, String name, Integer capacity, String floor, String description, String imageUrl, Boolean isActive);
 
+    void updateSpaceQrData(long id, byte[] qrCode, String qrToken, String qrETag);
+
     int deleteSpace(long id);
 }
 

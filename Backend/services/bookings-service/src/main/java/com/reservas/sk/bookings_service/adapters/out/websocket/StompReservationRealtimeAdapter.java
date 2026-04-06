@@ -2,6 +2,7 @@ package com.reservas.sk.bookings_service.adapters.out.websocket;
 
 import com.reservas.sk.bookings_service.application.port.out.ReservationRealtimePort;
 import com.reservas.sk.bookings_service.application.usecase.ReservationCancelledEvent;
+import com.reservas.sk.bookings_service.application.usecase.ReservationCheckedInEvent;
 import com.reservas.sk.bookings_service.application.usecase.ReservationCreatedEvent;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -34,6 +35,13 @@ public class StompReservationRealtimeAdapter implements ReservationRealtimePort 
         Map<String, Object> payload = Map.of("type", "reservation.cancelled", "data", event);
         messagingTemplate.convertAndSend("/topic/bookings.reservations", payload);
         messagingTemplate.convertAndSend("/topic/bookings.reservations.cancelled", payload);
+    }
+
+    @Override
+    public void publishReservationCheckedIn(ReservationCheckedInEvent event) {
+        Map<String, Object> payload = Map.of("type", "reservation.checkedin", "data", event);
+        messagingTemplate.convertAndSend("/topic/bookings.reservations", payload);
+        messagingTemplate.convertAndSend("/topic/bookings.reservations.checkedin", payload);
     }
 }
 

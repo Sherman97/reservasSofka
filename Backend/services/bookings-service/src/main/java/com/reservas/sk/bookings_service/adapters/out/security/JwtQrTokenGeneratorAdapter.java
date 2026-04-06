@@ -17,6 +17,20 @@ import java.time.Instant;
 /**
  * Adapter for generating and validating QR tokens using JWT.
  * QR tokens are permanent (no expiration) and contain space information.
+ * 
+ * ARCHITECTURE NOTE: This implementation is INTENTIONALLY DUPLICATED in locations-service.
+ * Both services operate in separate bounded contexts and should remain independent.
+ * However, QR tokens must be compatible across services:
+ * - locations-service GENERATES tokens when creating spaces
+ * - bookings-service VALIDATES tokens during check-in
+ * 
+ * CRITICAL: If you modify token structure, claims, or signing algorithm:
+ * 1. Update BOTH implementations simultaneously
+ * 2. Keep TOKEN_TYPE, CLAIM_SPACE_ID, and CLAIM_TOKEN_TYPE constants identical
+ * 3. Use the same JWT secret (JwtProperties)
+ * 4. Run cross-service integration tests to validate compatibility
+ * 
+ * See: Backend/services/locations-service/.../JwtQrTokenGeneratorAdapter.java
  */
 @Component
 public class JwtQrTokenGeneratorAdapter implements QrTokenGeneratorPort {

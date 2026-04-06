@@ -339,6 +339,82 @@ public class JdbcBookingPersistenceAdapter implements BookingPersistencePort {
     }
 
     @Override
+    public void updateReservationCheckIn(long reservationId, String status, String qrToken, Instant checkedInAt) {
+        jdbcTemplate.update(
+                """
+                UPDATE reservations 
+                SET status = ?, 
+                    qr_token = ?, 
+                    checked_in_at = ?,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+                """,
+                status,
+                qrToken,
+                Timestamp.from(checkedInAt),
+                reservationId
+        );
+    }
+
+    @Override
+    public int updateReservationStatusBatch(List<Long> reservationIds, String newStatus) {
+        if (reservationIds == null || reservationIds.isEmpty()) {
+            return 0;
+        }
+
+        String placeholders = String.join(",", Collections.nCopies(reservationIds.size(), "?"));
+        String sql = """
+                UPDATE reservations 
+                SET status = ?, 
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id IN (%s)
+                  AND status = 'pending'
+                """.formatted(placeholders);
+
+        Object[] params = new Object[reservationIds.size() + 1];
+        params[0] = newStatus;
+        for (int i = 0; i < reservationIds.size(); i++) {
+            params[i + 1] = reservationIds.get(i);
+        }
+
+        return jdbcTemplate.update(sql, params);
+    }
+
+    @Override
+    public List<Reservation> findExpiredPendingReservations(int gracePeriodMinutes) {
+        String sql = """
+                SELECT id, user_id, space_id, start_datetime, end_datetime, status, 
+                       title, attendees_count, notes, cancellation_reason, created_at,
+                       qr_token, checked_in_at
+                FROM reservations
+                WHERE status = 'pending'
+                  AND start_datetime < (CURRENT_TIMESTAMP - INTERVAL '%d MINUTE')
+                ORDER BY start_datetime
+                """.formatted(gracePeriodMinutes);
+
+        return jdbcTemplate.query(sql, (rs, rowNum) -> toReservation(rs));
+    }
+
+    @Override
+    public void logCheckInAttempt(long reservationId, long userId, long spaceId, String qrToken, 
+                                   boolean success, String failureReason, Instant attemptAt) {
+        jdbcTemplate.update(
+                """
+                INSERT INTO reservation_checkin_logs 
+                (reservation_id, user_id, space_id, qr_token_prefix, success, failure_reason, attempt_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                reservationId,
+                userId,
+                spaceId,
+                qrToken,
+                success,
+                failureReason,
+                Timestamp.from(attemptAt)
+        );
+    }
+
+    @Override
     public void markReservationEquipmentsDelivered(long reservationId, long deliveredBy, Instant deliveredAt, String novelty) {
         jdbcTemplate.update(
                 """

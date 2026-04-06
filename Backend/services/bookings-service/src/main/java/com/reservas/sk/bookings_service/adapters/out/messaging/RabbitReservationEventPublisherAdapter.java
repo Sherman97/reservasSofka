@@ -2,6 +2,7 @@ package com.reservas.sk.bookings_service.adapters.out.messaging;
 
 import com.reservas.sk.bookings_service.application.port.out.ReservationEventPublisherPort;
 import com.reservas.sk.bookings_service.application.usecase.ReservationCancelledEvent;
+import com.reservas.sk.bookings_service.application.usecase.ReservationCheckedInEvent;
 import com.reservas.sk.bookings_service.application.usecase.ReservationCreatedEvent;
 import com.reservas.sk.bookings_service.application.usecase.ReservationDeliveredEvent;
 import com.reservas.sk.bookings_service.application.usecase.ReservationReturnedEvent;
@@ -58,6 +59,15 @@ public class RabbitReservationEventPublisherAdapter implements ReservationEventP
         rabbitTemplate.convertAndSend(
                 rabbitProperties.getExchange(),
                 rabbitProperties.getReservationReturnedRoutingKey(),
+                event
+        );
+    }
+
+    @Override
+    public void publishReservationCheckedIn(ReservationCheckedInEvent event) {
+        rabbitTemplate.convertAndSend(
+                rabbitProperties.getExchange(),
+                rabbitProperties.getReservationCheckedInRoutingKey(),
                 event
         );
     }

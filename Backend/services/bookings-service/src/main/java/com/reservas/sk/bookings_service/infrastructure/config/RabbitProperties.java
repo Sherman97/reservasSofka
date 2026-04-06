@@ -10,6 +10,7 @@ public class RabbitProperties {
     private String reservationCancelledRoutingKey = "bookings.reservation.cancelled";
     private String reservationDeliveredRoutingKey = "bookings.reservation.delivered";
     private String reservationReturnedRoutingKey = "bookings.reservation.returned";
+    private String reservationCheckedInRoutingKey = "bookings.reservation.checkedin";
 
     public boolean isEnabled() {
         return enabled;
@@ -57,6 +58,14 @@ public class RabbitProperties {
 
     public void setReservationReturnedRoutingKey(String reservationReturnedRoutingKey) {
         this.reservationReturnedRoutingKey = reservationReturnedRoutingKey;
+    }
+
+    public String getReservationCheckedInRoutingKey() {
+        return reservationCheckedInRoutingKey;
+    }
+
+    public void setReservationCheckedInRoutingKey(String reservationCheckedInRoutingKey) {
+        this.reservationCheckedInRoutingKey = reservationCheckedInRoutingKey;
     }
 }
 

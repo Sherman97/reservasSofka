@@ -30,6 +30,8 @@ public interface LocationsUseCase {
     Space updateSpace(Long id, UpdateSpaceCommand command);
 
     void deleteSpace(Long id);
+
+    Space getSpaceWithQrCode(Long id);
 }
 
 

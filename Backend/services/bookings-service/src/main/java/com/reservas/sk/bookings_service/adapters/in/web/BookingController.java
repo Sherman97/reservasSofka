@@ -2,13 +2,16 @@ package com.reservas.sk.bookings_service.adapters.in.web;
 
 import com.reservas.sk.bookings_service.adapters.in.web.dto.ApiResponse;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.CancelReservationRequest;
+import com.reservas.sk.bookings_service.adapters.in.web.dto.CheckInRequest;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.CreateReservationRequest;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.UpdateReservationRequest;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.HandoverReservationRequest;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.ReservationResponse;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.SpaceAvailabilityResponse;
 import com.reservas.sk.bookings_service.application.port.in.BookingUseCase;
+import com.reservas.sk.bookings_service.application.service.CheckInReservationUseCase;
 import com.reservas.sk.bookings_service.application.usecase.AuthenticatedUser;
+import com.reservas.sk.bookings_service.application.usecase.CheckInReservationCommand;
 import com.reservas.sk.bookings_service.application.usecase.CheckSpaceAvailabilityQuery;
 import com.reservas.sk.bookings_service.application.usecase.CreateReservationCommand;
 import com.reservas.sk.bookings_service.application.usecase.UpdateReservationCommand;
@@ -34,10 +37,14 @@ import java.util.List;
 @RequestMapping("/bookings")
 public class BookingController {
     private final BookingUseCase bookingUseCase;
+    private final CheckInReservationUseCase checkInUseCase;
     private final BookingHttpMapper mapper;
 
-    public BookingController(BookingUseCase bookingUseCase, BookingHttpMapper mapper) {
+    public BookingController(BookingUseCase bookingUseCase, 
+                            CheckInReservationUseCase checkInUseCase,
+                            BookingHttpMapper mapper) {
         this.bookingUseCase = bookingUseCase;
+        this.checkInUseCase = checkInUseCase;
         this.mapper = mapper;
     }
 
@@ -122,5 +129,17 @@ public class BookingController {
         return ApiResponse.success(mapper.toResponse(bookingUseCase.returnReservation(
                 new HandoverReservationCommand(id, user.userId(), novelty)
         )));
+    }
+
+    @PostMapping("/reservations/{id}/checkin")
+    public ResponseEntity<ApiResponse<ReservationResponse>> checkIn(@PathVariable Long id,
+                                                                    @Valid @RequestBody CheckInRequest request,
+                                                                    @AuthenticationPrincipal AuthenticatedUser user) {
+        var reservation = checkInUseCase.execute(new CheckInReservationCommand(
+                id,
+                user.userId(),
+                request.qrToken()
+        ));
+        return ResponseEntity.ok(ApiResponse.success(mapper.toResponse(reservation)));
     }
 }

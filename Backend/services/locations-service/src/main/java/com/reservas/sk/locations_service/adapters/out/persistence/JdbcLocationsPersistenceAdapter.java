@@ -9,6 +9,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -130,7 +132,7 @@ public class JdbcLocationsPersistenceAdapter implements LocationsPersistencePort
     public List<Space> listSpaces(Long cityId, Boolean activeOnly) {
         StringBuilder sql = new StringBuilder(SPACES_QUERY_CAPACITY);
         sql.append(
-                "SELECT id, city_id, name, capacity, floor, description, image_url, is_active, created_at, updated_at FROM spaces"
+                "SELECT id, city_id, name, capacity, floor, description, image_url, is_active, created_at, updated_at, qr_code, qr_token, qr_etag FROM spaces"
         );
 
         List<String> where = new ArrayList<>();
@@ -157,7 +159,7 @@ public class JdbcLocationsPersistenceAdapter implements LocationsPersistencePort
     public Optional<Space> findSpaceById(long id) {
         List<Space> rows = jdbcTemplate.query(
                 """
-                SELECT id, city_id, name, capacity, floor, description, image_url, is_active, created_at, updated_at
+                SELECT id, city_id, name, capacity, floor, description, image_url, is_active, created_at, updated_at, qr_code, qr_token, qr_etag
                 FROM spaces
                 WHERE id = ?
                 LIMIT 1
@@ -211,6 +213,17 @@ public class JdbcLocationsPersistenceAdapter implements LocationsPersistencePort
 
         params.add(id);
         jdbcTemplate.update("UPDATE spaces SET " + String.join(", ", fields) + " WHERE id = ?", params.toArray());
+    }
+
+    @Override
+    public void updateSpaceQrData(long id, byte[] qrCode, String qrToken, String qrETag) {
+        jdbcTemplate.update(
+                "UPDATE spaces SET qr_code = ?, qr_token = ?, qr_etag = ?, updated_at = NOW() WHERE id = ?",
+                qrCode,
+                qrToken,
+                qrETag,
+                id
+        );
     }
 
     @Override

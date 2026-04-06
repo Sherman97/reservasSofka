@@ -1,12 +1,15 @@
 package com.reservas.sk.bookings_service.adapters.in.web;
 
 import com.reservas.sk.bookings_service.adapters.in.web.dto.CancelReservationRequest;
+import com.reservas.sk.bookings_service.adapters.in.web.dto.CheckInRequest;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.CreateReservationRequest;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.HandoverReservationRequest;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.ReservationResponse;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.SpaceAvailabilityResponse;
 import com.reservas.sk.bookings_service.application.port.in.BookingUseCase;
+import com.reservas.sk.bookings_service.application.service.CheckInReservationUseCase;
 import com.reservas.sk.bookings_service.application.usecase.AuthenticatedUser;
+import com.reservas.sk.bookings_service.application.usecase.CheckInReservationCommand;
 import com.reservas.sk.bookings_service.application.usecase.CreateReservationCommand;
 import com.reservas.sk.bookings_service.application.usecase.HandoverReservationCommand;
 import com.reservas.sk.bookings_service.domain.model.Reservation;
@@ -34,14 +37,16 @@ class BookingControllerUnitTest {
     private static final String STATUS_CANCELLED = "cancelled";
 
     private BookingUseCase bookingUseCase;
+    private CheckInReservationUseCase checkInUseCase;
     private BookingHttpMapper mapper;
     private BookingController controller;
 
     @BeforeEach
     void setUp() {
         bookingUseCase = mock(BookingUseCase.class);
+        checkInUseCase = mock(CheckInReservationUseCase.class);
         mapper = new BookingHttpMapper();
-        controller = new BookingController(bookingUseCase, mapper);
+        controller = new BookingController(bookingUseCase, checkInUseCase, mapper);
     }
 
     @Test
@@ -165,6 +170,90 @@ class BookingControllerUnitTest {
                 null,
                 null
         );
+    }
+
+    @Test
+    void checkIn_usesAuthenticatedUserAndQrToken() {
+        // Arrange
+        Long reservationId = 5L;
+        Long userId = 88L;
+        String qrToken = "valid-jwt-token";
+        
+        Reservation checkedInReservation = new Reservation(
+                reservationId,
+                userId,
+                10L,
+                Instant.parse("2026-03-01T10:00:00Z"),
+                Instant.parse("2026-03-01T11:00:00Z"),
+                Reservation.STATUS_CHECKED_IN,
+                "Meeting Room",
+                4,
+                "Test meeting",
+                null,
+                Instant.parse("2026-03-01T09:00:00Z"),
+                List.of(),
+                qrToken,
+                Instant.parse("2026-03-01T10:02:00Z")
+        );
+
+        when(checkInUseCase.execute(any())).thenReturn(checkedInReservation);
+
+        CheckInRequest request = new CheckInRequest(qrToken);
+        AuthenticatedUser user = new AuthenticatedUser(userId, "user@test.com");
+
+        // Act
+        var response = controller.checkIn(reservationId, request, user);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode(), ASSERT_MSG);
+        assertTrue(response.getBody().ok(), ASSERT_MSG);
+        assertEquals(reservationId, response.getBody().data().id(), ASSERT_MSG);
+        assertEquals(Reservation.STATUS_CHECKED_IN, response.getBody().data().status(), ASSERT_MSG);
+
+        ArgumentCaptor<CheckInReservationCommand> captor =
+                ArgumentCaptor.forClass(CheckInReservationCommand.class);
+        verify(checkInUseCase).execute(captor.capture());
+        assertEquals(reservationId, captor.getValue().reservationId(), ASSERT_MSG);
+        assertEquals(userId, captor.getValue().userId(), ASSERT_MSG);
+        assertEquals(qrToken, captor.getValue().qrToken(), ASSERT_MSG);
+    }
+
+    @Test
+    void checkIn_returnsSuccessWithCheckedInTimestamp() {
+        // Arrange
+        Long reservationId = 7L;
+        Instant checkedInAt = Instant.parse("2026-03-01T10:03:00Z");
+        
+        Reservation checkedInReservation = new Reservation(
+                reservationId,
+                88L,
+                10L,
+                Instant.parse("2026-03-01T10:00:00Z"),
+                Instant.parse("2026-03-01T11:00:00Z"),
+                Reservation.STATUS_CHECKED_IN,
+                "Conference Room",
+                6,
+                null,
+                null,
+                Instant.parse("2026-03-01T09:00:00Z"),
+                List.of(),
+                "jwt-token",
+                checkedInAt
+        );
+
+        when(checkInUseCase.execute(any())).thenReturn(checkedInReservation);
+
+        CheckInRequest request = new CheckInRequest("jwt-token");
+        AuthenticatedUser user = new AuthenticatedUser(88L, "user@test.com");
+
+        // Act
+        var response = controller.checkIn(reservationId, request, user);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode(), ASSERT_MSG);
+        ReservationResponse data = response.getBody().data();
+        assertEquals(Reservation.STATUS_CHECKED_IN, data.status(), ASSERT_MSG);
+        assertEquals(checkedInAt.toString(), data.checkedInAt(), ASSERT_MSG);
     }
 }
 
