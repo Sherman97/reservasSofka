@@ -388,7 +388,7 @@ public class JdbcBookingPersistenceAdapter implements BookingPersistencePort {
                        qr_token, checked_in_at
                 FROM reservations
                 WHERE status = 'pending'
-                  AND start_datetime < (CURRENT_TIMESTAMP - INTERVAL '%d MINUTE')
+                  AND start_datetime < (CURRENT_TIMESTAMP - INTERVAL %d MINUTE)
                 ORDER BY start_datetime
                 """.formatted(gracePeriodMinutes);
 

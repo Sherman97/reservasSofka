@@ -3,6 +3,12 @@ import { HttpReservationRepository } from './HttpReservationRepository';
 import { Reservation } from '../../core/domain/entities/Reservation';
 import type { IHttpClient } from '../../core/ports/services/IHttpClient';
 import type { IStorageService } from '../../core/ports/services/IStorageService';
+import {
+    InvalidQrCodeError,
+    QrExpiredError,
+    QrSpaceMismatchError,
+    InvalidReservationStateError
+} from '../../core/domain/errors/QrScanError';
 
 describe('HttpReservationRepository', () => {
     beforeEach(() => {
@@ -241,6 +247,224 @@ describe('HttpReservationRepository', () => {
             const result = await repo.getAvailability('l1', '2026-03-01');
             expect(result.locationId).toBe('l1');
             expect(result.date).toBe('2026-03-01');
+        });
+    });
+
+    describe('checkIn()', () => {
+        const checkedInReservationDTO = {
+            ...reservationDTO,
+            status: 'CHECKED_IN',
+            checkedInAt: '2026-03-01T09:58:00Z'
+        };
+
+        it('debe realizar check-in exitoso con respuesta wrapped', async () => {
+            const client = createMockHttpClient({
+                post: vi.fn().mockResolvedValue({ 
+                    data: { ok: true, data: checkedInReservationDTO }, 
+                    status: 200 
+                })
+            });
+            const repo = new HttpReservationRepository(client, createMockStorage());
+
+            const result = await repo.checkIn('r1', 'valid-qr-token');
+            
+            expect(result).toBeInstanceOf(Reservation);
+            expect(result.id).toBe('r1');
+            expect(client.post).toHaveBeenCalledWith(
+                '/bookings/reservations/r1/checkin',
+                { qrToken: 'valid-qr-token' }
+            );
+        });
+
+        it('debe realizar check-in exitoso con respuesta directa', async () => {
+            const client = createMockHttpClient({
+                post: vi.fn().mockResolvedValue({ 
+                    data: checkedInReservationDTO, 
+                    status: 200 
+                })
+            });
+            const repo = new HttpReservationRepository(client, createMockStorage());
+
+            const result = await repo.checkIn('r1', 'valid-qr-token');
+            
+            expect(result).toBeInstanceOf(Reservation);
+            expect(result.id).toBe('r1');
+        });
+
+        it('debe lanzar InvalidQrCodeError cuando QR es inválido (código INVALID_QR_TOKEN)', async () => {
+            const client = createMockHttpClient({
+                post: vi.fn().mockRejectedValue({
+                    response: {
+                        data: {
+                            code: 'INVALID_QR_TOKEN',
+                            message: 'Invalid QR token signature'
+                        },
+                        status: 400
+                    }
+                })
+            });
+            const repo = new HttpReservationRepository(client, createMockStorage());
+
+            await expect(repo.checkIn('r1', 'invalid-qr'))
+                .rejects.toThrow(InvalidQrCodeError);
+            await expect(repo.checkIn('r1', 'invalid-qr'))
+                .rejects.toThrow('El código QR es inválido o está malformado');
+        });
+
+        it('debe lanzar InvalidQrCodeError cuando QR es inválido (mensaje)', async () => {
+            const client = createMockHttpClient({
+                post: vi.fn().mockRejectedValue({
+                    response: {
+                        data: {
+                            message: 'Invalid QR token'
+                        },
+                        status: 400
+                    }
+                })
+            });
+            const repo = new HttpReservationRepository(client, createMockStorage());
+
+            await expect(repo.checkIn('r1', 'malformed-qr'))
+                .rejects.toThrow(InvalidQrCodeError);
+        });
+
+        it('debe lanzar QrExpiredError cuando QR expiró (código QR_EXPIRED)', async () => {
+            const client = createMockHttpClient({
+                post: vi.fn().mockRejectedValue({
+                    response: {
+                        data: {
+                            code: 'QR_EXPIRED',
+                            message: 'QR code has expired'
+                        },
+                        status: 400
+                    }
+                })
+            });
+            const repo = new HttpReservationRepository(client, createMockStorage());
+
+            await expect(repo.checkIn('r1', 'expired-qr'))
+                .rejects.toThrow(QrExpiredError);
+            await expect(repo.checkIn('r1', 'expired-qr'))
+                .rejects.toThrow('El período de check-in ha expirado');
+        });
+
+        it('debe lanzar QrExpiredError cuando QR expiró (mensaje)', async () => {
+            const client = createMockHttpClient({
+                post: vi.fn().mockRejectedValue({
+                    response: {
+                        data: {
+                            message: 'QR token expired'
+                        },
+                        status: 400
+                    }
+                })
+            });
+            const repo = new HttpReservationRepository(client, createMockStorage());
+
+            await expect(repo.checkIn('r1', 'expired-qr'))
+                .rejects.toThrow(QrExpiredError);
+        });
+
+        it('debe lanzar QrSpaceMismatchError cuando espacio no coincide (código SPACE_MISMATCH)', async () => {
+            const client = createMockHttpClient({
+                post: vi.fn().mockRejectedValue({
+                    response: {
+                        data: {
+                            code: 'SPACE_MISMATCH',
+                            message: 'QR code does not match reservation space'
+                        },
+                        status: 400
+                    }
+                })
+            });
+            const repo = new HttpReservationRepository(client, createMockStorage());
+
+            await expect(repo.checkIn('r1', 'qr-other-space'))
+                .rejects.toThrow(QrSpaceMismatchError);
+            await expect(repo.checkIn('r1', 'qr-other-space'))
+                .rejects.toThrow('El código QR no corresponde a este espacio');
+        });
+
+        it('debe lanzar QrSpaceMismatchError cuando espacio no coincide (mensaje)', async () => {
+            const client = createMockHttpClient({
+                post: vi.fn().mockRejectedValue({
+                    response: {
+                        data: {
+                            message: 'space ID does not match'
+                        },
+                        status: 400
+                    }
+                })
+            });
+            const repo = new HttpReservationRepository(client, createMockStorage());
+
+            await expect(repo.checkIn('r1', 'qr-other-space'))
+                .rejects.toThrow(QrSpaceMismatchError);
+        });
+
+        it('debe lanzar InvalidReservationStateError cuando estado no es válido (código INVALID_STATE_TRANSITION)', async () => {
+            const client = createMockHttpClient({
+                post: vi.fn().mockRejectedValue({
+                    response: {
+                        data: {
+                            code: 'INVALID_STATE_TRANSITION',
+                            message: 'Reservation is not in PENDING state'
+                        },
+                        status: 400
+                    }
+                })
+            });
+            const repo = new HttpReservationRepository(client, createMockStorage());
+
+            await expect(repo.checkIn('r1', 'valid-qr'))
+                .rejects.toThrow(InvalidReservationStateError);
+            await expect(repo.checkIn('r1', 'valid-qr'))
+                .rejects.toThrow('La reserva no está en estado válido para check-in');
+        });
+
+        it('debe lanzar InvalidReservationStateError cuando estado no es válido (mensaje)', async () => {
+            const client = createMockHttpClient({
+                post: vi.fn().mockRejectedValue({
+                    response: {
+                        data: {
+                            message: 'Invalid state transition'
+                        },
+                        status: 400
+                    }
+                })
+            });
+            const repo = new HttpReservationRepository(client, createMockStorage());
+
+            await expect(repo.checkIn('r1', 'valid-qr'))
+                .rejects.toThrow(InvalidReservationStateError);
+        });
+
+        it('debe propagar errores de red genéricos', async () => {
+            const client = createMockHttpClient({
+                post: vi.fn().mockRejectedValue(new Error('Network error'))
+            });
+            const repo = new HttpReservationRepository(client, createMockStorage());
+
+            await expect(repo.checkIn('r1', 'valid-qr'))
+                .rejects.toThrow('Network error');
+        });
+
+        it('debe propagar errores desconocidos sin mapear', async () => {
+            const client = createMockHttpClient({
+                post: vi.fn().mockRejectedValue({
+                    response: {
+                        data: {
+                            code: 'UNKNOWN_ERROR',
+                            message: 'Something went wrong'
+                        },
+                        status: 500
+                    }
+                })
+            });
+            const repo = new HttpReservationRepository(client, createMockStorage());
+
+            await expect(repo.checkIn('r1', 'valid-qr'))
+                .rejects.toThrow(); // Should throw the original error
         });
     });
 });

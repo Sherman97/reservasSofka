@@ -24,4 +24,15 @@ export interface IReservationRepository {
     deliver(id: string, novelty?: string): Promise<Reservation>;
     returnReservation(id: string, novelty?: string): Promise<Reservation>;
     getAvailability(locationId: string, date: string): Promise<AvailabilityResult>;
+    /**
+     * Checks in a reservation using a QR code token.
+     * @param reservationId - The ID of the reservation to check in
+     * @param qrToken - The JWT token from the scanned QR code
+     * @returns Promise with the updated reservation
+     * @throws InvalidQrCodeError if QR code is invalid
+     * @throws QrExpiredError if check-in period has expired
+     * @throws QrSpaceMismatchError if QR doesn't match reservation's space
+     * @throws InvalidReservationStateError if reservation is not in PENDING state
+     */
+    checkIn(reservationId: string, qrToken: string): Promise<Reservation>;
 }

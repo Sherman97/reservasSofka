@@ -9,6 +9,7 @@ import { ReminderAlertBanner } from '../../components/reservations/ReminderAlert
 import { Pagination } from '../../components/common/Pagination';
 import '../../styles/reservations/Reservations.css';
 import '../../styles/reservations/ReminderAlerts.css';
+import { ModalScanQr } from '../../components/reservations/ModalScanQr';
 
 /**
  * MyReservationsPage - UI Page
@@ -38,7 +39,7 @@ export const MyReservationsPage = () => {
     const [updateModal, setUpdateModal] = useState({ isOpen: false, reservation: null });
     const [updateError, setUpdateError] = useState(null);
     const itemsPerPage = 5;
-
+    const [scanQrReservation, setScanQrReservation] = useState(false);
     const getErrorMessage = (err) => {
         if (!err) return 'Error al actualizar reserva';
         if (typeof err === 'string') return err;
@@ -159,7 +160,9 @@ export const MyReservationsPage = () => {
             setUpdateError(getErrorMessage(err));
         }
     };
-
+    const handleScanQr = async (reservation) => {
+        setScanQrReservation(true);
+    }
     return (
         <div className="my-reservations-page">
             <div className="container">
@@ -199,6 +202,7 @@ export const MyReservationsPage = () => {
                             onUpdate={handleOpenUpdate}
                             onDeliver={handleOpenDeliver}
                             onReturn={handleOpenReturn}
+                            onScanQR={handleScanQr}
                         />
 
                         {totalPages > 1 && (
@@ -226,6 +230,14 @@ export const MyReservationsPage = () => {
                     onConfirm={handleConfirmUpdate}
                     reservation={updateModal.reservation}
                     errorMessage={updateError}
+                />
+
+                <ModalScanQr
+                    isOpen={scanQrReservation}
+                    onClose={() => setScanQrReservation(false)}
+                    onConfirm={() => setScanQrReservation(false)}
+                    action={'deliver'}
+                    reservationName={handoverModal.reservation?.locationName || ''}
                 />
             </div>
         </div>

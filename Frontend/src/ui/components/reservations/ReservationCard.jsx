@@ -6,7 +6,7 @@ import '../../styles/reservations/Reservations.css';
  * Displays a single reservation with details and actions.
  * Automatically transitions status from "Proxima" to "En Progreso" when startAt arrives.
  */
-export const ReservationCard = ({ reservation, onCancel, onEdit, onDeliver, onReturn }) => {
+export const ReservationCard = ({ reservation, onCancel, onEdit, onDeliver, onReturn, onScanQR }) => {
     const [, setTick] = useState(0);
     useEffect(() => {
         const interval = setInterval(() => setTick(t => t + 1), 30_000);
@@ -89,7 +89,11 @@ export const ReservationCard = ({ reservation, onCancel, onEdit, onDeliver, onRe
                             📦
                         </button>
                     )}
-
+                    {(isInProgress || isOngoing) && !isCancelled && !isCompleted && onScanQR && (
+                        <button className="btn-deliver-res" onClick={() => onScanQR(reservation)} title="Confirmar reserva con QR">
+                            Scan QR
+                        </button>
+                    )}
                     {isInProgress && onReturn && (
                         <button className="btn-return-res" onClick={() => onReturn(reservation)} title="Registrar devolucion">
                             ✅

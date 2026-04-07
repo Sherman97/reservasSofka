@@ -5,6 +5,7 @@ import com.reservas.sk.bookings_service.application.usecase.ReservationCancelled
 import com.reservas.sk.bookings_service.application.usecase.ReservationCheckedInEvent;
 import com.reservas.sk.bookings_service.application.usecase.ReservationCreatedEvent;
 import com.reservas.sk.bookings_service.application.usecase.ReservationDeliveredEvent;
+import com.reservas.sk.bookings_service.application.usecase.ReservationNoShowEvent;
 import com.reservas.sk.bookings_service.application.usecase.ReservationReturnedEvent;
 import com.reservas.sk.bookings_service.infrastructure.config.RabbitProperties;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -68,6 +69,15 @@ public class RabbitReservationEventPublisherAdapter implements ReservationEventP
         rabbitTemplate.convertAndSend(
                 rabbitProperties.getExchange(),
                 rabbitProperties.getReservationCheckedInRoutingKey(),
+                event
+        );
+    }
+
+    @Override
+    public void publishReservationNoShow(ReservationNoShowEvent event) {
+        rabbitTemplate.convertAndSend(
+                rabbitProperties.getExchange(),
+                rabbitProperties.getReservationNoShowRoutingKey(),
                 event
         );
     }

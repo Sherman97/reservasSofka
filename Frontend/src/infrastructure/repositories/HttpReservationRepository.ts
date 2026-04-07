@@ -3,6 +3,12 @@ import type { IHttpClient } from '../../core/ports/services/IHttpClient';
 import type { IStorageService } from '../../core/ports/services/IStorageService';
 import type { Reservation } from '../../core/domain/entities/Reservation';
 import { ReservationMapper } from '../mappers/ReservationMapper';
+import {
+    InvalidQrCodeError,
+    QrExpiredError,
+    QrSpaceMismatchError,
+    InvalidReservationStateError
+} from '../../core/domain/errors/QrScanError';
 
 interface ApiResponse<T = unknown> {
     ok: boolean;
@@ -167,6 +173,52 @@ export class HttpReservationRepository implements IReservationRepository {
             return reservation;
         } catch (error) {
             console.error('Error in HttpReservationRepository.returnReservation:', error);
+            throw error;
+        }
+    }
+
+    async checkIn(reservationId: string, qrToken: string): Promise<Reservation> {
+        try {
+            const response = await this.httpClient.post(
+                `/bookings/reservations/${reservationId}/checkin`,
+                { qrToken }
+            );
+            const raw = response.data as ApiResponse & Record<string, unknown>;
+
+            if (isWrappedResponse(raw)) {
+                if (!raw.ok) throw new Error(raw.message || 'Error al realizar el check-in');
+                const reservation = ReservationMapper.toDomain(raw.data as unknown as Parameters<typeof ReservationMapper.toDomain>[0]);
+                if (!reservation) throw new Error('Error mapping reservation data');
+                return reservation;
+            }
+
+            const reservation = ReservationMapper.toDomain(raw as unknown as Parameters<typeof ReservationMapper.toDomain>[0]);
+            if (!reservation) throw new Error('Error mapping reservation data');
+            return reservation;
+        } catch (error: unknown) {
+            console.error('Error in HttpReservationRepository.checkIn:', error);
+            
+            // Map backend error codes to domain errors
+            const errorMessage = (error as { response?: { data?: { message?: string; code?: string } } })?.response?.data?.message || '';
+            const errorCode = (error as { response?: { data?: { code?: string } } })?.response?.data?.code || '';
+
+            if (errorCode === 'INVALID_QR_TOKEN' || errorMessage.includes('Invalid QR token')) {
+                throw new InvalidQrCodeError('El código QR es inválido o está malformado');
+            }
+            
+            if (errorCode === 'QR_EXPIRED' || errorMessage.includes('expired')) {
+                throw new QrExpiredError('El período de check-in ha expirado');
+            }
+            
+            if (errorCode === 'SPACE_MISMATCH' || errorMessage.includes('space')) {
+                throw new QrSpaceMismatchError('El código QR no corresponde a este espacio');
+            }
+            
+            if (errorCode === 'INVALID_STATE_TRANSITION' || errorMessage.includes('state')) {
+                throw new InvalidReservationStateError('La reserva no está en estado válido para check-in');
+            }
+
+            // Re-throw original error if not a known QR error
             throw error;
         }
     }
