@@ -39,7 +39,7 @@ export const MyReservationsPage = () => {
     const [updateModal, setUpdateModal] = useState({ isOpen: false, reservation: null });
     const [updateError, setUpdateError] = useState(null);
     const itemsPerPage = 5;
-    const [scanQrReservation, setScanQrReservation] = useState(false);
+    const [scanQrReservation, setScanQrReservation] = useState(null);
     const getErrorMessage = (err) => {
         if (!err) return 'Error al actualizar reserva';
         if (typeof err === 'string') return err;
@@ -160,9 +160,14 @@ export const MyReservationsPage = () => {
             setUpdateError(getErrorMessage(err));
         }
     };
-    const handleScanQr = async (reservation) => {
-        setScanQrReservation(true);
-    }
+    const handleScanQr = (reservation) => {
+        setScanQrReservation(reservation);
+    };
+
+    const handleQrSuccess = () => {
+        setScanQrReservation(null);
+        reload();
+    };
     return (
         <div className="my-reservations-page">
             <div className="container">
@@ -233,11 +238,10 @@ export const MyReservationsPage = () => {
                 />
 
                 <ModalScanQr
-                    isOpen={scanQrReservation}
-                    onClose={() => setScanQrReservation(false)}
-                    onConfirm={() => setScanQrReservation(false)}
-                    action={'deliver'}
-                    reservationName={handoverModal.reservation?.locationName || ''}
+                    isOpen={scanQrReservation !== null}
+                    onClose={() => setScanQrReservation(null)}
+                    reservation={scanQrReservation}
+                    onSuccess={handleQrSuccess}
                 />
             </div>
         </div>
