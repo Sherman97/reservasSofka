@@ -52,7 +52,10 @@ class JdbcLocationsPersistenceAdapterTest {
                     image_url VARCHAR(255),
                     is_active BOOLEAN NOT NULL,
                     created_at TIMESTAMP NULL,
-                    updated_at TIMESTAMP NULL
+                    updated_at TIMESTAMP NULL,
+                    qr_code BYTEA,
+                    qr_token VARCHAR(255),
+                    qr_etag VARCHAR(255)
                 )
                 """);
     }
