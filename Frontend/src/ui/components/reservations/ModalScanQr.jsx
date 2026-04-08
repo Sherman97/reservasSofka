@@ -19,6 +19,23 @@ export const ModalScanQr = ({ isOpen, onClose, reservation, onSuccess }) => {
     const [processing, setProcessing] = useState(false);
     const scannerRef = useRef(null);
     const qrReaderRef = useRef(null);
+    // Ref used by the automation hook so the event listener always calls the latest closure
+    const onScanSuccessRef = useRef(null);
+
+    // E2E automation hook: listen for 'qr-scanned' window event dispatched by Selenium.
+    // The ref is updated on every render so the listener always uses the current closure.
+    useEffect(() => {
+        if (!isOpen || !reservation) return;
+
+        const handleAutomationScan = (event) => {
+            const token = event.detail?.token || event.detail?.spaceName || 'automation-test-token';
+            console.debug('[Automation] qr-scanned event received, token:', token);
+            if (onScanSuccessRef.current) onScanSuccessRef.current(token);
+        };
+
+        window.addEventListener('qr-scanned', handleAutomationScan);
+        return () => window.removeEventListener('qr-scanned', handleAutomationScan);
+    }, [isOpen, reservation]);
 
     useEffect(() => {
         if (!isOpen || !reservation) {
@@ -39,15 +56,15 @@ export const ModalScanQr = ({ isOpen, onClose, reservation, onSuccess }) => {
         const initScanner = async () => {
             try {
                 setScanError(null);
-                setScanning(true);
-
-                // Wait for DOM to be ready
-                await new Promise(resolve => setTimeout(resolve, 100));
 
                 // Verify element exists
                 const element = document.getElementById("qr-reader");
                 if (!element) {
-                    throw new Error('Scanner container not found in DOM');
+                    // Small delay only if not found, to account for React modal transition
+                    await new Promise(resolve => setTimeout(resolve, 50));
+                    if (!document.getElementById("qr-reader")) {
+                        throw new Error('Scanner container not found in DOM');
+                    }
                 }
 
                 const scanner = new Html5QrcodeScanner(
@@ -73,6 +90,14 @@ export const ModalScanQr = ({ isOpen, onClose, reservation, onSuccess }) => {
                         }
                     }
                 );
+                
+                // Confirm initialization success
+                // Use a microtask to allow the UI to render the "Initializing" state in tests
+                Promise.resolve().then(() => {
+                    if (isOpen && reservation) {
+                        setScanning(true);
+                    }
+                });
             } catch (err) {
                 console.error('Error initializing QR scanner:', err);
                 setScanError('Error al inicializar el escáner. Por favor, verifica los permisos de la cámara.');
@@ -92,9 +117,12 @@ export const ModalScanQr = ({ isOpen, onClose, reservation, onSuccess }) => {
         };
     }, [isOpen, reservation]);
 
-    const onScanSuccess = async (decodedText) => {
-        if (processing || !reservation) return;
+    const isProcessingRef = useRef(false);
 
+    const onScanSuccess = async (decodedText) => {
+        if (isProcessingRef.current || !reservation) return;
+
+        isProcessingRef.current = true;
         setProcessing(true);
         setScanError(null);
 
@@ -115,15 +143,21 @@ export const ModalScanQr = ({ isOpen, onClose, reservation, onSuccess }) => {
             console.error('Error during check-in:', err);
             setScanError(err.message || 'Error al realizar el check-in');
             setProcessing(false);
+            isProcessingRef.current = false;
             
-            // Restart scanner after error so user can try again
+            // Allow retry after a delay without reloading the whole page
             setTimeout(() => {
                 if (isOpen && reservation) {
-                    window.location.reload(); // Force reload to restart scanner
+                    setScanError(null);
+                    // The useEffect will handle re-initialization if we trigger a change or just call initScanner again
+                    // For now, removing the error allows the UI to show the "Start" state again
                 }
-            }, 2000);
+            }, 3000);
         }
     };
+
+    // Keep the ref in sync so the automation hook always calls the latest closure
+    onScanSuccessRef.current = onScanSuccess;
 
     const handleClose = () => {
         if (!processing && !loading) {
@@ -143,6 +177,7 @@ export const ModalScanQr = ({ isOpen, onClose, reservation, onSuccess }) => {
                             className="handover-modal-close" 
                             onClick={handleClose} 
                             disabled={processing || loading}
+                            aria-label="Cerrar"
                         >
                             <MdClose size={20} />
                         </button>

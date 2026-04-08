@@ -109,7 +109,7 @@ describe('InventoryAssignmentModal', () => {
         render(<InventoryAssignmentModal {...defaultProps} />);
         await waitFor(() => screen.getByText('Proyector (Multimedia)'));
 
-        fireEvent.click(screen.getByText('🗑️ Remover'));
+        fireEvent.click(screen.getByText(/Remover/));
 
         await waitFor(() => {
             expect(mockRemoveInventoryExecute).toHaveBeenCalledWith({
@@ -123,7 +123,7 @@ describe('InventoryAssignmentModal', () => {
         render(<InventoryAssignmentModal {...defaultProps} />);
         await waitFor(() => screen.getByText('Proyector (Multimedia)'));
 
-        fireEvent.click(screen.getByText('🗑️ Remover'));
+        fireEvent.click(screen.getByText(/Remover/));
 
         expect(mockRemoveInventoryExecute).not.toHaveBeenCalled();
     });
@@ -183,7 +183,7 @@ describe('InventoryAssignmentModal', () => {
         render(<InventoryAssignmentModal {...defaultProps} />);
         await waitFor(() => screen.getByText('Proyector (Multimedia)'));
 
-        fireEvent.click(screen.getByText('🗑️ Remover'));
+        fireEvent.click(screen.getByText(/Remover/));
 
         await waitFor(() => {
             expect(window.alert).toHaveBeenCalledWith('Remove failed');
@@ -199,7 +199,7 @@ describe('InventoryAssignmentModal', () => {
 
     it('debe cerrar al hacer clic en botón X', () => {
         render(<InventoryAssignmentModal {...defaultProps} />);
-        fireEvent.click(screen.getByText('✕'));
+        fireEvent.click(screen.getByLabelText('Cerrar'));
         expect(defaultProps.onClose).toHaveBeenCalled();
     });
 });

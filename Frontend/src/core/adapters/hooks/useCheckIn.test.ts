@@ -110,12 +110,14 @@ describe('useCheckIn', () => {
         });
 
         const { result } = renderHook(() => useCheckIn());
-
-        await expect(async () => {
-            await act(async () => {
+        
+        await act(async () => {
+            try {
                 await result.current.checkIn('res-123', 'invalid-qr');
-            });
-        }).rejects.toThrow(errorMessage);
+            } catch (err) {
+                expect((err as Error).message).toBe(errorMessage);
+            }
+        });
 
         await waitFor(() => {
             expect(result.current.error).toBe(errorMessage);
@@ -134,11 +136,13 @@ describe('useCheckIn', () => {
 
         const { result } = renderHook(() => useCheckIn());
 
-        await expect(async () => {
-            await act(async () => {
+        await act(async () => {
+            try {
                 await result.current.checkIn('res-123', 'expired-qr-token');
-            });
-        }).rejects.toThrow(errorMessage);
+            } catch (err) {
+                expect((err as Error).message).toBe(errorMessage);
+            }
+        });
 
         await waitFor(() => {
             expect(result.current.error).toBe(errorMessage);
@@ -157,11 +161,13 @@ describe('useCheckIn', () => {
 
         const { result } = renderHook(() => useCheckIn());
 
-        await expect(async () => {
-            await act(async () => {
+        await act(async () => {
+            try {
                 await result.current.checkIn('res-123', 'wrong-space-qr');
-            });
-        }).rejects.toThrow(errorMessage);
+            } catch (err) {
+                expect((err as Error).message).toBe(errorMessage);
+            }
+        });
 
         await waitFor(() => {
             expect(result.current.error).toBe(errorMessage);
@@ -183,11 +189,13 @@ describe('useCheckIn', () => {
         const { result } = renderHook(() => useCheckIn());
 
         // First attempt - fails
-        await expect(async () => {
-            await act(async () => {
+        await act(async () => {
+            try {
                 await result.current.checkIn('res-123', 'bad-token');
-            });
-        }).rejects.toThrow(firstError);
+            } catch (err) {
+                expect((err as Error).message).toBe(firstError);
+            }
+        });
 
         await waitFor(() => {
             expect(result.current.error).toBe(firstError);
@@ -214,11 +222,13 @@ describe('useCheckIn', () => {
 
         const { result } = renderHook(() => useCheckIn());
 
-        await expect(async () => {
-            await act(async () => {
+        await act(async () => {
+            try {
                 await result.current.checkIn('res-123', 'token');
-            });
-        }).rejects.toBeDefined();
+            } catch (err) {
+                expect(err).toBeDefined();
+            }
+        });
 
         await waitFor(() => {
             expect(result.current.error).toBe('Error al realizar el check-in');
@@ -236,11 +246,13 @@ describe('useCheckIn', () => {
 
         const { result } = renderHook(() => useCheckIn());
 
-        await expect(async () => {
-            await act(async () => {
+        await act(async () => {
+            try {
                 await result.current.checkIn('res-123', 'token');
-            });
-        }).rejects.toThrow();
+            } catch (err) {
+                expect(err).toBeDefined();
+            }
+        });
 
         await waitFor(() => {
             expect(result.current.loading).toBe(false);

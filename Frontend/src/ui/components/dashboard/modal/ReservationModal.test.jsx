@@ -57,12 +57,12 @@ describe('ReservationModal', () => {
 
     it('debe mostrar ubicación', () => {
         render(<ReservationModal {...defaultProps} />);
-        expect(screen.getByText('📍 Sede Central')).toBeDefined();
+        expect(screen.getByText('Sede Central')).toBeDefined();
     });
 
     it('debe mostrar tipo locación', () => {
         render(<ReservationModal {...defaultProps} />);
-        expect(screen.getByText('🏢 Locación')).toBeDefined();
+        expect(screen.getByText('Locación')).toBeDefined();
     });
 
     it('debe mostrar Calendar', () => {
@@ -140,7 +140,7 @@ describe('ReservationModal', () => {
 
     it('debe cerrar al hacer clic en botón X', () => {
         render(<ReservationModal {...defaultProps} />);
-        fireEvent.click(screen.getByText('✕'));
+        fireEvent.click(screen.getByLabelText('Cerrar'));
         expect(defaultProps.onClose).toHaveBeenCalled();
     });
 });

@@ -130,7 +130,7 @@ public class BookingApplicationService implements BookingUseCase {
                     spaceId,
                     startAt,
                     endAt,
-                    STATUS_CONFIRMED,
+                    STATUS_PENDING,
                     normalizeNullable(command.title()),
                     command.attendeesCount(),
                     normalizeNullable(command.notes())

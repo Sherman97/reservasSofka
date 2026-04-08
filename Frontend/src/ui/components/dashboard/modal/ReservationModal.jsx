@@ -40,7 +40,7 @@ export const ReservationModal = ({
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <button className="modal-close" onClick={onClose}>
+                <button className="modal-close" onClick={onClose} aria-label="Cerrar">
                     <MdClose size={20} />
                 </button>
 

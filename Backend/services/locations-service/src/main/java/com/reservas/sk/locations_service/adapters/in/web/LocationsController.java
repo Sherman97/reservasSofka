@@ -109,6 +109,16 @@ public class LocationsController {
         return ApiResponse.success(mapper.toResponse(useCase.getSpaceById(id)));
     }
 
+    @GetMapping("/spaces/{id}/qr-token")
+    public ApiResponse<java.util.Map<String, String>> getSpaceQrToken(@PathVariable Long id) {
+        Space space = useCase.getSpaceById(id);
+        String token = space.getQrToken();
+        if (token == null || token.isBlank()) {
+            throw new ApiException(HttpStatus.NOT_FOUND, "QR token not generated for this space", "QR_TOKEN_NOT_FOUND");
+        }
+        return ApiResponse.success(java.util.Map.of("token", token));
+    }
+
     @GetMapping("/spaces/{id}/qr")
     public ResponseEntity<byte[]> getSpaceQrCode(
             @PathVariable Long id,

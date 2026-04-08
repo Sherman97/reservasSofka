@@ -157,7 +157,7 @@ Feature: Check-in con QR para Reservas
   Para confirmar mi asistencia y evitar que mi reserva sea cancelada
 
   Background:
-    Given el usuario "anderson.rodriguez@sofka.com.co" está autenticado
+    Given el usuario "admin@sofka.com.co" está autenticado
     And tiene una reserva activa con ID "RES-20260407-001" para el espacio "Sala Zeus" 
     And la reserva está en estado "PENDING"
     And la hora de inicio de la reserva es "2026-04-07T14:00:00Z"
@@ -406,7 +406,7 @@ public class QrCheckinSteps {
     @Given("el usuario {string} está autenticado")
     public void elUsuarioEstaAutenticado(String email) {
         loginPage.navigate();
-        loginPage.login(email, "Test123!"); // Password de testing
+        loginPage.login(email, "password1234"); // Password de testing
         context.setCurrentUser(email);
     }
     
@@ -588,7 +588,7 @@ public class QrCheckinScenario {
         // Anderson es un colaborador de Sofka que quiere confirmar su asistencia
         anderson = Actor.named("Anderson Rodriguez");
         anderson.can(BrowseTheWeb.with(driver));
-        anderson.can(AuthenticateWithCredentials.as("anderson.rodriguez@sofka.com.co"));
+        anderson.can(AuthenticateWithCredentials.as("admin@sofka.com.co"));
     }
     
     @Test
@@ -596,7 +596,7 @@ public class QrCheckinScenario {
     public void checkInExitoso_conQrValido() {
         
         givenThat(anderson).wasAbleTo(
-            Login.withCredentials("anderson.rodriguez@sofka.com.co", "Test123!"),
+            Login.withCredentials("admin@sofka.com.co", "password1234"),
             CreateReservation.forSpace("Sala Zeus")
                 .onDate("2026-04-07")
                 .atTime("14:00")
@@ -634,7 +634,7 @@ public class QrCheckinScenario {
     public void checkInFallido_fueraDeGracePeriod() {
         
         givenThat(anderson).wasAbleTo(
-            Login.withCredentials("anderson.rodriguez@sofka.com.co", "Test123!"),
+            Login.withCredentials("admin@sofka.com.co", "password1234"),
             CreateReservation.forSpace("Sala Zeus")
                 .onDate("2026-04-07")
                 .atTime("14:00"),
@@ -863,8 +863,8 @@ public class CheckInApiTest {
             .contentType(ContentType.JSON)
             .body("""
                 {
-                    "email": "anderson.rodriguez@sofka.com.co",
-                    "password": "Test123!"
+                    "email": "admin@sofka.com.co",
+                    "password": "passwrod1234"
                 }
                 """)
             .when()
@@ -1167,7 +1167,7 @@ Feature: Validación de QR - Manejo de Errores
   Para evitar check-ins fraudulentos o erróneos
 
   Background:
-    Given el usuario "juan.perez@sofka.com.co" está autenticado
+    Given el usuario "juan.perez@demo.local" está autenticado
     And tiene una reserva para "Sala Zeus" (ID: "RES-20260407-002")
     And la reserva está en estado "PENDING"
     And la hora actual es "2026-04-07T14:02:00Z" # Dentro del grace period

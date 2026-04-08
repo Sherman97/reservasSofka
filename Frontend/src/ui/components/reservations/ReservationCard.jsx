@@ -19,10 +19,12 @@ export const ReservationCard = ({ reservation, onCancel, onEdit, onDeliver, onRe
     const isPast = reservation.isPast();
     const isInProgress = reservation.isInProgress();
     const isCompleted = reservation.isCompleted();
+    const isCheckedIn = reservation.isCheckedIn ? reservation.isCheckedIn() : (reservation.status || '').toLowerCase() === 'checked_in';
     const isOngoing = reservation.isOngoing();
 
     const getStatusClass = () => {
         if (isCancelled) return 'res-status-cancelled';
+        if (isCheckedIn) return 'res-status-checked-in';
         if (isInProgress) return 'res-status-in-progress';
         if (isCompleted) return 'res-status-completed';
         if (isOngoing) return 'res-status-in-progress';
@@ -33,6 +35,7 @@ export const ReservationCard = ({ reservation, onCancel, onEdit, onDeliver, onRe
 
     const getStatusText = () => {
         if (isCancelled) return 'Cancelada';
+        if (isCheckedIn) return 'Confirmada';
         if (isInProgress) return 'En Progreso';
         if (isCompleted) return 'Completada';
         if (isOngoing) return 'En Progreso';
@@ -80,7 +83,10 @@ export const ReservationCard = ({ reservation, onCancel, onEdit, onDeliver, onRe
             </div>
 
             <div className="card-right">
-                <span className={`res-status-badge ${getStatusClass()}`}>
+                <span
+                    className={`res-status-badge ${getStatusClass()}`}
+                    data-status={(reservation.status || '').toLowerCase()}
+                >
                     {getStatusText()}
                 </span>
 

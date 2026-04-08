@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import { ModalScanQr } from './ModalScanQr';
 import { useCheckIn } from '../../../core/adapters/hooks/useCheckIn';
 import { Html5QrcodeScanner } from 'html5-qrcode';
@@ -138,7 +138,9 @@ describe('ModalScanQr', () => {
 
         // Simulate QR scan
         expect(onScanSuccessCallback).toBeDefined();
-        await onScanSuccessCallback('valid-qr-token-jwt');
+        await act(async () => {
+            await onScanSuccessCallback('valid-qr-token-jwt');
+        });
 
         await waitFor(() => {
             expect(mockCheckIn).toHaveBeenCalledWith('res-123', 'valid-qr-token-jwt');
@@ -169,7 +171,9 @@ describe('ModalScanQr', () => {
         });
 
         // Simulate QR scan with error
-        await onScanSuccessCallback('invalid-qr-token');
+        await act(async () => {
+            await onScanSuccessCallback('invalid-qr-token');
+        });
 
         await waitFor(() => {
             expect(screen.getByText(new RegExp(errorMessage))).toBeInTheDocument();
@@ -204,7 +208,7 @@ describe('ModalScanQr', () => {
             />
         );
 
-        const closeButton = screen.getByText('✕');
+        const closeButton = screen.getByLabelText('Cerrar');
         closeButton.click();
 
         expect(mockOnClose).toHaveBeenCalled();
@@ -234,14 +238,14 @@ describe('ModalScanQr', () => {
         });
 
         // Trigger scan
-        onScanSuccessCallback('valid-token');
-
-        await waitFor(() => {
-            const cancelButton = screen.getByText('Cancelar');
-            const closeButton = screen.getByText('✕');
-            expect(cancelButton).toBeDisabled();
-            expect(closeButton).toBeDisabled();
+        await act(async () => {
+            await onScanSuccessCallback('valid-token');
         });
+
+        const cancelButton = screen.getByText('Cancelar');
+        const closeButton = screen.getByLabelText('Cerrar');
+        expect(cancelButton).toBeDisabled();
+        expect(closeButton).toBeDisabled();
     });
 
     it('should clear scanner when modal closes', async () => {
@@ -297,7 +301,9 @@ describe('ModalScanQr', () => {
         });
 
         // Trigger scan
-        onScanSuccessCallback('valid-token');
+        await act(async () => {
+            await onScanSuccessCallback('valid-token');
+        });
 
         await waitFor(() => {
             expect(screen.getByText('Procesando check-in...')).toBeInTheDocument();
@@ -328,9 +334,11 @@ describe('ModalScanQr', () => {
         });
 
         // Trigger multiple scans
-        onScanSuccessCallback('token-1');
-        onScanSuccessCallback('token-2');
-        onScanSuccessCallback('token-3');
+        await act(async () => {
+            onScanSuccessCallback('token-1');
+            onScanSuccessCallback('token-2');
+            onScanSuccessCallback('token-3');
+        });
 
         await waitFor(() => {
             expect(mockCheckIn).toHaveBeenCalledTimes(1);
