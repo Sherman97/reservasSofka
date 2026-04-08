@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import { FaCamera } from 'react-icons/fa';
 import { FiSmartphone } from 'react-icons/fi';
@@ -21,6 +21,38 @@ export const ModalScanQr = ({ isOpen, onClose, reservation, onSuccess }) => {
     const qrReaderRef = useRef(null);
     // Ref used by the automation hook so the event listener always calls the latest closure
     const onScanSuccessRef = useRef(null);
+    const isProcessingRef = useRef(false);
+
+    const onScanSuccess = useCallback(async (decodedText) => {
+        if (isProcessingRef.current || !reservation) return;
+
+        isProcessingRef.current = true;
+        setProcessing(true);
+        setScanError(null);
+
+        try {
+            // Stop scanner to prevent multiple scans
+            if (scannerRef.current) {
+                await scannerRef.current.clear();
+                scannerRef.current = null;
+            }
+            setScanning(false);
+
+            // Perform check-in with scanned QR token
+            await checkIn(reservation.id, decodedText);
+            
+            // Success - notify parent
+            onSuccess();
+        } catch (err) {
+            console.error('Error during check-in:', err);
+            setScanError(err.message || 'Error al realizar el check-in');
+            setProcessing(false);
+            isProcessingRef.current = false;
+        }
+    }, [checkIn, reservation, onSuccess]);
+
+    // Keep the ref in sync so the automation hook always calls the latest closure
+    onScanSuccessRef.current = onScanSuccess;
 
     // E2E automation hook: listen for 'qr-scanned' window event dispatched by Selenium.
     // The ref is updated on every render so the listener always uses the current closure.
@@ -115,49 +147,7 @@ export const ModalScanQr = ({ isOpen, onClose, reservation, onSuccess }) => {
                 });
             }
         };
-    }, [isOpen, reservation]);
-
-    const isProcessingRef = useRef(false);
-
-    const onScanSuccess = async (decodedText) => {
-        if (isProcessingRef.current || !reservation) return;
-
-        isProcessingRef.current = true;
-        setProcessing(true);
-        setScanError(null);
-
-        try {
-            // Stop scanner to prevent multiple scans
-            if (scannerRef.current) {
-                await scannerRef.current.clear();
-                scannerRef.current = null;
-            }
-            setScanning(false);
-
-            // Perform check-in with scanned QR token
-            await checkIn(reservation.id, decodedText);
-            
-            // Success - notify parent
-            onSuccess();
-        } catch (err) {
-            console.error('Error during check-in:', err);
-            setScanError(err.message || 'Error al realizar el check-in');
-            setProcessing(false);
-            isProcessingRef.current = false;
-            
-            // Allow retry after a delay without reloading the whole page
-            setTimeout(() => {
-                if (isOpen && reservation) {
-                    setScanError(null);
-                    // The useEffect will handle re-initialization if we trigger a change or just call initScanner again
-                    // For now, removing the error allows the UI to show the "Start" state again
-                }
-            }, 3000);
-        }
-    };
-
-    // Keep the ref in sync so the automation hook always calls the latest closure
-    onScanSuccessRef.current = onScanSuccess;
+    }, [isOpen, reservation, onScanSuccess]);
 
     const handleClose = () => {
         if (!processing && !loading) {
