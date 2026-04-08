@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { FaBox, FaCheckCircle } from 'react-icons/fa';
+import { MdClose } from 'react-icons/md';
 import '../../styles/reservations/Reservations.css';
 
 /**
@@ -17,7 +19,7 @@ export const HandoverModal = ({ isOpen, onClose, onConfirm, action, reservationN
         ? `¿Confirmar la entrega del espacio "${reservationName}"? El estado cambiará a "En progreso".`
         : `¿Confirmar la devolución del espacio "${reservationName}"? El estado cambiará a "Completada".`;
     const confirmLabel = isDeliver ? 'Confirmar Entrega' : 'Confirmar Devolución';
-    const icon = isDeliver ? '📦' : '✅';
+    const IconComponent = isDeliver ? FaBox : FaCheckCircle;
 
     const handleConfirm = async () => {
         setSubmitting(true);
@@ -40,9 +42,11 @@ export const HandoverModal = ({ isOpen, onClose, onConfirm, action, reservationN
         <div className="handover-modal-overlay" onClick={handleClose}>
             <div className="handover-modal" onClick={e => e.stopPropagation()}>
                 <div className="handover-modal-header">
-                    <span className="handover-modal-icon">{icon}</span>
+                    <IconComponent className="handover-modal-icon" size={24} />
                     <h3>{title}</h3>
-                    <button className="handover-modal-close" onClick={handleClose} disabled={submitting}>✕</button>
+                    <button className="handover-modal-close" onClick={handleClose} disabled={submitting}>
+                        <MdClose size={20} />
+                    </button>
                 </div>
 
                 <div className="handover-modal-body">

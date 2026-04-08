@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { FaBuilding, FaLaptop, FaVideo, FaCalendarAlt, FaClock, FaBox, FaCheckCircle, FaEdit, FaTrash, FaQrcode } from 'react-icons/fa';
 import '../../styles/reservations/Reservations.css';
 
 /**
@@ -40,17 +41,17 @@ export const ReservationCard = ({ reservation, onCancel, onEdit, onDeliver, onRe
         return 'En curso';
     };
 
-    let icon = '📅';
+    let IconComponent = FaCalendarAlt;
     const name = (reservation.locationName || '').toLowerCase();
-    if (name.includes('sala') || name.includes('reunion')) icon = '🏢';
-    if (name.includes('laptop') || name.includes('macbook')) icon = '💻';
-    if (name.includes('kit') || name.includes('camara')) icon = '📹';
+    if (name.includes('sala') || name.includes('reunion')) IconComponent = FaBuilding;
+    if (name.includes('laptop') || name.includes('macbook')) IconComponent = FaLaptop;
+    if (name.includes('kit') || name.includes('camara')) IconComponent = FaVideo;
 
     return (
         <div className={`reservation-card ${isCancelled ? 'cancelled' : ''}`}>
             <div className="card-left">
                 <div className="card-icon-container">
-                    <span className="card-icon">{icon}</span>
+                    <IconComponent className="card-icon" size={28} />
                 </div>
                 <div className="card-details">
                     <h3 className="card-title">{reservation.locationName}</h3>
@@ -60,7 +61,7 @@ export const ReservationCard = ({ reservation, onCancel, onEdit, onDeliver, onRe
 
             <div className="card-middle">
                 <div className="card-date-info">
-                    <span className="calendar-icon">🕒</span>
+                    <FaClock className="calendar-icon" size={20} />
                     <div className="date-text">
                         <span className="date-main">
                             {reservation.startAt.toLocaleDateString('es-ES', {
@@ -86,29 +87,30 @@ export const ReservationCard = ({ reservation, onCancel, onEdit, onDeliver, onRe
                 <div className="card-actions">
                     {(isInProgress || isOngoing) && !isCancelled && !isCompleted && onDeliver && (
                         <button className="btn-deliver-res" onClick={() => onDeliver(reservation)} title="Registrar entrega">
-                            📦
+                            <FaBox size={18} />
                         </button>
                     )}
+                    
                     {(isInProgress || isOngoing) && !isCancelled && !isCompleted && onScanQR && (
                         <button className="btn-deliver-res" onClick={() => onScanQR(reservation)} title="Confirmar reserva con QR">
-                            Scan QR
+                            <FaQrcode size={18} />
                         </button>
                     )}
                     {isInProgress && onReturn && (
                         <button className="btn-return-res" onClick={() => onReturn(reservation)} title="Registrar devolucion">
-                            ✅
+                            <FaCheckCircle size={18} />
                         </button>
                     )}
 
                     {isUpcoming && !isCancelled && onEdit && (
                         <button className="btn-edit-res" onClick={() => onEdit(reservation)} title="Actualizar horario">
-                            ✏️
+                            <FaEdit size={18} />
                         </button>
                     )}
 
                     {isUpcoming && !isCancelled && (
                         <button className="btn-cancel-res" onClick={() => onCancel(reservation.id)} title="Cancelar reserva">
-                            🗑️
+                            <FaTrash size={18} />
                         </button>
                     )}
                 </div>

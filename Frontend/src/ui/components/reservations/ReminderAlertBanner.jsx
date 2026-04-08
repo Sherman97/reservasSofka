@@ -1,4 +1,7 @@
 import React from 'react';
+import { FaClock, FaBell } from 'react-icons/fa';
+import { BiError } from 'react-icons/bi';
+import { MdSos, MdClose } from 'react-icons/md';
 import '../../styles/reservations/ReminderAlerts.css';
 
 /**
@@ -20,10 +23,10 @@ export const ReminderAlertBanner = ({ alerts, onDismiss, onClearAll }) => {
 
     const getAlertIcon = (type) => {
         switch (type) {
-            case 'reminder_15m': return '⏰';
-            case 'reminder_5m': return '⚠️';
-            case 'overdue_10m': return '🚨';
-            default: return '🔔';
+            case 'reminder_15m': return <FaClock size={18} />;
+            case 'reminder_5m': return <BiError size={18} />;
+            case 'overdue_10m': return <MdSos size={18} />;
+            default: return <FaBell size={18} />;
         }
     };
 
@@ -39,7 +42,10 @@ export const ReminderAlertBanner = ({ alerts, onDismiss, onClearAll }) => {
     return (
         <div className="reminder-alerts-container">
             <div className="reminder-alerts-header">
-                <span className="reminder-alerts-title">🔔 Recordatorios ({alerts.length})</span>
+                <span className="reminder-alerts-title">
+                    <FaBell size={16} style={{ marginRight: '6px' }} />
+                    Recordatorios ({alerts.length})
+                </span>
                 {alerts.length > 1 && (
                     <button className="btn-clear-all" onClick={onClearAll}>
                         Limpiar todos
@@ -60,7 +66,7 @@ export const ReminderAlertBanner = ({ alerts, onDismiss, onClearAll }) => {
                             onClick={() => onDismiss(alert.id)}
                             title="Descartar"
                         >
-                            ✕
+                            <MdClose size={18} />
                         </button>
                     </div>
                 ))}

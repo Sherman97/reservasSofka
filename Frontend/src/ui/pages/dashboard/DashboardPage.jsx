@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BiError } from 'react-icons/bi';
 import { useDashboard } from '../../../core/adapters/hooks/useDashboard';
 import { SearchBar } from '../../components/dashboard/SearchBar';
 import { ItemCard } from '../../components/dashboard/ItemCard';
@@ -36,7 +37,7 @@ const DashboardPage = () => {
 
                     {error && (
                         <div className="error-banner">
-                            <p>⚠️ {error}</p>
+                            <p><BiError size={20} style={{ verticalAlign: 'middle', marginRight: '6px' }} /> {error}</p>
                             <button onClick={reload} className="btn-retry">Reintentar</button>
                         </div>
                     )}

@@ -38,6 +38,8 @@ Frontend/reports/
 .idea/
 .idea/
 
-CRUD/
-POM/
-ScreenPlay/
+AUTO_API_SCREENPLAY/
+AUTO_FRONT_POM_FACTORY/
+AUTO_FRONT_SCREENPLAY/
+
+

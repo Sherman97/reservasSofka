@@ -1,4 +1,7 @@
 import React from 'react';
+import { FaMapMarkerAlt, FaBuilding, FaCheckCircle } from 'react-icons/fa';
+import { BiError } from 'react-icons/bi';
+import { MdClose } from 'react-icons/md';
 import { Calendar } from './Calendar';
 import { EquipmentSelector } from './EquipmentSelector';
 import { DurationSelector } from './DurationSelector';
@@ -37,17 +40,25 @@ export const ReservationModal = ({
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <button className="modal-close" onClick={onClose}>✕</button>
+                <button className="modal-close" onClick={onClose}>
+                    <MdClose size={20} />
+                </button>
 
                 <div className="modal-header">
                     <div className="modal-item-info">
                         <img src={item.image} alt={item.title} className="modal-item-image" />
                         <div className="modal-item-details">
                             <h2>{item.title}</h2>
-                            <p className="modal-item-location">📍 {item.location || 'Sede Central'}</p>
+                            <p className="modal-item-location">
+                                <FaMapMarkerAlt size={14} style={{ marginRight: '4px' }} />
+                                {item.location || 'Sede Central'}
+                            </p>
                             {/* Check item type safely */}
                             {(item.type === 'location' || item._type === 'location') && (
-                                <p className="modal-item-type">🏢 Locación</p>
+                                <p className="modal-item-type">
+                                    <FaBuilding size={14} style={{ marginRight: '4px' }} />
+                                    Locación
+                                </p>
                             )}
                         </div>
                     </div>
@@ -57,14 +68,14 @@ export const ReservationModal = ({
 
                     {successMessage && (
                         <div className="modal-success-banner">
-                            <span className="success-icon">✅</span>
+                            <FaCheckCircle className="success-icon" size={20} />
                             <span>{successMessage}</span>
                         </div>
                     )}
 
                     {!successMessage && error && (
                         <div className="modal-error-banner">
-                            <span className="error-icon">⚠️</span>
+                            <BiError className="error-icon" size={20} />
                             <span>{error}</span>
                         </div>
                     )}

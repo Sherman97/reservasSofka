@@ -1,85 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
+import { FaCamera } from 'react-icons/fa';
+import { FiSmartphone } from 'react-icons/fi';
+import { BiError } from 'react-icons/bi';
+import { MdClose } from 'react-icons/md';
 import { useCheckIn } from '../../../core/adapters/hooks/useCheckIn';
 import '../../styles/reservations/Reservations.css';
-
-// Estilos específicos para el escáner QR
-const qrScannerStyles = `
-    #qr-reader {
-        border: none !important;
-        width: 100% !important;
-        max-width: 500px !important;
-        margin: 0 auto !important;
-    }
-    
-    #qr-reader__dashboard_section {
-        display: none !important;
-    }
-    
-    #qr-reader__camera_selection {
-        margin: 10px 0 !important;
-    }
-    
-    #qr-reader video {
-        width: 100% !important;
-        max-width: 100% !important;
-        height: auto !important;
-        border-radius: 8px !important;
-        object-fit: cover !important;
-    }
-    
-    #qr-reader__scan_region {
-        width: 100% !important;
-        max-width: 100% !important;
-    }
-    
-    #qr-reader__scan_region img {
-        max-width: 100% !important;
-        height: auto !important;
-    }
-    
-    #qr-reader__header_message {
-        display: none !important;
-    }
-    
-    .qr-scan-modal {
-        max-width: 600px !important;
-        width: 90% !important;
-    }
-    
-    .qr-scanner-container {
-        max-width: 500px;
-        margin: 0 auto;
-        padding: 10px 0;
-        overflow: hidden;
-    }
-    
-    .qr-scanner-help {
-        text-align: center;
-        color: #666;
-        font-size: 14px;
-        margin-top: 10px;
-        padding: 0 10px;
-    }
-    
-    .qr-processing, .qr-initializing {
-        text-align: center;
-        padding: 40px 20px;
-    }
-    
-    .qr-error-banner {
-        background-color: #fee;
-        border: 1px solid #fcc;
-        border-radius: 8px;
-        padding: 15px;
-        margin: 10px 0;
-    }
-    
-    .qr-error-banner p {
-        margin: 0;
-        color: #c33;
-    }
-`;
 
 /**
  * ModalScanQr - UI Component
@@ -208,19 +134,17 @@ export const ModalScanQr = ({ isOpen, onClose, reservation, onSuccess }) => {
     if (!isOpen || !reservation) return null;
 
     return (
-        <>
-            <style>{qrScannerStyles}</style>
-            <div className="handover-modal-overlay" onClick={handleClose}>
+        <div className="handover-modal-overlay" onClick={handleClose}>
                 <div className="handover-modal qr-scan-modal" onClick={e => e.stopPropagation()}>
                     <div className="handover-modal-header">
-                        <span className="handover-modal-icon">📷</span>
+                        <FaCamera className="handover-modal-icon" size={24} />
                         <h3>Escanear Código QR</h3>
                         <button 
                             className="handover-modal-close" 
                             onClick={handleClose} 
                             disabled={processing || loading}
                         >
-                            ✕
+                            <MdClose size={20} />
                         </button>
                     </div>
 
@@ -234,7 +158,8 @@ export const ModalScanQr = ({ isOpen, onClose, reservation, onSuccess }) => {
                                 <div id="qr-reader" ref={qrReaderRef}></div>
                                 {scanning && (
                                     <p className="qr-scanner-help">
-                                        📱 Apunta la cámara hacia el código QR del espacio
+                                        <FiSmartphone size={18} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
+                                        Apunta la cámara hacia el código QR del espacio
                                     </p>
                                 )}
                             </div>
@@ -249,7 +174,7 @@ export const ModalScanQr = ({ isOpen, onClose, reservation, onSuccess }) => {
 
                         {(scanError || checkInError) && (
                             <div className="qr-error-banner">
-                                <p>⚠️ {scanError || checkInError}</p>
+                                <p><BiError size={20} style={{ verticalAlign: 'middle', marginRight: '6px' }} /> {scanError || checkInError}</p>
                             </div>
                         )}
 
@@ -272,6 +197,5 @@ export const ModalScanQr = ({ isOpen, onClose, reservation, onSuccess }) => {
                     </div>
                 </div>
             </div>
-        </>
     );
 };

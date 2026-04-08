@@ -48,9 +48,8 @@
     font-size: 1.5rem;
     cursor: pointer;
     color: #6c757d;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
+    /* width: 36px; */
+    /* height: 36px; */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -361,7 +360,11 @@
 }
 
 .info-icon {
-    font-size: 1.1rem;
+    width: 18px;
+    height: 18px;
+    color: var(--primary-color);
+    display: inline-block;
+    vertical-align: middle;
 }
 
 /* ===== Time Slots / Availability Timeline ===== */
@@ -381,7 +384,12 @@
 }
 
 .conflict-icon {
-    font-size: 1.1rem;
+    width: 20px;
+    height: 20px;
+    color: #dc2626;
+    display: inline-block;
+    vertical-align: middle;
+    flex-shrink: 0;
 }
 
 .time-input-group input[type="time"].time-conflict {
@@ -693,8 +701,11 @@
 }
 
 .equipment-main-icon {
-    font-size: 1.25rem;
+    width: 18px;
+    height: 18px;
     opacity: 0.6;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .select-arrow {
@@ -861,7 +872,10 @@
 }
 
 .modal-success-banner .success-icon {
-    font-size: 1.25rem;
+    width: 20px;
+    height: 20px;
+    color: #059669;
+    flex-shrink: 0;
 }
 
 .modal-error-banner {
@@ -880,7 +894,10 @@
 }
 
 .modal-error-banner .error-icon {
-    font-size: 1.25rem;
+    width: 20px;
+    height: 20px;
+    color: #dc2626;
+    flex-shrink: 0;
 }
 
 @keyframes bannerSlideIn {

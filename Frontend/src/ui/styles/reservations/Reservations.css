@@ -74,6 +74,11 @@
     top: 50%;
     transform: translateY(-50%);
     color: #a0aec0;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .search-input {
@@ -142,6 +147,13 @@
     font-size: 1.75rem;
 }
 
+.card-icon {
+    color: #3182ce;
+    width: 28px;
+    height: 28px;
+    display: block;
+}
+
 .card-details {
     display: flex;
     flex-direction: column;
@@ -174,10 +186,15 @@
 }
 
 .calendar-icon {
-    font-size: 1.5rem;
+    width: 20px;
+    height: 20px;
+    color: #4a5568;
     background: #f7fafc;
     padding: 0.5rem;
     border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .date-text {
@@ -255,7 +272,7 @@
     font-size: 1rem;
     color: #e53e3e;
     cursor: pointer;
-    width: 36px;
+    /* width: 36px; */
     height: 36px;
     border-radius: 8px;
     display: flex;
@@ -270,7 +287,7 @@
     font-size: 1rem;
     color: #2563eb;
     cursor: pointer;
-    width: 36px;
+    /* width: 36px; */
     height: 36px;
     border-radius: 8px;
     display: flex;
@@ -338,7 +355,7 @@
     font-size: 1rem;
     color: #ca8a04;
     cursor: pointer;
-    width: 36px;
+    /* width: 36px; */
     height: 36px;
     border-radius: 8px;
     display: flex;
@@ -410,7 +427,10 @@
 }
 
 .handover-modal-icon {
-    font-size: 1.5rem;
+    width: 24px;
+    height: 24px;
+    color: #3182ce;
+    display: block;
 }
 
 .handover-modal-header h3 {
@@ -539,4 +559,80 @@
 @keyframes slideUp {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* QR Scanner Styles */
+#qr-reader {
+    border: none !important;
+    width: 100% !important;
+    max-width: 500px !important;
+    margin: 0 auto !important;
+}
+
+#qr-reader__dashboard_section {
+    display: none !important;
+}
+
+#qr-reader__camera_selection {
+    margin: 10px 0 !important;
+}
+
+#qr-reader video {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    border-radius: 8px !important;
+    object-fit: cover !important;
+}
+
+#qr-reader__scan_region {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+#qr-reader__scan_region img {
+    max-width: 100% !important;
+    height: auto !important;
+}
+
+#qr-reader__header_message {
+    display: none !important;
+}
+
+.qr-scan-modal {
+    max-width: 600px !important;
+    width: 90% !important;
+}
+
+.qr-scanner-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 10px 0;
+    overflow: hidden;
+}
+
+.qr-scanner-help {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    margin-top: 10px;
+    padding: 0 10px;
+}
+
+.qr-processing, .qr-initializing {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.qr-error-banner {
+    background-color: #fee;
+    border: 1px solid #fcc;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+}
+
+.qr-error-banner p {
+    margin: 0;
+    color: #c33;
 }
