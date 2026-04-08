@@ -101,11 +101,6 @@ jobs:
     name: "🌐 Frontend"
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        shell: bash
-        working-directory: Frontend
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -118,12 +113,15 @@ jobs:
           cache-dependency-path: Frontend/package-lock.json
 
       - name: Install
+        working-directory: Frontend
         run: npm ci
 
       - name: Lint
+        working-directory: Frontend
         run: npm run lint --if-present
 
       - name: Test
+        working-directory: Frontend
         run: |
           if ! node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts.test ? 0 : 1)"; then
             echo "No test script, skipping"
