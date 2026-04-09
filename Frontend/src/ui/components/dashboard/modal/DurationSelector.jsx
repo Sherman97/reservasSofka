@@ -91,7 +91,7 @@ export const DurationSelector = ({
                 <div className={`time-slots-section ${slotsUpdatedFlag ? 'slots-updated' : ''}`}>
                     {slotsUpdatedFlag && (
                         <div className="slots-updated-banner">
-                            <FaSync size={14} style={{ marginRight: '6px' }} />
+                            <FaSync size={14} style={{ marginRight: '6px' }} title="Sincronizar" />
                             <span>Disponibilidad actualizada en tiempo real</span>
                         </div>
                     )}

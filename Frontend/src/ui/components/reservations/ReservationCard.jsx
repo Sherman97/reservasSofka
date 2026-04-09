@@ -54,7 +54,7 @@ export const ReservationCard = ({ reservation, onCancel, onEdit, onDeliver, onRe
         <div className={`reservation-card ${isCancelled ? 'cancelled' : ''}`}>
             <div className="card-left">
                 <div className="card-icon-container">
-                    <IconComponent className="card-icon" size={28} />
+                    <IconComponent className="card-icon" size={28} title="Icono de reserva" />
                 </div>
                 <div className="card-details">
                     <h3 className="card-title">{reservation.locationName}</h3>

@@ -41,7 +41,7 @@ describe('LoginPage', () => {
             </MemoryRouter>
         );
 
-        expect(screen.getByText('📅')).toBeInTheDocument();
+        expect(screen.getByTitle('Calendario')).toBeInTheDocument();
         expect(screen.getByText('Reservas Sofka')).toBeInTheDocument();
     });
 

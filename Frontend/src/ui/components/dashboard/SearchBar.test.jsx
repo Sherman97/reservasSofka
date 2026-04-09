@@ -25,7 +25,8 @@ describe('SearchBar', () => {
     });
 
     it('should render search icon', () => {
-        render(<SearchBar searchQuery="" handleSearch={vi.fn()} />);
-        expect(screen.getByText('🔍')).toBeInTheDocument();
+        const { container } = render(<SearchBar searchQuery="" handleSearch={vi.fn()} />);
+        const searchIcon = container.querySelector('.search-icon');
+        expect(searchIcon).toBeInTheDocument();
     });
 });

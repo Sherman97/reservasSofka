@@ -65,7 +65,7 @@ export const EquipmentSelector = ({ selectedEquipment, onEquipmentToggle, item }
                                     handleToggle(eq.itemId);
                                 }}>
                                     <span>{eq.name || getEquipmentName(eq.itemId)}</span>
-                                    <MdClose className="remove-tag" size={16} />
+                                    <MdClose className="remove-tag" size={16} title="Eliminar" />
                                 </span>
                             ))
                         )}
@@ -94,7 +94,7 @@ export const EquipmentSelector = ({ selectedEquipment, onEquipmentToggle, item }
                             }}
                         >
                             <span className="option-checkbox">
-                                {selectedEquipment.some(e => e.itemId === equipment.id) && <MdCheck size={16} />}
+                                {selectedEquipment.some(e => e.itemId === equipment.id) && <MdCheck size={16} title="Seleccionado" />}
                             </span>
                             <span className="option-content">
                                 {equipment.name}

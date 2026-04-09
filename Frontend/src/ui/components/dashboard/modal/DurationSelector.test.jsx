@@ -71,7 +71,7 @@ describe('DurationSelector', () => {
 
     it('debe mostrar banner de actualización en tiempo real', () => {
         render(<DurationSelector {...defaultProps} selectedDate={15} slotsUpdatedFlag={true} />);
-        expect(screen.getByText('🔄 Disponibilidad actualizada en tiempo real')).toBeDefined();
+        expect(screen.getByText('Disponibilidad actualizada en tiempo real')).toBeDefined();
     });
 
     it('debe mostrar leyenda de slots', () => {

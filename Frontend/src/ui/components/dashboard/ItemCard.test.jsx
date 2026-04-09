@@ -58,7 +58,7 @@ describe('ItemCard', () => {
     it('debe renderizar item de tipo location', () => {
         render(<ItemCard item={locationItem} />);
         expect(screen.getByText('Sala A')).toBeDefined();
-        expect(screen.getByText('📍 Capacidad: 10 personas')).toBeDefined();
+        expect(screen.getByText('Capacidad: 10 personas')).toBeDefined();
     });
 
     it('debe mostrar badge DISPONIBLE', () => {
@@ -73,22 +73,22 @@ describe('ItemCard', () => {
 
     it('debe mostrar botón Reservar para locations', () => {
         render(<ItemCard item={locationItem} />);
-        expect(screen.getByText('📅 Reservar')).toBeDefined();
+        expect(screen.getByText('Reservar')).toBeDefined();
     });
 
     it('debe mostrar botón Ver Detalles para inventory', () => {
         render(<ItemCard item={inventoryItem} />);
-        expect(screen.getByText('ℹ️ Ver Detalles')).toBeDefined();
+        expect(screen.getByText('Ver Detalles')).toBeDefined();
     });
 
     it('debe mostrar categoría Sala para locations', () => {
         render(<ItemCard item={locationItem} />);
-        expect(screen.getByText('🏢 Sala')).toBeDefined();
+        expect(screen.getByText('Sala')).toBeDefined();
     });
 
     it('debe mostrar categoría de equipo para inventory', () => {
         render(<ItemCard item={inventoryItem} />);
-        expect(screen.getByText('🎧 Multimedia')).toBeDefined();
+        expect(screen.getByText('Multimedia')).toBeDefined();
     });
 
     it('debe mostrar tags', () => {
@@ -99,7 +99,7 @@ describe('ItemCard', () => {
 
     it('debe llamar openModal al hacer clic en Reservar', () => {
         render(<ItemCard item={locationItem} />);
-        fireEvent.click(screen.getByText('📅 Reservar'));
+        fireEvent.click(screen.getByText('Reservar'));
         expect(mockReservation.openModal).toHaveBeenCalled();
     });
 

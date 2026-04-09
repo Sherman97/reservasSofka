@@ -18,9 +18,6 @@ export const ModalScanQr = ({ isOpen, onClose, reservation, onSuccess }) => {
     const [scanError, setScanError] = useState(null);
     const [processing, setProcessing] = useState(false);
     const scannerRef = useRef(null);
-    const qrReaderRef = useRef(null);
-    // Ref used by the automation hook so the event listener always calls the latest closure
-    const onScanSuccessRef = useRef(null);
     const isProcessingRef = useRef(false);
 
     const onScanSuccess = useCallback(async (decodedText) => {
@@ -33,7 +30,7 @@ export const ModalScanQr = ({ isOpen, onClose, reservation, onSuccess }) => {
         try {
             // Stop scanner to prevent multiple scans
             if (scannerRef.current) {
-                await scannerRef.current.clear();
+                await scannerRef.current.clear().catch(() => {});
                 scannerRef.current = null;
             }
             setScanning(false);
@@ -49,102 +46,57 @@ export const ModalScanQr = ({ isOpen, onClose, reservation, onSuccess }) => {
             setProcessing(false);
             isProcessingRef.current = false;
         }
-    }, [checkIn, reservation, onSuccess]);
+    }, [checkIn, reservation?.id, onSuccess]);
 
-    // Keep the ref in sync so the automation hook always calls the latest closure
-    onScanSuccessRef.current = onScanSuccess;
-
-    // E2E automation hook: listen for 'qr-scanned' window event dispatched by Selenium.
-    // The ref is updated on every render so the listener always uses the current closure.
-    useEffect(() => {
-        if (!isOpen || !reservation) return;
-
-        const handleAutomationScan = (event) => {
-            const token = event.detail?.token || event.detail?.spaceName || 'automation-test-token';
-            console.debug('[Automation] qr-scanned event received, token:', token);
-            if (onScanSuccessRef.current) onScanSuccessRef.current(token);
-        };
-
-        window.addEventListener('qr-scanned', handleAutomationScan);
-        return () => window.removeEventListener('qr-scanned', handleAutomationScan);
-    }, [isOpen, reservation]);
-
+    // Cleanup and Init Scanner
     useEffect(() => {
         if (!isOpen || !reservation) {
-            // Cleanup scanner if modal closes
             if (scannerRef.current) {
-                scannerRef.current.clear().catch(err => {
-                    console.warn('Error clearing QR scanner:', err);
-                });
+                scannerRef.current.clear().catch(() => {});
                 scannerRef.current = null;
             }
             setScanning(false);
-            setScanError(null);
-            setProcessing(false);
             return;
         }
 
-        // Initialize scanner when modal opens
-        const initScanner = async () => {
+        const initScanner = () => {
             try {
                 setScanError(null);
-
-                // Verify element exists
                 const element = document.getElementById("qr-reader");
                 if (!element) {
-                    // Small delay only if not found, to account for React modal transition
-                    await new Promise(resolve => setTimeout(resolve, 50));
-                    if (!document.getElementById("qr-reader")) {
-                        throw new Error('Scanner container not found in DOM');
-                    }
+                    // Fail gracefully if element not found (maybe modal closed fast)
+                    return;
                 }
 
                 const scanner = new Html5QrcodeScanner(
                     "qr-reader",
-                    { 
-                        fps: 10,
-                        qrbox: { width: 250, height: 250 },
-                        aspectRatio: 1.0,
-                        showTorchButtonIfSupported: true,
-                        showZoomSliderIfSupported: true
-                    },
-                    false
+                    { fps: 10, qrbox: { width: 250, height: 250 } },
+                    /* verbose= */ false
                 );
 
                 scannerRef.current = scanner;
-
                 scanner.render(
                     (decodedText) => onScanSuccess(decodedText),
                     (errorMessage) => {
-                        // Ignore frequent scanning errors, only log real issues
                         if (!errorMessage.includes('NotFoundException')) {
                             console.debug('QR scan error:', errorMessage);
                         }
                     }
                 );
                 
-                // Confirm initialization success
-                // Use a microtask to allow the UI to render the "Initializing" state in tests
-                Promise.resolve().then(() => {
-                    if (isOpen && reservation) {
-                        setScanning(true);
-                    }
-                });
+                setScanning(true);
             } catch (err) {
                 console.error('Error initializing QR scanner:', err);
                 setScanError('Error al inicializar el escáner. Por favor, verifica los permisos de la cámara.');
-                setScanning(false);
             }
         };
 
         initScanner();
 
-        // Cleanup on unmount or when dependencies change
         return () => {
             if (scannerRef.current) {
-                scannerRef.current.clear().catch(err => {
-                    console.warn('Error clearing QR scanner on cleanup:', err);
-                });
+                scannerRef.current.clear().catch(() => {});
+                scannerRef.current = null;
             }
         };
     }, [isOpen, reservation, onScanSuccess]);
@@ -180,7 +132,7 @@ export const ModalScanQr = ({ isOpen, onClose, reservation, onSuccess }) => {
 
                         {!processing && !scanError && !checkInError && (
                             <div className="qr-scanner-container">
-                                <div id="qr-reader" ref={qrReaderRef}></div>
+                                <div id="qr-reader"></div>
                                 {scanning && (
                                     <p className="qr-scanner-help">
                                         <FiSmartphone size={18} style={{ verticalAlign: 'middle', marginRight: '6px' }} />

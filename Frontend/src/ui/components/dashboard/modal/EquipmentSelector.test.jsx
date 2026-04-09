@@ -114,7 +114,8 @@ describe('EquipmentSelector', () => {
         // Wait for equipment to load so handleToggle can find the name
         await waitFor(() => expect(mockExecute).toHaveBeenCalled());
         // Click the remove tag button
-        fireEvent.click(screen.getByText('✕'));
+        const removeBtn = screen.getByTitle('Eliminar');
+        fireEvent.click(removeBtn);
         expect(onToggle).toHaveBeenCalledWith('eq1', 'Proyector');
     });
 
@@ -167,7 +168,7 @@ describe('EquipmentSelector', () => {
         render(<EquipmentSelector {...props} />);
         fireEvent.click(screen.getByText('Equipamiento'));
         await waitFor(() => {
-            expect(screen.getByText('✓')).toBeDefined();
+            expect(screen.getByTitle('Seleccionado')).toBeDefined();
         });
     });
 });

@@ -17,7 +17,7 @@ const LoginPage = () => {
             <div className="login-right">
                 <div className="login-form-wrapper">
                     <div className="logo-container">
-                        <FaCalendarAlt className="logo-icon" size={32} />
+                        <FaCalendarAlt className="logo-icon" size={32} title="Calendario" />
                         <span className="logo-text">Reservas Sofka</span>
                     </div>
 

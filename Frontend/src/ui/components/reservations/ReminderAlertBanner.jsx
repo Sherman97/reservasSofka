@@ -23,10 +23,10 @@ export const ReminderAlertBanner = ({ alerts, onDismiss, onClearAll }) => {
 
     const getAlertIcon = (type) => {
         switch (type) {
-            case 'reminder_15m': return <FaClock size={18} />;
-            case 'reminder_5m': return <BiError size={18} />;
-            case 'overdue_10m': return <MdSos size={18} />;
-            default: return <FaBell size={18} />;
+            case 'reminder_15m': return <FaClock size={18} title="Reloj" />;
+            case 'reminder_5m': return <BiError size={18} title="Advertencia" />;
+            case 'overdue_10m': return <MdSos size={18} title="Urgente" />;
+            default: return <FaBell size={18} title="Notificación" />;
         }
     };
 
@@ -43,7 +43,7 @@ export const ReminderAlertBanner = ({ alerts, onDismiss, onClearAll }) => {
         <div className="reminder-alerts-container">
             <div className="reminder-alerts-header">
                 <span className="reminder-alerts-title">
-                    <FaBell size={16} style={{ marginRight: '6px' }} />
+                    <FaBell size={16} style={{ marginRight: '6px' }} title="Alertas" />
                     Recordatorios ({alerts.length})
                 </span>
                 {alerts.length > 1 && (
@@ -66,7 +66,7 @@ export const ReminderAlertBanner = ({ alerts, onDismiss, onClearAll }) => {
                             onClick={() => onDismiss(alert.id)}
                             title="Descartar"
                         >
-                            <MdClose size={18} />
+                            <MdClose size={18} title="Cerrar" />
                         </button>
                     </div>
                 ))}
