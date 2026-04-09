@@ -1,478 +1,398 @@
-# Análisis Técnico de la Feature Administrativa de Reservas
-## Principios SOLID, Patrones de Diseño y Arquitectura
+# Analisis Tecnico de la Feature Administrativa de Reservas
+## Principios SOLID, Patrones de Diseno y Arquitectura
 
-**Fecha del análisis:** 2026-04-09  
-**Ámbito:** Backend (Java 17 + Spring Boot) y Frontend (React + TypeScript)  
-**Enfoque:** HU-01 (Consultar reservas desde módulo administrador) y HU-02 (Crear reserva manual desde módulo administrador)
+**Fecha del analisis:** 2026-04-09  
+**Ambito:** Backend (Java 17 + Spring Boot) y Frontend (React + TypeScript)  
+**Enfoque:** HU-01 (Consultar reservas desde modulo administrador) y HU-02 (Crear reserva manual desde modulo administrador)
 
 ---
 
 ## Glosario de Siglas
 
 - **HU:** Historia de Usuario.
-- **SOLID:** Conjunto de principios de diseño orientados a mantenibilidad.
-- **SRP (Single Responsibility Principle):** una clase/componente debe tener una sola razón de cambio.
-- **OCP (Open/Closed Principle):** el diseño debe permitir extensión sin modificar comportamiento estable.
-- **LSP (Liskov Substitution Principle):** una implementación debe poder sustituir a otra sin romper contratos.
-- **ISP (Interface Segregation Principle):** interfaces pequeñas y enfocadas, no contratos inflados.
-- **DIP (Dependency Inversion Principle):** la capa de aplicación depende de abstracciones, no de detalles técnicos.
-- **CQRS (Command Query Responsibility Segregation):** separar operaciones de lectura y de escritura.
-- **DTO (Data Transfer Object):** objeto de transporte entre capas/protocolos.
-- **API (Application Programming Interface):** contrato de integración entre consumidores y servicios.
-- **JWT (JSON Web Token):** token para identidad/autorización.
-- **STOMP (Simple Text Oriented Messaging Protocol):** protocolo de mensajería sobre WebSocket.
+- **SOLID:** conjunto de principios de diseno orientados a mantenibilidad.
+- **SRP:** Single Responsibility Principle.
+- **OCP:** Open/Closed Principle.
+- **LSP:** Liskov Substitution Principle.
+- **ISP:** Interface Segregation Principle.
+- **DIP:** Dependency Inversion Principle.
+- **CQRS:** Command Query Responsibility Segregation.
+- **DTO:** Data Transfer Object.
+- **JWT:** JSON Web Token.
+- **STOMP:** Simple Text Oriented Messaging Protocol.
 
 ---
 
-## Introducción Contextual
+## Introduccion Contextual
 
-La feature analizada introduce un módulo administrativo con dos capacidades encadenadas:
+La feature administrativa combina:
 
-1. **HU-01:** consultar reservas por listado paginado, filtros y detalle.
-2. **HU-02:** crear reservas manuales para terceros, con validaciones funcionales y de disponibilidad.
+1. HU-01: listado paginado, filtros y detalle de reservas.
+2. HU-02: creacion manual de reservas por admin, con validaciones de disponibilidad.
 
-Este documento conserva la estructura y profundidad del `resultado_tecnico.md`, pero acota el análisis a la porción de arquitectura realmente tocada por ambas HU. El propósito no es inventariar clases, sino explicar por qué las decisiones de diseño sí corresponden a principios SOLID y patrones concretos, con trazabilidad a archivos del proyecto.
+Este documento mantiene la estructura de `resultado_tecnico.md`, pero se limita a los servicios y componentes impactados por esas dos HU, indicando en que archivos y lineas se evidencia cada principio o patron.
 
 ---
 
-## I. BACKEND - ANÁLISIS POR SERVICIO
+## I. BACKEND - ANALISIS POR SERVICIO
 
-### 1. AUTH-SERVICE: Autenticación, autorización y catálogo de usuarios no admin
+### 1. AUTH-SERVICE: Autenticacion, autorizacion y listado de usuarios no admin
 
-#### Descripción General
-`auth-service` sostiene dos responsabilidades críticas de la feature: validar que el actor tenga perfil administrativo y exponer un catálogo de usuarios elegibles para reservas manuales (excluyendo rol admin). No crea reservas, pero define quién puede crearlas y para quién.
+#### Descripcion General
+`auth-service` habilita dos necesidades de la feature: control de acceso por rol administrador y exposicion del listado de usuarios no admin para el modal de creacion.
 
 #### Principios SOLID Identificados
 
-##### **S - Single Responsibility Principle (SRP)**
-- **`AuthController`** concentra la traducción HTTP de acciones de autenticación y del endpoint administrativo de consulta de usuarios.
-  - **Archivo relacionado:** `Backend/services/auth-service/src/main/java/com/reservas/sk/auth_service/adapters/in/web/AuthController.java`
-  - **Justificación:** la clase no decide persistencia ni reglas de hash/token; su razón de cambio es el contrato web.
+##### **S - SRP**
+- `AuthController` concentra la traduccion HTTP y la validacion de acceso admin para `/auth/users`.  
+  Archivo: `Backend/services/auth-service/src/main/java/com/reservas/sk/auth_service/adapters/in/web/AuthController.java` (lineas 29, 64, 69, 74).
+- `AuthApplicationService` concentra orquestacion del caso de uso (`listNonAdminUsers`).  
+  Archivo: `Backend/services/auth-service/src/main/java/com/reservas/sk/auth_service/application/service/AuthApplicationService.java` (lineas 23, 82-83).
+- `UserPersistenceAdapter` encapsula el acceso a datos para excluir admins.  
+  Archivo: `Backend/services/auth-service/src/main/java/com/reservas/sk/auth_service/adapters/out/persistence/UserPersistenceAdapter.java` (lineas 16, 61, 68).
 
-- **`AuthApplicationService`** orquesta casos de uso (`login`, `register`, `getMe`, `listNonAdminUsers`) sin detalles de JPA o filtros SQL.
-  - **Archivo relacionado:** `Backend/services/auth-service/src/main/java/com/reservas/sk/auth_service/application/service/AuthApplicationService.java`
-  - **Justificación:** su razón de cambio es la política de negocio de autenticación y catálogo de usuarios.
+##### **O - OCP**
+- Se extiende el contrato de caso de uso sin romper login/registro.  
+  Archivos:  
+  `Backend/services/auth-service/src/main/java/com/reservas/sk/auth_service/application/port/in/AuthUseCase.java` (metodo `listNonAdminUsers`)  
+  `Backend/services/auth-service/src/main/java/com/reservas/sk/auth_service/application/service/AuthApplicationService.java` (lineas 82-83).
 
-- **`UserPersistenceAdapter`** encapsula la consulta de usuarios no admin en infraestructura de persistencia.
-  - **Archivo relacionado:** `Backend/services/auth-service/src/main/java/com/reservas/sk/auth_service/adapters/out/persistence/UserPersistenceAdapter.java`
-  - **Justificación:** separa mapeo de entidad/rol del comportamiento de aplicación.
+##### **I - ISP**
+- `UserPersistencePort` separa operaciones de usuario sin mezclar token/hash/eventos.  
+  Archivo: `Backend/services/auth-service/src/main/java/com/reservas/sk/auth_service/application/port/out/UserPersistencePort.java` (metodo `listNonAdminUsers`).
 
-##### **O - Open/Closed Principle (OCP)**
-- El caso de uso se extiende con `listNonAdminUsers` sin alterar contratos previos de login y registro.
-  - **Archivos relacionados:**
-    - `.../application/port/in/AuthUseCase.java`
-    - `.../application/service/AuthApplicationService.java`
-  - **Justificación:** la funcionalidad nueva entra como operación adicional, no como mutación destructiva de flujos existentes.
+##### **D - DIP**
+- `AuthApplicationService` depende de puertos (`UserPersistencePort`, `TokenPort`, etc.), no de detalles de repositorio.  
+  Archivo: `Backend/services/auth-service/src/main/java/com/reservas/sk/auth_service/application/service/AuthApplicationService.java` (lineas 23-36).
 
-##### **L - Liskov Substitution Principle (LSP)**
-- Implementaciones de publicación de eventos (`RabbitUserEventPublisherAdapter` y fallback `NoOp`) permanecen sustituibles para la capa de aplicación.
-  - **Archivos relacionados:**
-    - `.../application/port/out/UserEventPublisherPort.java`
-    - `.../adapters/out/messaging/RabbitUserEventPublisherAdapter.java`
-    - `.../adapters/out/messaging/NoOpUserEventPublisherAdapter.java`
-  - **Justificación:** el servicio de aplicación no requiere condicionales por implementación.
+#### Patrones de Diseno Implementados
 
-##### **I - Interface Segregation Principle (ISP)**
-- El puerto `UserPersistencePort` mantiene métodos focalizados (buscar/guardar/listar no admin) sin mezclar tokenización o mensajería.
-  - **Archivo relacionado:** `Backend/services/auth-service/src/main/java/com/reservas/sk/auth_service/application/port/out/UserPersistencePort.java`
-  - **Justificación:** consumidores dependen de capacidades mínimas para su caso de uso.
-
-##### **D - Dependency Inversion Principle (DIP)**
-- `AuthApplicationService` depende de `UserPersistencePort`, `PasswordHasherPort`, `TokenPort`, `UserEventPublisherPort`.
-  - **Archivo relacionado:** `Backend/services/auth-service/src/main/java/com/reservas/sk/auth_service/application/service/AuthApplicationService.java`
-  - **Justificación:** la aplicación no conoce `SpringDataUserRepository` ni librerías JWT/Bcrypt.
-
-#### Patrones de Diseño Implementados
-
-##### **Hexagonal Architecture (Ports & Adapters)**
-- Entrada web en `AuthController`, orquestación en `AuthApplicationService`, salida por puertos de persistencia/seguridad/eventos.
-- **Valor en HU-02:** habilita el endpoint de usuarios no admin sin acoplar UI admin a consultas directas de BD.
+##### **Hexagonal Architecture**
+- Flujo: Controller -> UseCase -> Service -> Port -> Adapter.  
+  Evidencia: `AuthController` (lineas 64-71), `AuthApplicationService` (82-83), `UserPersistenceAdapter` (61-65).
 
 ##### **Adapter Pattern**
-- `UserPersistenceAdapter` traduce entidades (`UserJpaEntity`, `RoleJpaEntity`) a dominio `User`.
-- **Valor en HU-02:** la pantalla administrativa recibe nombres/correos limpios en vez de estructura persistente interna.
+- `UserPersistenceAdapter` traduce entidad JPA a dominio.  
+  Evidencia: `UserPersistenceAdapter.java` (linea 68, metodo `toDomain`).
 
 ##### **Strategy Pattern**
-- Estrategias de hash/token/eventos quedan intercambiables vía puertos.
-- **Valor funcional:** el módulo admin no queda bloqueado por un solo mecanismo de publicación o criptografía.
+- Publicacion de eventos sustituible por adaptadores `Rabbit`/`NoOp`.  
+  Evidencia: `UserEventPublisherPort` + adapters de mensajeria.
 
 ---
 
-### 2. BOOKINGS-SERVICE: Núcleo de consulta administrativa y creación manual
+### 2. BOOKINGS-SERVICE: Nucleo de HU-01 y HU-02
 
-#### Descripción General
-`bookings-service` ejecuta el corazón de HU-01/HU-02: filtrado paginado por criterios administrativos, enriquecimiento de detalle, validación de solapamiento y alta manual con estado inicial esperado por operación.
+#### Descripcion General
+`bookings-service` implementa la consulta administrativa, el conteo paginado, el detalle enriquecido y la creacion manual con validacion de solapamiento.
 
 #### Principios SOLID Identificados
 
-##### **S - Single Responsibility Principle (SRP)**
-- **`BookingController`** se centra en exponer endpoints y normalizar request/response de capa web.
-  - **Archivo relacionado:** `Backend/services/bookings-service/src/main/java/com/reservas/sk/bookings_service/adapters/in/web/BookingController.java`
-  - **Justificación:** no contiene SQL ni reglas de validación temporal compleja.
+##### **S - SRP**
+- `BookingController` expone endpoints admin y delega reglas de negocio.  
+  Archivo: `Backend/services/bookings-service/src/main/java/com/reservas/sk/bookings_service/adapters/in/web/BookingController.java` (lineas 39, 56, 83).
+- `BookingApplicationService` concentra validaciones funcionales (filtros, paginacion, conflicto horario).  
+  Archivo: `Backend/services/bookings-service/src/main/java/com/reservas/sk/bookings_service/application/service/BookingApplicationService.java` (lineas 44, 86, 228-234, 527-546).
+- `JdbcBookingPersistenceAdapter` concentra SQL admin (joins, order, limit/offset).  
+  Archivo: `Backend/services/bookings-service/src/main/java/com/reservas/sk/bookings_service/adapters/out/persistence/JdbcBookingPersistenceAdapter.java` (lineas 31, 255, 276, 284).
+- `ReservationStatusCatalog` concentra catalogo y mapeo de estados.  
+  Archivo: `Backend/services/bookings-service/src/main/java/com/reservas/sk/bookings_service/domain/model/ReservationStatusCatalog.java` (lineas 8-9, 24, 44).
 
-- **`BookingApplicationService`** concentra reglas de negocio: paginación segura, validación de filtros de fecha/estado, conflicto horario, validación de equipos.
-  - **Archivo relacionado:** `Backend/services/bookings-service/src/main/java/com/reservas/sk/bookings_service/application/service/BookingApplicationService.java`
-  - **Justificación:** es el punto de verdad de políticas funcionales HU-01/HU-02.
+##### **O - OCP**
+- `AdminListReservationsQuery` permite extender lectura admin sin reescribir la consulta estandar.  
+  Archivos:  
+  `Backend/services/bookings-service/src/main/java/com/reservas/sk/bookings_service/application/usecase/AdminListReservationsQuery.java`  
+  `Backend/services/bookings-service/src/main/java/com/reservas/sk/bookings_service/application/port/in/BookingUseCase.java`.
 
-- **`JdbcBookingPersistenceAdapter`** encapsula consultas SQL y joins para enriquecer datos administrativos (usuario, sede, espacio).
-  - **Archivo relacionado:** `Backend/services/bookings-service/src/main/java/com/reservas/sk/bookings_service/adapters/out/persistence/JdbcBookingPersistenceAdapter.java`
-  - **Justificación:** separa acceso relacional del modelo de dominio.
+##### **L - LSP**
+- `ReservationEventPublisherPort` admite adapters sustituibles (`Rabbit`/`NoOp`) sin romper capa de aplicacion.  
+  Evidencia: port + adapters de mensajeria del servicio.
 
-- **`ReservationStatusCatalog`** concentra normalización y mapeo de estados funcionales.
-  - **Archivo relacionado:** `Backend/services/bookings-service/src/main/java/com/reservas/sk/bookings_service/domain/model/ReservationStatusCatalog.java`
-  - **Justificación:** evita dispersar el catálogo en controller/service/sql.
+##### **I - ISP**
+- `BookingPersistencePort` separa lectura admin (`listAdminReservations`, `countAdminReservations`) del resto de comandos.  
+  Archivo: `Backend/services/bookings-service/src/main/java/com/reservas/sk/bookings_service/application/port/out/BookingPersistencePort.java`.
 
-##### **O - Open/Closed Principle (OCP)**
-- Se añade `AdminListReservationsQuery` y operaciones administrativas sin romper rutas de consulta de usuario.
-  - **Archivos relacionados:**
-    - `.../application/usecase/AdminListReservationsQuery.java`
-    - `.../application/port/in/BookingUseCase.java`
-  - **Justificación:** la extensión entra como variante de consulta, no como reescritura del flujo existente.
+##### **D - DIP**
+- `BookingApplicationService` depende de puertos de persistencia/eventos/realtime.  
+  Archivo: `Backend/services/bookings-service/src/main/java/com/reservas/sk/bookings_service/application/service/BookingApplicationService.java` (constructor + uso de puertos).
 
-##### **L - Liskov Substitution Principle (LSP)**
-- `ReservationEventPublisherPort` y `ReservationRealtimePort` mantienen implementación sustituible.
-  - **Archivos relacionados:**
-    - `.../application/port/out/ReservationEventPublisherPort.java`
-    - `.../adapters/out/messaging/RabbitReservationEventPublisherAdapter.java`
-    - `.../adapters/out/messaging/NoOpReservationEventPublisherAdapter.java`
-    - `.../adapters/out/websocket/StompReservationRealtimeAdapter.java`
-  - **Justificación:** la aplicación no necesita conocer el canal de publicación para funcionar.
-
-##### **I - Interface Segregation Principle (ISP)**
-- `BookingPersistencePort` discrimina operaciones de lectura admin (`listAdminReservations`, `countAdminReservations`) respecto a comandos mutables.
-  - **Archivo relacionado:** `Backend/services/bookings-service/src/main/java/com/reservas/sk/bookings_service/application/port/out/BookingPersistencePort.java`
-  - **Justificación:** evita interfaces monolíticas y aclara intención.
-
-##### **D - Dependency Inversion Principle (DIP)**
-- `BookingApplicationService` depende de puertos de persistencia y mensajería.
-  - **Archivo relacionado:** `Backend/services/bookings-service/src/main/java/com/reservas/sk/bookings_service/application/service/BookingApplicationService.java`
-  - **Justificación:** habilita cambios de infraestructura sin tocar reglas HU.
-
-#### Patrones de Diseño Implementados
+#### Patrones de Diseno Implementados
 
 ##### **Hexagonal Architecture**
-- `Controller -> UseCase -> ApplicationService -> Ports -> Adapters`.
-- **Aporte HU-01:** consulta admin paginada con filtros.
-- **Aporte HU-02:** creación manual con validación previa y publicación de evento.
+- Evidencia transversal en controller/usecase/service/ports/adapters.
 
 ##### **CQRS Parcial**
-- **Queries:** `AdminListReservationsQuery`, `ListReservationsQuery`, `CheckSpaceAvailabilityQuery`.
-- **Commands:** `CreateReservationCommand`, `UpdateReservationCommand`, `HandoverReservationCommand`.
-- **Justificación:** lectura y escritura evolucionan con restricciones diferentes.
+- Query: `AdminListReservationsQuery` (lectura HU-01).  
+- Command: `CreateReservationCommand` (escritura HU-02).
 
 ##### **Repository Pattern**
-- Puerto `BookingPersistencePort` con implementación JDBC.
-- **Aporte HU-01:** joins de usuarios/espacios/ciudades para mostrar nombres de negocio.
+- `BookingPersistencePort` + `JdbcBookingPersistenceAdapter` (lineas 255 y 284 para lista/conteo admin).
 
 ##### **Mapper Pattern**
-- `BookingHttpMapper` transforma dominio hacia DTO admin (`AdminReservationResponse`, `AdminReservationsPageResponse`).
-- **Aporte HU-01:** consistencia entre tabla y detalle.
-
-##### **State/Value Catalog Pattern (implícito)**
-- `ReservationStatusCatalog` gobierna validación de estados admin y del sistema.
-- **Aporte HU-01:** filtro de estado confiable y no ambiguo.
+- `BookingHttpMapper` + DTO admin (`AdminReservationResponse`, `AdminReservationsPageResponse`) para desacoplar dominio y contrato web.
 
 ---
 
-### 3. INVENTORY-SERVICE: Catálogo de equipos para la creación manual
+### 3. INVENTORY-SERVICE: Soporte de equipos adicionales
 
-#### Descripción General
-La HU-02 utiliza inventario como soporte: no para decidir la reserva principal, sino para poblar equipos adicionales compatibles con la ciudad seleccionada.
+#### Descripcion General
+En HU-02, `inventory-service` alimenta el selector de equipos por ciudad para el modal administrativo.
 
 #### Principios SOLID Identificados
 
-##### **S - Single Responsibility Principle (SRP)**
-- **`EquipmentsController`** expone operaciones HTTP de equipos.
-  - **Archivo relacionado:** `Backend/services/inventory-service/src/main/java/com/reservas/sk/inventory_service/adapters/in/web/EquipmentsController.java`
-- **`InventoryApplicationService`** valida estado/cityId y reglas de catálogo.
-  - **Archivo relacionado:** `Backend/services/inventory-service/src/main/java/com/reservas/sk/inventory_service/application/service/InventoryApplicationService.java`
+##### **S - SRP**
+- `EquipmentsController` expone lectura HTTP de equipos.  
+  Archivo: `Backend/services/inventory-service/src/main/java/com/reservas/sk/inventory_service/adapters/in/web/EquipmentsController.java` (lineas 29, 54, 57, 61).
+- `InventoryApplicationService` concentra reglas de filtro y estado.  
+  Archivo: `Backend/services/inventory-service/src/main/java/com/reservas/sk/inventory_service/application/service/InventoryApplicationService.java` (lineas 23, 67-69, 146).
 
-##### **O - Open/Closed Principle (OCP)**
-- `ListEquipmentsQuery` permite evolución de filtros sin romper endpoint base.
-  - **Archivo relacionado:** `Backend/services/inventory-service/src/main/java/com/reservas/sk/inventory_service/application/usecase/ListEquipmentsQuery.java`
+##### **O - OCP**
+- `ListEquipmentsQuery` habilita variacion de filtros sin romper endpoint.
 
-##### **D - Dependency Inversion Principle (DIP)**
-- La aplicación depende de puertos de persistencia/eventos.
-  - **Archivo relacionado:** `Backend/services/inventory-service/src/main/java/com/reservas/sk/inventory_service/application/service/InventoryApplicationService.java`
+##### **D - DIP**
+- Service depende de puertos, no de SQL directo.
 
-#### Patrones de Diseño Implementados
+#### Patrones de Diseno Implementados
 
 ##### **Hexagonal + Adapter**
-- Controlador y servicio aislados del motor de persistencia.
-- **Aporte HU-02:** el frontend admin consume catálogo sin acoplamiento a tablas internas.
+- Entrada web desacoplada de persistencia.
 
 ##### **Mapper Pattern**
-- `InventoryHttpMapper` traduce representación de transporte.
-  - **Archivo relacionado:** `Backend/services/inventory-service/src/main/java/com/reservas/sk/inventory_service/adapters/in/web/InventoryHttpMapper.java`
+- `InventoryHttpMapper` convierte dominio a DTO.  
+  Archivo: `Backend/services/inventory-service/src/main/java/com/reservas/sk/inventory_service/adapters/in/web/InventoryHttpMapper.java` (lineas 10-11).
 
 ---
 
-### 4. LOCATIONS-SERVICE: Cadena ciudad -> espacios
+### 4. LOCATIONS-SERVICE: Dependencia ciudad -> espacio
 
-#### Descripción General
-`locations-service` aporta el comportamiento dependiente necesario para HU-02: primero ciudad/sede, luego espacios/salas asociados.
+#### Descripcion General
+En HU-02, `locations-service` soporta la carga de sedes/ciudades y espacios por ciudad seleccionada.
 
 #### Principios SOLID Identificados
 
-##### **S - Single Responsibility Principle (SRP)**
-- `LocationsController` separa rutas de ciudades y espacios, incluyendo `/cities/{cityId}/spaces`.
-  - **Archivo relacionado:** `Backend/services/locations-service/src/main/java/com/reservas/sk/locations_service/adapters/in/web/LocationsController.java`
+##### **S - SRP**
+- `LocationsController` concentra endpoints de ciudades y espacios, incluyendo `/cities/{cityId}/spaces`.  
+  Archivo: `Backend/services/locations-service/src/main/java/com/reservas/sk/locations_service/adapters/in/web/LocationsController.java` (lineas 38, 95-97, 101-104).
+- `LocationsApplicationService` concentra reglas de existencia/consistencia.  
+  Archivo: `Backend/services/locations-service/src/main/java/com/reservas/sk/locations_service/application/service/LocationsApplicationService.java` (lineas 32, 95, 127-128, 132).
 
-- `LocationsApplicationService` concentra validaciones de existencia y consistencia de ciudad/espacio.
-  - **Archivo relacionado:** `Backend/services/locations-service/src/main/java/com/reservas/sk/locations_service/application/service/LocationsApplicationService.java`
+##### **O - OCP**
+- `ListSpacesQuery` extiende consulta con criterios (`cityId`, `activeOnly`) sin romper rutas existentes.  
+  Archivo: `Backend/services/locations-service/src/main/java/com/reservas/sk/locations_service/application/usecase/ListSpacesQuery.java` (linea 3).
 
-##### **O - Open/Closed Principle (OCP)**
-- `ListSpacesQuery` habilita filtro por ciudad y por activo sin reescribir flujos previos.
-  - **Archivo relacionado:** `Backend/services/locations-service/src/main/java/com/reservas/sk/locations_service/application/usecase/ListSpacesQuery.java`
+##### **I - ISP**
+- Puertos de persistencia y de publicacion de eventos estan segregados.
 
-##### **I - Interface Segregation Principle (ISP)**
-- `LocationsPersistencePort` y `LocationEventPublisherPort` mantienen contratos claros y separados.
-  - **Archivos relacionados:**
-    - `.../application/port/out/LocationsPersistencePort.java`
-    - `.../application/port/out/LocationEventPublisherPort.java`
+##### **D - DIP**
+- Service depende de puertos (`LocationsPersistencePort`, `LocationEventPublisherPort`).
 
-##### **D - Dependency Inversion Principle (DIP)**
-- Servicio de aplicación depende de puertos, no de acceso SQL directo.
-
-#### Patrones de Diseño Implementados
+#### Patrones de Diseno Implementados
 
 ##### **Hexagonal Architecture**
-- Repite patrón de entrada/salida desacoplada.
+- Controller -> service -> puertos -> adapters.
 
 ##### **Query Object Pattern**
-- `ListSpacesQuery` encapsula criterios de consulta para mantener controller liviano.
+- `ListSpacesQuery` encapsula criterios de consulta.
 
 ---
 
-### 5. API-GATEWAY: Borde de integración
+### 5. API-GATEWAY: Borde unico de integracion
 
-#### Descripción General
-La feature admin no expone puertos internos de microservicios al frontend; se enruta desde una única entrada.
+#### Descripcion General
+`api-gateway` publica las rutas de la feature admin bajo un unico punto de entrada.
 
 #### Principios SOLID Identificados
 
-##### **S - Single Responsibility Principle (SRP)**
-- `GatewayProxyConfig` define reglas de enrutamiento y nada más.
-  - **Archivo relacionado:** `Backend/services/api-gateway/src/main/java/com/reservas/sk/api_gateway/infrastructure/config/GatewayProxyConfig.java`
+##### **S - SRP**
+- `GatewayProxyConfig` solo define reglas de ruteo.  
+  Archivo: `Backend/services/api-gateway/src/main/java/com/reservas/sk/api_gateway/infrastructure/config/GatewayProxyConfig.java` (lineas 9, 25-28).
 
-##### **D - Dependency Inversion Principle (DIP)**
-- URLs de servicios viven en propiedades (`GatewayRoutesProperties`, `application.properties`), no incrustadas en lógica.
-  - **Archivos relacionados:**
-    - `.../infrastructure/config/GatewayRoutesProperties.java`
-    - `Backend/services/api-gateway/src/main/resources/application.properties`
+##### **D - DIP**
+- Destinos de servicios vienen de propiedades, no hardcodeados.  
+  Archivo: `Backend/services/api-gateway/src/main/resources/application.properties` (lineas 4-9).
 
-#### Patrones de Diseño Implementados
+#### Patrones de Diseno Implementados
 
 ##### **Gateway/Facade Pattern**
-- El frontend consume `/auth/**`, `/bookings/**`, `/locations/**`, `/inventory/**` por un único punto.
+- Rutas `/auth/**`, `/bookings/**`, `/locations/**`, `/inventory/**` centralizadas.
 
-##### **Strangler Pattern (operativo)**
-- Se extiende funcionalidad admin sin fracturar rutas legacy.
+##### **Strangler Pattern**
+- Se incorpora la feature admin sin romper contratos legacy de cliente.
 
 ---
 
-### 6. NOTIFICATIONS-SERVICE: Canal de difusión en tiempo real
+### 6. NOTIFICATIONS-SERVICE: Difusion de eventos
 
-#### Descripción General
-Aunque HU-01/HU-02 no depende exclusivamente de WebSocket para cerrar el flujo, el servicio de notificaciones sostiene el modelo reactivo de eventos administrativos.
+#### Descripcion General
+`notifications-service` mantiene la propagacion de eventos para consumo en tiempo real y soporte de feedback operativo.
 
 #### Principios SOLID Identificados
 
-##### **S - Single Responsibility Principle (SRP)**
-- `RabbitEventListenerAdapter`: escucha eventos AMQP.
-- `StompWebSocketBroadcastAdapter`: publica al canal WebSocket.
-  - **Archivos relacionados:**
-    - `Backend/services/notifications-service/src/main/java/com/reservas/sk/notifications_service/adapters/in/rabbit/RabbitEventListenerAdapter.java`
-    - `Backend/services/notifications-service/src/main/java/com/reservas/sk/notifications_service/adapters/out/websocket/StompWebSocketBroadcastAdapter.java`
+##### **S - SRP**
+- `RabbitEventListenerAdapter` escucha cola/eventos.  
+  Archivo: `Backend/services/notifications-service/src/main/java/com/reservas/sk/notifications_service/adapters/in/rabbit/RabbitEventListenerAdapter.java` (lineas 15-16, 25, 28).
+- `StompWebSocketBroadcastAdapter` publica a topics STOMP.  
+  Archivo: `Backend/services/notifications-service/src/main/java/com/reservas/sk/notifications_service/adapters/out/websocket/StompWebSocketBroadcastAdapter.java` (lineas 9, 18-20).
 
-##### **D - Dependency Inversion Principle (DIP)**
-- `EventBroadcastApplicationService` trabaja con `WebSocketBroadcastPort`.
-  - **Archivo relacionado:** `Backend/services/notifications-service/src/main/java/com/reservas/sk/notifications_service/application/service/EventBroadcastApplicationService.java`
+##### **D - DIP**
+- `EventBroadcastApplicationService` depende de `WebSocketBroadcastPort`.  
+  Archivo: `Backend/services/notifications-service/src/main/java/com/reservas/sk/notifications_service/application/service/EventBroadcastApplicationService.java` (lineas 12-13, 20, 23).
 
-#### Patrones de Diseño Implementados
+#### Patrones de Diseno Implementados
 
 ##### **Observer / Pub-Sub**
-- Recepción en broker y retransmisión a suscriptores WebSocket.
+- Listener Rabbit -> broadcast STOMP.
 
 ##### **Adapter Pattern**
-- Adaptadores de entrada/salida desacoplan protocolos de transporte.
+- Adaptadores desacoplan AMQP y WebSocket.
 
 ---
 
-## II. FRONTEND - ANÁLISIS ARQUITECTÓNICO
+## II. FRONTEND - ANALISIS ARQUITECTONICO
 
-### Descripción General
-El frontend incorpora una vista administrativa específica (`/admin-reservations`) con control de acceso por rol, filtros operativos, paginación, detalle, creación manual y notificación visual.
+### Descripcion General
+El frontend administra toda la feature en `/admin-reservations`: control de acceso por rol, filtros, tabla, paginacion, detalle y creacion manual.
 
-### Estructura Arquitectónica
+### Estructura Arquitectonica
 
-```
-routes/
-└── AppRouter.jsx                    # Ruteo + AdminRoute
-
-ui/components/common/
-└── AdminRoute.jsx                   # Guardia por rol
-
-ui/pages/admin-reservations/
-└── AdminReservationsPage.jsx        # Orquestación de HU-01 y HU-02
-
-ui/components/admin-reservations/
-├── AdminCreateReservationPanel.jsx
-├── ReservationRequesterAutocomplete.jsx
-└── ReservationStatusFilter.jsx
-
-core/adapters/hooks/
-├── useAdminReservationFilters.ts
-└── useAdminCreateReservationForm.ts
-
-features/reservations/services/
-└── adminReservationsService.js
-```
+- `Frontend/src/routes/AppRouter.jsx`
+- `Frontend/src/ui/components/common/AdminRoute.jsx`
+- `Frontend/src/ui/pages/admin-reservations/AdminReservationsPage.jsx`
+- `Frontend/src/ui/components/admin-reservations/AdminCreateReservationPanel.jsx`
+- `Frontend/src/core/adapters/hooks/useAdminReservationFilters.ts`
+- `Frontend/src/core/adapters/hooks/useAdminCreateReservationForm.ts`
+- `Frontend/src/features/reservations/services/adminReservationsService.js`
 
 ### Principios SOLID en Frontend
 
-#### **S - Single Responsibility Principle**
-- `AdminRoute.jsx` solo resuelve autorización por token/rol.
-- `useAdminReservationFilters.ts` solo maneja estado y validación de filtros.
-- `useAdminCreateReservationForm.ts` solo maneja estado/errores del formulario.
-- `adminReservationsService.js` solo concentra integración HTTP.
+#### **S - SRP**
+- `AdminRoute.jsx` solo resuelve acceso admin.  
+  Evidencia: lineas 5, 10, 18-19, 23, 25-26.
+- `useAdminReservationFilters.ts` solo gestiona filtro/aplicar/limpiar.  
+  Evidencia: lineas 23, 33-34, 42-43, 52-55.
+- `useAdminCreateReservationForm.ts` solo valida formulario y habilita submit.  
+  Evidencia: lineas 25, 29, 110-142, 149-165.
+- `adminReservationsService.js` solo centraliza integracion HTTP de la HU.  
+  Evidencia: lineas 68, 123, 206, 224, 243, 256, 270, 287.
 
-#### **O - Open/Closed Principle**
-- La pantalla `AdminReservationsPage.jsx` se extiende por hooks y servicios; agregar un nuevo filtro/campo no exige romper toda la vista.
+#### **O - OCP**
+- `AdminReservationsPage.jsx` puede extender filtros/campos por hooks y servicios sin reescribir toda la pantalla.  
+  Evidencia: lineas 24, 37, 302-305, 312, 404, 477-480.
 
-#### **L - Liskov Substitution Principle**
-- El modal reutilizado opera en modo creación y modo detalle respetando contrato de props, sin romper comportamiento del contenedor.
+#### **L - LSP**
+- `AdminCreateReservationPanel.jsx` soporta `mode='create'` y `mode='detail'` con el mismo contrato de componente.  
+  Evidencia: lineas 48, 103, 122, 311.
 
-#### **I - Interface Segregation Principle**
-- Hooks admin exponen API mínima:
-  - filtros: `setFilter`, `applyFilters`, `clearFilters`
-  - formulario: `setField`, `validateForm`, `canSubmit`, `resetForm`
+#### **I - ISP**
+- Hooks admin exponen API enfocada y separada:
+  - filtros: `applyFilters`, `clearFilters` (lineas 19-20, 42, 52).
+  - formulario: `validateForm`, `canSubmit` (lineas 110, 149, 179, 185).
 
-#### **D - Dependency Inversion Principle**
-- La página depende de funciones de servicio (`getAdminReservations`, `createAdminReservation`, etc.), no de `axios` o `fetch` embebido en componentes.
+#### **D - DIP**
+- `AdminReservationsPage` usa servicio admin, no llamadas HTTP directas en cada componente.  
+  Evidencia: lineas 13-17, 312, 404, 477, 480.
 
-### Patrones de Diseño en Frontend
+### Patrones de Diseno en Frontend
 
 #### **Service Layer Pattern**
-- `adminReservationsService.js` abstrae endpoints, parsing y fallbacks.
+- `adminReservationsService.js` abstrae endpoints y parsing.
 
 #### **Facade Pattern (UI)**
-- `AdminReservationsPage.jsx` orquesta tabla, filtros, modal y feedback como punto de entrada único de la feature.
+- `AdminReservationsPage.jsx` orquesta tabla, filtros, modal y toasts.
 
 #### **Adapter/Mapper Pattern**
-- El servicio transforma respuestas del backend a estructura consumible por tabla y detalle.
+- El servicio normaliza payload del backend para tabla/detalle.
 
 #### **Observer Pattern (ligero)**
-- Toasts y recargas de tabla reaccionan al resultado de operaciones asíncronas.
+- Toast temporal y recarga reactiva luego de crear/filtrar.
+  Evidencia: lineas 292, 327, 478-480, 493.
 
-### Integración Frontend-Backend
+### Integracion Frontend-Backend
 
-- Consulta HU-01:
-  - `GET /bookings/admin/reservations?page=0&size=20&...filtros`
-  - `GET /bookings/reservations/{id}`
-- Catálogos HU-02:
-  - `GET /auth/users?query=...` (no admin)
-  - `GET /locations/cities`
-  - `GET /locations/cities/{cityId}/spaces`
-  - `GET /inventory/equipments?cityId=...`
-- Creación HU-02:
-  - `POST /bookings/reservations`
-  - validación de solapamiento y manejo de mensajes de error/éxito.
+- Query HU-01: `GET /bookings/admin/reservations` + detalle.
+- Catalogos HU-02: usuarios no admin, ciudades, espacios por ciudad, equipos por ciudad.
+- Command HU-02: `POST /bookings/reservations` con validaciones y feedback.
 
 ---
 
 ## III. PATRONES TRANSVERSALES
 
-### 1. Command Query Responsibility Segregation (CQRS) - Parcial
-
-**Backend**
-- Lectura admin: `AdminListReservationsQuery`.
-- Escritura admin: `CreateReservationCommand`.
-
-**Frontend**
-- Lectura: carga de tabla y detalle.
-- Escritura: submit del modal administrativo.
+### 1. CQRS (Parcial)
+- Lectura: `AdminListReservationsQuery` (HU-01).
+- Escritura: `CreateReservationCommand` (HU-02).
 
 ### 2. Event-Driven Architecture
-
-La creación/modificación de reservas puede emitir eventos que viajan por mensajería y se reflejan en interfaces suscritas. La feature no depende de un polling rígido para mantener coherencia operativa.
+- Flujo de eventos por Rabbit + difusion via STOMP.
 
 ### 3. Strangler Pattern (API Gateway)
+- Entrada unica para crecimiento del modulo admin sin romper rutas existentes.
 
-La entrada única del gateway permite crecer el módulo admin sin dispersar cambios de URL o puertos en el cliente.
-
-### 4. Circuit Breaker Pattern (Implícito)
-
-No está materializado como componente explícito en las HU, pero la separación por puertos permite introducir resiliencia por adaptador sin invadir dominio.
+### 4. Circuit Breaker Pattern (Implicito)
+- No esta implementado como modulo explicito en HU-01/HU-02, pero la separacion por puertos lo habilita.
 
 ### 5. Mapper Pattern (Bidireccional)
-
-- Backend: mapeo dominio -> DTO HTTP admin.
-- Frontend: mapeo payload API -> view model.
+- Backend: dominio -> DTO admin.
+- Frontend: payload API -> view model.
 
 ---
 
-## IV. VERIFICACIÓN DE ESTADOS DE RESERVA
+## IV. VERIFICACION DE ESTADOS DE RESERVA
 
 ### Estados Identificados en Backend
 
-`ReservationStatusCatalog` normaliza estados para operación administrativa.  
-Estados funcionales observables en HU:
+Fuente de verdad: `ReservationStatusCatalog.java` (lineas 8-9, 24, 44).
 
-- `Pendiente`
-- `Confirmada`
-- `Cancelada`
-- `Finalizada`
-
-Además, el servicio valida el paso de estado según reglas de conflicto y de ventana temporal.
+- Pendiente
+- Confirmada
+- Cancelada
+- Finalizada
 
 ### Estados en Frontend
 
-La vista admin consume estados normalizados para:
-
-- filtro por estado en HU-01;
-- visualización de tabla y detalle;
-- refresco post creación en HU-02 para confirmar estado operativo del registro recién creado.
+Consumo en:
+- filtro de estado;
+- tabla y detalle;
+- recarga tras creacion.
 
 ---
 
 ## V. CONCLUSIONES Y RECOMENDACIONES
 
-### Fortalezas Arquitectónicas
+### Fortalezas Arquitectonicas
 
-1. La feature se integró sin romper contratos existentes, conservando separación por capas.
-2. HU-01/HU-02 quedaron trazables por servicio, con responsabilidades técnicas claramente acotadas.
-3. El backend dejó de exponer información cruda para admin y prioriza datos de negocio legibles.
-4. El frontend administra validaciones y feedback sin acoplar componentes a detalles de infraestructura.
+1. La feature mantiene separacion por capas y por servicio.
+2. HU-01/HU-02 son trazables a codigo con evidencias de linea.
+3. La salida administrativa prioriza datos de negocio legibles.
+4. El flujo de creacion queda protegido por validacion de campos y de solapamiento.
 
-### Áreas de Mejora
+### Areas de Mejora
 
-1. Formalizar contrato único de catálogo de estados entre backend y frontend.
-2. Incorporar métricas de uso del módulo admin (errores por validación, conflictos de horario, latencia por filtros).
-3. Reutilizar patrón HU-01/HU-02 para las siguientes HU administrativas (reprogramación, cancelación masiva, auditoría de cambios).
+1. Consolidar contrato compartido de estados entre backend/frontend.
+2. Agregar metricas operativas del modulo admin.
+3. Reusar el mismo estandar tecnico para HU futuras del modulo.
 
 ---
 
 ## VI. MATRIZ DE REFERENCIA: PRINCIPIOS SOLID Y PATRONES
 
-| Principio/Patrón | Auth-Service | Bookings-Service | Inventory-Service | Locations-Service | Api-Gateway | Notifications-Service | Frontend Admin |
+| Principio/Patron | Auth-Service | Bookings-Service | Inventory-Service | Locations-Service | Api-Gateway | Notifications-Service | Frontend Admin |
 |---|---|---|---|---|---|---|---|
-| **S - Single Responsibility** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **O - Open/Closed** | ✓ | ✓ | ✓ | ✓ | - | - | ✓ |
-| **L - Liskov Substitution** | ✓ | ✓ | - | - | - | - | ✓ |
-| **I - Interface Segregation** | ✓ | ✓ | - | ✓ | - | - | ✓ |
-| **D - Dependency Inversion** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **Hexagonal Architecture** | ✓ | ✓ | ✓ | ✓ | Parcial | ✓ | Adaptada |
-| **Adapter Pattern** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **Strategy Pattern** | ✓ | ✓ | Parcial | Parcial | - | - | Parcial |
-| **Repository Pattern** | ✓ | ✓ | ✓ | ✓ | - | - | - |
-| **CQRS (Parcial)** | - | ✓ | - | - | - | - | ✓ |
-| **Event-Driven** | ✓ | ✓ | ✓ | ✓ | - | ✓ | ✓ |
-| **Mapper Pattern** | ✓ | ✓ | ✓ | ✓ | - | - | ✓ |
-| **Dependency Injection** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| S - SRP | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| O - OCP | ✓ | ✓ | ✓ | ✓ | - | - | ✓ |
+| L - LSP | ✓ | ✓ | - | - | - | - | ✓ |
+| I - ISP | ✓ | ✓ | - | ✓ | - | - | ✓ |
+| D - DIP | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Hexagonal Architecture | ✓ | ✓ | ✓ | ✓ | Parcial | ✓ | Adaptada |
+| Adapter Pattern | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Strategy Pattern | ✓ | ✓ | Parcial | Parcial | - | - | Parcial |
+| Repository Pattern | ✓ | ✓ | ✓ | ✓ | - | - | - |
+| CQRS (Parcial) | - | ✓ | - | - | - | - | ✓ |
+| Event-Driven | ✓ | ✓ | ✓ | ✓ | - | ✓ | ✓ |
+| Mapper Pattern | ✓ | ✓ | ✓ | ✓ | - | - | ✓ |
+| Dependency Injection | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 
 ---
 
-**Fin del análisis técnico de la feature administrativa**  
+**Fin del analisis tecnico de la feature administrativa**  
 *Documento generado: 2026-04-09*  
-*Cobertura: HU-01 y HU-02 del módulo administrador*
+*Cobertura: HU-01 y HU-02 del modulo administrador*
