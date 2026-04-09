@@ -170,14 +170,24 @@ describe('CheckInReservationUseCase', () => {
         expect(repo.checkIn).not.toHaveBeenCalled();
     });
 
-    it('debe trimear los strings antes de validar', async () => {
+    it('debe trimear los strings antes de validar y pasar al repositorio', async () => {
         const repo = createMockRepo();
         const useCase = new CheckInReservationUseCase(repo);
         
         // Llamada exitosa con espacios al inicio/final
         await useCase.execute('  r1  ', '  valid-qr-token  ');
         
-        // Debe haber llamado al repositorio (los strings se trimean antes de validar)
-        expect(repo.checkIn).toHaveBeenCalledWith('  r1  ', '  valid-qr-token  ');
+        // Debe haber llamado al repositorio con los valores trimeados
+        expect(repo.checkIn).toHaveBeenCalledWith('r1', 'valid-qr-token');
+    });
+
+    it('debe manejar IDs numéricos convirtiéndolos a string de forma segura', async () => {
+        const repo = createMockRepo();
+        const useCase = new CheckInReservationUseCase(repo);
+        
+        // Simular un ID que viene como número (por ejemplo, desde el backend)
+        await useCase.execute(123 as any, 'valid-token');
+        
+        expect(repo.checkIn).toHaveBeenCalledWith('123', 'valid-token');
     });
 });

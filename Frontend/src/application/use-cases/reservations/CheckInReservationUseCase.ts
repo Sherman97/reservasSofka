@@ -30,14 +30,17 @@ export class CheckInReservationUseCase {
      * @throws {Error} Para errores de red u otros errores no mapeados
      */
     async execute(reservationId: string, qrToken: string): Promise<Reservation> {
-        if (!reservationId?.trim()) {
+        const rId = String(reservationId || '').trim();
+        const token = String(qrToken || '').trim();
+
+        if (!rId) {
             throw new Error('Reservation ID is required');
         }
 
-        if (!qrToken?.trim()) {
+        if (!token) {
             throw new Error('QR token is required');
         }
 
-        return await this.reservationRepository.checkIn(reservationId, qrToken);
+        return await this.reservationRepository.checkIn(rId, token);
     }
 }

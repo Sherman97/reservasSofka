@@ -94,8 +94,8 @@ describe('ReservationMapper', () => {
             expect(ReservationMapper.normalizeStatus(undefined)).toBe('active');
         });
 
-        it('debe retornar active para pending', () => {
-            expect(ReservationMapper.normalizeStatus('pending')).toBe('active');
+        it('debe retornar pending para pending', () => {
+            expect(ReservationMapper.normalizeStatus('pending')).toBe('pending');
         });
 
         it('debe retornar active para confirmed', () => {
@@ -114,8 +114,8 @@ describe('ReservationMapper', () => {
             expect(ReservationMapper.normalizeStatus('created')).toBe('active');
         });
 
-        it('debe retornar active para PENDING (case insensitive)', () => {
-            expect(ReservationMapper.normalizeStatus('PENDING')).toBe('active');
+        it('debe retornar pending para PENDING (case insensitive)', () => {
+            expect(ReservationMapper.normalizeStatus('PENDING')).toBe('pending');
         });
 
         it('debe retornar cancelled para cancelled', () => {

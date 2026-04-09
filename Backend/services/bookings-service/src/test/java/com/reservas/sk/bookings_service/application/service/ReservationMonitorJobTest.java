@@ -34,7 +34,7 @@ class ReservationMonitorJobTest {
     
     @BeforeEach
     void setUp() {
-        qrProperties = new QrProperties(5); // 5 minutes grace period
+        qrProperties = new QrProperties(5, 5); // 5 minutes grace, 5 minutes lead
         job = new ReservationMonitorJob(persistencePort, eventPublisher, qrProperties);
     }
     

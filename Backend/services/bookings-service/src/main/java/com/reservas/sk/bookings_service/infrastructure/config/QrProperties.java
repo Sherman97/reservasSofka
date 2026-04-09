@@ -6,17 +6,18 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * Configuration properties for QR check-in functionality.
  * Grace period determines how long after start time a user can check in.
  */
-@ConfigurationProperties(prefix = "qr.checkin")
+@ConfigurationProperties(prefix = "app.qr")
 public record QrProperties(
-    int gracePeriodMinutes
+    int gracePeriodMinutes,
+    int leadTimeMinutes
 ) {
     public QrProperties {
         if (gracePeriodMinutes <= 0) {
             throw new IllegalArgumentException("Grace period must be positive");
         }
+        if (leadTimeMinutes < 0) {
+            throw new IllegalArgumentException("Lead time cannot be negative");
+        }
     }
     
-    public QrProperties() {
-        this(5); // Default: 5 minutes grace period
-    }
 }

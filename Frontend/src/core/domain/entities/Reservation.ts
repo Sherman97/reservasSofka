@@ -126,22 +126,30 @@ export class Reservation {
         return Math.ceil(diffMs / (1000 * 60));
     }
 
+    // Lead time for check-in (can check in 5 minutes before start time)
+    public static readonly CHECK_IN_LEAD_TIME_MINUTES = 5;
+
     /**
      * Checks if the reservation can be checked in with QR code.
      * Conditions:
      * - Status must be PENDING
+     * - Current time must be within lead time before start time (5 minutes)
      * - Current time must be within grace period after start time (5 minutes)
      */
-    canCheckIn(gracePeriodMinutes: number = Reservation.CHECK_IN_GRACE_PERIOD_MINUTES): boolean {
+    canCheckIn(
+        gracePeriodMinutes: number = Reservation.CHECK_IN_GRACE_PERIOD_MINUTES,
+        leadTimeMinutes: number = Reservation.CHECK_IN_LEAD_TIME_MINUTES
+    ): boolean {
         if (!this.isPending()) {
             return false;
         }
 
         const now = new Date();
+        const earliestStart = new Date(this.startAt.getTime() - leadTimeMinutes * 60 * 1000);
         const graceDeadline = new Date(this.startAt.getTime() + gracePeriodMinutes * 60 * 1000);
         
-        // Must be after start time and before grace deadline
-        return now >= this.startAt && now <= graceDeadline;
+        // Must be after earliest start and before grace deadline
+        return now >= earliestStart && now <= graceDeadline;
     }
 
     /**,

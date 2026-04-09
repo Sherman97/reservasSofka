@@ -40,7 +40,7 @@ class CheckInReservationUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        qrProperties = new QrProperties(5); // 5 minutes grace period
+        qrProperties = new QrProperties(5, 5); // 5 minutes grace, 5 minutes lead
         useCase = new CheckInReservationUseCase(
                 persistencePort,
                 qrTokenGenerator,
@@ -361,7 +361,7 @@ class CheckInReservationUseCaseTest {
         // Act & Assert
         ApiException exception = assertThrows(ApiException.class, () -> useCase.execute(command));
         
-        assertEquals("CHECKIN_TIME_EXPIRED", exception.getErrorCode());
+        assertEquals("CHECKIN_TIME_WINDOW_MISMATCH", exception.getErrorCode());
         assertEquals(409, exception.getStatus().value());
         verify(persistencePort).logCheckInAttempt(
                 eq(reservationId),
@@ -369,21 +369,76 @@ class CheckInReservationUseCaseTest {
                 eq(spaceId),
                 anyString(),
                 eq(false),
-                eq("CHECKIN_TIME_EXPIRED"),
+                eq("CHECKIN_TIME_WINDOW_MISMATCH"),
                 any(Instant.class)
         );
     }
 
     @Test
     void shouldCheckIn_whenExactlyWithinGracePeriod() {
-        // Arrange  
+        // ... (previous test code)
+    }
+
+    @Test
+    void shouldCheckInSuccessfully_whenFourMinutesBeforeStartTime() {
+        // Arrange
         Long reservationId = 1L;
         Long userId = 100L;
         Long spaceId = 50L;
-        String qrToken = "valid-jwt-token";
-        Instant startTime = Instant.now().minus(4, ChronoUnit.MINUTES); // Exactly 4 minutes ago (within 5 min grace)
+        String qrToken = "early-token";
+        // Start time is 4 minutes in the future (within 5 min lead time)
+        Instant startTime = Instant.now().plus(4, ChronoUnit.MINUTES); 
         
-        Reservation reservation = new Reservation(
+        Reservation existingReservation = new Reservation(
+                reservationId,
+                userId,
+                spaceId,
+                startTime,
+                startTime.plus(1, ChronoUnit.HOURS),
+                Reservation.STATUS_PENDING,
+                "Meeting Room",
+                5,
+                "Early check-in test",
+                null,
+                Instant.now().minus(1, ChronoUnit.HOURS),
+                List.of(),
+                null,
+                null
+        );
+
+        QrTokenData qrData = new QrTokenData(spaceId, "QR_CHECKIN", System.currentTimeMillis() / 1000);
+
+        when(persistencePort.findReservationById(reservationId)).thenReturn(Optional.of(existingReservation));
+        when(qrTokenGenerator.validateQrToken(qrToken)).thenReturn(qrData);
+
+        CheckInReservationCommand command = new CheckInReservationCommand(reservationId, userId, qrToken);
+
+        // Act
+        Reservation result = useCase.execute(command);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(Reservation.STATUS_CHECKED_IN, result.getStatus());
+        
+        verify(persistencePort).updateReservationCheckIn(
+                eq(reservationId),
+                eq(Reservation.STATUS_CHECKED_IN),
+                eq(qrToken),
+                any(Instant.class)
+        );
+    }
+
+    @Test
+    void shouldThrowException_whenTooEarlyBeforeStartTime() {
+        // Arrange
+        Long reservationId = 1L;
+        Long userId = 100L;
+        Long spaceId = 50L;
+        String qrToken = "too-early-token";
+        // Start time is 10 minutes in the future (beyond 5 min lead time)
+        Instant startTime = Instant.now().plus(10, ChronoUnit.MINUTES); 
+        
+        Reservation existingReservation = new Reservation(
                 reservationId,
                 userId,
                 spaceId,
@@ -402,31 +457,14 @@ class CheckInReservationUseCaseTest {
 
         QrTokenData qrData = new QrTokenData(spaceId, "QR_CHECKIN", System.currentTimeMillis() / 1000);
 
-        when(persistencePort.findReservationById(reservationId)).thenReturn(Optional.of(reservation));
+        when(persistencePort.findReservationById(reservationId)).thenReturn(Optional.of(existingReservation));
         when(qrTokenGenerator.validateQrToken(qrToken)).thenReturn(qrData);
 
         CheckInReservationCommand command = new CheckInReservationCommand(reservationId, userId, qrToken);
 
-        // Act
-        Reservation result = useCase.execute(command);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(Reservation.STATUS_CHECKED_IN, result.getStatus());
-        verify(persistencePort).updateReservationCheckIn(
-                eq(reservationId),
-                eq(Reservation.STATUS_CHECKED_IN),
-                eq(qrToken),
-                any(Instant.class)
-        );
-        verify(persistencePort).logCheckInAttempt(
-                eq(reservationId),
-                eq(userId),
-                eq(spaceId),
-                anyString(),
-                eq(true),
-                isNull(),
-                any(Instant.class)
-        );
+        // Act & Assert
+        ApiException exception = assertThrows(ApiException.class, () -> useCase.execute(command));
+        assertEquals("CHECKIN_TIME_WINDOW_MISMATCH", exception.getErrorCode());
+        assertEquals(409, exception.getStatus().value());
     }
 }

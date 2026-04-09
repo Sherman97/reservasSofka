@@ -2,13 +2,15 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { ModalScanQr } from './ModalScanQr';
 import { useCheckIn } from '../../../core/adapters/hooks/useCheckIn';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
 
 // Mock dependencias
 vi.mock('html5-qrcode', () => ({
-    Html5QrcodeScanner: vi.fn(() => ({
-        render: vi.fn(),
-        clear: vi.fn().mockResolvedValue(undefined),
+    Html5Qrcode: vi.fn(() => ({
+        start: vi.fn().mockResolvedValue(undefined),
+        stop: vi.fn().mockResolvedValue(undefined),
+        clear: vi.fn(),
+        isScanning: false
     }))
 }));
 
@@ -79,7 +81,7 @@ describe('ModalScanQr', () => {
         expect(screen.getByText(/Sala 101/)).toBeInTheDocument();
         
         await waitFor(() => {
-            expect(Html5QrcodeScanner).toHaveBeenCalled();
+            expect(Html5Qrcode).toHaveBeenCalled();
         });
     });
 
@@ -92,11 +94,14 @@ describe('ModalScanQr', () => {
         });
 
         let onScanSuccessCallback;
-        vi.mocked(Html5QrcodeScanner).mockImplementation(() => ({
-            render: vi.fn((onSuccess) => {
+        vi.mocked(Html5Qrcode).mockImplementation(() => ({
+            start: vi.fn((facingMode, config, onSuccess) => {
                 onScanSuccessCallback = onSuccess;
+                return Promise.resolve();
             }),
-            clear: vi.fn().mockResolvedValue(undefined),
+            stop: vi.fn().mockResolvedValue(undefined),
+            clear: vi.fn(),
+            isScanning: true
         }));
 
         render(
@@ -131,11 +136,14 @@ describe('ModalScanQr', () => {
         });
 
         let onScanSuccessCallback;
-        vi.mocked(Html5QrcodeScanner).mockImplementation(() => ({
-            render: vi.fn((onSuccess) => {
+        vi.mocked(Html5Qrcode).mockImplementation(() => ({
+            start: vi.fn((facingMode, config, onSuccess) => {
                 onScanSuccessCallback = onSuccess;
+                return Promise.resolve();
             }),
-            clear: vi.fn().mockResolvedValue(undefined),
+            stop: vi.fn().mockResolvedValue(undefined),
+            clear: vi.fn(),
+            isScanning: true
         }));
 
         render(
@@ -171,7 +179,7 @@ describe('ModalScanQr', () => {
         );
 
         await waitFor(() => {
-            expect(Html5QrcodeScanner).toHaveBeenCalled();
+            expect(Html5Qrcode).toHaveBeenCalled();
         });
 
         const cancelBtn = screen.getByText('Cancelar');
@@ -183,10 +191,13 @@ describe('ModalScanQr', () => {
     });
 
     it('should clear scanner on unmount', async () => {
-        const clearMock = vi.fn().mockResolvedValue(undefined);
-        vi.mocked(Html5QrcodeScanner).mockImplementation(() => ({
-            render: vi.fn(),
+        const stopMock = vi.fn().mockResolvedValue(undefined);
+        const clearMock = vi.fn();
+        vi.mocked(Html5Qrcode).mockImplementation(() => ({
+            start: vi.fn().mockResolvedValue(undefined),
+            stop: stopMock,
             clear: clearMock,
+            isScanning: true
         }));
 
         const { unmount } = render(
@@ -199,13 +210,13 @@ describe('ModalScanQr', () => {
         );
 
         await waitFor(() => {
-            expect(Html5QrcodeScanner).toHaveBeenCalled();
+            expect(Html5Qrcode).toHaveBeenCalled();
         });
 
         unmount();
 
         await waitFor(() => {
-            expect(clearMock).toHaveBeenCalled();
+            expect(stopMock).toHaveBeenCalled();
         });
     });
 });

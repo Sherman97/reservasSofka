@@ -97,7 +97,7 @@ export const ReservationCard = ({ reservation, onCancel, onEdit, onDeliver, onRe
                         </button>
                     )}
                     
-                    {(isInProgress || isOngoing) && !isCancelled && !isCompleted && onScanQR && (
+                    {(reservation.canCheckIn() || isInProgress || isOngoing) && !isCancelled && !isCompleted && !isCheckedIn && onScanQR && (
                         <button className="btn-deliver-res" onClick={() => onScanQR(reservation)} title="Confirmar reserva con QR">
                             <FaQrcode size={18} />
                         </button>

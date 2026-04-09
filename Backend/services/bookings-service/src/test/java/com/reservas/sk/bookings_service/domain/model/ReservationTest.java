@@ -18,7 +18,7 @@ class ReservationTest {
         Reservation reservation = createReservation(Reservation.STATUS_PENDING, startTime);
         
         // Act
-        boolean canCheckIn = reservation.canCheckIn(currentTime, 5);
+        boolean canCheckIn = reservation.canCheckIn(currentTime, 5, 5);
         
         // Assert
         assertTrue(canCheckIn);
@@ -32,21 +32,48 @@ class ReservationTest {
         Reservation reservation = createReservation(Reservation.STATUS_CHECKED_IN, startTime);
         
         // Act
-        boolean canCheckIn = reservation.canCheckIn(currentTime, 5);
+        boolean canCheckIn = reservation.canCheckIn(currentTime, 5, 5);
+        
+        // Assert
+        assertFalse(canCheckIn);
+    }
+    @Test
+    void shouldNotAllowCheckIn_whenStatusCanceledBeforeStart() {
+        // Arrange
+        Instant startTime = Instant.now().plus(10, ChronoUnit.MINUTES);
+        Instant currentTime = Instant.now();
+        Reservation reservation = createReservation(Reservation.STATUS_CANCELED, startTime);
+        
+        // Act
+        boolean canCheckIn = reservation.canCheckIn(currentTime, 5, 5);
         
         // Assert
         assertFalse(canCheckIn);
     }
     
     @Test
-    void shouldNotAllowCheckIn_whenCurrentTimeBeforeStart() {
+    void shouldAllowCheckIn_whenCurrentTimeIsBeforeStartWithinLeadTime() {
         // Arrange
-        Instant startTime = Instant.now().plus(10, ChronoUnit.MINUTES);
-        Instant currentTime = Instant.now();
+        Instant startTime = Instant.now().plus(4, ChronoUnit.MINUTES);
+        Instant currentTime = Instant.now(); // 4 min before start
         Reservation reservation = createReservation(Reservation.STATUS_PENDING, startTime);
         
         // Act
-        boolean canCheckIn = reservation.canCheckIn(currentTime, 5);
+        boolean canCheckIn = reservation.canCheckIn(currentTime, 5, 5);
+        
+        // Assert
+        assertTrue(canCheckIn);
+    }
+    
+    @Test
+    void shouldNotAllowCheckIn_whenCurrentTimeIsBeforeStartBeyondLeadTime() {
+        // Arrange
+        Instant startTime = Instant.now().plus(10, ChronoUnit.MINUTES);
+        Instant currentTime = Instant.now(); // 10 min before start
+        Reservation reservation = createReservation(Reservation.STATUS_PENDING, startTime);
+        
+        // Act
+        boolean canCheckIn = reservation.canCheckIn(currentTime, 5, 5);
         
         // Assert
         assertFalse(canCheckIn);
@@ -60,7 +87,7 @@ class ReservationTest {
         Reservation reservation = createReservation(Reservation.STATUS_PENDING, startTime);
         
         // Act
-        boolean canCheckIn = reservation.canCheckIn(currentTime, 5);
+        boolean canCheckIn = reservation.canCheckIn(currentTime, 5, 5);
         
         // Assert
         assertFalse(canCheckIn);
@@ -74,7 +101,7 @@ class ReservationTest {
         Reservation reservation = createReservation(Reservation.STATUS_PENDING, startTime);
         
         // Act
-        boolean canCheckIn = reservation.canCheckIn(currentTime, 5);
+        boolean canCheckIn = reservation.canCheckIn(currentTime, 5, 5);
         
         // Assert
         assertTrue(canCheckIn);
@@ -88,7 +115,7 @@ class ReservationTest {
         Reservation reservation = createReservation(Reservation.STATUS_PENDING, startTime);
         
         // Act
-        boolean canCheckIn = reservation.canCheckIn(currentTime, 5);
+        boolean canCheckIn = reservation.canCheckIn(currentTime, 5, 5);
         
         // Assert
         assertTrue(canCheckIn);
@@ -102,7 +129,7 @@ class ReservationTest {
         Reservation reservation = createReservation(Reservation.STATUS_CANCELED, startTime);
         
         // Act
-        boolean canCheckIn = reservation.canCheckIn(currentTime, 5);
+        boolean canCheckIn = reservation.canCheckIn(currentTime, 5, 5);
         
         // Assert
         assertFalse(canCheckIn);
@@ -116,7 +143,7 @@ class ReservationTest {
         Reservation reservation = createReservation(Reservation.STATUS_NO_SHOW, startTime);
         
         // Act
-        boolean canCheckIn = reservation.canCheckIn(currentTime, 5);
+        boolean canCheckIn = reservation.canCheckIn(currentTime, 5, 5);
         
         // Assert
         assertFalse(canCheckIn);

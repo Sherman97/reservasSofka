@@ -135,6 +135,11 @@ public class BookingController {
     public ResponseEntity<ApiResponse<ReservationResponse>> checkIn(@PathVariable Long id,
                                                                     @Valid @RequestBody CheckInRequest request,
                                                                     @AuthenticationPrincipal AuthenticatedUser user) {
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Usuario no autenticado", "UNAUTHORIZED"));
+        }
+        
         var reservation = checkInUseCase.execute(new CheckInReservationCommand(
                 id,
                 user.userId(),

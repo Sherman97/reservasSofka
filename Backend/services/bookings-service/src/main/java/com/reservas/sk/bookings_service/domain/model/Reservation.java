@@ -78,14 +78,16 @@ public class Reservation {
      * @param gracePeriodMinutes The grace period in minutes
      * @return true if check-in is allowed, false otherwise
      */
-    public boolean canCheckIn(Instant currentTime, int gracePeriodMinutes) {
-        if (!STATUS_PENDING.equals(this.status)) {
+    public boolean canCheckIn(Instant currentTime, int gracePeriodMinutes, int leadTimeMinutes) {
+        if (!STATUS_PENDING.equals(this.status) || this.startDatetime == null) {
             return false;
         }
         
-        // Check if current time is after start time but within grace period
+        // Check if current time is within [start - leadTime, start + gracePeriod]
+        Instant earliestStart = this.startDatetime.minus(leadTimeMinutes, ChronoUnit.MINUTES);
         Instant graceDeadline = this.startDatetime.plus(gracePeriodMinutes, ChronoUnit.MINUTES);
-        return !currentTime.isBefore(this.startDatetime) && !currentTime.isAfter(graceDeadline);
+        
+        return !currentTime.isBefore(earliestStart) && !currentTime.isAfter(graceDeadline);
     }
     
     /**

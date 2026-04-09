@@ -199,23 +199,24 @@ export class HttpReservationRepository implements IReservationRepository {
             console.error('Error in HttpReservationRepository.checkIn:', error);
             
             // Map backend error codes to domain errors
-            const errorMessage = (error as { response?: { data?: { message?: string; code?: string } } })?.response?.data?.message || '';
-            const errorCode = (error as { response?: { data?: { code?: string } } })?.response?.data?.code || '';
+            const rawError = (error as { response?: { data?: { message?: string; code?: string; errorCode?: string } } })?.response?.data;
+            const errorMessage = rawError?.message || '';
+            const errorCode = rawError?.errorCode || rawError?.code || '';
 
-            if (errorCode === 'INVALID_QR_TOKEN' || errorMessage.includes('Invalid QR token')) {
+            if (errorCode === 'INVALID_QR_TOKEN' || errorCode === 'QR_TOKEN_INVALID' || errorMessage.includes('Invalid QR token')) {
                 throw new InvalidQrCodeError('El código QR es inválido o está malformado');
             }
             
-            if (errorCode === 'QR_EXPIRED' || errorMessage.includes('expired')) {
-                throw new QrExpiredError('El período de check-in ha expirado');
+            if (errorCode === 'QR_EXPIRED' || errorCode === 'CHECKIN_TIME_WINDOW_MISMATCH' || errorMessage.includes('expired')) {
+                throw new QrExpiredError('El período de check-in ha expirado o no ha comenzado');
             }
             
             if (errorCode === 'SPACE_MISMATCH' || errorMessage.includes('space')) {
                 throw new QrSpaceMismatchError('El código QR no corresponde a este espacio');
             }
             
-            if (errorCode === 'INVALID_STATE_TRANSITION' || errorMessage.includes('state')) {
-                throw new InvalidReservationStateError('La reserva no está en estado válido para check-in');
+            if (errorCode === 'INVALID_STATE_TRANSITION' || errorCode === 'INVALID_RESERVATION_STATUS' || errorMessage.includes('state')) {
+                throw new InvalidReservationStateError('La reserva no está en un estado válido para realizar el check-in (ya podría estar cancelada o completada)');
             }
 
             // Re-throw original error if not a known QR error

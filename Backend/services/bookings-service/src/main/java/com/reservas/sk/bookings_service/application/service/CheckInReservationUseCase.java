@@ -130,23 +130,30 @@ public class CheckInReservationUseCase {
                     "INVALID_RESERVATION_STATUS");
         }
 
-        // 6. Validate time: within grace period
-        if (!reservation.canCheckIn(now, qrProperties.gracePeriodMinutes())) {
-            log.warn("Check-in attempt failed - reservationId={}, userId={}, spaceId={}, startTime={}, currentTime={}, gracePeriod={}, reason=CHECKIN_TIME_EXPIRED, timestamp={}",
+        // 6. Validate time: within [start - leadTime, start + gracePeriod]
+        int gracePeriod = qrProperties != null ? qrProperties.gracePeriodMinutes() : 5;
+        int leadTime = qrProperties != null ? qrProperties.leadTimeMinutes() : 5;
+        
+        // Ensure values are sane even if bound incorrectly
+        gracePeriod = gracePeriod <= 0 ? 5 : gracePeriod;
+        leadTime = leadTime < 0 ? 5 : leadTime;
+
+        if (!reservation.canCheckIn(now, gracePeriod, leadTime)) {
+            log.warn("Check-in attempt failed - reservationId={}, userId={}, spaceId={}, startTime={}, currentTime={}, gracePeriod={}, leadTime={}, reason=CHECKIN_TIME_WINDOW_MISMATCH, timestamp={}",
                     command.reservationId(), command.userId(), reservation.getSpaceId(), 
-                    reservation.getStartDatetime(), now, qrProperties.gracePeriodMinutes(), now);
+                    reservation.getStartDatetime(), now, gracePeriod, leadTime, now);
             persistencePort.logCheckInAttempt(
                     command.reservationId(),
                     command.userId(),
                     reservation.getSpaceId(),
                     safePrefix(command.qrToken()),
                     false,
-                    "CHECKIN_TIME_EXPIRED",
+                    "CHECKIN_TIME_WINDOW_MISMATCH",
                     now
             );
             throw new ApiException(HttpStatus.CONFLICT, 
-                    "El período de check-in ha expirado", 
-                    "CHECKIN_TIME_EXPIRED");
+                    "La reserva no está dentro del período de check-in permitido (Margen de 5 min)", 
+                    "CHECKIN_TIME_WINDOW_MISMATCH");
         }
 
         // 7. Update reservation status to CHECKED_IN
