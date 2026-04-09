@@ -15,6 +15,10 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @SuppressFBWarnings(
@@ -55,7 +59,25 @@ public class JwtTokenAdapter implements TokenPort {
 
         Long userId = Long.parseLong(claims.getSubject());
         String email = claims.get("email", String.class);
-        return new AuthenticatedUser(userId, email);
+        Set<String> roles = extractRoles(claims);
+        return new AuthenticatedUser(userId, email, roles);
+    }
+
+    private Set<String> extractRoles(Claims claims) {
+        Object rawRoles = claims.get("roles");
+        if (!(rawRoles instanceof List<?> list)) {
+            return Set.of("USER");
+        }
+
+        Set<String> normalized = list.stream()
+                .filter(String.class::isInstance)
+                .map(String.class::cast)
+                .map(String::trim)
+                .filter(role -> !role.isBlank())
+                .map(role -> role.toUpperCase(Locale.ROOT))
+                .collect(Collectors.toSet());
+
+        return normalized.isEmpty() ? Set.of("USER") : Set.copyOf(normalized);
     }
 }
 

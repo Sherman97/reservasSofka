@@ -16,6 +16,11 @@ public class Reservation {
     private final String cancellationReason;
     private final Instant createdAt;
     private final List<ReservationEquipment> equipments;
+    private final String userName;
+    private final String userEmail;
+    private final String spaceName;
+    private final Long siteId;
+    private final String siteName;
 
     public Reservation(Long id,
                        Long userId,
@@ -29,6 +34,44 @@ public class Reservation {
                        String cancellationReason,
                        Instant createdAt,
                        List<ReservationEquipment> equipments) {
+        this(
+                id,
+                userId,
+                spaceId,
+                startDatetime,
+                endDatetime,
+                status,
+                title,
+                attendeesCount,
+                notes,
+                cancellationReason,
+                createdAt,
+                equipments,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    public Reservation(Long id,
+                       Long userId,
+                       Long spaceId,
+                       Instant startDatetime,
+                       Instant endDatetime,
+                       String status,
+                       String title,
+                       Integer attendeesCount,
+                       String notes,
+                       String cancellationReason,
+                       Instant createdAt,
+                       List<ReservationEquipment> equipments,
+                       String userName,
+                       String userEmail,
+                       String spaceName,
+                       Long siteId,
+                       String siteName) {
         this.id = id;
         this.userId = userId;
         this.spaceId = spaceId;
@@ -41,6 +84,11 @@ public class Reservation {
         this.cancellationReason = cancellationReason;
         this.createdAt = createdAt;
         this.equipments = equipments == null ? List.of() : List.copyOf(equipments);
+        this.userName = userName;
+        this.userEmail = userEmail;
+        this.spaceName = spaceName;
+        this.siteId = siteId;
+        this.siteName = siteName;
     }
 
     public Long getId() { return id; }
@@ -55,6 +103,11 @@ public class Reservation {
     public String getCancellationReason() { return cancellationReason; }
     public Instant getCreatedAt() { return createdAt; }
     public List<ReservationEquipment> getEquipments() { return List.copyOf(equipments); }
+    public String getUserName() { return userName; }
+    public String getUserEmail() { return userEmail; }
+    public String getSpaceName() { return spaceName; }
+    public Long getSiteId() { return siteId; }
+    public String getSiteName() { return siteName; }
 }
 
 

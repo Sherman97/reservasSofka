@@ -27,7 +27,6 @@ Backend/.gradle/
 Backend/.idea/
 Backend/gradle/
 Backend/.ai/
-Backend/.github/
 
 Frontend/node_modules/
 Frontend/dist/
@@ -42,3 +41,8 @@ Frontend/reports/
 CRUD/
 POM/
 ScreenPlay/
+
+# Automatizaciones (repositorio aparte)
+AUTO_API_SCREENPLAY/
+AUTO_FRONT_POM_FACTORY/
+AUTO_FRONT_SCREENPLAY/

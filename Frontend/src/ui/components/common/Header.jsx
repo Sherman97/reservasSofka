@@ -15,14 +15,18 @@ export const Header = () => {
     const menuRef = useRef(null);
     const mobileMenuRef = useRef(null);
 
-    // Get user from localStorage - should eventually be handled by auth context/hook
     const user = JSON.parse(localStorage.getItem('user')) || { name: 'Usuario' };
+    const userRoles = Array.isArray(user?.roles)
+        ? user.roles
+            .filter((role) => typeof role === 'string')
+            .map((role) => role.toLowerCase())
+        : [];
+    const isAdmin = (user?.role || '').toLowerCase() === 'admin' || userRoles.includes('admin');
 
     const handleLogout = async () => {
         if (logoutUseCase) {
             await logoutUseCase.execute();
         } else {
-            // Fallback if use case not available (though it should be)
             localStorage.removeItem('token');
             localStorage.removeItem('user');
         }
@@ -69,11 +73,16 @@ export const Header = () => {
                         <NavLink to="/my-reservations" className={({ isActive }) => isActive ? "active" : ""}>
                             Mis Reservas
                         </NavLink>
+                        {isAdmin && (
+                            <NavLink to="/admin-reservations" className={({ isActive }) => isActive ? "active" : ""}>
+                                Gestion de Reservas
+                            </NavLink>
+                        )}
                     </nav>
                 </div>
                 <div className="header-right">
                     <button onClick={toggleTheme} className="icon-btn">
-                        {theme === 'light' ? '🌙' : '☀️'}
+                        {theme === 'light' ? '\u{1F319}' : '\u2600\uFE0F'}
                     </button>
                     <div className="user-profile-wrapper" ref={menuRef}>
                         <div
@@ -83,24 +92,23 @@ export const Header = () => {
                             <div className="user-info">
                                 <span className="user-name">{user.username || user.name}</span>
                             </div>
-                            <span className="dropdown-chevron">▾</span>
+                            <span className="dropdown-chevron">v</span>
                         </div>
                         {showUserMenu && (
                             <div className="user-dropdown">
                                 <button className="dropdown-item logout-btn" onClick={handleLogout}>
-                                    <span className="dropdown-icon">🚪</span>
-                                    Cerrar Sesión
+                                    <span className="dropdown-icon">{'->'}</span>
+                                    Cerrar Sesion
                                 </button>
                             </div>
                         )}
                     </div>
 
-                    {/* Hamburger button - visible only on mobile */}
                     <div className="hamburger-wrapper" ref={mobileMenuRef}>
                         <button
                             className={`hamburger-btn ${mobileMenuOpen ? 'open' : ''}`}
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            aria-label="Menú de navegación"
+                            aria-label="Menu de navegacion"
                         >
                             <span className="hamburger-line"></span>
                             <span className="hamburger-line"></span>
@@ -113,7 +121,7 @@ export const Header = () => {
                                     className={({ isActive }) => `mobile-dropdown-item ${isActive ? 'active' : ''}`}
                                     onClick={() => setMobileMenuOpen(false)}
                                 >
-                                    <span className="dropdown-icon">🔍</span>
+                                    <span className="dropdown-icon">{'>'}</span>
                                     Explorar
                                 </NavLink>
                                 <NavLink
@@ -121,9 +129,19 @@ export const Header = () => {
                                     className={({ isActive }) => `mobile-dropdown-item ${isActive ? 'active' : ''}`}
                                     onClick={() => setMobileMenuOpen(false)}
                                 >
-                                    <span className="dropdown-icon">📋</span>
+                                    <span className="dropdown-icon">{'>'}</span>
                                     Mis Reservas
                                 </NavLink>
+                                {isAdmin && (
+                                    <NavLink
+                                        to="/admin-reservations"
+                                        className={({ isActive }) => `mobile-dropdown-item ${isActive ? 'active' : ''}`}
+                                        onClick={() => setMobileMenuOpen(false)}
+                                    >
+                                        <span className="dropdown-icon">{'>'}</span>
+                                        Gestion de Reservas
+                                    </NavLink>
+                                )}
                             </div>
                         )}
                     </div>

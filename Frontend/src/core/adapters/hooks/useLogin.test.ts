@@ -18,7 +18,7 @@ vi.mock('../providers/DependencyProvider', () => ({
 describe('useLogin', () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        mockExecute.mockResolvedValue({ id: 'u1', email: 'a@b.com' });
+        mockExecute.mockResolvedValue({ id: 'u1', email: 'a@b.com', isAdmin: () => false });
     });
 
     it('debe inicializar con valores vacíos', () => {
@@ -37,7 +37,7 @@ describe('useLogin', () => {
         expect(result.current.password).toBe('123456');
     });
 
-    it('debe hacer login exitoso y navegar a /dashboard', async () => {
+    it('debe hacer login exitoso de usuario regular y navegar a /dashboard', async () => {
         const { result } = renderHook(() => useLogin());
         act(() => { result.current.setEmail('a@b.com'); });
         act(() => { result.current.setPassword('123456'); });
@@ -50,6 +50,19 @@ describe('useLogin', () => {
         expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
         expect(result.current.loading).toBe(false);
         expect(result.current.error).toBe('');
+    });
+
+    it('debe hacer login exitoso de admin y navegar a /admin-reservations', async () => {
+        mockExecute.mockResolvedValue({ id: 'u1', email: 'a@b.com', isAdmin: () => true });
+        const { result } = renderHook(() => useLogin());
+        act(() => { result.current.setEmail('admin@b.com'); });
+        act(() => { result.current.setPassword('123456'); });
+
+        await act(async () => {
+            await result.current.handleSubmit({ preventDefault: vi.fn() } as unknown as React.FormEvent);
+        });
+
+        expect(mockNavigate).toHaveBeenCalledWith('/admin-reservations');
     });
 
     it('debe mostrar error si login falla', async () => {

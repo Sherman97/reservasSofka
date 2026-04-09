@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 // Human Check 🛡️: se incluyen codigos de error para distinguir conflictos/auth/not-found.
@@ -75,6 +76,11 @@ public class AuthApplicationService implements AuthUseCase {
     public User getMe(Long userId) {
         return userPersistencePort.findById(userId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Usuario no encontrado", "USER_NOT_FOUND"));
+    }
+
+    @Override
+    public List<User> listNonAdminUsers(String query) {
+        return userPersistencePort.listNonAdminUsers(query);
     }
 }
 

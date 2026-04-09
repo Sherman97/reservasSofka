@@ -27,6 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -85,7 +86,7 @@ class AuthControllerTest {
     void register_201_payloadOk() throws Exception {
         AuthResult authResult = Mockito.mock(AuthResult.class);
         AuthResponse authResponse = new AuthResponse(
-                new UserResponse(1L, "Juan", JUAN_EMAIL, LocalDateTime.of(2026, 3, 1, 10, 0)),
+                new UserResponse(1L, "Juan", JUAN_EMAIL, LocalDateTime.of(2026, 3, 1, 10, 0), Set.of("USER")),
                 "jwt-token"
         );
         when(authUseCase.register(any(RegisterCommand.class))).thenReturn(authResult);
@@ -137,7 +138,7 @@ class AuthControllerTest {
     void login_200_payloadOk() throws Exception {
         AuthResult authResult = Mockito.mock(AuthResult.class);
         AuthResponse authResponse = new AuthResponse(
-                new UserResponse(1L, "Juan", JUAN_EMAIL, LocalDateTime.of(2026, 3, 1, 10, 0)),
+                new UserResponse(1L, "Juan", JUAN_EMAIL, LocalDateTime.of(2026, 3, 1, 10, 0), Set.of("USER")),
                 "jwt-login"
         );
         when(authUseCase.login(any(LoginCommand.class))).thenReturn(authResult);

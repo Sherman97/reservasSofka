@@ -2,6 +2,7 @@ package com.reservas.sk.bookings_service.adapters.in.web;
 
 import com.reservas.sk.bookings_service.adapters.in.web.dto.ReservationEquipmentResponse;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.ReservationResponse;
+import com.reservas.sk.bookings_service.adapters.in.web.dto.AdminReservationResponse;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.SpaceAvailabilityResponse;
 import com.reservas.sk.bookings_service.domain.model.Reservation;
 import com.reservas.sk.bookings_service.domain.model.ReservationEquipment;
@@ -26,6 +27,24 @@ public class BookingHttpMapper {
                 reservation.getCancellationReason(),
                 toIso(reservation.getCreatedAt()),
                 reservation.getEquipments().stream().map(this::toEquipmentResponse).toList()
+        );
+    }
+
+    public AdminReservationResponse toAdminResponse(Reservation reservation) {
+        return new AdminReservationResponse(
+                reservation.getId(),
+                reservation.getUserId(),
+                reservation.getUserName(),
+                reservation.getUserEmail(),
+                reservation.getSpaceId(),
+                reservation.getSpaceName(),
+                reservation.getSiteId(),
+                reservation.getSiteName(),
+                toIso(reservation.getStartDatetime()),
+                toIso(reservation.getEndDatetime()),
+                reservation.getStatus(),
+                reservation.getAttendeesCount(),
+                reservation.getNotes()
         );
     }
 

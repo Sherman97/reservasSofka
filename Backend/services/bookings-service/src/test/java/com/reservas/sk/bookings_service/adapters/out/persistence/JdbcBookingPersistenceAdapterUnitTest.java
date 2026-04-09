@@ -1,5 +1,6 @@
 package com.reservas.sk.bookings_service.adapters.out.persistence;
 
+import com.reservas.sk.bookings_service.application.usecase.AdminListReservationsQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -180,6 +181,92 @@ class JdbcBookingPersistenceAdapterUnitTest {
                 .thenReturn(List.of());
 
         assertTrue(adapter.listReservations(null, null, "   ").isEmpty(), ASSERT_MSG);
+    }
+
+    @Test
+    void listReservations_withAllFilters_buildsCombinedWhereClause() {
+        when(jdbcTemplate.query(anyString(), org.mockito.ArgumentMatchers.<RowMapper<Object>>any(), any(), any(), any()))
+                .thenReturn(List.of());
+
+        adapter.listReservations(10L, 20L, "confirmed");
+
+        verify(jdbcTemplate).query(
+                contains("user_id = ? AND space_id = ? AND status = ?"),
+                org.mockito.ArgumentMatchers.<RowMapper<Object>>any(),
+                eq(10L),
+                eq(20L),
+                eq("confirmed")
+        );
+    }
+
+    @Test
+    void listAdminReservations_usesAdminStatusMappingAndPagination() {
+        when(jdbcTemplate.query(anyString(), org.mockito.ArgumentMatchers.<RowMapper<Object>>any(), any(), any(), any(), any(), any(), any(), any()))
+                .thenReturn(List.of());
+
+        adapter.listAdminReservations(new AdminListReservationsQuery(
+                "2026-03-01T00:00:00Z",
+                "2026-03-31T23:59:59Z",
+                "Confirmada",
+                10L,
+                20L,
+                1,
+                20
+        ));
+
+        verify(jdbcTemplate).query(
+                contains("r.start_datetime >= ?"),
+                org.mockito.ArgumentMatchers.<RowMapper<Object>>any(),
+                any(),
+                any(),
+                eq("confirmed"),
+                eq(10L),
+                eq(20L),
+                eq(20),
+                eq(20)
+        );
+    }
+
+    @Test
+    void listAdminReservations_acceptsSystemStatusAndUsesDefaultPaging() {
+        when(jdbcTemplate.query(anyString(), org.mockito.ArgumentMatchers.<RowMapper<Object>>any(), any(), any(), any()))
+                .thenReturn(List.of());
+
+        adapter.listAdminReservations(new AdminListReservationsQuery(
+                null,
+                null,
+                "confirmed",
+                null,
+                null,
+                null,
+                null
+        ));
+
+        verify(jdbcTemplate).query(
+                contains("r.status = ?"),
+                org.mockito.ArgumentMatchers.<RowMapper<Object>>any(),
+                eq("confirmed"),
+                eq(20),
+                eq(0)
+        );
+    }
+
+    @Test
+    void countAdminReservations_returnsZeroWhenJdbcReturnsNull() {
+        when(jdbcTemplate.queryForObject(anyString(), eq(Long.class), org.mockito.ArgumentMatchers.<Object[]>any()))
+                .thenReturn(null);
+
+        long total = adapter.countAdminReservations(new AdminListReservationsQuery(
+                null,
+                null,
+                null,
+                null,
+                null,
+                0,
+                20
+        ));
+
+        assertEquals(0L, total, ASSERT_MSG);
     }
 }
 
