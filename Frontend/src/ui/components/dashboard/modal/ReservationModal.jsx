@@ -30,41 +30,39 @@ export const ReservationModal = ({
     loadingSlots = false,
     hasTimeConflict = false,
     successMessage = null,
-    slotsUpdatedFlag = false
+    slotsUpdatedFlag = false,
 }) => {
     if (!isOpen) return null;
 
     return (
         <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <button className="modal-close" onClick={onClose}>✕</button>
+            <div className="modal-content" onClick={(event) => event.stopPropagation()}>
+                <button className="modal-close" onClick={onClose}>{'\u2715'}</button>
 
                 <div className="modal-header">
                     <div className="modal-item-info">
                         <img src={item.image} alt={item.title} className="modal-item-image" />
                         <div className="modal-item-details">
                             <h2>{item.title}</h2>
-                            <p className="modal-item-location">📍 {item.location || 'Sede Central'}</p>
-                            {/* Check item type safely */}
+                            <p className="modal-item-location">{'\u{1F4CD}'} {item.location || 'Sede Central'}</p>
                             {(item.type === 'location' || item._type === 'location') && (
-                                <p className="modal-item-type">🏢 Locación</p>
+                                <p className="modal-item-type">{'\u{1F3E2}'} Locación</p>
                             )}
                         </div>
                     </div>
                 </div>
 
                 <div className="modal-body">
-
                     {successMessage && (
                         <div className="modal-success-banner">
-                            <span className="success-icon">✅</span>
+                            <span className="success-icon">OK</span>
                             <span>{successMessage}</span>
                         </div>
                     )}
 
                     {!successMessage && error && (
                         <div className="modal-error-banner">
-                            <span className="error-icon">⚠️</span>
+                            <span className="error-icon">!</span>
                             <span>{error}</span>
                         </div>
                     )}
@@ -72,7 +70,7 @@ export const ReservationModal = ({
                     <div className="modal-columns">
                         <div className="modal-left-column">
                             <div className="modal-section">
-                                <h3>Selecciona una Fecha</h3>
+                                <h3>Selecciona una fecha</h3>
                                 <Calendar
                                     currentDate={currentDate}
                                     selectedDate={selectedDate}
@@ -86,7 +84,7 @@ export const ReservationModal = ({
 
                         <div className="modal-right-column">
                             <div className="modal-section">
-                                <h3>Horario de Reserva</h3>
+                                <h3>Horario de reserva</h3>
                                 <DurationSelector
                                     startTime={startTime}
                                     endTime={endTime}
@@ -100,21 +98,21 @@ export const ReservationModal = ({
                                     item={item}
                                     successMessage={successMessage}
                                 />
-                                
-                                <div style={{marginTop: '15px'}} className="modal-section-attendees">
-                                    <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '0.9rem', color: '#555'}}>Asistentes:</label>
-                                    <input 
-                                        type="number" 
-                                        min="1" 
-                                        value={attendeesCount} 
-                                        onChange={(e) => onAttendeesCountChange?.(Number(e.target.value))}
-                                        style={{width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd', fontSize: '1rem', transition: 'border-color 0.2s', backgroundColor: '#f9f9f9'}}
+
+                                <div className="modal-section-attendees">
+                                    <label className="modal-attendees-label">Asistentes:</label>
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        value={attendeesCount}
+                                        onChange={(event) => onAttendeesCountChange?.(Number(event.target.value))}
+                                        className="modal-attendees-input"
                                     />
                                 </div>
                             </div>
 
                             <div className="modal-section">
-                                <h3>Equipos Adicionales</h3>
+                                <h3>Equipos adicionales</h3>
                                 <EquipmentSelector
                                     selectedEquipment={selectedEquipment}
                                     onEquipmentToggle={onEquipmentToggle}

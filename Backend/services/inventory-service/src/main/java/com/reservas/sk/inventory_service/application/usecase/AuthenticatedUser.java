@@ -1,6 +1,15 @@
 package com.reservas.sk.inventory_service.application.usecase;
 
-public record AuthenticatedUser(Long userId, String email) {
+import java.util.Set;
+
+public record AuthenticatedUser(Long userId, String email, Set<String> roles) {
+    public AuthenticatedUser(Long userId, String email) {
+        this(userId, email, Set.of("USER"));
+    }
+
+    public AuthenticatedUser {
+        roles = roles == null ? Set.of("USER") : Set.copyOf(roles);
+    }
 }
 
 

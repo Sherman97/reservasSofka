@@ -27,8 +27,8 @@ export const useLogin = (): UseLoginReturn => {
         setLoading(true);
 
         try {
-            await loginUseCase.execute({ email, password });
-            navigate('/dashboard');
+            const user = await loginUseCase.execute({ email, password });
+            navigate(user.isAdmin() ? '/admin-reservations' : '/dashboard');
         } catch (err) {
             setError((err as Error).message || 'Error al iniciar sesión');
         } finally {

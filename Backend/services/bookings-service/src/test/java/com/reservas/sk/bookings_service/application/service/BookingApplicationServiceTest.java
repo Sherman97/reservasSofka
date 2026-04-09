@@ -6,6 +6,8 @@ import com.reservas.sk.bookings_service.application.usecase.CheckSpaceAvailabili
 import com.reservas.sk.bookings_service.application.usecase.CreateReservationCommand;
 import com.reservas.sk.bookings_service.application.usecase.HandoverReservationCommand;
 import com.reservas.sk.bookings_service.application.usecase.ListReservationsQuery;
+import com.reservas.sk.bookings_service.application.usecase.AdminListReservationsQuery;
+import com.reservas.sk.bookings_service.application.usecase.UpdateReservationCommand;
 import com.reservas.sk.bookings_service.domain.model.Reservation;
 import com.reservas.sk.bookings_service.domain.model.ReservationEquipment;
 import com.reservas.sk.bookings_service.domain.model.SpaceAvailability;
@@ -28,7 +30,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
@@ -41,6 +45,8 @@ class BookingApplicationServiceTest {
     private static final String ASSERT_MSG = "PMD UnitTestAssertionsShouldIncludeMessage";
     private static final String START_AT = "2026-03-01T10:00:00Z";
     private static final String END_AT = "2026-03-01T12:00:00Z";
+    private static final String SPACE_OVERLAP_FUNCTIONAL_MESSAGE =
+            "El espacio seleccionado ya se encuentra reservado en este horario";
     private static final String STATUS_CONFIRMED = "confirmed";
     private static final String STATUS_CANCELLED = "cancelled";
     private static final String STATUS_COMPLETED = "completed";
@@ -146,6 +152,50 @@ class BookingApplicationServiceTest {
         assertEquals(HttpStatus.CONFLICT, ex.getStatus(), ASSERT_MSG);
         assertEquals("SPACE_ALREADY_RESERVED", ex.getErrorCode(), ASSERT_MSG);
         verify(persistencePort, times(1)).releaseSpaceReservationLock(2L);
+    }
+
+    @Test
+    void shouldRejectManualReservationWhenOverlapsWithActiveReservation_usingExactFunctionalMessage() {
+        CreateReservationCommand cmd = baseCommand(List.of());
+        stubCreateReservationPreconditions();
+        when(persistencePort.countOverlappingReservations(anyLong(), any(), any())).thenReturn(1);
+
+        ApiException ex = assertThrows(ApiException.class, () -> service.createReservation(cmd));
+
+        assertEquals(HttpStatus.CONFLICT, ex.getStatus(), ASSERT_MSG);
+        assertEquals(SPACE_OVERLAP_FUNCTIONAL_MESSAGE, ex.getMessage(), ASSERT_MSG);
+    }
+
+    @Test
+    void shouldRejectManualReservationWhenTimeRangeIsNotIn15MinuteIntervals() {
+        CreateReservationCommand cmd = new CreateReservationCommand(
+                1L,
+                2L,
+                "2026-03-01T10:07:00Z",
+                "2026-03-01T11:22:00Z",
+                "Reserva",
+                2,
+                null,
+                List.of()
+        );
+        stubCreateReservationPreconditions();
+
+        ApiException ex = assertThrows(ApiException.class, () -> service.createReservation(cmd));
+
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus(), ASSERT_MSG);
+        assertTrue(ex.getMessage().contains("15"), ASSERT_MSG);
+        verify(persistencePort, never()).acquireSpaceReservationLock(anyLong(), anyInt());
+    }
+
+    @Test
+    void shouldNotPersistManualReservationWhenOverlapConflictOccurs() {
+        CreateReservationCommand cmd = baseCommand(List.of());
+        stubCreateReservationPreconditions();
+        when(persistencePort.countOverlappingReservations(anyLong(), any(), any())).thenReturn(1);
+
+        assertThrows(ApiException.class, () -> service.createReservation(cmd));
+
+        verify(persistencePort, never()).insertReservation(anyLong(), anyLong(), any(), any(), anyString(), any(), any(), any());
     }
 
     @Test
@@ -460,8 +510,372 @@ class BookingApplicationServiceTest {
         assertEquals(STATUS_COMPLETED, result.getStatus(), ASSERT_MSG);
     }
 
+    @Test
+    void returnReservation_invalidStatus() {
+        Reservation existing = reservation(9L, STATUS_COMPLETED);
+        when(persistencePort.findReservationById(9L)).thenReturn(Optional.of(existing));
+        when(persistencePort.findReservationEquipments(9L)).thenReturn(List.of());
+
+        ApiException ex = assertThrows(ApiException.class,
+                () -> service.returnReservation(new HandoverReservationCommand(9L, 70L, "ok")));
+
+        assertEquals(HttpStatus.CONFLICT, ex.getStatus(), ASSERT_MSG);
+        assertEquals("INVALID_RESERVATION_STATUS", ex.getErrorCode(), ASSERT_MSG);
+    }
+
+    @Test
+    void returnReservation_allowsWhenReservationIsConfirmed() {
+        Reservation existing = reservation(9L, STATUS_CONFIRMED);
+        Reservation returned = reservation(9L, STATUS_COMPLETED);
+
+        when(persistencePort.findReservationById(9L)).thenReturn(Optional.of(existing), Optional.of(returned));
+        when(persistencePort.findReservationEquipments(9L)).thenReturn(List.of(), List.of());
+
+        Reservation result = service.returnReservation(new HandoverReservationCommand(9L, 70L, "ok"));
+
+        assertEquals(STATUS_COMPLETED, result.getStatus(), ASSERT_MSG);
+    }
+
+    @Test
+    void deliverReservation_allowsWhenReservationIsAlreadyInProgress() {
+        Reservation existing = reservation(7L, STATUS_IN_PROGRESS);
+        Reservation delivered = reservation(7L, STATUS_IN_PROGRESS);
+
+        when(persistencePort.findReservationById(7L)).thenReturn(Optional.of(existing), Optional.of(delivered));
+        when(persistencePort.findReservationEquipments(7L)).thenReturn(List.of(), List.of());
+
+        Reservation result = service.deliverReservation(new HandoverReservationCommand(7L, 50L, "novedad"));
+
+        assertEquals(STATUS_IN_PROGRESS, result.getStatus(), ASSERT_MSG);
+    }
+
+    @Test
+    void countAdminReservations_rejectsInvalidExecutionDateRange() {
+        ApiException ex = assertThrows(ApiException.class, () -> service.countAdminReservations(new AdminListReservationsQuery(
+                "2026-04-30T23:59:59Z",
+                "2026-04-01T00:00:00Z",
+                "Confirmada",
+                null,
+                null,
+                0,
+                20
+        )));
+
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus(), ASSERT_MSG);
+        assertEquals("desde debe ser menor o igual que hasta", ex.getMessage(), ASSERT_MSG);
+    }
+
+    @Test
+    void listAdminReservations_acceptsBlankFiltersAndNormalizesToNull() {
+        when(persistencePort.listAdminReservations(any())).thenReturn(List.of());
+
+        List<Reservation> result = service.listAdminReservations(new AdminListReservationsQuery(
+                "   ",
+                "   ",
+                "   ",
+                null,
+                null,
+                0,
+                20
+        ));
+
+        assertTrue(result.isEmpty(), ASSERT_MSG);
+        verify(persistencePort).listAdminReservations(argThat(query ->
+                query.fromExecutionDate() == null
+                        && query.toExecutionDate() == null
+                        && query.status() == null
+        ));
+    }
+
+    @Test
+    void getReservationById_rejectsInvalidId() {
+        ApiException ex = assertThrows(ApiException.class, () -> service.getReservationById(0L));
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus(), ASSERT_MSG);
+    }
+
+    @Test
+    void updateReservation_rejectsInvalidReservationId() {
+        ApiException ex = assertThrows(ApiException.class, () -> service.updateReservation(new UpdateReservationCommand(
+                0L,
+                1L,
+                "Nueva",
+                Instant.parse("2026-03-01T10:00:00Z"),
+                Instant.parse("2026-03-01T11:00:00Z"),
+                1,
+                null
+        )));
+
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus(), ASSERT_MSG);
+    }
+
+    @Test
+    void createReservation_rejectsInvalidUserId() {
+        ApiException ex = assertThrows(ApiException.class, () -> service.createReservation(new CreateReservationCommand(
+                0L,
+                2L,
+                START_AT,
+                END_AT,
+                "Reserva",
+                2,
+                null,
+                List.of()
+        )));
+
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus(), ASSERT_MSG);
+    }
+
+    @Test
+    void createReservation_rejectsInvalidSpaceId() {
+        ApiException ex = assertThrows(ApiException.class, () -> service.createReservation(new CreateReservationCommand(
+                1L,
+                0L,
+                START_AT,
+                END_AT,
+                "Reserva",
+                2,
+                null,
+                List.of()
+        )));
+
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus(), ASSERT_MSG);
+    }
+
+    @Test
+    void deliverReservation_rejectsInvalidStaffId() {
+        ApiException ex = assertThrows(ApiException.class,
+                () -> service.deliverReservation(new HandoverReservationCommand(7L, 0L, "ok")));
+
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus(), ASSERT_MSG);
+    }
+
+    @Test
+    void returnReservation_rejectsInvalidStaffId() {
+        ApiException ex = assertThrows(ApiException.class,
+                () -> service.returnReservation(new HandoverReservationCommand(9L, 0L, "ok")));
+
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus(), ASSERT_MSG);
+    }
+
+    @Test
+    void updateReservation_forbiddenWhenOwnerDoesNotMatch() {
+        Reservation existing = reservation(22L, STATUS_CONFIRMED);
+        when(persistencePort.findReservationById(22L)).thenReturn(Optional.of(existing));
+        when(persistencePort.findReservationEquipments(22L)).thenReturn(List.of());
+
+        ApiException ex = assertThrows(ApiException.class, () -> service.updateReservation(new UpdateReservationCommand(
+                22L,
+                999L,
+                "Nueva",
+                Instant.parse("2026-03-01T10:00:00Z"),
+                Instant.parse("2026-03-01T11:00:00Z"),
+                3,
+                "nota"
+        )));
+
+        assertEquals(HttpStatus.FORBIDDEN, ex.getStatus(), ASSERT_MSG);
+    }
+
+    @Test
+    void updateReservation_rejectsWhenReservationIsNotActive() {
+        Reservation existing = reservation(22L, STATUS_COMPLETED);
+        when(persistencePort.findReservationById(22L)).thenReturn(Optional.of(existing));
+        when(persistencePort.findReservationEquipments(22L)).thenReturn(List.of());
+
+        ApiException ex = assertThrows(ApiException.class, () -> service.updateReservation(new UpdateReservationCommand(
+                22L,
+                1L,
+                "Nueva",
+                Instant.parse("2026-03-01T10:00:00Z"),
+                Instant.parse("2026-03-01T11:00:00Z"),
+                3,
+                "nota"
+        )));
+
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus(), ASSERT_MSG);
+    }
+
+    @Test
+    void updateReservation_withSameRangeUpdatesWithoutLock() {
+        Reservation existing = reservation(22L, STATUS_CONFIRMED);
+        Reservation updated = reservation(22L, STATUS_CONFIRMED);
+        when(persistencePort.findReservationById(22L)).thenReturn(Optional.of(existing), Optional.of(updated));
+        when(persistencePort.findReservationEquipments(22L)).thenReturn(List.of(), List.of());
+
+        Reservation result = service.updateReservation(new UpdateReservationCommand(
+                22L,
+                1L,
+                "  Titulo actualizado  ",
+                existing.getStartDatetime(),
+                existing.getEndDatetime(),
+                6,
+                "  nota  "
+        ));
+
+        assertEquals(22L, result.getId(), ASSERT_MSG);
+        verify(persistencePort, never()).acquireSpaceReservationLock(anyLong(), anyInt());
+        verify(persistencePort).updateReservation(
+                22L,
+                "Titulo actualizado",
+                existing.getStartDatetime(),
+                existing.getEndDatetime(),
+                6,
+                "nota"
+        );
+    }
+
+    @Test
+    void updateReservation_withChangedRangeRejectsWhenLockCannotBeAcquired() {
+        Reservation existing = reservation(22L, STATUS_CONFIRMED);
+        when(persistencePort.findReservationById(22L)).thenReturn(Optional.of(existing));
+        when(persistencePort.findReservationEquipments(22L)).thenReturn(List.of());
+        when(persistencePort.acquireSpaceReservationLock(2L, 5)).thenReturn(false);
+
+        ApiException ex = assertThrows(ApiException.class, () -> service.updateReservation(new UpdateReservationCommand(
+                22L,
+                1L,
+                "Nueva",
+                Instant.parse("2026-03-01T12:00:00Z"),
+                Instant.parse("2026-03-01T13:00:00Z"),
+                2,
+                null
+        )));
+
+        assertEquals(HttpStatus.CONFLICT, ex.getStatus(), ASSERT_MSG);
+        assertEquals("SPACE_LOCK_TIMEOUT", ex.getErrorCode(), ASSERT_MSG);
+    }
+
+    @Test
+    void updateReservation_withChangedRangeRejectsWhenOverlapIsGreaterThanOne() {
+        Reservation existing = reservation(22L, STATUS_CONFIRMED);
+        when(persistencePort.findReservationById(22L)).thenReturn(Optional.of(existing));
+        when(persistencePort.findReservationEquipments(22L)).thenReturn(List.of());
+        when(persistencePort.acquireSpaceReservationLock(2L, 5)).thenReturn(true);
+        when(persistencePort.countOverlappingReservations(anyLong(), any(), any())).thenReturn(2);
+
+        ApiException ex = assertThrows(ApiException.class, () -> service.updateReservation(new UpdateReservationCommand(
+                22L,
+                1L,
+                "Nueva",
+                Instant.parse("2026-03-01T12:00:00Z"),
+                Instant.parse("2026-03-01T13:00:00Z"),
+                2,
+                null
+        )));
+
+        assertEquals(HttpStatus.CONFLICT, ex.getStatus(), ASSERT_MSG);
+        assertEquals("SPACE_ALREADY_RESERVED", ex.getErrorCode(), ASSERT_MSG);
+        verify(persistencePort).releaseSpaceReservationLock(2L);
+    }
+
+    @Test
+    void updateReservation_withChangedRangeAllowsWhenOnlySelfOverlapExists() {
+        Reservation existing = reservation(22L, STATUS_CONFIRMED);
+        Reservation updated = reservation(22L, STATUS_CONFIRMED);
+        when(persistencePort.findReservationById(22L)).thenReturn(Optional.of(existing), Optional.of(updated));
+        when(persistencePort.findReservationEquipments(22L)).thenReturn(List.of(), List.of());
+        when(persistencePort.acquireSpaceReservationLock(2L, 5)).thenReturn(true);
+        when(persistencePort.countOverlappingReservations(anyLong(), any(), any())).thenReturn(1);
+
+        Reservation result = service.updateReservation(new UpdateReservationCommand(
+                22L,
+                1L,
+                "Nueva",
+                Instant.parse("2026-03-01T12:00:00Z"),
+                Instant.parse("2026-03-01T13:00:00Z"),
+                2,
+                null
+        ));
+
+        assertEquals(22L, result.getId(), ASSERT_MSG);
+        verify(persistencePort).releaseSpaceReservationLock(2L);
+    }
+
+    @Test
+    void listAdminReservations_normalizesStatusAndDefaultPaging() {
+        when(persistencePort.listAdminReservations(any())).thenReturn(List.of());
+
+        List<Reservation> result = service.listAdminReservations(new AdminListReservationsQuery(
+                null,
+                null,
+                "Confirmada",
+                10L,
+                20L,
+                null,
+                null
+        ));
+
+        assertTrue(result.isEmpty(), ASSERT_MSG);
+        verify(persistencePort).listAdminReservations(argThat(query ->
+                "confirmed".equals(query.status())
+                        && query.page() == 0
+                        && query.size() == 20
+                        && query.userId().equals(10L)
+                        && query.siteId().equals(20L)
+        ));
+    }
+
+    @Test
+    void countAdminReservations_normalizesStatusAndDefaultPaging() {
+        when(persistencePort.countAdminReservations(any())).thenReturn(42L);
+
+        long total = service.countAdminReservations(new AdminListReservationsQuery(
+                "2026-03-01T00:00:00Z",
+                "2026-03-31T23:59:59Z",
+                "Finalizada",
+                null,
+                null,
+                null,
+                null
+        ));
+
+        assertEquals(42L, total, ASSERT_MSG);
+        verify(persistencePort).countAdminReservations(argThat(query ->
+                "completed".equals(query.status())
+                        && query.page() == 0
+                        && query.size() == 20
+        ));
+    }
+
+    @Test
+    void listAdminReservations_rejectsNegativePage() {
+        ApiException ex = assertThrows(ApiException.class, () -> service.listAdminReservations(new AdminListReservationsQuery(
+                null,
+                null,
+                "Pendiente",
+                null,
+                null,
+                -1,
+                20
+        )));
+
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus(), ASSERT_MSG);
+        assertEquals("page es invalido", ex.getMessage(), ASSERT_MSG);
+    }
+
+    @Test
+    void countAdminReservations_rejectsInvalidPageSize() {
+        ApiException ex = assertThrows(ApiException.class, () -> service.countAdminReservations(new AdminListReservationsQuery(
+                null,
+                null,
+                "Cancelada",
+                null,
+                null,
+                0,
+                0
+        )));
+
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus(), ASSERT_MSG);
+        assertEquals("size es invalido", ex.getMessage(), ASSERT_MSG);
+    }
+
     private CreateReservationCommand baseCommand(List<Long> equipmentIds) {
         return new CreateReservationCommand(1L, 2L, START_AT, END_AT, "Reserva", 2, null, equipmentIds);
+    }
+
+    private void stubCreateReservationPreconditions() {
+        when(persistencePort.userExists(1L)).thenReturn(true);
+        when(persistencePort.findSpaceCityId(2L)).thenReturn(Optional.of(3L));
+        when(persistencePort.acquireSpaceReservationLock(2L, 5)).thenReturn(true);
     }
 
     private Reservation reservation(long id, String status) {

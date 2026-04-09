@@ -98,6 +98,13 @@ public class LocationsController {
         return ApiResponse.success(spaces.stream().map(mapper::toResponse).toList());
     }
 
+    @GetMapping("/cities/{cityId}/spaces")
+    public ApiResponse<List<SpaceResponse>> listSpacesByCity(@PathVariable Long cityId,
+                                                             @RequestParam(required = false) Boolean activeOnly) {
+        var spaces = useCase.listSpaces(new ListSpacesQuery(cityId, activeOnly));
+        return ApiResponse.success(spaces.stream().map(mapper::toResponse).toList());
+    }
+
     @GetMapping("/spaces/{id}")
     public ApiResponse<SpaceResponse> getSpace(@PathVariable Long id) {
         return ApiResponse.success(mapper.toResponse(useCase.getSpaceById(id)));

@@ -4,7 +4,9 @@ import SignupPage from '../ui/pages/signup/SignupPage';
 import DashboardPage from '../ui/pages/dashboard/DashboardPage';
 import { MainLayout } from '../ui/layouts/MainLayout';
 import { MyReservationsPage } from '../ui/pages/reservations/MyReservationsPage';
+import AdminReservationsPage from '../ui/pages/admin-reservations/AdminReservationsPage';
 import ProtectedRoute from '../ui/components/common/ProtectedRoute';
+import AdminRoute from '../ui/components/common/AdminRoute';
 
 const AppRouter = () => {
     return (
@@ -19,6 +21,9 @@ const AppRouter = () => {
                     <Route element={<MainLayout />}>
                         <Route path="/dashboard" element={<DashboardPage />} />
                         <Route path="/my-reservations" element={<MyReservationsPage />} />
+                        <Route element={<AdminRoute />}>
+                            <Route path="/admin-reservations" element={<AdminReservationsPage />} />
+                        </Route>
                     </Route>
                 </Route>
             </Routes>

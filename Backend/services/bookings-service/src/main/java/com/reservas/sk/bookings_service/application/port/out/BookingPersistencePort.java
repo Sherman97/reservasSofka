@@ -2,6 +2,7 @@ package com.reservas.sk.bookings_service.application.port.out;
 
 import com.reservas.sk.bookings_service.domain.model.Reservation;
 import com.reservas.sk.bookings_service.domain.model.ReservationEquipment;
+import com.reservas.sk.bookings_service.application.usecase.AdminListReservationsQuery;
 
 import java.time.Instant;
 import java.util.List;
@@ -45,6 +46,9 @@ public interface BookingPersistencePort {
                            String notes);
 
     List<Reservation> listReservations(Long userId, Long spaceId, String status);
+
+    List<Reservation> listAdminReservations(AdminListReservationsQuery query);
+    long countAdminReservations(AdminListReservationsQuery query);
 
     Optional<Reservation> findReservationById(long reservationId);
 

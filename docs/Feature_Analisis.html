@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Feature Analisis</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 980px; margin: 32px auto; line-height: 1.55; color: #111; padding: 0 16px; }
+    h1, h2, h3, h4 { color: #0f172a; }
+    pre, code { font-family: Consolas, monospace; }
+    pre { background: #f5f5f5; padding: 12px; border-radius: 6px; overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #d1d5db; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f4f6; }
+    hr { border: 0; border-top: 1px solid #d1d5db; margin: 24px 0; }
+  </style>
+</head>
+<body>
+<h1 id="analisis-tecnico-de-la-feature-administrativa-de-reservas">Analisis Tecnico de la Feature Administrativa de Reservas</h1>
+<h2 id="principios-solid-patrones-de-diseno-y-arquitectura">Principios SOLID, Patrones de Diseno y Arquitectura</h2>
+<p><strong>Fecha del analisis:</strong> 2026-04-09<br />
+<strong>Ambito:</strong> Backend (Java 17 + Spring Boot) y Frontend (React + TypeScript)<br />
+<strong>Enfoque:</strong> HU-01 (Consultar reservas desde modulo administrador) y HU-02 (Crear reserva manual desde modulo administrador)</p>
+<hr />
+<h2 id="glosario-de-siglas">Glosario de Siglas</h2>
+<ul>
+<li><strong>HU:</strong> Historia de Usuario.</li>
+<li><strong>SOLID:</strong> conjunto de principios de diseno orientados a mantenibilidad.</li>
+<li><strong>SRP:</strong> Single Responsibility Principle.</li>
+<li><strong>OCP:</strong> Open/Closed Principle.</li>
+<li><strong>LSP:</strong> Liskov Substitution Principle.</li>
+<li><strong>ISP:</strong> Interface Segregation Principle.</li>
+<li><strong>DIP:</strong> Dependency Inversion Principle.</li>
+<li><strong>CQRS:</strong> Command Query Responsibility Segregation.</li>
+<li><strong>DTO:</strong> Data Transfer Object.</li>
+<li><strong>JWT:</strong> JSON Web Token.</li>
+<li><strong>STOMP:</strong> Simple Text Oriented Messaging Protocol.</li>
+</ul>
+<hr />
+<h2 id="introduccion-contextual">Introduccion Contextual</h2>
+<p>La feature administrativa combina:</p>
+<ol>
+<li>HU-01: listado paginado, filtros y detalle de reservas.</li>
+<li>HU-02: creacion manual de reservas por admin, con validaciones de disponibilidad.</li>
+</ol>
+<p>Este documento mantiene la estructura de <code>resultado_tecnico.md</code>, pero se limita a los servicios y componentes impactados por esas dos HU, indicando en que archivos y lineas se evidencia cada principio o patron.</p>
+<hr />
+<h2 id="i-backend-analisis-por-servicio">I. BACKEND - ANALISIS POR SERVICIO</h2>
+<h3 id="1-auth-service-autenticacion-autorizacion-y-listado-de-usuarios-no-admin">1. AUTH-SERVICE: Autenticacion, autorizacion y listado de usuarios no admin</h3>
+<h4 id="descripcion-general">Descripcion General</h4>
+<p><code>auth-service</code> habilita dos necesidades de la feature: control de acceso por rol administrador y exposicion del listado de usuarios no admin para el modal de creacion.</p>
+<h4 id="principios-solid-identificados">Principios SOLID Identificados</h4>
+<h5 id="s-srp"><strong>S - SRP</strong></h5>
+<ul>
+<li><code>AuthController</code> concentra la traduccion HTTP y la validacion de acceso admin para <code>/auth/users</code>.<br />
+  Archivo: <code>Backend/services/auth-service/src/main/java/com/reservas/sk/auth_service/adapters/in/web/AuthController.java</code> (lineas 29, 64, 69, 74).</li>
+<li><code>AuthApplicationService</code> concentra orquestacion del caso de uso (<code>listNonAdminUsers</code>).<br />
+  Archivo: <code>Backend/services/auth-service/src/main/java/com/reservas/sk/auth_service/application/service/AuthApplicationService.java</code> (lineas 23, 82-83).</li>
+<li><code>UserPersistenceAdapter</code> encapsula el acceso a datos para excluir admins.<br />
+  Archivo: <code>Backend/services/auth-service/src/main/java/com/reservas/sk/auth_service/adapters/out/persistence/UserPersistenceAdapter.java</code> (lineas 16, 61, 68).</li>
+</ul>
+<h5 id="o-ocp"><strong>O - OCP</strong></h5>
+<ul>
+<li>Se extiende el contrato de caso de uso sin romper login/registro.<br />
+  Archivos:<br />
+<code>Backend/services/auth-service/src/main/java/com/reservas/sk/auth_service/application/port/in/AuthUseCase.java</code> (metodo <code>listNonAdminUsers</code>)<br />
+<code>Backend/services/auth-service/src/main/java/com/reservas/sk/auth_service/application/service/AuthApplicationService.java</code> (lineas 82-83).</li>
+</ul>
+<h5 id="i-isp"><strong>I - ISP</strong></h5>
+<ul>
+<li><code>UserPersistencePort</code> separa operaciones de usuario sin mezclar token/hash/eventos.<br />
+  Archivo: <code>Backend/services/auth-service/src/main/java/com/reservas/sk/auth_service/application/port/out/UserPersistencePort.java</code> (metodo <code>listNonAdminUsers</code>).</li>
+</ul>
+<h5 id="d-dip"><strong>D - DIP</strong></h5>
+<ul>
+<li><code>AuthApplicationService</code> depende de puertos (<code>UserPersistencePort</code>, <code>TokenPort</code>, etc.), no de detalles de repositorio.<br />
+  Archivo: <code>Backend/services/auth-service/src/main/java/com/reservas/sk/auth_service/application/service/AuthApplicationService.java</code> (lineas 23-36).</li>
+</ul>
+<h4 id="patrones-de-diseno-implementados">Patrones de Diseno Implementados</h4>
+<h5 id="hexagonal-architecture"><strong>Hexagonal Architecture</strong></h5>
+<ul>
+<li>Flujo: Controller -&gt; UseCase -&gt; Service -&gt; Port -&gt; Adapter.<br />
+  Evidencia: <code>AuthController</code> (lineas 64-71), <code>AuthApplicationService</code> (82-83), <code>UserPersistenceAdapter</code> (61-65).</li>
+</ul>
+<h5 id="adapter-pattern"><strong>Adapter Pattern</strong></h5>
+<ul>
+<li><code>UserPersistenceAdapter</code> traduce entidad JPA a dominio.<br />
+  Evidencia: <code>UserPersistenceAdapter.java</code> (linea 68, metodo <code>toDomain</code>).</li>
+</ul>
+<h5 id="strategy-pattern"><strong>Strategy Pattern</strong></h5>
+<ul>
+<li>Publicacion de eventos sustituible por adaptadores <code>Rabbit</code>/<code>NoOp</code>.<br />
+  Evidencia: <code>UserEventPublisherPort</code> + adapters de mensajeria.</li>
+</ul>
+<hr />
+<h3 id="2-bookings-service-nucleo-de-hu-01-y-hu-02">2. BOOKINGS-SERVICE: Nucleo de HU-01 y HU-02</h3>
+<h4 id="descripcion-general_1">Descripcion General</h4>
+<p><code>bookings-service</code> implementa la consulta administrativa, el conteo paginado, el detalle enriquecido y la creacion manual con validacion de solapamiento.</p>
+<h4 id="principios-solid-identificados_1">Principios SOLID Identificados</h4>
+<h5 id="s-srp_1"><strong>S - SRP</strong></h5>
+<ul>
+<li><code>BookingController</code> expone endpoints admin y delega reglas de negocio.<br />
+  Archivo: <code>Backend/services/bookings-service/src/main/java/com/reservas/sk/bookings_service/adapters/in/web/BookingController.java</code> (lineas 39, 56, 83).</li>
+<li><code>BookingApplicationService</code> concentra validaciones funcionales (filtros, paginacion, conflicto horario).<br />
+  Archivo: <code>Backend/services/bookings-service/src/main/java/com/reservas/sk/bookings_service/application/service/BookingApplicationService.java</code> (lineas 44, 86, 228-234, 527-546).</li>
+<li><code>JdbcBookingPersistenceAdapter</code> concentra SQL admin (joins, order, limit/offset).<br />
+  Archivo: <code>Backend/services/bookings-service/src/main/java/com/reservas/sk/bookings_service/adapters/out/persistence/JdbcBookingPersistenceAdapter.java</code> (lineas 31, 255, 276, 284).</li>
+<li><code>ReservationStatusCatalog</code> concentra catalogo y mapeo de estados.<br />
+  Archivo: <code>Backend/services/bookings-service/src/main/java/com/reservas/sk/bookings_service/domain/model/ReservationStatusCatalog.java</code> (lineas 8-9, 24, 44).</li>
+</ul>
+<h5 id="o-ocp_1"><strong>O - OCP</strong></h5>
+<ul>
+<li><code>AdminListReservationsQuery</code> permite extender lectura admin sin reescribir la consulta estandar.<br />
+  Archivos:<br />
+<code>Backend/services/bookings-service/src/main/java/com/reservas/sk/bookings_service/application/usecase/AdminListReservationsQuery.java</code><br />
+<code>Backend/services/bookings-service/src/main/java/com/reservas/sk/bookings_service/application/port/in/BookingUseCase.java</code>.</li>
+</ul>
+<h5 id="l-lsp"><strong>L - LSP</strong></h5>
+<ul>
+<li><code>ReservationEventPublisherPort</code> admite adapters sustituibles (<code>Rabbit</code>/<code>NoOp</code>) sin romper capa de aplicacion.<br />
+  Evidencia: port + adapters de mensajeria del servicio.</li>
+</ul>
+<h5 id="i-isp_1"><strong>I - ISP</strong></h5>
+<ul>
+<li><code>BookingPersistencePort</code> separa lectura admin (<code>listAdminReservations</code>, <code>countAdminReservations</code>) del resto de comandos.<br />
+  Archivo: <code>Backend/services/bookings-service/src/main/java/com/reservas/sk/bookings_service/application/port/out/BookingPersistencePort.java</code>.</li>
+</ul>
+<h5 id="d-dip_1"><strong>D - DIP</strong></h5>
+<ul>
+<li><code>BookingApplicationService</code> depende de puertos de persistencia/eventos/realtime.<br />
+  Archivo: <code>Backend/services/bookings-service/src/main/java/com/reservas/sk/bookings_service/application/service/BookingApplicationService.java</code> (constructor + uso de puertos).</li>
+</ul>
+<h4 id="patrones-de-diseno-implementados_1">Patrones de Diseno Implementados</h4>
+<h5 id="hexagonal-architecture_1"><strong>Hexagonal Architecture</strong></h5>
+<ul>
+<li>Evidencia transversal en controller/usecase/service/ports/adapters.</li>
+</ul>
+<h5 id="cqrs-parcial"><strong>CQRS Parcial</strong></h5>
+<ul>
+<li>Query: <code>AdminListReservationsQuery</code> (lectura HU-01).  </li>
+<li>Command: <code>CreateReservationCommand</code> (escritura HU-02).</li>
+</ul>
+<h5 id="repository-pattern"><strong>Repository Pattern</strong></h5>
+<ul>
+<li><code>BookingPersistencePort</code> + <code>JdbcBookingPersistenceAdapter</code> (lineas 255 y 284 para lista/conteo admin).</li>
+</ul>
+<h5 id="mapper-pattern"><strong>Mapper Pattern</strong></h5>
+<ul>
+<li><code>BookingHttpMapper</code> + DTO admin (<code>AdminReservationResponse</code>, <code>AdminReservationsPageResponse</code>) para desacoplar dominio y contrato web.</li>
+</ul>
+<hr />
+<h3 id="3-inventory-service-soporte-de-equipos-adicionales">3. INVENTORY-SERVICE: Soporte de equipos adicionales</h3>
+<h4 id="descripcion-general_2">Descripcion General</h4>
+<p>En HU-02, <code>inventory-service</code> alimenta el selector de equipos por ciudad para el modal administrativo.</p>
+<h4 id="principios-solid-identificados_2">Principios SOLID Identificados</h4>
+<h5 id="s-srp_2"><strong>S - SRP</strong></h5>
+<ul>
+<li><code>EquipmentsController</code> expone lectura HTTP de equipos.<br />
+  Archivo: <code>Backend/services/inventory-service/src/main/java/com/reservas/sk/inventory_service/adapters/in/web/EquipmentsController.java</code> (lineas 29, 54, 57, 61).</li>
+<li><code>InventoryApplicationService</code> concentra reglas de filtro y estado.<br />
+  Archivo: <code>Backend/services/inventory-service/src/main/java/com/reservas/sk/inventory_service/application/service/InventoryApplicationService.java</code> (lineas 23, 67-69, 146).</li>
+</ul>
+<h5 id="o-ocp_2"><strong>O - OCP</strong></h5>
+<ul>
+<li><code>ListEquipmentsQuery</code> habilita variacion de filtros sin romper endpoint.</li>
+</ul>
+<h5 id="d-dip_2"><strong>D - DIP</strong></h5>
+<ul>
+<li>Service depende de puertos, no de SQL directo.</li>
+</ul>
+<h4 id="patrones-de-diseno-implementados_2">Patrones de Diseno Implementados</h4>
+<h5 id="hexagonal-adapter"><strong>Hexagonal + Adapter</strong></h5>
+<ul>
+<li>Entrada web desacoplada de persistencia.</li>
+</ul>
+<h5 id="mapper-pattern_1"><strong>Mapper Pattern</strong></h5>
+<ul>
+<li><code>InventoryHttpMapper</code> convierte dominio a DTO.<br />
+  Archivo: <code>Backend/services/inventory-service/src/main/java/com/reservas/sk/inventory_service/adapters/in/web/InventoryHttpMapper.java</code> (lineas 10-11).</li>
+</ul>
+<hr />
+<h3 id="4-locations-service-dependencia-ciudad-espacio">4. LOCATIONS-SERVICE: Dependencia ciudad -&gt; espacio</h3>
+<h4 id="descripcion-general_3">Descripcion General</h4>
+<p>En HU-02, <code>locations-service</code> soporta la carga de sedes/ciudades y espacios por ciudad seleccionada.</p>
+<h4 id="principios-solid-identificados_3">Principios SOLID Identificados</h4>
+<h5 id="s-srp_3"><strong>S - SRP</strong></h5>
+<ul>
+<li><code>LocationsController</code> concentra endpoints de ciudades y espacios, incluyendo <code>/cities/{cityId}/spaces</code>.<br />
+  Archivo: <code>Backend/services/locations-service/src/main/java/com/reservas/sk/locations_service/adapters/in/web/LocationsController.java</code> (lineas 38, 95-97, 101-104).</li>
+<li><code>LocationsApplicationService</code> concentra reglas de existencia/consistencia.<br />
+  Archivo: <code>Backend/services/locations-service/src/main/java/com/reservas/sk/locations_service/application/service/LocationsApplicationService.java</code> (lineas 32, 95, 127-128, 132).</li>
+</ul>
+<h5 id="o-ocp_3"><strong>O - OCP</strong></h5>
+<ul>
+<li><code>ListSpacesQuery</code> extiende consulta con criterios (<code>cityId</code>, <code>activeOnly</code>) sin romper rutas existentes.<br />
+  Archivo: <code>Backend/services/locations-service/src/main/java/com/reservas/sk/locations_service/application/usecase/ListSpacesQuery.java</code> (linea 3).</li>
+</ul>
+<h5 id="i-isp_2"><strong>I - ISP</strong></h5>
+<ul>
+<li>Puertos de persistencia y de publicacion de eventos estan segregados.</li>
+</ul>
+<h5 id="d-dip_3"><strong>D - DIP</strong></h5>
+<ul>
+<li>Service depende de puertos (<code>LocationsPersistencePort</code>, <code>LocationEventPublisherPort</code>).</li>
+</ul>
+<h4 id="patrones-de-diseno-implementados_3">Patrones de Diseno Implementados</h4>
+<h5 id="hexagonal-architecture_2"><strong>Hexagonal Architecture</strong></h5>
+<ul>
+<li>Controller -&gt; service -&gt; puertos -&gt; adapters.</li>
+</ul>
+<h5 id="query-object-pattern"><strong>Query Object Pattern</strong></h5>
+<ul>
+<li><code>ListSpacesQuery</code> encapsula criterios de consulta.</li>
+</ul>
+<hr />
+<h3 id="5-api-gateway-borde-unico-de-integracion">5. API-GATEWAY: Borde unico de integracion</h3>
+<h4 id="descripcion-general_4">Descripcion General</h4>
+<p><code>api-gateway</code> publica las rutas de la feature admin bajo un unico punto de entrada.</p>
+<h4 id="principios-solid-identificados_4">Principios SOLID Identificados</h4>
+<h5 id="s-srp_4"><strong>S - SRP</strong></h5>
+<ul>
+<li><code>GatewayProxyConfig</code> solo define reglas de ruteo.<br />
+  Archivo: <code>Backend/services/api-gateway/src/main/java/com/reservas/sk/api_gateway/infrastructure/config/GatewayProxyConfig.java</code> (lineas 9, 25-28).</li>
+</ul>
+<h5 id="d-dip_4"><strong>D - DIP</strong></h5>
+<ul>
+<li>Destinos de servicios vienen de propiedades, no hardcodeados.<br />
+  Archivo: <code>Backend/services/api-gateway/src/main/resources/application.properties</code> (lineas 4-9).</li>
+</ul>
+<h4 id="patrones-de-diseno-implementados_4">Patrones de Diseno Implementados</h4>
+<h5 id="gatewayfacade-pattern"><strong>Gateway/Facade Pattern</strong></h5>
+<ul>
+<li>Rutas <code>/auth/**</code>, <code>/bookings/**</code>, <code>/locations/**</code>, <code>/inventory/**</code> centralizadas.</li>
+</ul>
+<h5 id="strangler-pattern"><strong>Strangler Pattern</strong></h5>
+<ul>
+<li>Se incorpora la feature admin sin romper contratos legacy de cliente.</li>
+</ul>
+<hr />
+<h3 id="6-notifications-service-difusion-de-eventos">6. NOTIFICATIONS-SERVICE: Difusion de eventos</h3>
+<h4 id="descripcion-general_5">Descripcion General</h4>
+<p><code>notifications-service</code> mantiene la propagacion de eventos para consumo en tiempo real y soporte de feedback operativo.</p>
+<h4 id="principios-solid-identificados_5">Principios SOLID Identificados</h4>
+<h5 id="s-srp_5"><strong>S - SRP</strong></h5>
+<ul>
+<li><code>RabbitEventListenerAdapter</code> escucha cola/eventos.<br />
+  Archivo: <code>Backend/services/notifications-service/src/main/java/com/reservas/sk/notifications_service/adapters/in/rabbit/RabbitEventListenerAdapter.java</code> (lineas 15-16, 25, 28).</li>
+<li><code>StompWebSocketBroadcastAdapter</code> publica a topics STOMP.<br />
+  Archivo: <code>Backend/services/notifications-service/src/main/java/com/reservas/sk/notifications_service/adapters/out/websocket/StompWebSocketBroadcastAdapter.java</code> (lineas 9, 18-20).</li>
+</ul>
+<h5 id="d-dip_5"><strong>D - DIP</strong></h5>
+<ul>
+<li><code>EventBroadcastApplicationService</code> depende de <code>WebSocketBroadcastPort</code>.<br />
+  Archivo: <code>Backend/services/notifications-service/src/main/java/com/reservas/sk/notifications_service/application/service/EventBroadcastApplicationService.java</code> (lineas 12-13, 20, 23).</li>
+</ul>
+<h4 id="patrones-de-diseno-implementados_5">Patrones de Diseno Implementados</h4>
+<h5 id="observer-pub-sub"><strong>Observer / Pub-Sub</strong></h5>
+<ul>
+<li>Listener Rabbit -&gt; broadcast STOMP.</li>
+</ul>
+<h5 id="adapter-pattern_1"><strong>Adapter Pattern</strong></h5>
+<ul>
+<li>Adaptadores desacoplan AMQP y WebSocket.</li>
+</ul>
+<hr />
+<h2 id="ii-frontend-analisis-arquitectonico">II. FRONTEND - ANALISIS ARQUITECTONICO</h2>
+<h3 id="descripcion-general_6">Descripcion General</h3>
+<p>El frontend administra toda la feature en <code>/admin-reservations</code>: control de acceso por rol, filtros, tabla, paginacion, detalle y creacion manual.</p>
+<h3 id="estructura-arquitectonica">Estructura Arquitectonica</h3>
+<ul>
+<li><code>Frontend/src/routes/AppRouter.jsx</code></li>
+<li><code>Frontend/src/ui/components/common/AdminRoute.jsx</code></li>
+<li><code>Frontend/src/ui/pages/admin-reservations/AdminReservationsPage.jsx</code></li>
+<li><code>Frontend/src/ui/components/admin-reservations/AdminCreateReservationPanel.jsx</code></li>
+<li><code>Frontend/src/core/adapters/hooks/useAdminReservationFilters.ts</code></li>
+<li><code>Frontend/src/core/adapters/hooks/useAdminCreateReservationForm.ts</code></li>
+<li><code>Frontend/src/features/reservations/services/adminReservationsService.js</code></li>
+</ul>
+<h3 id="principios-solid-en-frontend">Principios SOLID en Frontend</h3>
+<h4 id="s-srp_6"><strong>S - SRP</strong></h4>
+<ul>
+<li><code>AdminRoute.jsx</code> solo resuelve acceso admin.<br />
+  Evidencia: lineas 5, 10, 18-19, 23, 25-26.</li>
+<li><code>useAdminReservationFilters.ts</code> solo gestiona filtro/aplicar/limpiar.<br />
+  Evidencia: lineas 23, 33-34, 42-43, 52-55.</li>
+<li><code>useAdminCreateReservationForm.ts</code> solo valida formulario y habilita submit.<br />
+  Evidencia: lineas 25, 29, 110-142, 149-165.</li>
+<li><code>adminReservationsService.js</code> solo centraliza integracion HTTP de la HU.<br />
+  Evidencia: lineas 68, 123, 206, 224, 243, 256, 270, 287.</li>
+</ul>
+<h4 id="o-ocp_4"><strong>O - OCP</strong></h4>
+<ul>
+<li><code>AdminReservationsPage.jsx</code> puede extender filtros/campos por hooks y servicios sin reescribir toda la pantalla.<br />
+  Evidencia: lineas 24, 37, 302-305, 312, 404, 477-480.</li>
+</ul>
+<h4 id="l-lsp_1"><strong>L - LSP</strong></h4>
+<ul>
+<li><code>AdminCreateReservationPanel.jsx</code> soporta <code>mode='create'</code> y <code>mode='detail'</code> con el mismo contrato de componente.<br />
+  Evidencia: lineas 48, 103, 122, 311.</li>
+</ul>
+<h4 id="i-isp_3"><strong>I - ISP</strong></h4>
+<ul>
+<li>Hooks admin exponen API enfocada y separada:</li>
+<li>filtros: <code>applyFilters</code>, <code>clearFilters</code> (lineas 19-20, 42, 52).</li>
+<li>formulario: <code>validateForm</code>, <code>canSubmit</code> (lineas 110, 149, 179, 185).</li>
+</ul>
+<h4 id="d-dip_6"><strong>D - DIP</strong></h4>
+<ul>
+<li><code>AdminReservationsPage</code> usa servicio admin, no llamadas HTTP directas en cada componente.<br />
+  Evidencia: lineas 13-17, 312, 404, 477, 480.</li>
+</ul>
+<h3 id="patrones-de-diseno-en-frontend">Patrones de Diseno en Frontend</h3>
+<h4 id="service-layer-pattern"><strong>Service Layer Pattern</strong></h4>
+<ul>
+<li><code>adminReservationsService.js</code> abstrae endpoints y parsing.</li>
+</ul>
+<h4 id="facade-pattern-ui"><strong>Facade Pattern (UI)</strong></h4>
+<ul>
+<li><code>AdminReservationsPage.jsx</code> orquesta tabla, filtros, modal y toasts.</li>
+</ul>
+<h4 id="adaptermapper-pattern"><strong>Adapter/Mapper Pattern</strong></h4>
+<ul>
+<li>El servicio normaliza payload del backend para tabla/detalle.</li>
+</ul>
+<h4 id="observer-pattern-ligero"><strong>Observer Pattern (ligero)</strong></h4>
+<ul>
+<li>Toast temporal y recarga reactiva luego de crear/filtrar.
+  Evidencia: lineas 292, 327, 478-480, 493.</li>
+</ul>
+<h3 id="integracion-frontend-backend">Integracion Frontend-Backend</h3>
+<ul>
+<li>Query HU-01: <code>GET /bookings/admin/reservations</code> + detalle.</li>
+<li>Catalogos HU-02: usuarios no admin, ciudades, espacios por ciudad, equipos por ciudad.</li>
+<li>Command HU-02: <code>POST /bookings/reservations</code> con validaciones y feedback.</li>
+</ul>
+<hr />
+<h2 id="iii-patrones-transversales">III. PATRONES TRANSVERSALES</h2>
+<h3 id="1-cqrs-parcial">1. CQRS (Parcial)</h3>
+<ul>
+<li>Lectura: <code>AdminListReservationsQuery</code> (HU-01).</li>
+<li>Escritura: <code>CreateReservationCommand</code> (HU-02).</li>
+</ul>
+<h3 id="2-event-driven-architecture">2. Event-Driven Architecture</h3>
+<ul>
+<li>Flujo de eventos por Rabbit + difusion via STOMP.</li>
+</ul>
+<h3 id="3-strangler-pattern-api-gateway">3. Strangler Pattern (API Gateway)</h3>
+<ul>
+<li>Entrada unica para crecimiento del modulo admin sin romper rutas existentes.</li>
+</ul>
+<h3 id="4-circuit-breaker-pattern-implicito">4. Circuit Breaker Pattern (Implicito)</h3>
+<ul>
+<li>No esta implementado como modulo explicito en HU-01/HU-02, pero la separacion por puertos lo habilita.</li>
+</ul>
+<h3 id="5-mapper-pattern-bidireccional">5. Mapper Pattern (Bidireccional)</h3>
+<ul>
+<li>Backend: dominio -&gt; DTO admin.</li>
+<li>Frontend: payload API -&gt; view model.</li>
+</ul>
+<hr />
+<h2 id="iv-verificacion-de-estados-de-reserva">IV. VERIFICACION DE ESTADOS DE RESERVA</h2>
+<h3 id="estados-identificados-en-backend">Estados Identificados en Backend</h3>
+<p>Fuente de verdad: <code>ReservationStatusCatalog.java</code> (lineas 8-9, 24, 44).</p>
+<ul>
+<li>Pendiente</li>
+<li>Confirmada</li>
+<li>Cancelada</li>
+<li>Finalizada</li>
+</ul>
+<h3 id="estados-en-frontend">Estados en Frontend</h3>
+<p>Consumo en:
+- filtro de estado;
+- tabla y detalle;
+- recarga tras creacion.</p>
+<hr />
+<h2 id="v-conclusiones-y-recomendaciones">V. CONCLUSIONES Y RECOMENDACIONES</h2>
+<h3 id="fortalezas-arquitectonicas">Fortalezas Arquitectonicas</h3>
+<ol>
+<li>La feature mantiene separacion por capas y por servicio.</li>
+<li>HU-01/HU-02 son trazables a codigo con evidencias de linea.</li>
+<li>La salida administrativa prioriza datos de negocio legibles.</li>
+<li>El flujo de creacion queda protegido por validacion de campos y de solapamiento.</li>
+</ol>
+<h3 id="areas-de-mejora">Areas de Mejora</h3>
+<ol>
+<li>Consolidar contrato compartido de estados entre backend/frontend.</li>
+<li>Agregar metricas operativas del modulo admin.</li>
+<li>Reusar el mismo estandar tecnico para HU futuras del modulo.</li>
+</ol>
+<hr />
+<h2 id="vi-matriz-de-referencia-principios-solid-y-patrones">VI. MATRIZ DE REFERENCIA: PRINCIPIOS SOLID Y PATRONES</h2>
+<table>
+<thead>
+<tr>
+<th>Principio/Patron</th>
+<th>Auth-Service</th>
+<th>Bookings-Service</th>
+<th>Inventory-Service</th>
+<th>Locations-Service</th>
+<th>Api-Gateway</th>
+<th>Notifications-Service</th>
+<th>Frontend Admin</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S - SRP</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>O - OCP</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>-</td>
+<td>-</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>L - LSP</td>
+<td>✓</td>
+<td>✓</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>I - ISP</td>
+<td>✓</td>
+<td>✓</td>
+<td>-</td>
+<td>✓</td>
+<td>-</td>
+<td>-</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>D - DIP</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Hexagonal Architecture</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>Parcial</td>
+<td>✓</td>
+<td>Adaptada</td>
+</tr>
+<tr>
+<td>Adapter Pattern</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Strategy Pattern</td>
+<td>✓</td>
+<td>✓</td>
+<td>Parcial</td>
+<td>Parcial</td>
+<td>-</td>
+<td>-</td>
+<td>Parcial</td>
+</tr>
+<tr>
+<td>Repository Pattern</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td>CQRS (Parcial)</td>
+<td>-</td>
+<td>✓</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Event-Driven</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>-</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Mapper Pattern</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>-</td>
+<td>-</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Dependency Injection</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><strong>Fin del analisis tecnico de la feature administrativa</strong><br />
+<em>Documento generado: 2026-04-09</em><br />
+<em>Cobertura: HU-01 y HU-02 del modulo administrador</em></p>
+</body>
+</html>

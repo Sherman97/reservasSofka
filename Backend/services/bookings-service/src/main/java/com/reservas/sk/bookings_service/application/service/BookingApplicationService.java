@@ -6,6 +6,7 @@ import com.reservas.sk.bookings_service.application.port.out.ReservationEventPub
 import com.reservas.sk.bookings_service.application.usecase.CheckSpaceAvailabilityQuery;
 import com.reservas.sk.bookings_service.application.usecase.CreateReservationCommand;
 import com.reservas.sk.bookings_service.application.usecase.HandoverReservationCommand;
+import com.reservas.sk.bookings_service.application.usecase.AdminListReservationsQuery;
 import com.reservas.sk.bookings_service.application.usecase.ListReservationsQuery;
 import com.reservas.sk.bookings_service.application.usecase.UpdateReservationCommand;
 import com.reservas.sk.bookings_service.application.usecase.ReservationCancelledEvent;
@@ -14,6 +15,7 @@ import com.reservas.sk.bookings_service.application.usecase.ReservationDelivered
 import com.reservas.sk.bookings_service.application.usecase.ReservationReturnedEvent;
 import com.reservas.sk.bookings_service.domain.model.Reservation;
 import com.reservas.sk.bookings_service.domain.model.ReservationEquipment;
+import com.reservas.sk.bookings_service.domain.model.ReservationStatusCatalog;
 import com.reservas.sk.bookings_service.domain.model.SpaceAvailability;
 import com.reservas.sk.bookings_service.domain.service.DateTimeService;
 import com.reservas.sk.bookings_service.exception.ApiException;
@@ -25,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -39,11 +42,21 @@ import java.util.Set;
         justification = "Ports are injected dependencies managed by Spring."
 )
 public class BookingApplicationService implements BookingUseCase {
-    private static final String STATUS_PENDING = "pending";
-    private static final String STATUS_CONFIRMED = "confirmed";
-    private static final String STATUS_IN_PROGRESS = "in_progress";
-    private static final String STATUS_COMPLETED = "completed";
-    private static final String STATUS_CANCELLED = "cancelled";
+    private static final String STATUS_PENDING = ReservationStatusCatalog.STATUS_PENDING;
+    private static final String STATUS_CONFIRMED = ReservationStatusCatalog.STATUS_CONFIRMED;
+    private static final String STATUS_IN_PROGRESS = ReservationStatusCatalog.STATUS_IN_PROGRESS;
+    private static final String STATUS_COMPLETED = ReservationStatusCatalog.STATUS_COMPLETED;
+    private static final String STATUS_CANCELLED = ReservationStatusCatalog.STATUS_CANCELLED;
+    private static final int DEFAULT_ADMIN_PAGE = 0;
+    private static final int DEFAULT_ADMIN_SIZE = 20;
+    private static final String ADMIN_STATUS_ERROR_MESSAGE =
+            "estado invalido. Use: Pendiente, Confirmada, Cancelada, Finalizada";
+    private static final String SPACE_OVERLAP_FUNCTIONAL_MESSAGE =
+            "El espacio seleccionado ya se encuentra reservado en este horario";
+    private static final String SPACE_OVERLAP_ERROR_CODE = "SPACE_ALREADY_RESERVED";
+    private static final String QUARTER_HOUR_INTERVAL_MESSAGE =
+            "startAt y endAt deben usar intervalos de 15 minutos";
+    private static final int QUARTER_HOUR_MINUTES = 15;
     private static final List<String> RESERVATION_ACTIVE_STATUSES =
             List.of(STATUS_PENDING, STATUS_CONFIRMED, STATUS_IN_PROGRESS);
     private static final Logger log = LoggerFactory.getLogger(BookingApplicationService.class);
@@ -81,9 +94,9 @@ public class BookingApplicationService implements BookingUseCase {
         Long cityId = persistencePort.findSpaceCityId(spaceId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Espacio no encontrado"));
 
-        Instant startAt = DateTimeService.parse(command.startAt(), "startAt");
-        Instant endAt = DateTimeService.parse(command.endAt(), "endAt");
-        validateRange(startAt, endAt);
+        ReservationRange reservationRange = parseAndValidateReservationRange(command.startAt(), command.endAt());
+        Instant startAt = reservationRange.startAt();
+        Instant endAt = reservationRange.endAt();
 
         // Human Check 🛡️: lock por espacio para evitar doble reserva simultanea.
         boolean lockAcquired = persistencePort.acquireSpaceReservationLock(spaceId, 5);
@@ -94,36 +107,9 @@ public class BookingApplicationService implements BookingUseCase {
         }
 
         try {
-            int overlaps = persistencePort.countOverlappingReservations(spaceId, startAt, endAt);
-            if (overlaps > 0) {
-                throw new ApiException(HttpStatus.CONFLICT,
-                        "El espacio ya esta reservado para ese rango de tiempo",
-                        "SPACE_ALREADY_RESERVED");
-            }
+            assertNoSpaceOverlap(spaceId, startAt, endAt);
 
-            List<Long> equipmentIds = normalizeEquipmentIds(command.equipmentIds());
-            if (!equipmentIds.isEmpty()) {
-                List<Long> existing = persistencePort.findExistingEquipmentIds(equipmentIds);
-                if (existing.size() != equipmentIds.size()) {
-                    Set<Long> existingSet = new HashSet<>(existing);
-                    List<Long> missing = equipmentIds.stream()
-                            .filter(id -> !existingSet.contains(id))
-                            .toList();
-                    throw new ApiException(HttpStatus.BAD_REQUEST, "Equipos no encontrados: " + missing, "EQUIPMENT_NOT_FOUND");
-                }
-
-                List<Long> unavailable = persistencePort.findUnavailableEquipmentIds(equipmentIds);
-                if (!unavailable.isEmpty()) {
-                    throw new ApiException(HttpStatus.CONFLICT, "Equipos no disponibles: " + unavailable, "EQUIPMENT_UNAVAILABLE");
-                }
-
-                List<Long> outsideCity = persistencePort.findEquipmentIdsOutsideCity(equipmentIds, cityId);
-                if (!outsideCity.isEmpty()) {
-                    throw new ApiException(HttpStatus.BAD_REQUEST,
-                            "Equipos no pertenecen a la ciudad del espacio: " + outsideCity,
-                            "EQUIPMENT_OUTSIDE_CITY");
-                }
-            }
+            List<Long> equipmentIds = resolveAndValidateEquipmentIds(command.equipmentIds(), cityId);
 
             long reservationId = persistencePort.insertReservation(
                     userId,
@@ -236,6 +222,16 @@ public class BookingApplicationService implements BookingUseCase {
             result.add(withEquipments(reservation, equipmentMap.getOrDefault(reservation.getId(), List.of())));
         }
         return result;
+    }
+
+    @Override
+    public List<Reservation> listAdminReservations(AdminListReservationsQuery query) {
+        return persistencePort.listAdminReservations(normalizeAdminQuery(query));
+    }
+
+    @Override
+    public long countAdminReservations(AdminListReservationsQuery query) {
+        return persistencePort.countAdminReservations(normalizeAdminQuery(query));
     }
 
     @Override
@@ -397,7 +393,12 @@ public class BookingApplicationService implements BookingUseCase {
                 reservation.getNotes(),
                 reservation.getCancellationReason(),
                 reservation.getCreatedAt(),
-                equipments
+                equipments,
+                reservation.getUserName(),
+                reservation.getUserEmail(),
+                reservation.getSpaceName(),
+                reservation.getSiteId(),
+                reservation.getSiteName()
         );
     }
 
@@ -412,6 +413,63 @@ public class BookingApplicationService implements BookingUseCase {
         if (!startAt.isBefore(endAt)) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "startAt debe ser menor que endAt");
         }
+    }
+
+    private void validateQuarterHourInterval(Instant startAt, Instant endAt) {
+        if (!isQuarterHourBoundary(startAt) || !isQuarterHourBoundary(endAt)) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, QUARTER_HOUR_INTERVAL_MESSAGE);
+        }
+    }
+
+    private boolean isQuarterHourBoundary(Instant value) {
+        var dateTime = value.atOffset(ZoneOffset.UTC);
+        return dateTime.getMinute() % QUARTER_HOUR_MINUTES == 0
+                && dateTime.getSecond() == 0
+                && dateTime.getNano() == 0;
+    }
+
+    private ReservationRange parseAndValidateReservationRange(String startAtRaw, String endAtRaw) {
+        Instant startAt = DateTimeService.parse(startAtRaw, "startAt");
+        Instant endAt = DateTimeService.parse(endAtRaw, "endAt");
+        validateRange(startAt, endAt);
+        validateQuarterHourInterval(startAt, endAt);
+        return new ReservationRange(startAt, endAt);
+    }
+
+    private void assertNoSpaceOverlap(long spaceId, Instant startAt, Instant endAt) {
+        int overlaps = persistencePort.countOverlappingReservations(spaceId, startAt, endAt);
+        if (overlaps > 0) {
+            throw new ApiException(HttpStatus.CONFLICT, SPACE_OVERLAP_FUNCTIONAL_MESSAGE, SPACE_OVERLAP_ERROR_CODE);
+        }
+    }
+
+    private List<Long> resolveAndValidateEquipmentIds(List<Long> equipmentIds, Long cityId) {
+        List<Long> normalizedEquipmentIds = normalizeEquipmentIds(equipmentIds);
+        if (normalizedEquipmentIds.isEmpty()) {
+            return normalizedEquipmentIds;
+        }
+
+        List<Long> existing = persistencePort.findExistingEquipmentIds(normalizedEquipmentIds);
+        if (existing.size() != normalizedEquipmentIds.size()) {
+            Set<Long> existingSet = new HashSet<>(existing);
+            List<Long> missing = normalizedEquipmentIds.stream()
+                    .filter(id -> !existingSet.contains(id))
+                    .toList();
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Equipos no encontrados: " + missing, "EQUIPMENT_NOT_FOUND");
+        }
+
+        List<Long> unavailable = persistencePort.findUnavailableEquipmentIds(normalizedEquipmentIds);
+        if (!unavailable.isEmpty()) {
+            throw new ApiException(HttpStatus.CONFLICT, "Equipos no disponibles: " + unavailable, "EQUIPMENT_UNAVAILABLE");
+        }
+
+        List<Long> outsideCity = persistencePort.findEquipmentIdsOutsideCity(normalizedEquipmentIds, cityId);
+        if (!outsideCity.isEmpty()) {
+            throw new ApiException(HttpStatus.BAD_REQUEST,
+                    "Equipos no pertenecen a la ciudad del espacio: " + outsideCity,
+                    "EQUIPMENT_OUTSIDE_CITY");
+        }
+        return normalizedEquipmentIds;
     }
 
     private List<Long> normalizeEquipmentIds(List<Long> equipmentIds) {
@@ -439,17 +497,63 @@ public class BookingApplicationService implements BookingUseCase {
     }
 
     private String normalizeStatus(String status) {
-        if (status == null || status.isBlank()) {
+        String normalized = ReservationStatusCatalog.normalizeStatusOrNull(status);
+        if (normalized == null) {
             return null;
         }
-        String normalized = status.trim().toLowerCase(Locale.ROOT);
-        if (!RESERVATION_ACTIVE_STATUSES.contains(normalized) &&
-                !STATUS_COMPLETED.equals(normalized) &&
-                !STATUS_CANCELLED.equals(normalized)) {
+        if (!ReservationStatusCatalog.isAllowedSystemFilterStatus(normalized)) {
             throw new ApiException(HttpStatus.BAD_REQUEST,
                     "status invalido. Use: pending, confirmed, in_progress, completed, cancelled");
         }
         return normalized;
+    }
+
+    private String normalizeAdminStatus(String status) {
+        String normalized = ReservationStatusCatalog.normalizeStatusOrNull(status);
+        if (normalized == null) {
+            return null;
+        }
+        return ReservationStatusCatalog.mapAdminToSystem(normalized)
+                .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ADMIN_STATUS_ERROR_MESSAGE));
+    }
+
+    private Instant parseOptionalInstant(String value, String fieldName) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return DateTimeService.parse(value, fieldName);
+    }
+
+    private void validateAdminPaging(Integer page, Integer size) {
+        if (page < 0) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "page es invalido");
+        }
+        if (size <= 0) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "size es invalido");
+        }
+    }
+
+    private AdminListReservationsQuery normalizeAdminQuery(AdminListReservationsQuery query) {
+        Instant fromExecutionDate = parseOptionalInstant(query.fromExecutionDate(), "desde");
+        Instant toExecutionDate = parseOptionalInstant(query.toExecutionDate(), "hasta");
+        if (fromExecutionDate != null && toExecutionDate != null && fromExecutionDate.isAfter(toExecutionDate)) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "desde debe ser menor o igual que hasta");
+        }
+
+        String normalizedStatus = normalizeAdminStatus(query.status());
+        Integer page = query.page() == null ? DEFAULT_ADMIN_PAGE : query.page();
+        Integer size = query.size() == null ? DEFAULT_ADMIN_SIZE : query.size();
+        validateAdminPaging(page, size);
+
+        return new AdminListReservationsQuery(
+                fromExecutionDate == null ? null : fromExecutionDate.toString(),
+                toExecutionDate == null ? null : toExecutionDate.toString(),
+                normalizedStatus,
+                query.userId(),
+                query.siteId(),
+                page,
+                size
+        );
     }
 
     private void assertHandoverAllowed(Reservation reservation, List<String> validStatuses, String message) {
@@ -459,6 +563,9 @@ public class BookingApplicationService implements BookingUseCase {
         if (!validStatuses.contains(normalizedStatus)) {
             throw new ApiException(HttpStatus.CONFLICT, message, "INVALID_RESERVATION_STATUS");
         }
+    }
+
+    private record ReservationRange(Instant startAt, Instant endAt) {
     }
 }
 
