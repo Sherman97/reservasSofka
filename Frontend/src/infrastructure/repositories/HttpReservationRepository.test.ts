@@ -345,7 +345,7 @@ describe('HttpReservationRepository', () => {
             await expect(repo.checkIn('r1', 'expired-qr'))
                 .rejects.toThrow(QrExpiredError);
             await expect(repo.checkIn('r1', 'expired-qr'))
-                .rejects.toThrow('El período de check-in ha expirado');
+                .rejects.toThrow('El período de check-in ha expirado o no ha comenzado');
         });
 
         it('debe lanzar QrExpiredError cuando QR expiró (mensaje)', async () => {
@@ -419,7 +419,7 @@ describe('HttpReservationRepository', () => {
             await expect(repo.checkIn('r1', 'valid-qr'))
                 .rejects.toThrow(InvalidReservationStateError);
             await expect(repo.checkIn('r1', 'valid-qr'))
-                .rejects.toThrow('La reserva no está en estado válido para check-in');
+                .rejects.toThrow('La reserva no está en un estado válido para realizar el check-in (ya podría estar cancelada o completada)');
         });
 
         it('debe lanzar InvalidReservationStateError cuando estado no es válido (mensaje)', async () => {

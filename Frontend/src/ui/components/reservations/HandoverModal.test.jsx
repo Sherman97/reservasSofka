@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { HandoverModal } from './HandoverModal';
 
 vi.mock('../../styles/reservations/Reservations.css', () => ({}));
@@ -141,7 +141,9 @@ describe('HandoverModal', () => {
             expect(screen.getByText('Procesando...')).toBeDefined();
         });
 
-        resolveConfirm();
+        await act(async () => {
+            resolveConfirm();
+        });
     });
 
     it('debe aplicar clase btn-deliver para acción deliver', () => {
