@@ -73,13 +73,13 @@ describe('ReservationCard', () => {
     });
 
     it('debe usar icono de sala para nombres con "sala"', () => {
-        const { container } = render(<ReservationCard reservation={createReservation()} onCancel={mockOnCancel} />);
+        render(<ReservationCard reservation={createReservation()} onCancel={mockOnCancel} />);
         expect(screen.getByTitle('Icono de reserva')).toBeDefined();
     });
 
     it('debe usar icono por defecto para nombres genéricos', () => {
         const res = createReservation({ locationName: 'Espacio Coworking' });
-        const { container } = render(<ReservationCard reservation={res} onCancel={mockOnCancel} />);
+        render(<ReservationCard reservation={res} onCancel={mockOnCancel} />);
         expect(screen.getByTitle('Icono de reserva')).toBeDefined();
     });
 
@@ -218,13 +218,13 @@ describe('ReservationCard', () => {
 
     it('debe usar icono laptop para nombres con "laptop"', () => {
         const res = createReservation({ locationName: 'Laptop Dell XPS' });
-        const { container } = render(<ReservationCard reservation={res} onCancel={mockOnCancel} />);
+        render(<ReservationCard reservation={res} onCancel={mockOnCancel} />);
         expect(screen.getByTitle('Icono de reserva')).toBeDefined();
     });
 
     it('debe usar icono cámara para nombres con "kit"', () => {
         const res = createReservation({ locationName: 'Kit de Video' });
-        const { container } = render(<ReservationCard reservation={res} onCancel={mockOnCancel} />);
+        render(<ReservationCard reservation={res} onCancel={mockOnCancel} />);
         expect(screen.getByTitle('Icono de reserva')).toBeDefined();
     });
 

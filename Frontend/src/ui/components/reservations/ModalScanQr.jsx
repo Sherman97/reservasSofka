@@ -46,7 +46,7 @@ export const ModalScanQr = ({ isOpen, onClose, reservation, onSuccess }) => {
             setProcessing(false);
             isProcessingRef.current = false;
         }
-    }, [checkIn, reservation?.id, onSuccess]);
+    }, [checkIn, reservation, onSuccess]);
 
     // Cleanup and Init Scanner
     useEffect(() => {
