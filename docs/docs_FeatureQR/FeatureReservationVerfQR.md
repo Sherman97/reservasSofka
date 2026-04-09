@@ -32,14 +32,14 @@ En las salas de reuniones y reservas de equipos, un problema muy común son las 
 #### Diagrama de Flujo
 
 <p align="center">
-  <img src="./images/DiagramaFlujoHU-QR.png" alt="DiagramaFlujo" width="400">
+  <img src="../images/DiagramaFlujoHU-QR.png" alt="DiagramaFlujo" width="400">
 </p>
 
 #### Diagrama de clases
 
 
 <p align="center">
-  <img src="./images/DiagramaClasesHU-QR.png" alt="DiagramaClases" width="400">
+  <img src="../images/DiagramaClasesHU-QR.png" alt="DiagramaClases" width="400">
 </p>
 
 ### 1.3 Objetivo y Métricas de Éxito
@@ -127,9 +127,9 @@ Número de reservas en estado NO_SHOW vs reservas reasignadas el mismo día.
 
 ## 6. Mockups
 
-![Mockup 1](./images/mockup_1.png)
+![Mockup 1](../images/mockup_1.png)
 
-![Mockup 2](./images/mockup_2.png)
+![Mockup 2](../images/mockup_2.png)
 
 ---
 

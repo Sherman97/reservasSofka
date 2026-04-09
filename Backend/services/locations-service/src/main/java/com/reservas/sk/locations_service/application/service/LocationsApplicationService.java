@@ -205,6 +205,36 @@ public class LocationsApplicationService implements LocationsUseCase {
         return getSpaceById(id);
     }
 
+    @Override
+    public int regenerateAllSpaceQrCodes() {
+        log.info("Starting QR code regeneration for all spaces");
+        List<Space> allSpaces = persistencePort.listSpaces(null, null);
+        int successCount = 0;
+        int failureCount = 0;
+
+        for (Space space : allSpaces) {
+            try {
+                // Generate QR code
+                String qrToken = qrTokenGeneratorPort.generateQrToken(space.getId());
+                byte[] qrImageData = qrCodeImageGeneratorPort.generateQrCodeImage(qrToken);
+                String qrETag = calculateSha256Hash(qrImageData);
+                
+                // Update space with QR data
+                persistencePort.updateSpaceQrData(space.getId(), qrImageData, qrToken, qrETag);
+                successCount++;
+                log.info("QR code regenerated successfully for space {} ({})", space.getId(), space.getName());
+            } catch (Exception e) {
+                failureCount++;
+                log.error("Failed to regenerate QR code for space {} ({}): {}", 
+                         space.getId(), space.getName(), e.getMessage(), e);
+            }
+        }
+
+        log.info("QR code regeneration completed: {} successful, {} failed out of {} total spaces", 
+                successCount, failureCount, allSpaces.size());
+        return successCount;
+    }
+
     private long requirePositive(Long value, String message) {
         if (value == null || value <= 0) {
             throw new ApiException(HttpStatus.BAD_REQUEST, message, "INVALID_ARGUMENT");

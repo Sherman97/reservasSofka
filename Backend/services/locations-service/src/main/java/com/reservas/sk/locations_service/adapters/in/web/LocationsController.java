@@ -176,6 +176,15 @@ public class LocationsController {
         useCase.deleteSpace(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/spaces/regenerate-qr")
+    public ApiResponse<java.util.Map<String, Object>> regenerateAllSpaceQrCodes() {
+        int generatedCount = useCase.regenerateAllSpaceQrCodes();
+        return ApiResponse.success(java.util.Map.of(
+                "message", "QR code regeneration completed",
+                "generatedCount", generatedCount
+        ));
+    }
 }
 
 
