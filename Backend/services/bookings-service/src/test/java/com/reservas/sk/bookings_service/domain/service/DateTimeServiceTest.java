@@ -35,6 +35,13 @@ class DateTimeServiceTest {
     }
 
     @Test
+    void parse_rejectsBlankValue() {
+        ApiException ex = assertThrows(ApiException.class, () -> DateTimeService.parse("   ", FIELD_START_AT));
+
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus(), ASSERT_MSG);
+    }
+
+    @Test
     void parse_rejectsInvalidValue() {
         ApiException ex = assertThrows(
                 ApiException.class,

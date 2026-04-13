@@ -1,8 +1,10 @@
 package com.reservas.sk.bookings_service.adapters.out.persistence;
 
 import com.reservas.sk.bookings_service.application.port.out.BookingPersistencePort;
+import com.reservas.sk.bookings_service.application.usecase.AdminListReservationsQuery;
 import com.reservas.sk.bookings_service.domain.model.Reservation;
 import com.reservas.sk.bookings_service.domain.model.ReservationEquipment;
+import com.reservas.sk.bookings_service.domain.model.ReservationStatusCatalog;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -251,17 +253,109 @@ public class JdbcBookingPersistenceAdapter implements BookingPersistencePort {
     }
 
     @Override
+    public List<Reservation> listAdminReservations(AdminListReservationsQuery query) {
+        StringBuilder sql = new StringBuilder(RESERVATION_QUERY_CAPACITY * 2);
+        sql.append(
+                """
+                SELECT r.id, r.user_id, r.space_id, r.start_datetime, r.end_datetime, r.status,
+                       r.title, r.attendees_count, r.notes, r.cancellation_reason, r.created_at,
+                       r.qr_token, r.checked_in_at,
+                       u.username AS user_name, u.email AS user_email,
+                       s.name AS space_name, c.id AS site_id, c.name AS site_name
+                FROM reservations r
+                JOIN users u ON u.id = r.user_id
+                JOIN spaces s ON s.id = r.space_id
+                JOIN cities c ON c.id = s.city_id
+                """
+        );
+
+        List<Object> params = new ArrayList<>();
+        appendAdminReservationFilters(query, sql, params);
+
+        int size = query.size() == null ? 20 : query.size();
+        int page = query.page() == null ? 0 : query.page();
+        int offset = page * size;
+        sql.append(" ORDER BY r.start_datetime DESC, r.id DESC LIMIT ? OFFSET ?");
+        params.add(size);
+        params.add(offset);
+
+        return jdbcTemplate.query(sql.toString(), (rs, rowNum) -> toReservationWithContext(rs), params.toArray());
+    }
+
+    @Override
+    public long countAdminReservations(AdminListReservationsQuery query) {
+        StringBuilder sql = new StringBuilder(RESERVATION_QUERY_CAPACITY);
+        sql.append(
+                """
+                SELECT COUNT(*)
+                FROM reservations r
+                JOIN spaces s ON s.id = r.space_id
+                """
+        );
+
+        List<Object> params = new ArrayList<>();
+        appendAdminReservationFilters(query, sql, params);
+
+        Long total = jdbcTemplate.queryForObject(sql.toString(), Long.class, params.toArray());
+        return total == null ? 0L : total;
+    }
+
+    private String normalizeAdminStatusForPersistence(String status) {
+        String normalized = ReservationStatusCatalog.normalizeStatusOrNull(status);
+        if (normalized == null) {
+            return null;
+        }
+        return ReservationStatusCatalog.mapAdminToSystem(normalized).orElse(normalized);
+    }
+
+    private void appendAdminReservationFilters(AdminListReservationsQuery query,
+                                               StringBuilder sql,
+                                               List<Object> params) {
+        List<String> where = new ArrayList<>();
+
+        if (query.fromExecutionDate() != null && !query.fromExecutionDate().isBlank()) {
+            where.add("r.start_datetime >= ?");
+            params.add(Timestamp.from(Instant.parse(query.fromExecutionDate())));
+        }
+        if (query.toExecutionDate() != null && !query.toExecutionDate().isBlank()) {
+            where.add("r.start_datetime <= ?");
+            params.add(Timestamp.from(Instant.parse(query.toExecutionDate())));
+        }
+        if (query.status() != null && !query.status().isBlank()) {
+            where.add("r.status = ?");
+            params.add(normalizeAdminStatusForPersistence(query.status()));
+        }
+        if (query.userId() != null) {
+            where.add("r.user_id = ?");
+            params.add(query.userId());
+        }
+        if (query.siteId() != null) {
+            where.add("s.city_id = ?");
+            params.add(query.siteId());
+        }
+
+        if (!where.isEmpty()) {
+            sql.append(" WHERE ").append(String.join(" AND ", where));
+        }
+    }
+
+    @Override
     public Optional<Reservation> findReservationById(long reservationId) {
         List<Reservation> rows = jdbcTemplate.query(
                 """
-                SELECT id, user_id, space_id, start_datetime, end_datetime, status,
-                       title, attendees_count, notes, cancellation_reason, created_at,
-                       qr_token, checked_in_at
-                FROM reservations
-                WHERE id = ?
+                SELECT r.id, r.user_id, r.space_id, r.start_datetime, r.end_datetime, r.status,
+                       r.title, r.attendees_count, r.notes, r.cancellation_reason, r.created_at,
+                       r.qr_token, r.checked_in_at,
+                       u.username AS user_name, u.email AS user_email,
+                       s.name AS space_name, c.id AS site_id, c.name AS site_name
+                FROM reservations r
+                JOIN users u ON u.id = r.user_id
+                JOIN spaces s ON s.id = r.space_id
+                JOIN cities c ON c.id = s.city_id
+                WHERE r.id = ?
                 LIMIT 1
                 """,
-                (rs, rowNum) -> toReservation(rs),
+                (rs, rowNum) -> toReservationWithContext(rs),
                 reservationId
         );
 
@@ -491,6 +585,30 @@ public class JdbcBookingPersistenceAdapter implements BookingPersistencePort {
                 List.of(),
                 rs.getString("qr_token"),
                 toInstant(rs.getTimestamp("checked_in_at"))
+        );
+    }
+
+    private Reservation toReservationWithContext(java.sql.ResultSet rs) throws java.sql.SQLException {
+        return new Reservation(
+                rs.getLong("id"),
+                rs.getLong("user_id"),
+                rs.getLong("space_id"),
+                toInstant(rs.getTimestamp("start_datetime")),
+                toInstant(rs.getTimestamp("end_datetime")),
+                rs.getString("status"),
+                rs.getString("title"),
+                rs.getObject("attendees_count") == null ? null : rs.getInt("attendees_count"),
+                rs.getString("notes"),
+                rs.getString("cancellation_reason"),
+                toInstant(rs.getTimestamp("created_at")),
+                List.of(),
+                rs.getString("qr_token"),
+                toInstant(rs.getTimestamp("checked_in_at")),
+                rs.getString("user_name"),
+                rs.getString("user_email"),
+                rs.getString("space_name"),
+                rs.getObject("site_id") == null ? null : rs.getLong("site_id"),
+                rs.getString("site_name")
         );
     }
 

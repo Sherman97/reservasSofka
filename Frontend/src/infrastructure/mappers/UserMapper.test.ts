@@ -12,6 +12,7 @@ describe('UserMapper', () => {
             expect(user!.email).toBe('test@mail.com');
             expect(user!.name).toBe('Test User');
             expect(user!.role).toBe('admin');
+            expect(user!.roles).toContain('admin');
         });
 
         it('debe usar username si name no existe', () => {
@@ -38,6 +39,13 @@ describe('UserMapper', () => {
             expect(user!.role).toBe('user');
         });
 
+        it('debe mapear roles[] de backend y detectar admin', () => {
+            const dto = { id: 'u1', email: 'test@mail.com', name: 'Test', roles: ['USER', 'ADMIN'] };
+            const user = UserMapper.toDomain(dto);
+            expect(user!.role).toBe('admin');
+            expect(user!.roles).toEqual(['user', 'admin']);
+        });
+
         it('debe retornar null si dto es null', () => {
             const result = UserMapper.toDomain(null as any);
             expect(result).toBeNull();
@@ -48,7 +56,7 @@ describe('UserMapper', () => {
         it('debe mapear dominio a DTO', () => {
             const user = new User({ id: 'u1', email: 'a@b.com', name: 'Test', role: 'user' });
             const dto = UserMapper.toDTO(user);
-            expect(dto).toEqual({ id: 'u1', email: 'a@b.com', name: 'Test', role: 'user' });
+            expect(dto).toEqual({ id: 'u1', email: 'a@b.com', name: 'Test', role: 'user', roles: ['user'] });
         });
 
         it('debe retornar null si user es null', () => {

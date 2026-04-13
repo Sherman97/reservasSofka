@@ -45,11 +45,29 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
   - changeSet:
+      id: 005-add-rbac-and-admin-audit
+      author: reservas-sk
+      changes:
+        - sqlFile:
+            path: 005_add_rbac_roles_and_admin_audit.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: false
+  - changeSet:
       id: 006-reservation-checkin-logs
       author: qr-feature
       changes:
         - sqlFile:
             path: 006_reservation_checkin_logs.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: false
+  - changeSet:
+      id: 006-seed-extra-admin-user
+      author: reservas-sk
+      changes:
+        - sqlFile:
+            path: 006_seed_extra_admin_user.sql
             relativeToChangelogFile: true
             splitStatements: true
             stripComments: false

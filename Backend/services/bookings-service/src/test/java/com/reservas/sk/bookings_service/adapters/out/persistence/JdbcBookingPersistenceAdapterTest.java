@@ -38,11 +38,15 @@ class JdbcBookingPersistenceAdapterTest {
         jdbcTemplate.execute("DROP TABLE IF EXISTS reservations");
         jdbcTemplate.execute("DROP TABLE IF EXISTS equipments");
         jdbcTemplate.execute("DROP TABLE IF EXISTS spaces");
+        jdbcTemplate.execute("DROP TABLE IF EXISTS cities");
         jdbcTemplate.execute("DROP TABLE IF EXISTS users");
 
-        jdbcTemplate.execute("CREATE TABLE users (id BIGINT PRIMARY KEY)");
         jdbcTemplate.execute(
-                "CREATE TABLE spaces (id BIGINT PRIMARY KEY, city_id BIGINT NOT NULL, is_active BOOLEAN NOT NULL)"
+                "CREATE TABLE users (id BIGINT PRIMARY KEY, username VARCHAR(100), email VARCHAR(255))"
+        );
+        jdbcTemplate.execute("CREATE TABLE cities (id BIGINT PRIMARY KEY, name VARCHAR(100) NOT NULL)");
+        jdbcTemplate.execute(
+                "CREATE TABLE spaces (id BIGINT PRIMARY KEY, name VARCHAR(100), city_id BIGINT NOT NULL, is_active BOOLEAN NOT NULL)"
         );
         jdbcTemplate.execute(
                 "CREATE TABLE equipments (id BIGINT PRIMARY KEY, city_id BIGINT NOT NULL, status VARCHAR(30) NOT NULL)"
@@ -90,10 +94,12 @@ class JdbcBookingPersistenceAdapterTest {
                 )
                 """);
 
-        jdbcTemplate.update("INSERT INTO users (id) VALUES (100)");
-        jdbcTemplate.update("INSERT INTO users (id) VALUES (101)");
-        jdbcTemplate.update("INSERT INTO spaces (id, city_id, is_active) VALUES (1, 10, TRUE)");
-        jdbcTemplate.update("INSERT INTO spaces (id, city_id, is_active) VALUES (2, 20, FALSE)");
+        jdbcTemplate.update("INSERT INTO users (id, username, email) VALUES (100, 'user100', 'user100@demo.com')");
+        jdbcTemplate.update("INSERT INTO users (id, username, email) VALUES (101, 'user101', 'user101@demo.com')");
+        jdbcTemplate.update("INSERT INTO cities (id, name) VALUES (10, 'Bogota')");
+        jdbcTemplate.update("INSERT INTO cities (id, name) VALUES (20, 'Medellin')");
+        jdbcTemplate.update("INSERT INTO spaces (id, name, city_id, is_active) VALUES (1, 'Sala Norte', 10, TRUE)");
+        jdbcTemplate.update("INSERT INTO spaces (id, name, city_id, is_active) VALUES (2, 'Sala Sur', 20, FALSE)");
 
         jdbcTemplate.update("INSERT INTO equipments (id, city_id, status) VALUES (11, 10, 'available')");
         jdbcTemplate.update("INSERT INTO equipments (id, city_id, status) VALUES (12, 10, 'maintenance')");
@@ -133,6 +139,22 @@ class JdbcBookingPersistenceAdapterTest {
         );
 
         assertThat(overlaps).isEqualTo(1);
+    }
+
+    @Test
+    void countOverlappingReservations_countsPartialOverlapForInProgressAndIgnoresCompleted() {
+        insertReservation(100L, 1L, "2026-03-01T09:45:00Z", "2026-03-01T10:15:00Z", "in_progress");
+        insertReservation(101L, 1L, "2026-03-01T11:45:00Z", "2026-03-01T12:15:00Z", STATUS_CONFIRMED);
+        insertReservation(101L, 1L, "2026-03-01T10:15:00Z", "2026-03-01T11:45:00Z", "completed");
+        insertReservation(101L, 2L, "2026-03-01T10:30:00Z", "2026-03-01T11:30:00Z", STATUS_CONFIRMED);
+
+        int overlaps = adapter.countOverlappingReservations(
+                1L,
+                Instant.parse(START_AT),
+                Instant.parse(END_AT)
+        );
+
+        assertThat(overlaps).isEqualTo(2);
     }
 
     @Test

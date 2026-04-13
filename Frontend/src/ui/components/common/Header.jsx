@@ -5,7 +5,7 @@ import { useAuthDependencies } from '../../../core/adapters/hooks/useDependencie
 import logoLight from '../../../assets/LogoSofka_FondoBlanco_peq.png';
 import logoDark from '../../../assets/LogoSofka_FondoNegro_peq.png';
 import '../../styles/common/Header.css';
-import { FaMoon, FaSun, FaSignOutAlt, FaSearch, FaClipboardList } from 'react-icons/fa';
+import { FaMoon, FaSun, FaSignOutAlt, FaSearch, FaClipboardList, FaTasks } from 'react-icons/fa';
 
 export const Header = () => {
     const { theme, toggleTheme } = useTheme();
@@ -18,6 +18,7 @@ export const Header = () => {
 
     // Get user from localStorage - should eventually be handled by auth context/hook
     const user = JSON.parse(localStorage.getItem('user')) || { name: 'Usuario' };
+    const isAdmin = user?.role === 'ADMIN';
 
     const handleLogout = async () => {
         if (logoutUseCase) {
@@ -70,6 +71,11 @@ export const Header = () => {
                         <NavLink to="/my-reservations" className={({ isActive }) => isActive ? "active" : ""}>
                             Mis Reservas
                         </NavLink>
+                        {isAdmin && (
+                            <NavLink to="/admin-reservations" className={({ isActive }) => isActive ? "active" : ""}>
+                                Gestión de Reservas
+                            </NavLink>
+                        )}
                     </nav>
                 </div>
                 <div className="header-right">
@@ -125,6 +131,16 @@ export const Header = () => {
                                     <FaClipboardList className="dropdown-icon" size={18} />
                                     Mis Reservas
                                 </NavLink>
+                                {isAdmin && (
+                                    <NavLink
+                                        to="/admin-reservations"
+                                        className={({ isActive }) => `mobile-dropdown-item ${isActive ? 'active' : ''}`}
+                                        onClick={() => setMobileMenuOpen(false)}
+                                    >
+                                        <FaTasks className="dropdown-icon" size={18} />
+                                        Gestión de Reservas
+                                    </NavLink>
+                                )}
                             </div>
                         )}
                     </div>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nueva Reserva | sofka_</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-error-container": "#ffdad6",
+                        "background": "#131313",
+                        "surface-dim": "#131313",
+                        "on-error": "#690005",
+                        "on-secondary": "#4d2600",
+                        "secondary-fixed": "#ffdcc3",
+                        "surface-container-low": "#1b1c1c",
+                        "surface-bright": "#393939",
+                        "on-surface": "#e5e2e1",
+                        "tertiary-fixed-dim": "#85cfff",
+                        "outline": "#a48c7b",
+                        "on-primary-fixed": "#2f1500",
+                        "error": "#ffb4ab",
+                        "error-container": "#93000a",
+                        "primary-fixed-dim": "#ffb77d",
+                        "on-surface-variant": "#ddc1ae",
+                        "surface": "#131313",
+                        "on-secondary-container": "#e9a772",
+                        "on-tertiary-fixed-variant": "#004c6c",
+                        "on-tertiary": "#00344c",
+                        "surface-container-highest": "#353535",
+                        "on-primary-fixed-variant": "#6e3900",
+                        "on-primary-container": "#623200",
+                        "secondary": "#fcb881",
+                        "secondary-container": "#6a3b0f",
+                        "tertiary": "#85cfff",
+                        "inverse-on-surface": "#303030",
+                        "surface-tint": "#ffb77d",
+                        "inverse-surface": "#e5e2e1",
+                        "on-tertiary-fixed": "#001e2e",
+                        "tertiary-container": "#00b5fc",
+                        "inverse-primary": "#914d00",
+                        "on-background": "#e5e2e1",
+                        "tertiary-fixed": "#c7e7ff",
+                        "on-tertiary-container": "#004360",
+                        "on-secondary-fixed-variant": "#6a3b0f",
+                        "primary-container": "#ff8c03",
+                        "secondary-fixed-dim": "#fcb881",
+                        "on-secondary-fixed": "#2f1500",
+                        "surface-container": "#202020",
+                        "primary": "#ffb77d",
+                        "on-primary": "#4d2600",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-variant": "#353535",
+                        "surface-container-high": "#2a2a2a",
+                        "primary-fixed": "#ffdcc3",
+                        "outline-variant": "#564334"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+        .glass-header {
+            background: rgba(19, 19, 19, 0.8);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex">
+<!-- SideNavBar (The Anchor) -->
+<aside class="hidden lg:flex flex-col p-6 space-y-4 h-screen w-72 bg-zinc-50 dark:bg-zinc-900 shadow-2xl shadow-zinc-950/5">
+<div class="mb-8 px-2">
+<span class="text-lg font-bold text-zinc-900 dark:text-zinc-100">Admin Panel</span>
+<p class="text-xs font-semibold text-zinc-500 uppercase tracking-widest mt-1">Editorial Archive</p>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 dark:text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label text-xs font-semibold">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-zinc-200 dark:bg-zinc-800 text-orange-600 dark:text-orange-400 rounded-lg opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="font-label text-xs font-semibold">Reservas</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 dark:text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-label text-xs font-semibold">Usuarios</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 dark:text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="location_on">location_on</span>
+<span class="font-label text-xs font-semibold">Sedes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 dark:text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label text-xs font-semibold">Reportes</span>
+</a>
+</nav>
+<div class="pt-6 border-t border-outline-variant/15 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 dark:text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-label text-xs font-semibold">Ayuda</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 dark:text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-label text-xs font-semibold">Cerrar Sesión</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Context (Blurred Dashboard Background) -->
+<main class="flex-1 relative overflow-hidden">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-40 flex justify-between items-center px-10 h-20 glass-header">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black tracking-tighter text-orange-600 dark:text-orange-500">sofka_</span>
+<div class="relative group">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-400">
+<span class="material-symbols-outlined">search</span>
+</span>
+<input class="bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 w-64 text-sm focus:ring-2 focus:ring-primary/40" placeholder="Buscar reservas..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden md:flex gap-8 items-center">
+<a class="text-zinc-600 dark:text-zinc-400 hover:text-orange-500 font-label text-xs uppercase tracking-wider" href="#">Explorar</a>
+<a class="text-orange-600 dark:text-orange-400 font-bold border-b-2 border-orange-500 pb-1 font-label text-xs uppercase tracking-wider" href="#">Gestión de Reservas</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-zinc-800 border-2 border-primary/20 overflow-hidden">
+<img alt="German Gonzalo Rojas Perdomo" class="w-full h-full object-cover" data-alt="Professional headshot of a male administrator in a dark studio setting with warm directional lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqnoBEOXw-GPuBKwZug6EB5xjGpwhFt5WtqAF3xoeYMU6zTJI8mzKrtAp7y2_5kLimR_UzNOQtTiiTajetChIKBGr24p0EGduLs9FZ5Ywr9kKR9uXdG4w1_HVIsS0akdexkr79UlZ0mB28cVd4bYvQXcGptuvtBiyQXeZSBbS0RfZkSGZv5HwufEdUq_4YnRkrZ_v7FJdgW28wm_3Ue3ubNPHuqjij7TanGNUEBKjqkjIXy0C_X79Gb9-4v3QToeLLWYfTHB9ZK-Py"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Overlay for Modal -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-md p-4 lg:p-0">
+<!-- Modal Container -->
+<div class="bg-surface-container-low w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+<!-- Modal Header -->
+<div class="px-8 pt-8 pb-6 flex justify-between items-start">
+<div>
+<h2 class="text-3xl font-extrabold text-on-surface tracking-tight">Nueva Reserva</h2>
+<p class="text-on-surface-variant text-sm mt-1 font-body">Complete los detalles para asegurar el espacio en el archivo editorial.</p>
+</div>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-2xl">close</span>
+</button>
+</div>
+<!-- Modal Content -->
+<form class="px-8 pb-8 space-y-6">
+<!-- Asymmetric Grid for Fields -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Location & Space -->
+<div class="space-y-4 md:col-span-2">
+<label class="block">
+<span class="block text-xs font-bold uppercase tracking-widest text-primary mb-2">Sede / Locación</span>
+<select class="w-full bg-surface-container-lowest border-none rounded-lg text-on-surface py-3 px-4 focus:ring-2 focus:ring-primary/40 transition-shadow">
+<option>Sede Principal - Medellín</option>
+<option>Sede Norte - Bogotá</option>
+<option>Hub Tecnológico - Cali</option>
+</select>
+</label>
+</div>
+<div class="space-y-4 md:col-span-2">
+<label class="block">
+<span class="block text-xs font-bold uppercase tracking-widest text-primary mb-2">Espacio / Sala</span>
+<select class="w-full bg-surface-container-lowest border-none rounded-lg text-on-surface py-3 px-4 focus:ring-2 focus:ring-primary/40 transition-shadow">
+<option>Sala de Innovación A1</option>
+<option>Estudio Fotográfico 04</option>
+<option>Auditorio Principal</option>
+<option>Sala de Juntas Ejecutiva</option>
+</select>
+</label>
+</div>
+<!-- Date & Time Row -->
+<div class="space-y-4">
+<label class="block">
+<span class="block text-xs font-bold uppercase tracking-widest text-primary mb-2">Fecha</span>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+</span>
+<input class="w-full bg-surface-container-lowest border-none rounded-lg text-on-surface py-3 pl-10 pr-4 focus:ring-2 focus:ring-primary/40 transition-shadow" type="date"/>
+</div>
+</label>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<label class="block">
+<span class="block text-xs font-bold uppercase tracking-widest text-primary mb-2">Inicio</span>
+<input class="w-full bg-surface-container-lowest border-none rounded-lg text-on-surface py-3 px-4 focus:ring-2 focus:ring-primary/40 transition-shadow" type="time" value="09:00"/>
+</label>
+<label class="block">
+<span class="block text-xs font-bold uppercase tracking-widest text-primary mb-2">Fin</span>
+<input class="w-full bg-surface-container-lowest border-none rounded-lg text-on-surface py-3 px-4 focus:ring-2 focus:ring-primary/40 transition-shadow" type="time" value="11:00"/>
+</label>
+</div>
+<!-- User Autocomplete -->
+<div class="space-y-4 md:col-span-2">
+<label class="block">
+<span class="block text-xs font-bold uppercase tracking-widest text-primary mb-2">Usuario Solicitante</span>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">person_search</span>
+</span>
+<input class="w-full bg-surface-container-lowest border-none rounded-lg text-on-surface py-3 pl-10 pr-4 focus:ring-2 focus:ring-primary/40 transition-shadow" placeholder="Escriba el nombre o email..." type="text"/>
+<div class="absolute right-3 top-1/2 -translate-y-1/2">
+<div class="flex -space-x-2">
+<div class="h-6 w-6 rounded-full border border-surface bg-zinc-700 overflow-hidden">
+<img alt="User hint" class="w-full h-full object-cover" data-alt="Portrait of a creative professional male looking sideways" src="https://lh3.googleusercontent.com/aida-public/AB6AXuATD8BgQKTUQ0APU9i4SGHBB17RiZ1W36DALnJrhxFpZT55ONUR_oc2-gkENK-hl3MRSKq2gOzhAcouUoixvTYw_x-pji2hGJ-2_2wmjlwf_BPKSS-hQNyUCryTwwSya6jWS466tO5kjHSh9J6YJwUnRSUCHCDwq-EbsJ2InVQtUU7MQHr8SUAGeV-BNZVbTWl5IBAwU03iZ-2oj9Lmrl_cBjwJ5313BH5cJGK79PjrgCuz735y2KDxEjwoPxWIpnHXbwHzDuVbFPR1"/>
+</div>
+</div>
+</div>
+</div>
+</label>
+</div>
+</div>
+<!-- Validation Warning (Contextual Alert) -->
+<div class="bg-error-container/20 border border-error/20 p-4 rounded-lg flex items-start gap-4">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">warning</span>
+<div class="flex-1">
+<p class="text-error text-sm font-semibold">Conflicto detectado</p>
+<p class="text-on-error-container text-xs mt-0.5">La 'Sala de Innovación A1' ya tiene una reserva confirmada de 10:00 a 12:00 para la fecha seleccionada.</p>
+</div>
+<button class="text-error hover:bg-error/10 p-1 rounded" type="button">
+<span class="material-symbols-outlined text-sm">refresh</span>
+</button>
+</div>
+<!-- Form Actions -->
+<div class="flex items-center justify-end gap-4 pt-4">
+<button class="px-8 py-3 rounded-full text-zinc-400 font-bold tracking-tight hover:bg-surface-container-high transition-all" type="button">
+                            Cancelar
+                        </button>
+<button class="px-10 py-3 rounded-full bg-gradient-to-b from-primary-container to-orange-700 text-on-primary font-bold tracking-tight shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all" type="submit">
+                            Crear Reserva
+                        </button>
+</div>
+</form>
+</div>
+</div>
+<!-- Dashboard Placeholder Content (Blurred) -->
+<div class="p-10 mt-20 opacity-20 pointer-events-none">
+<h1 class="text-4xl font-black mb-8">Gestión de Reservas</h1>
+<div class="grid grid-cols-4 gap-6">
+<div class="h-48 bg-surface-container-high rounded-xl"></div>
+<div class="h-48 bg-surface-container-high rounded-xl"></div>
+<div class="h-48 bg-surface-container-high rounded-xl"></div>
+<div class="h-48 bg-surface-container-high rounded-xl"></div>
+</div>
+<div class="mt-8 space-y-4">
+<div class="h-20 bg-surface-container-low rounded-lg w-full"></div>
+<div class="h-20 bg-surface-container-low rounded-lg w-full"></div>
+<div class="h-20 bg-surface-container-low rounded-lg w-full"></div>
+</div>
+</div>
+</main>
+</body></html>
