@@ -347,7 +347,8 @@ class BookingApplicationServiceTest {
                 Instant.parse(START_AT),
                 Instant.parse(END_AT),
                 STATUS_CANCELLED, "Reserva", 2, null, CANCELLATION_REASON,
-                Instant.parse("2026-03-01T09:00:00Z"), List.of()
+                Instant.parse("2026-03-01T09:00:00Z"), List.of(),
+                null, null
         );
 
         when(persistencePort.findReservationById(7L)).thenReturn(Optional.of(confirmed), Optional.of(cancelled));
@@ -477,7 +478,9 @@ class BookingApplicationServiceTest {
                 null,
                 null,
                 Instant.parse("2026-03-01T09:00:00Z"),
-                List.of()
+                List.of(),
+                null,
+                null
         );
     }
 }

@@ -53,6 +53,14 @@ class BookingsServiceApplicationTests {
                 @Override
                 public void publishReservationReturned(ReservationReturnedEvent event) {
                 }
+
+                @Override
+                public void publishReservationCheckedIn(com.reservas.sk.bookings_service.application.usecase.ReservationCheckedInEvent event) {
+                }
+
+                @Override
+                public void publishReservationNoShow(com.reservas.sk.bookings_service.application.usecase.ReservationNoShowEvent event) {
+                }
             };
         }
     }

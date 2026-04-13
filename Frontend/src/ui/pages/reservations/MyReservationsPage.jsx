@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { BiError } from 'react-icons/bi';
 import { useUserReservations } from '../../../core/adapters/hooks/useUserReservations';
 import { useReminderAlerts } from '../../../core/adapters/hooks/useReminderAlerts';
 import { ReservationFilterBar } from '../../components/reservations/ReservationFilterBar';
@@ -9,6 +10,7 @@ import { ReminderAlertBanner } from '../../components/reservations/ReminderAlert
 import { Pagination } from '../../components/common/Pagination';
 import '../../styles/reservations/Reservations.css';
 import '../../styles/reservations/ReminderAlerts.css';
+import { ModalScanQr } from '../../components/reservations/ModalScanQr';
 
 /**
  * MyReservationsPage - UI Page
@@ -38,7 +40,7 @@ export const MyReservationsPage = () => {
     const [updateModal, setUpdateModal] = useState({ isOpen: false, reservation: null });
     const [updateError, setUpdateError] = useState(null);
     const itemsPerPage = 5;
-
+    const [scanQrReservation, setScanQrReservation] = useState(null);
     const getErrorMessage = (err) => {
         if (!err) return 'Error al actualizar reserva';
         if (typeof err === 'string') return err;
@@ -159,7 +161,14 @@ export const MyReservationsPage = () => {
             setUpdateError(getErrorMessage(err));
         }
     };
+    const handleScanQr = (reservation) => {
+        setScanQrReservation(reservation);
+    };
 
+    const handleQrSuccess = () => {
+        setScanQrReservation(null);
+        reload();
+    };
     return (
         <div className="my-reservations-page">
             <div className="container">
@@ -181,7 +190,7 @@ export const MyReservationsPage = () => {
 
                 {error && (
                     <div className="error-banner">
-                        <p>⚠️ {error}</p>
+                        <p><BiError size={20} style={{ verticalAlign: 'middle', marginRight: '6px' }} /> {error}</p>
                         <button onClick={reload} className="btn-retry">Reintentar</button>
                     </div>
                 )}
@@ -199,6 +208,7 @@ export const MyReservationsPage = () => {
                             onUpdate={handleOpenUpdate}
                             onDeliver={handleOpenDeliver}
                             onReturn={handleOpenReturn}
+                            onScanQR={handleScanQr}
                         />
 
                         {totalPages > 1 && (
@@ -226,6 +236,13 @@ export const MyReservationsPage = () => {
                     onConfirm={handleConfirmUpdate}
                     reservation={updateModal.reservation}
                     errorMessage={updateError}
+                />
+
+                <ModalScanQr
+                    isOpen={scanQrReservation !== null}
+                    onClose={() => setScanQrReservation(null)}
+                    reservation={scanQrReservation}
+                    onSuccess={handleQrSuccess}
                 />
             </div>
         </div>

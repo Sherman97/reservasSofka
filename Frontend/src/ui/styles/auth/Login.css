@@ -94,7 +94,6 @@
 }
 
 .logo-icon {
-    font-size: 1.5rem;
     background-color: var(--primary-color);
     color: white;
     width: 40px;
@@ -103,6 +102,11 @@
     align-items: center;
     justify-content: center;
     border-radius: 8px;
+}
+
+.logo-icon svg {
+    width: 24px;
+    height: 24px;
 }
 
 .logo-text {

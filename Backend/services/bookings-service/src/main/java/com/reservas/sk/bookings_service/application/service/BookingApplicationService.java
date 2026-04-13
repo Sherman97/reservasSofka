@@ -130,7 +130,7 @@ public class BookingApplicationService implements BookingUseCase {
                     spaceId,
                     startAt,
                     endAt,
-                    STATUS_CONFIRMED,
+                    STATUS_PENDING,
                     normalizeNullable(command.title()),
                     command.attendeesCount(),
                     normalizeNullable(command.notes())
@@ -397,7 +397,9 @@ public class BookingApplicationService implements BookingUseCase {
                 reservation.getNotes(),
                 reservation.getCancellationReason(),
                 reservation.getCreatedAt(),
-                equipments
+                equipments,
+                reservation.getQrToken(),
+                reservation.getCheckedInAt()
         );
     }
 

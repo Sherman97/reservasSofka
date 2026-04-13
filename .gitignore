@@ -5,7 +5,6 @@ node_modules/
 # Human Check 🛡️: ignorar archivos locales de IDE/Gradle que no deben versionarse.
 **/.idea/
 *.iml
-
 # Gradle cache
 .gradle/
 **/.gradle/
@@ -33,12 +32,14 @@ Frontend/node_modules/
 Frontend/dist/
 Frontend/html/
 Frontend/reports/
-.agent/
+.agents/
 .idea/
 
 .idea/
 .idea/
 
-CRUD/
-POM/
-ScreenPlay/
+AUTO_API_SCREENPLAY/
+AUTO_FRONT_POM_FACTORY/
+AUTO_FRONT_SCREENPLAY/
+
+

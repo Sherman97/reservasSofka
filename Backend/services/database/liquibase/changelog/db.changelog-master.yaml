@@ -35,3 +35,21 @@ databaseChangeLog:
             relativeToChangelogFile: true
             splitStatements: true
             stripComments: false
+  - changeSet:
+      id: 005-qr-checkin-support
+      author: qr-feature
+      changes:
+        - sqlFile:
+            path: 005_qr_checkin_support.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: false
+  - changeSet:
+      id: 006-reservation-checkin-logs
+      author: qr-feature
+      changes:
+        - sqlFile:
+            path: 006_reservation_checkin_logs.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: false

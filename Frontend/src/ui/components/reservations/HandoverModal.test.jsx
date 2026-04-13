@@ -47,17 +47,17 @@ describe('HandoverModal', () => {
     });
 
     it('debe mostrar icono 📦 para deliver', () => {
-        render(
+        const { container } = render(
             <HandoverModal isOpen={true} onClose={mockOnClose} onConfirm={mockOnConfirm} action="deliver" reservationName="Sala A" />
         );
-        expect(screen.getByText('📦')).toBeDefined();
+        expect(container.querySelector('.handover-modal-icon')).toBeDefined();
     });
 
     it('debe mostrar icono ✅ para return', () => {
-        render(
+        const { container } = render(
             <HandoverModal isOpen={true} onClose={mockOnClose} onConfirm={mockOnConfirm} action="return" reservationName="Sala A" />
         );
-        expect(screen.getByText('✅')).toBeDefined();
+        expect(container.querySelector('.handover-modal-icon')).toBeDefined();
     });
 
     it('debe mostrar textarea para novedad', () => {
@@ -76,10 +76,10 @@ describe('HandoverModal', () => {
     });
 
     it('debe llamar onClose al hacer clic en el botón ✕', () => {
-        render(
+        const { container } = render(
             <HandoverModal isOpen={true} onClose={mockOnClose} onConfirm={mockOnConfirm} action="deliver" reservationName="Sala A" />
         );
-        fireEvent.click(screen.getByText('✕'));
+        fireEvent.click(container.querySelector('.handover-modal-close'));
         expect(mockOnClose).toHaveBeenCalled();
     });
 

@@ -5,6 +5,7 @@ import { useAuthDependencies } from '../../../core/adapters/hooks/useDependencie
 import logoLight from '../../../assets/LogoSofka_FondoBlanco_peq.png';
 import logoDark from '../../../assets/LogoSofka_FondoNegro_peq.png';
 import '../../styles/common/Header.css';
+import { FaMoon, FaSun, FaSignOutAlt, FaSearch, FaClipboardList } from 'react-icons/fa';
 
 export const Header = () => {
     const { theme, toggleTheme } = useTheme();
@@ -73,7 +74,7 @@ export const Header = () => {
                 </div>
                 <div className="header-right">
                     <button onClick={toggleTheme} className="icon-btn">
-                        {theme === 'light' ? '🌙' : '☀️'}
+                        {theme === 'light' ? <FaMoon size={18} /> : <FaSun size={18} />}
                     </button>
                     <div className="user-profile-wrapper" ref={menuRef}>
                         <div
@@ -88,7 +89,7 @@ export const Header = () => {
                         {showUserMenu && (
                             <div className="user-dropdown">
                                 <button className="dropdown-item logout-btn" onClick={handleLogout}>
-                                    <span className="dropdown-icon">🚪</span>
+                                    <FaSignOutAlt className="dropdown-icon" size={18} />
                                     Cerrar Sesión
                                 </button>
                             </div>
@@ -113,7 +114,7 @@ export const Header = () => {
                                     className={({ isActive }) => `mobile-dropdown-item ${isActive ? 'active' : ''}`}
                                     onClick={() => setMobileMenuOpen(false)}
                                 >
-                                    <span className="dropdown-icon">🔍</span>
+                                    <FaSearch className="dropdown-icon" size={18} />
                                     Explorar
                                 </NavLink>
                                 <NavLink
@@ -121,7 +122,7 @@ export const Header = () => {
                                     className={({ isActive }) => `mobile-dropdown-item ${isActive ? 'active' : ''}`}
                                     onClick={() => setMobileMenuOpen(false)}
                                 >
-                                    <span className="dropdown-icon">📋</span>
+                                    <FaClipboardList className="dropdown-icon" size={18} />
                                     Mis Reservas
                                 </NavLink>
                             </div>

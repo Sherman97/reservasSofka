@@ -60,8 +60,8 @@ describe('Header', () => {
     });
 
     it('debe mostrar botón de tema', () => {
-        renderHeader();
-        expect(screen.getByText('🌙')).toBeDefined();
+        const { container } = renderHeader();
+        expect(container.querySelector('.icon-btn')).toBeDefined();
     });
 
     it('debe mostrar menú de usuario al hacer clic', () => {

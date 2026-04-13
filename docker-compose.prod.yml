@@ -427,6 +427,8 @@ services:
       LOCATIONS_URL: http://locations-service:3004
       NOTIFICATIONS_URL: http://notifications-service:3006
       NOTIFICATIONS_WS_URL: ws://notifications-service:3006
+    ports:
+      - "3000:3000"
     networks:
       - backend_network
       - frontend_network
@@ -469,6 +471,40 @@ services:
       app.service: "api-gateway"
       app.role: "gateway"
       app.port: "3000"
+      app.project: "reservas-sk"
+
+  # ── Initialization Tasks ───────────────────────────────────
+
+  qr-initializer:
+    container_name: reservas-qr-init
+    build:
+      context: ./Backend/services/qr-initializer
+      dockerfile: Dockerfile
+    environment:
+      LOCATIONS_SERVICE_URL: http://locations-service:3004
+      MAX_RETRIES: 30
+      RETRY_INTERVAL: 5
+    networks:
+      - backend_network
+    depends_on:
+      locations-service:
+        condition: service_healthy
+    restart: on-failure
+    cap_drop:
+      - ALL
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 64M
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
+    labels:
+      app.service: "qr-initializer"
+      app.role: "initialization"
       app.project: "reservas-sk"
 
   # ── Frontend ───────────────────────────────────────────────

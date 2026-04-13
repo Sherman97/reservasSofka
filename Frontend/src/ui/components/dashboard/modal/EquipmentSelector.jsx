@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { MdClose, MdCheck } from 'react-icons/md';
+import { FaTools } from 'react-icons/fa';
 import { useDependencies } from '../../../../core/adapters/hooks/useDependencies';
 
 export const EquipmentSelector = ({ selectedEquipment, onEquipmentToggle, item }) => {
@@ -63,14 +65,14 @@ export const EquipmentSelector = ({ selectedEquipment, onEquipmentToggle, item }
                                     handleToggle(eq.itemId);
                                 }}>
                                     <span>{eq.name || getEquipmentName(eq.itemId)}</span>
-                                    <span className="remove-tag">✕</span>
+                                    <MdClose className="remove-tag" size={16} title="Eliminar" />
                                 </span>
                             ))
                         )}
                     </div>
                 </div>
                 <div className="select-icon-group">
-                    <span className="equipment-main-icon">🛠️</span>
+                    <FaTools className="equipment-main-icon" size={18} />
                     <div className="select-arrow"></div>
                 </div>
             </div>
@@ -92,7 +94,7 @@ export const EquipmentSelector = ({ selectedEquipment, onEquipmentToggle, item }
                             }}
                         >
                             <span className="option-checkbox">
-                                {selectedEquipment.some(e => e.itemId === equipment.id) && '✓'}
+                                {selectedEquipment.some(e => e.itemId === equipment.id) && <MdCheck size={16} title="Seleccionado" />}
                             </span>
                             <span className="option-content">
                                 {equipment.name}

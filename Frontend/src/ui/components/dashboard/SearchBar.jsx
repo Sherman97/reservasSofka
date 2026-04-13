@@ -1,10 +1,11 @@
 import React from 'react';
+import { FiSearch } from 'react-icons/fi';
 
 export const SearchBar = ({ searchQuery, handleSearch }) => {
     return (
         <div className="search-bar-container">
             <div className="search-input-wrapper">
-                <span className="search-icon">🔍</span>
+                <FiSearch className="search-icon" size={20} />
                 <input
                     type="text"
                     placeholder="Buscar salas o equipos..."

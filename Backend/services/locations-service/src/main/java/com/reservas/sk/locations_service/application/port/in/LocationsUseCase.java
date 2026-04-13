@@ -30,6 +30,14 @@ public interface LocationsUseCase {
     Space updateSpace(Long id, UpdateSpaceCommand command);
 
     void deleteSpace(Long id);
+
+    Space getSpaceWithQrCode(Long id);
+
+    /**
+     * Regenera códigos QR para todos los espacios sin QR o con QR inválido.
+     * @return Cantidad de códigos QR generados exitosamente
+     */
+    int regenerateAllSpaceQrCodes();
 }
 
 

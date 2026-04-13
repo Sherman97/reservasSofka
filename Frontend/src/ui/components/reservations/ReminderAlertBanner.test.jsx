@@ -53,7 +53,7 @@ describe('ReminderAlertBanner', () => {
                 onClearAll={mockOnClearAll}
             />
         );
-        expect(screen.getByText('🔔 Recordatorios (2)')).toBeDefined();
+        expect(screen.getByText(/Recordatorios \(2\)/)).toBeDefined();
     });
 
     it('debe mostrar botón Limpiar todos cuando hay más de 1 alerta', () => {
@@ -98,7 +98,7 @@ describe('ReminderAlertBanner', () => {
                 onClearAll={mockOnClearAll}
             />
         );
-        fireEvent.click(screen.getByText('✕'));
+        fireEvent.click(screen.getByTitle('Cerrar'));
         expect(mockOnDismiss).toHaveBeenCalledWith('my-alert-id');
     });
 
@@ -143,7 +143,7 @@ describe('ReminderAlertBanner', () => {
                 onClearAll={mockOnClearAll}
             />
         );
-        expect(screen.getByText('⏰')).toBeDefined();
+        expect(screen.getByTitle('Reloj')).toBeDefined();
     });
 
     it('debe mostrar icono ⚠️ para reminder_5m', () => {
@@ -154,7 +154,7 @@ describe('ReminderAlertBanner', () => {
                 onClearAll={mockOnClearAll}
             />
         );
-        expect(screen.getByText('⚠️')).toBeDefined();
+        expect(screen.getByTitle('Advertencia')).toBeDefined();
     });
 
     it('debe mostrar icono 🚨 para overdue_10m', () => {
@@ -165,7 +165,7 @@ describe('ReminderAlertBanner', () => {
                 onClearAll={mockOnClearAll}
             />
         );
-        expect(screen.getByText('🚨')).toBeDefined();
+        expect(screen.getByTitle('Urgente')).toBeDefined();
     });
 
     it('debe mostrar badge 15 min para reminder_15m', () => {
@@ -231,7 +231,7 @@ describe('ReminderAlertBanner', () => {
                 onClearAll={mockOnClearAll}
             />
         );
-        expect(screen.getByText('🔔')).toBeDefined();
+        expect(screen.getByTitle('Notificación')).toBeDefined();
     });
 
     it('debe mostrar badge Alerta para tipo desconocido', () => {

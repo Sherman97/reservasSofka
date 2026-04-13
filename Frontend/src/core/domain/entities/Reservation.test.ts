@@ -296,3 +296,55 @@ describe('Reservation - Status Methods', () => {
         expect(reservation.isConfirmed()).toBe(false);
     });
 });
+
+describe('Reservation - canCheckIn() early window', () => {
+    beforeEach(() => {
+        vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+        vi.useRealTimers();
+    });
+
+    it('canCheckIn() debe retornar true 4 minutos antes de la hora de inicio', () => {
+        const startAt = new Date('2026-02-26T10:00:00Z');
+        const now = new Date('2026-02-26T09:56:00Z'); // 4 min antes
+        vi.setSystemTime(now);
+
+        const reservation = new Reservation({
+            id: 'r_early', userId: 'u1', locationId: 'l1', locationName: 'Sala early',
+            startAt: startAt, endAt: '2026-02-26T11:00:00Z',
+            status: 'pending',
+        });
+
+        expect(reservation.canCheckIn()).toBe(true);
+    });
+
+    it('canCheckIn() debe retornar false 10 minutos antes de la hora de inicio', () => {
+        const startAt = new Date('2026-02-26T10:00:00Z');
+        const now = new Date('2026-02-26T09:50:00Z'); // 10 min antes
+        vi.setSystemTime(now);
+
+        const reservation = new Reservation({
+            id: 'r_too_early', userId: 'u1', locationId: 'l1', locationName: 'Sala too early',
+            startAt: startAt, endAt: '2026-02-26T11:00:00Z',
+            status: 'pending',
+        });
+
+        expect(reservation.canCheckIn()).toBe(false);
+    });
+
+    it('canCheckIn() debe retornar true durante el periodo de gracia', () => {
+        const startAt = new Date('2026-02-26T10:00:00Z');
+        const now = new Date('2026-02-26T10:04:00Z'); // 4 min despues
+        vi.setSystemTime(now);
+
+        const reservation = new Reservation({
+            id: 'r_grace', userId: 'u1', locationId: 'l1', locationName: 'Sala grace',
+            startAt: startAt, endAt: '2026-02-26T11:00:00Z',
+            status: 'pending',
+        });
+
+        expect(reservation.canCheckIn()).toBe(true);
+    });
+});

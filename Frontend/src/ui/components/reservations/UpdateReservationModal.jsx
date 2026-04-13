@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { FaCalendarAlt } from 'react-icons/fa';
 import '../../styles/reservations/Reservations.css';
 
 /**
@@ -90,7 +91,10 @@ export const UpdateReservationModal = ({ isOpen, onClose, onConfirm, reservation
 
                     {/* Read-only date info */}
                     <div style={{ marginBottom: '1.25rem', padding: '0.75rem 1rem', background: '#f0f4f8', borderRadius: '8px', fontSize: '0.9rem', color: '#4a5568' }}>
-                        <span style={{ fontWeight: 600 }}>📅 Fecha: </span>
+                        <span style={{ fontWeight: 600 }}>
+                            <FaCalendarAlt size={14} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                            Fecha: 
+                        </span>
                         <span style={{ textTransform: 'capitalize' }}>{initial.displayDate}</span>
                         <div style={{ fontSize: '0.75rem', color: '#718096', marginTop: '0.25rem' }}>
                             La fecha no puede modificarse. Solo ajusta la hora de inicio y fin.

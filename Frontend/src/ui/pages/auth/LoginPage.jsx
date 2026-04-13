@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaCalendarAlt } from 'react-icons/fa';
 import { LoginForm } from '../../components/auth/LoginForm';
 import '../../styles/auth/Login.css';
 
@@ -16,7 +17,7 @@ const LoginPage = () => {
             <div className="login-right">
                 <div className="login-form-wrapper">
                     <div className="logo-container">
-                        <div className="logo-icon">📅</div>
+                        <FaCalendarAlt className="logo-icon" size={32} title="Calendario" />
                         <span className="logo-text">Reservas Sofka</span>
                     </div>
 

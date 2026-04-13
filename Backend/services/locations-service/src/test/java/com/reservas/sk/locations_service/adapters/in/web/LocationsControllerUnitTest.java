@@ -91,7 +91,10 @@ class LocationsControllerUnitTest {
                 null,
                 active,
                 Instant.parse(START_AT),
-                Instant.parse(START_AT)
+                Instant.parse(START_AT),
+                null,
+                null,
+                null
         );
     }
 }

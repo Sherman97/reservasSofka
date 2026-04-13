@@ -10,16 +10,28 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestControllerAdvice
 // Human Check 🛡️: handlers especificos para convertir errores HTTP comunes en respuestas
 // claras de cliente y eviar que todo quede en error 500.
 public class GlobalExceptionHandler {
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ApiResponse<Void>> handleApiException(ApiException ex) {
+        log.warn("API Exception ({}): {}", ex.getErrorCode(), ex.getMessage());
         return ResponseEntity
                 .status(ex.getStatus())
                 .body(ApiResponse.error(ex.getMessage(), defaultCode(ex.getErrorCode(), "BUSINESS_ERROR")));
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException ex) {
+        log.warn("Business Exception: {}", ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(ex.getMessage(), "BUSINESS_RULE_VIOLATION"));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -54,6 +66,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleUnexpected(Exception ex) {
+        log.error("Unexpected error occurred", ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.error("Internal server error", "INTERNAL_ERROR"));
     }
