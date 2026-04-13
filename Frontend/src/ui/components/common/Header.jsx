@@ -18,7 +18,11 @@ export const Header = () => {
 
     // Get user from localStorage - should eventually be handled by auth context/hook
     const user = JSON.parse(localStorage.getItem('user')) || { name: 'Usuario' };
-    const isAdmin = user?.role === 'ADMIN';
+    const role = typeof user?.role === 'string' ? user.role.toLowerCase() : '';
+    const roles = Array.isArray(user?.roles)
+        ? user.roles.filter((item) => typeof item === 'string').map((item) => item.toLowerCase())
+        : [];
+    const isAdmin = role === 'admin' || roles.includes('admin');
 
     const handleLogout = async () => {
         if (logoutUseCase) {
@@ -80,7 +84,7 @@ export const Header = () => {
                 </div>
                 <div className="header-right">
                     <button onClick={toggleTheme} className="icon-btn">
-                        {theme === 'light' ? <FaMoon size={18} /> : <FaSun size={18} />}
+                        {theme === 'light' ? <FaMoon size={18} /> : <FaSun size={18} className='icon-btn-sun'/>}
                     </button>
                     <div className="user-profile-wrapper" ref={menuRef}>
                         <div

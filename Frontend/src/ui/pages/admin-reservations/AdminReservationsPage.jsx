@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ReservationStatusFilter } from '../../components/admin-reservations/ReservationStatusFilter';
+import { FaPlus } from 'react-icons/fa';
 import {
     AdminCreateReservationPanel,
     CREATE_RESERVATION_SUCCESS_MESSAGE,
@@ -21,7 +22,7 @@ import {
 } from '../../../features/reservations/services/adminReservationsService';
 import '../../styles/admin/AdminReservations.css';
 
-const ADMIN_PAGE_SIZE = 20;
+const ADMIN_PAGE_SIZE = 10;
 const ADMIN_SORT = { sortBy: 'executionDate', sortDirection: 'desc' };
 const ADMIN_SITE_OPTIONS = [
     'Sede Medellin',
@@ -160,7 +161,7 @@ const AdminReservationsFilters = ({
 
         <div className="admin-filter-actions">
             <button type="button" className="admin-btn admin-btn-secondary" onClick={clearFilters}>Limpiar</button>
-            <button type="button" className="admin-btn admin-btn-primary" onClick={applyFilters}>Aplicar filtros</button>
+            <button type="button" className="admin-btn admin-btn-primary" onClick={applyFilters}>Aplicar</button>
         </div>
     </section>
 );
@@ -226,7 +227,7 @@ const AdminReservationsTable = ({
                                     className="admin-row-action"
                                     onClick={() => onViewDetail(reservation.id)}
                                 >
-                                    {`Ver detalle ${reservation.id}`}
+                                    {`Ver detalle `}
                                 </button>
                             </td>
                         </tr>
@@ -497,16 +498,6 @@ export const AdminReservationsPage = () => {
     return (
         <div className="admin-reservations-page">
             <div className="container">
-                <div className="admin-page-header">
-                    <div>
-                        <h1>Gestion de Reservas</h1>
-                        <p>Administra reservas activas e historial por sede y usuario.</p>
-                    </div>
-                    <button type="button" className="admin-btn admin-btn-primary" onClick={openCreateModal}>
-                        Nueva reserva
-                    </button>
-                </div>
-
                 {toast.message && (
                     <div
                         role="status"
@@ -519,34 +510,41 @@ export const AdminReservationsPage = () => {
                 )}
 
                 {!isCreateModalOpen && (
-                    <>
-                        <AdminReservationsFilters
-                            filters={filters}
-                            cityOptions={
-                                cityOptions.length > 0
-                                    ? cityOptions
-                                    : ADMIN_SITE_FILTER_OPTIONS.map((siteName, index) => ({
-                                        value: String(index + 1),
-                                        label: siteName,
-                                    }))
-                            }
-                            userOptions={filterUserOptions}
-                            loadingUsers={loadingFilterUsers}
-                            setFilter={setFilter}
-                            clearFilters={clearFilters}
-                            applyFilters={applyFilters}
-                        />
+                    <div className="admin-table-filters-section">
+                        
+                        <div className='admin-filter-section'>
+                            <AdminReservationsFilters
+                                filters={filters}
+                                cityOptions={
+                                    cityOptions.length > 0
+                                        ? cityOptions
+                                        : ADMIN_SITE_FILTER_OPTIONS.map((siteName, index) => ({
+                                            value: String(index + 1),
+                                            label: siteName,
+                                        }))
+                                }
+                                userOptions={filterUserOptions}
+                                loadingUsers={loadingFilterUsers}
+                                setFilter={setFilter}
+                                clearFilters={clearFilters}
+                                applyFilters={applyFilters}
+                            />
+                        </div>
+
                         {validationError && <p className="admin-inline-alert">{validationError}</p>}
-                        <AdminReservationsTable
-                            reservations={reservations}
-                            currentPage={currentPage}
-                            totalPages={pagination.totalPages}
-                            totalItems={pagination.totalItems}
-                            pageSize={pagination.pageSize}
-                            onPageChange={(page) => setCurrentPage(page)}
-                            onViewDetail={handleViewDetail}
-                        />
-                    </>
+                        <div className='admin-table-section'>
+                            <AdminReservationsTable
+                                reservations={reservations}
+                                currentPage={currentPage}
+                                totalPages={pagination.totalPages}
+                                totalItems={pagination.totalItems}
+                                pageSize={pagination.pageSize}
+                                onPageChange={(page) => setCurrentPage(page)}
+                                onViewDetail={handleViewDetail}
+                            />
+                        </div>
+
+                    </div>
                 )}
 
                 <AdminCreateReservationPanel
@@ -616,6 +614,16 @@ export const AdminReservationsPage = () => {
                     onClose={closeDetailModal}
                 />
             </div>
+
+            <button
+                type="button"
+                className="admin-btn-fab"
+                onClick={openCreateModal}
+                title="Nueva reserva"
+                aria-label="Nueva reserva"
+            >
+                <FaPlus />
+            </button>
         </div>
     );
 };

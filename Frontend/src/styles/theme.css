@@ -14,13 +14,13 @@
 /*L IA modifico el backgroundColor de la card´s y no estaba siguiendo lo requerido*/
 [data-theme='dark'] {
     /* Dark Mode */
-    --bg-color: #383838;
+    --bg-color: #000000;
     --text-color: #e0e0e0;
     --text-color-card: #ffffff;
     --primary-color: #ff8c03;
     --primary-hover: #ffa333;
     --secondary-color: #94a3b8;
-    --card-bg: #464646;
+    --card-bg: #252525;
     --input-bg: #ffffff;
     --input-border: #404040;
     --button-text: #ffffff;
