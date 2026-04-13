@@ -2,6 +2,7 @@ package com.reservas.sk.bookings_service.adapters.in.web;
 
 import com.reservas.sk.bookings_service.application.port.in.BookingUseCase;
 import com.reservas.sk.bookings_service.application.port.out.TokenPort;
+import com.reservas.sk.bookings_service.application.service.CheckInReservationUseCase;
 import com.reservas.sk.bookings_service.application.usecase.AuthenticatedUser;
 import com.reservas.sk.bookings_service.exception.GlobalExceptionHandler;
 import com.reservas.sk.bookings_service.infrastructure.config.SecurityConfig;
@@ -35,6 +36,9 @@ class AdminReservationsSecurityIntegrationTest {
 
     @MockBean
     private BookingUseCase bookingUseCase;
+
+    @MockBean
+    private CheckInReservationUseCase checkInUseCase;
 
     @Test
     void adminReservationsEndpoint_allowsAdminAndRejectsNonAdmin() throws Exception {

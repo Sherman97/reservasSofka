@@ -6,6 +6,7 @@ import com.reservas.sk.bookings_service.application.port.out.ReservationEventPub
 import com.reservas.sk.bookings_service.application.port.out.TokenPort;
 import com.reservas.sk.bookings_service.application.service.BookingApplicationService;
 import com.reservas.sk.bookings_service.application.usecase.AuthenticatedUser;
+import com.reservas.sk.bookings_service.application.service.CheckInReservationUseCase;
 import com.reservas.sk.bookings_service.exception.GlobalExceptionHandler;
 import com.reservas.sk.bookings_service.infrastructure.config.SecurityConfig;
 import com.reservas.sk.bookings_service.infrastructure.security.JwtAuthenticationFilter;
@@ -50,6 +51,9 @@ class AdminCreateReservationWebIntegrationTest {
 
     @MockBean
     private TokenPort tokenPort;
+
+    @MockBean
+    private CheckInReservationUseCase checkInUseCase;
 
     @MockBean
     private BookingPersistencePort bookingPersistencePort;
