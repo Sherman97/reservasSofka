@@ -10,9 +10,10 @@ describe('UpdateReservationTimeUseCase', () => {
         getById: vi.fn(),
         cancel: vi.fn(),
         deliver: vi.fn(),
+        checkIn: vi.fn(),
         returnReservation: vi.fn(),
         getAvailability: vi.fn(),
-        updateTime: vi.fn().mockResolvedValue(
+        update: vi.fn().mockResolvedValue(
             new Reservation({
                 id: 'r1',
                 userId: 'u1',
@@ -25,7 +26,7 @@ describe('UpdateReservationTimeUseCase', () => {
             })
         ),
         ...overrides
-    });
+    } as unknown as IReservationRepository);
 
     it('debe actualizar la hora de una reserva con datos válidos', async () => {
         const repo = createMockRepo();
@@ -33,7 +34,7 @@ describe('UpdateReservationTimeUseCase', () => {
 
         const result = await useCase.execute('r1', '2026-03-01', '13:00', '14:00');
 
-        expect(repo.updateTime).toHaveBeenCalledWith('r1', '2026-03-01', '13:00', '14:00');
+        expect(repo.update).toHaveBeenCalledWith('r1', { date: '2026-03-01', startTime: '13:00', endTime: '14:00' });
         expect(result).toBeInstanceOf(Reservation);
     });
 
@@ -50,12 +51,6 @@ describe('UpdateReservationTimeUseCase', () => {
     it('debe lanzar error si la hora de fin no es posterior', async () => {
         const useCase = new UpdateReservationTimeUseCase(createMockRepo());
         await expect(useCase.execute('r1', '2026-03-01', '14:00', '13:00')).rejects.toThrow('End time must be later than start time');
-    });
-
-    it('debe lanzar error si el repositorio no soporta updateTime', async () => {
-        const repo = createMockRepo({ updateTime: undefined });
-        const useCase = new UpdateReservationTimeUseCase(repo);
-        await expect(useCase.execute('r1', '2026-03-01', '13:00', '14:00')).rejects.toThrow('Reservation update is not available');
     });
 });
 

@@ -71,6 +71,7 @@ export class ReservationMapper {
         if (!status) return 'active';
         const s = status.toLowerCase();
         if (s === 'in_progress') return 'in_progress';
+        if (s === 'pending') return 'pending';
         if (['confirmed', 'active', 'created'].includes(s)) {
             return 'active';
         }

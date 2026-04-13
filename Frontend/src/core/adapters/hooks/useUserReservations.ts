@@ -12,6 +12,7 @@ interface UseUserReservationsReturn {
     setActiveTab: (tab: string) => void;
     handleSearch: (query: string) => void;
     cancelReservation: (reservationId: string) => Promise<void>;
+    updateReservation: (reservationId: string, data: Record<string, unknown>) => Promise<void>;
     deliverReservation: (reservationId: string, novelty?: string) => Promise<void>;
     returnReservation: (reservationId: string, novelty?: string) => Promise<void>;
     reload: () => Promise<void>;

@@ -31,7 +31,28 @@ describe('useCheckIn', () => {
         isPast: () => false,
         isFuture: () => false,
         canCancel: () => false,
-        canUpdate: () => false
+        canUpdate: () => false,
+        locationId: 'loc-1',
+        equipment: [],
+        createdAt: new Date('2026-04-06T10:00:00Z'),
+        attendeesCount: 2,
+        notes: '',
+        checkedInAt: null,
+        isActive: () => true,
+        isConfirmed: () => true,
+        getDurationHours: () => 1,
+        getFormattedDateRange: () => '07 abr 2026 10:00 - 11:00',
+        getRemainingMinutes: () => 60,
+        canCheckIn: () => true,
+        isExpired: () => false,
+        getCheckInRemainingMinutes: () => 60,
+        isAboutToExpire: () => false,
+        overlaps: () => false,
+        toJSON: () => ({}),
+        isCheckedIn: () => true,
+        isNoShow: () => false,
+        isInProgress: () => false,
+        isUpcoming: () => false
     } as Reservation;
 
     const mockReservationRepository = {

@@ -5,14 +5,16 @@ import type { IReservationRepository } from '../../../core/ports/repositories/IR
 describe('CancelReservationUseCase', () => {
     const createMockRepo = (overrides: Partial<IReservationRepository> = {}): IReservationRepository => ({
         create: vi.fn(),
+        update: vi.fn(),
         cancel: vi.fn().mockResolvedValue(undefined),
         getByUserId: vi.fn(),
         getById: vi.fn(),
+        checkIn: vi.fn(),
         deliver: vi.fn(),
         returnReservation: vi.fn(),
         getAvailability: vi.fn(),
         ...overrides
-    });
+    } as unknown as IReservationRepository);
 
     it('debe cancelar una reserva con ID válido', async () => {
         const repo = createMockRepo();

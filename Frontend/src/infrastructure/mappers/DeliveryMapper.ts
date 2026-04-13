@@ -11,24 +11,24 @@ interface DeliveryDTO {
     notes?: string;
     novedad?: string;
     date?: string;
-    fecha?: string;
     [key: string]: unknown;
 }
 
-interface DeliveryApiPayload {
-    locationId: string;
-    userId: string;
-    managerId: string;
-    notes: string;
-    date: string;
+export interface DeliveryApiPayload {
+    locationId?: string;
+    userId?: string;
+    managerId?: string;
+    notes?: string;
+    date?: string;
 }
 
-interface DeliveryFormData {
-    locationId: string;
-    userId: string;
-    managerId: string;
-    notes: string;
-    date: string;
+export interface DeliveryFormData {
+    locationId?: string;
+    userId?: string;
+    managerId?: string;
+    notes?: string;
+    date?: string;
+    [key: string]: unknown;
 }
 
 export class DeliveryMapper {
@@ -40,7 +40,7 @@ export class DeliveryMapper {
             userId: dto.userId || dto.user_id || '',
             managerId: dto.managerId || dto.manager_id || '',
             notes: dto.notes || dto.novedad || '',
-            date: dto.date || dto.fecha || new Date().toISOString(),
+            date: dto.date || (dto['fecha'] as string) || new Date().toISOString(),
         });
     }
 
@@ -50,7 +50,7 @@ export class DeliveryMapper {
             userId: formData.userId,
             managerId: formData.managerId,
             notes: formData.notes,
-            date: new Date(formData.date).toISOString(),
+            date: formData.date ? new Date(formData.date).toISOString() : new Date().toISOString(),
         };
     }
 

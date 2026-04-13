@@ -6,10 +6,12 @@ import { Reservation } from '../../../core/domain/entities/Reservation';
 describe('ReturnReservationUseCase', () => {
     const createMockRepo = (overrides: Partial<IReservationRepository> = {}): IReservationRepository => ({
         create: vi.fn(),
+        update: vi.fn(),
         cancel: vi.fn(),
         getByUserId: vi.fn(),
         getById: vi.fn(),
         deliver: vi.fn(),
+        checkIn: vi.fn(),
         returnReservation: vi.fn().mockResolvedValue(
             new Reservation({
                 id: 'r1', userId: 'u1', locationId: 'l1', locationName: 'Sala A',
@@ -19,7 +21,7 @@ describe('ReturnReservationUseCase', () => {
         ),
         getAvailability: vi.fn(),
         ...overrides
-    });
+    } as unknown as IReservationRepository);
 
     it('debe devolver una reserva con ID válido sin novedad', async () => {
         const repo = createMockRepo();

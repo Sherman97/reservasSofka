@@ -8,6 +8,7 @@ interface DeliveryFormData {
     managerId: string;
     notes: string;
     date: string;
+    [key: string]: unknown;
 }
 
 interface UseDeliveryReturn {

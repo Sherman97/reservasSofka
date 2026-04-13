@@ -14,14 +14,16 @@ describe('GetUserReservationsUseCase', () => {
 
     const createMockRepo = (overrides: Partial<IReservationRepository> = {}): IReservationRepository => ({
         create: vi.fn(),
+        update: vi.fn(),
         cancel: vi.fn(),
         getByUserId: vi.fn().mockResolvedValue(mockReservations),
         getById: vi.fn(),
+        checkIn: vi.fn(),
         deliver: vi.fn(),
         returnReservation: vi.fn(),
         getAvailability: vi.fn(),
         ...overrides
-    });
+    } as unknown as IReservationRepository);
 
     it('debe retornar reservas del usuario', async () => {
         const repo = createMockRepo();
