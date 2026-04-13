@@ -226,6 +226,7 @@ const AdminReservationsTable = ({
                                     type="button"
                                     className="admin-row-action"
                                     onClick={() => onViewDetail(reservation.id)}
+                                    aria-label={`Ver detalle ${safeText(reservation.id)}`}
                                 >
                                     {`Ver detalle `}
                                 </button>

@@ -21,7 +21,7 @@ const emptyReservationsResponse = {
     items: [],
     total: 0,
     page: 1,
-    pageSize: 20,
+    pageSize: 10,
 };
 
 const oneReservationResponse = {
@@ -39,8 +39,8 @@ const oneReservationResponse = {
     ],
     total: 25,
     page: 1,
-    pageSize: 20,
-    totalPages: 2,
+    pageSize: 10,
+    totalPages: 3,
 };
 
 const reservationDetailResponse = {
@@ -76,7 +76,7 @@ describe('AdminReservationsPage', () => {
         ]);
     });
 
-    it('AdminReservationsPage.carga_inicial_consulta_con_orden_desc_y_20_por_pagina', async () => {
+    it('AdminReservationsPage.carga_inicial_consulta_con_orden_desc_y_10_por_pagina', async () => {
         getAdminReservations.mockResolvedValue(emptyReservationsResponse);
 
         renderPage();
@@ -84,7 +84,7 @@ describe('AdminReservationsPage', () => {
         await waitFor(() => {
             expect(getAdminReservations).toHaveBeenCalledWith({
                 page: 1,
-                pageSize: 20,
+                pageSize: 10,
                 sortBy: 'executionDate',
                 sortDirection: 'desc',
                 filters: {
@@ -110,12 +110,12 @@ describe('AdminReservationsPage', () => {
         fireEvent.change(screen.getByLabelText('Estado'), { target: { value: 'Confirmada' } });
         fireEvent.change(screen.getByLabelText('Sede'), { target: { value: '10' } });
         fireEvent.change(screen.getByLabelText('Usuario'), { target: { value: '33' } });
-        fireEvent.click(screen.getByRole('button', { name: 'Aplicar filtros' }));
+        fireEvent.click(screen.getByRole('button', { name: 'Aplicar' }));
 
         await waitFor(() => {
             expect(getAdminReservations).toHaveBeenLastCalledWith({
                 page: 1,
-                pageSize: 20,
+                pageSize: 10,
                 sortBy: 'executionDate',
                 sortDirection: 'desc',
                 filters: {
@@ -137,7 +137,7 @@ describe('AdminReservationsPage', () => {
 
         fireEvent.change(screen.getByLabelText('Estado'), { target: { value: 'Cancelada' } });
         fireEvent.change(screen.getByLabelText('Usuario'), { target: { value: '33' } });
-        fireEvent.click(screen.getByRole('button', { name: 'Aplicar filtros' }));
+        fireEvent.click(screen.getByRole('button', { name: 'Aplicar' }));
 
         expect(await screen.findByText('No se encontraron reservas con los filtros aplicados')).toBeInTheDocument();
         expect(screen.getByLabelText('Estado')).toHaveValue('Cancelada');
@@ -171,13 +171,13 @@ describe('AdminReservationsPage', () => {
 
         renderPage();
 
-        await screen.findByText('Mostrando 1-20 de 25 reservas');
+        await screen.findByText('Mostrando 1-10 de 25 reservas');
         fireEvent.click(screen.getByRole('button', { name: 'Siguiente' }));
 
         await waitFor(() => {
             expect(getAdminReservations).toHaveBeenLastCalledWith({
                 page: 2,
-                pageSize: 20,
+                pageSize: 10,
                 sortBy: 'executionDate',
                 sortDirection: 'desc',
                 filters: {

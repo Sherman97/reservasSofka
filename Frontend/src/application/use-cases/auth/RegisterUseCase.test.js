@@ -4,11 +4,11 @@ import { RegistrationError } from '../../../core/domain/errors/AuthenticationErr
 
 describe('RegisterUseCase', () => {
     const createMockRepo = (overrides = {}) => ({
-        register: vi.fn().mockResolvedValue({ id: '1', email: 'new@empresa.com', name: 'Nuevo' }),
+        register: vi.fn().mockResolvedValue({ id: '1', email: 'new@sofka.com.co', name: 'Nuevo' }),
         ...overrides,
     });
 
-    const validData = { email: 'new@empresa.com', password: 'pass123', name: 'Nuevo Usuario' };
+    const validData = { email: 'new@sofka.com.co', password: 'pass123', name: 'Nuevo Usuario' };
 
     it('should register successfully with valid data', async () => {
         const mockUser = { id: '1', ...validData };
@@ -51,7 +51,7 @@ describe('RegisterUseCase', () => {
         const useCase = new RegisterUseCase(repo);
 
         await expect(useCase.execute({ ...validData, email: 'no-email' }))
-            .rejects.toThrow('Email inválido');
+            .rejects.toThrow('El correo corporativo no cumple con el formato válido');
     });
 
     it('should throw RegistrationError for short password', async () => {

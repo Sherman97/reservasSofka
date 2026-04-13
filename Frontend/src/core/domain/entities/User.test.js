@@ -81,7 +81,7 @@ describe('User - Domain Entity', () => {
         it('should serialize to JSON', () => {
             const user = new User(validUserData);
             const json = user.toJSON();
-            expect(json).toEqual(validUserData);
+            expect(json).toEqual({ ...validUserData, roles: ['user'] });
         });
 
         it('should deserialize from JSON', () => {
