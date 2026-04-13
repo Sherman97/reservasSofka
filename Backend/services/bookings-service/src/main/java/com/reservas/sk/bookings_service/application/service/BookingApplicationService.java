@@ -278,7 +278,7 @@ public class BookingApplicationService implements BookingUseCase {
         String novelty = normalizeNullable(command.novelty());
 
         Reservation existing = getReservationById(reservationId);
-        assertHandoverAllowed(existing, List.of("confirmed", "in_progress"), "La reserva no puede marcarse como entregada");
+        assertHandoverAllowed(existing, List.of("pending", "confirmed", "in_progress", "checked_in"), "La reserva no puede marcarse como entregada");
 
         Instant now = Instant.now();
         persistencePort.updateReservationStatus(existing.getId(), STATUS_IN_PROGRESS);
@@ -315,7 +315,7 @@ public class BookingApplicationService implements BookingUseCase {
         String novelty = normalizeNullable(command.novelty());
 
         Reservation existing = getReservationById(reservationId);
-        assertHandoverAllowed(existing, List.of("in_progress", "confirmed"), "La reserva no puede marcarse como devuelta");
+        assertHandoverAllowed(existing, List.of("pending", "confirmed", "in_progress", "checked_in"), "La reserva no puede marcarse como devuelta");
 
         Instant now = Instant.now();
         persistencePort.updateReservationStatus(existing.getId(), STATUS_COMPLETED);

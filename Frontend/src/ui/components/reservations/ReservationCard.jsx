@@ -91,19 +91,23 @@ export const ReservationCard = ({ reservation, onCancel, onEdit, onDeliver, onRe
                 </span>
 
                 <div className="card-actions">
-                    {(isInProgress || isOngoing) && !isCancelled && !isCompleted && onDeliver && (
-                        <button className="btn-deliver-res" onClick={() => onDeliver(reservation)} title="Registrar entrega">
-                            <FaBox size={18} />
-                        </button>
-                    )}
-                    
-                    {(reservation.canCheckIn() || isInProgress || isOngoing) && !isCancelled && !isCompleted && !isCheckedIn && onScanQR && (
+                    {/* QR Check-in button: visible when reservation can be checked in and hasn't been checked in yet */}
+                    {reservation.canCheckIn() && !isCancelled && !isCompleted && !isCheckedIn && !isInProgress && onScanQR && (
                         <button className="btn-deliver-res" onClick={() => onScanQR(reservation)} title="Confirmar reserva con QR">
                             <FaQrcode size={18} />
                         </button>
                     )}
-                    {isInProgress && onReturn && (
-                        <button className="btn-return-res" onClick={() => onReturn(reservation)} title="Registrar devolucion">
+
+                    {/* Deliver button: visible only after check-in and before delivery */}
+                    {isCheckedIn && !isCancelled && !isCompleted && onDeliver && (
+                        <button className="btn-deliver-res" onClick={() => onDeliver(reservation)} title="Registrar entrega">
+                            <FaBox size={18} />
+                        </button>
+                    )}
+
+                    {/* Return button: visible after delivery (in_progress state) */}
+                    {isInProgress && !isCompleted && onReturn && (
+                        <button className="btn-return-res" onClick={() => onReturn(reservation)} title="Registrar devolución">
                             <FaCheckCircle size={18} />
                         </button>
                     )}

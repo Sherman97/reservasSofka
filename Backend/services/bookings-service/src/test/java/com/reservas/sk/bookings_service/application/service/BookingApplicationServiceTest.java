@@ -41,7 +41,9 @@ class BookingApplicationServiceTest {
     private static final String ASSERT_MSG = "PMD UnitTestAssertionsShouldIncludeMessage";
     private static final String START_AT = "2026-03-01T10:00:00Z";
     private static final String END_AT = "2026-03-01T12:00:00Z";
+    private static final String STATUS_PENDING = "pending";
     private static final String STATUS_CONFIRMED = "confirmed";
+    private static final String STATUS_CHECKED_IN = "checked_in";
     private static final String STATUS_CANCELLED = "cancelled";
     private static final String STATUS_COMPLETED = "completed";
     private static final String STATUS_IN_PROGRESS = "in_progress";
@@ -432,6 +434,34 @@ class BookingApplicationServiceTest {
     }
 
     @Test
+    void deliverReservation_successFromPendingStatus() {
+        Reservation existing = reservation(7L, STATUS_PENDING);
+        Reservation delivered = reservation(7L, STATUS_IN_PROGRESS);
+
+        when(persistencePort.findReservationById(7L)).thenReturn(Optional.of(existing), Optional.of(delivered));
+        when(persistencePort.findReservationEquipments(7L)).thenReturn(List.of(), List.of());
+
+        Reservation result = service.deliverReservation(new HandoverReservationCommand(7L, 50L, "ok"));
+
+        assertEquals(STATUS_IN_PROGRESS, result.getStatus(), ASSERT_MSG);
+        verify(persistencePort).updateReservationStatus(7L, STATUS_IN_PROGRESS);
+    }
+
+    @Test
+    void deliverReservation_successFromCheckedInStatus() {
+        Reservation existing = reservation(7L, STATUS_CHECKED_IN);
+        Reservation delivered = reservation(7L, STATUS_IN_PROGRESS);
+
+        when(persistencePort.findReservationById(7L)).thenReturn(Optional.of(existing), Optional.of(delivered));
+        when(persistencePort.findReservationEquipments(7L)).thenReturn(List.of(), List.of());
+
+        Reservation result = service.deliverReservation(new HandoverReservationCommand(7L, 50L, "ok"));
+
+        assertEquals(STATUS_IN_PROGRESS, result.getStatus(), ASSERT_MSG);
+        verify(persistencePort).updateReservationStatus(7L, STATUS_IN_PROGRESS);
+    }
+
+    @Test
     void returnReservation_success() {
         Reservation existing = reservation(9L, STATUS_IN_PROGRESS);
         Reservation returned = reservation(9L, STATUS_COMPLETED);
@@ -459,6 +489,34 @@ class BookingApplicationServiceTest {
         Reservation result = service.returnReservation(new HandoverReservationCommand(9L, 70L, "ok"));
 
         assertEquals(STATUS_COMPLETED, result.getStatus(), ASSERT_MSG);
+    }
+
+    @Test
+    void returnReservation_successFromPendingStatus() {
+        Reservation existing = reservation(9L, STATUS_PENDING);
+        Reservation returned = reservation(9L, STATUS_COMPLETED);
+
+        when(persistencePort.findReservationById(9L)).thenReturn(Optional.of(existing), Optional.of(returned));
+        when(persistencePort.findReservationEquipments(9L)).thenReturn(List.of(), List.of());
+
+        Reservation result = service.returnReservation(new HandoverReservationCommand(9L, 70L, "ok"));
+
+        assertEquals(STATUS_COMPLETED, result.getStatus(), ASSERT_MSG);
+        verify(persistencePort).updateReservationStatus(9L, STATUS_COMPLETED);
+    }
+
+    @Test
+    void returnReservation_successFromCheckedInStatus() {
+        Reservation existing = reservation(9L, STATUS_CHECKED_IN);
+        Reservation returned = reservation(9L, STATUS_COMPLETED);
+
+        when(persistencePort.findReservationById(9L)).thenReturn(Optional.of(existing), Optional.of(returned));
+        when(persistencePort.findReservationEquipments(9L)).thenReturn(List.of(), List.of());
+
+        Reservation result = service.returnReservation(new HandoverReservationCommand(9L, 70L, "ok"));
+
+        assertEquals(STATUS_COMPLETED, result.getStatus(), ASSERT_MSG);
+        verify(persistencePort).updateReservationStatus(9L, STATUS_COMPLETED);
     }
 
     private CreateReservationCommand baseCommand(List<Long> equipmentIds) {

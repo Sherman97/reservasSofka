@@ -85,14 +85,9 @@ describe('ReservationCard', () => {
 
     // === Tests for deliver/return buttons and new statuses ===
 
-    it('debe mostrar botón de entrega para reservas en progreso (ongoing)', () => {
+    it('debe mostrar botón de entrega solo para reservas checked_in', () => {
         const mockOnDeliver = vi.fn();
-        const now = new Date();
-        const res = createReservation({
-            status: 'active',
-            startAt: new Date(now.getTime() - 30 * 60000).toISOString(),
-            endAt: new Date(now.getTime() + 30 * 60000).toISOString(),
-        });
+        const res = createReservation({ status: 'checked_in' });
         const { container } = render(
             <ReservationCard reservation={res} onCancel={mockOnCancel} onDeliver={mockOnDeliver} onReturn={vi.fn()} />
         );
@@ -102,12 +97,7 @@ describe('ReservationCard', () => {
 
     it('debe llamar onDeliver con la reserva al hacer clic en botón entrega', () => {
         const mockOnDeliver = vi.fn();
-        const now = new Date();
-        const res = createReservation({
-            status: 'active',
-            startAt: new Date(now.getTime() - 30 * 60000).toISOString(),
-            endAt: new Date(now.getTime() + 30 * 60000).toISOString(),
-        });
+        const res = createReservation({ status: 'checked_in' });
         const { container } = render(
             <ReservationCard reservation={res} onCancel={mockOnCancel} onDeliver={mockOnDeliver} onReturn={vi.fn()} />
         );
@@ -115,7 +105,7 @@ describe('ReservationCard', () => {
         expect(mockOnDeliver).toHaveBeenCalledWith(res);
     });
 
-    it('no debe mostrar botón de entrega para reservas futuras (próximas)', () => {
+    it('no debe mostrar botón de entrega para reservas pending/active', () => {
         const mockOnDeliver = vi.fn();
         const res = createReservation({ status: 'active' });
         const { container } = render(
@@ -143,12 +133,7 @@ describe('ReservationCard', () => {
     });
 
     it('no debe mostrar botón de entrega si onDeliver no se pasa', () => {
-        const now = new Date();
-        const res = createReservation({
-            status: 'active',
-            startAt: new Date(now.getTime() - 30 * 60000).toISOString(),
-            endAt: new Date(now.getTime() + 30 * 60000).toISOString(),
-        });
+        const res = createReservation({ status: 'checked_in' });
         const { container } = render(
             <ReservationCard reservation={res} onCancel={mockOnCancel} />
         );
@@ -173,6 +158,15 @@ describe('ReservationCard', () => {
         );
         container.querySelector('.btn-return-res').click();
         expect(mockOnReturn).toHaveBeenCalledWith(res);
+    });
+
+    it('no debe mostrar botón de devolución para reservas checked_in', () => {
+        const mockOnReturn = vi.fn();
+        const res = createReservation({ status: 'checked_in' });
+        const { container } = render(
+            <ReservationCard reservation={res} onCancel={mockOnCancel} onDeliver={vi.fn()} onReturn={mockOnReturn} />
+        );
+        expect(container.querySelector('.btn-return-res')).toBeNull();
     });
 
     it('no debe mostrar botón de devolución para reservas active', () => {

@@ -11,14 +11,16 @@ describe('GetSpaceAvailabilityUseCase', () => {
 
     const createMockRepo = (overrides: Partial<IReservationRepository> = {}): IReservationRepository => ({
         create: vi.fn(),
+        update: vi.fn(),
         cancel: vi.fn(),
         getByUserId: vi.fn(),
         getById: vi.fn(),
+        checkIn: vi.fn(),
         deliver: vi.fn(),
         returnReservation: vi.fn(),
         getAvailability: vi.fn().mockResolvedValue(mockAvailability),
         ...overrides
-    });
+    } as unknown as IReservationRepository);
 
     it('debe retornar disponibilidad con datos válidos', async () => {
         const repo = createMockRepo();

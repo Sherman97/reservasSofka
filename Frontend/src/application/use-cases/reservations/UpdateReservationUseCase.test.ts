@@ -26,7 +26,15 @@ describe('UpdateReservationUseCase', () => {
         const id = '123';
         const updateData = { title: 'New Title' };
         
-        const mockReservation = { id, title: 'New Title' } as Reservation;
+        const mockReservation = { 
+          id, 
+          title: 'New Title',
+          userId: 'user-1',
+          locationId: 'loc-1',
+          locationName: 'Sala 1',
+          startAt: new Date(),
+          endAt: new Date()
+        } as unknown as Reservation;
         (mockRepository.update as import('vitest').Mock)
           .mockResolvedValue(mockReservation);
 
