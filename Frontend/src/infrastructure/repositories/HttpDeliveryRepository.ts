@@ -1,7 +1,7 @@
 import type { IDeliveryRepository } from '../../core/ports/repositories/IDeliveryRepository';
 import type { IHttpClient } from '../../core/ports/services/IHttpClient';
 import type { Delivery } from '../../core/domain/entities/Delivery';
-import { DeliveryMapper } from '../mappers/DeliveryMapper';
+import { DeliveryMapper, DeliveryFormData } from '../mappers/DeliveryMapper';
 
 interface ApiResponse<T = unknown> {
     ok: boolean;
@@ -14,7 +14,7 @@ export class HttpDeliveryRepository implements IDeliveryRepository {
 
     async submit(deliveryData: Record<string, unknown>): Promise<Delivery> {
         try {
-            const payload = DeliveryMapper.toApi(deliveryData as Parameters<typeof DeliveryMapper.toApi>[0]);
+            const payload = DeliveryMapper.toApi(deliveryData as DeliveryFormData);
             const response = await this.httpClient.post('/bookings/deliveries', payload);
             const raw = response.data as ApiResponse & Record<string, unknown>;
 

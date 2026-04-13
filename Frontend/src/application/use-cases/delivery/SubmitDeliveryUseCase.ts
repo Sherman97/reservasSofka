@@ -7,6 +7,7 @@ interface SubmitDeliveryData {
     managerId: string;
     notes: string;
     date: string;
+    [key: string]: unknown;
 }
 
 export class SubmitDeliveryUseCase {

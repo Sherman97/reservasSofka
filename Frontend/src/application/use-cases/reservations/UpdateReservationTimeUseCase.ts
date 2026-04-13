@@ -17,10 +17,9 @@ export class UpdateReservationTimeUseCase {
         if (startTime >= endTime) {
             throw new Error('End time must be later than start time');
         }
-        if (!this.reservationRepository.updateTime) {
-            throw new Error('Reservation update is not available');
-        }
-        return await this.reservationRepository.updateTime(reservationId, date, startTime, endTime);
+        return await this.reservationRepository.update(reservationId, {
+            date, startTime, endTime
+        });
     }
 }
 

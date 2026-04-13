@@ -30,8 +30,8 @@ describe('Integration: Reservation Flow (UseCase + Mapper + Entity)', () => {
                 const dto = {
                     id: `r${idCounter++}`,
                     userId: 'u1',
-                    spaceId: data['locationId'] || data['spaceId'],
-                    spaceName: data['locationName'] || 'Sala Test',
+                    locationId: data['locationId'] as string,
+                    spaceName: (data['locationName'] || 'Sala Test') as string,
                     startAt: '2026-03-01T10:00:00Z',
                     endAt: '2026-03-01T11:00:00Z',
                     equipments: [],
@@ -65,9 +65,21 @@ describe('Integration: Reservation Flow (UseCase + Mapper + Entity)', () => {
             },
             async getAvailability(spaceId: string, date: string) {
                 const busy = reservations
-                    .filter(r => r['spaceId'] === spaceId && r['status'] !== 'cancelled')
+                    .filter(r => r['locationId'] === spaceId && r['status'] !== 'cancelled')
                     .map(r => ({ startAt: r['startAt'] as string, endAt: r['endAt'] as string }));
                 return { locationId: spaceId, date, busySlots: busy.map(b => ({ start: b.startAt, end: b.endAt })) };
+            },
+            async update(id: string, updateData: Record<string, unknown>) {
+                const idx = reservations.findIndex(r => r['id'] === id);
+                if (idx >= 0) {
+                    reservations[idx] = { ...reservations[idx], ...updateData };
+                }
+                return ReservationMapper.toDomain(reservations[idx] as any)!;
+            },
+            async checkIn(reservationId: string, qrToken: string) {
+                const idx = reservations.findIndex(r => r['id'] === reservationId);
+                if (idx >= 0) reservations[idx]['status'] = 'checked_in';
+                return ReservationMapper.toDomain(reservations[idx] as any)!;
             }
         };
     }
