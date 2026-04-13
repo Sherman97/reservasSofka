@@ -1,4 +1,5 @@
 import React from 'react';
+import { FiSearch } from 'react-icons/fi';
 
 /**
  * ReservationFilterBar - UI Component
@@ -35,7 +36,7 @@ export const ReservationFilterBar = ({
 
             <div className="filter-controls">
                 <div className="search-input-wrapper">
-                    <span className="search-icon">🔍</span>
+                    <FiSearch className="search-icon" size={18} />
                     <input
                         type="text"
                         className="search-input"

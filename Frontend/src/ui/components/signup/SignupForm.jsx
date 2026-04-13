@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaUser, FaLock, FaRedo } from 'react-icons/fa';
 import { useSignup } from '../../../core/adapters/hooks/useSignup';
 import '../../styles/signup/Signup.css';
 
@@ -10,7 +11,7 @@ export const SignupForm = () => {
             <div className="form-group">
                 <label htmlFor="fullName">Nombre Completo</label>
                 <div className="input-wrapper">
-                    <span className="input-icon">👤</span>
+                    <FaUser className="input-icon" size={18} />
                     <input
                         type="text"
                         id="fullName"
@@ -43,7 +44,7 @@ export const SignupForm = () => {
             <div className="form-group">
                 <label htmlFor="password">Contraseña</label>
                 <div className="input-wrapper">
-                    <span className="input-icon">🔒</span>
+                    <FaLock className="input-icon" size={18} />
                     <input
                         type="password"
                         id="password"
@@ -59,7 +60,7 @@ export const SignupForm = () => {
             <div className="form-group">
                 <label htmlFor="confirmPassword">Confirmar Contraseña</label>
                 <div className="input-wrapper">
-                    <span className="input-icon">🔄</span>
+                    <FaRedo className="input-icon" size={18} />
                     <input
                         type="password"
                         id="confirmPassword"

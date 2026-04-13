@@ -29,15 +29,14 @@ describe('SignupPage', () => {
         expect(screen.getByTestId('signup-form')).toBeInTheDocument();
     });
 
-    it('should display branding', () => {
+    it('should display description text', () => {
         render(
             <MemoryRouter>
                 <SignupPage />
             </MemoryRouter>
         );
 
-        expect(screen.getByText('📅')).toBeInTheDocument();
-        expect(screen.getByText('Booking Platform')).toBeInTheDocument();
+        expect(screen.getByText(/reserva salas de conferencias/i)).toBeInTheDocument();
     });
 
     it('should display subtitle', () => {

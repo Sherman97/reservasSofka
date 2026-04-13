@@ -10,6 +10,11 @@ import {
     UnauthorizedError
 } from '../../core/domain/errors/AuthenticationError';
 
+/** Detect whether the API response uses { ok, data } wrapper or returns data directly */
+function isWrappedResponse(raw: unknown): raw is { ok: boolean; message?: string; data?: unknown } {
+    return typeof (raw as { ok?: unknown }).ok === 'boolean';
+}
+
 export class HttpAuthRepository implements IAuthRepository {
     constructor(
         private readonly httpClient: IHttpClient,
@@ -19,15 +24,31 @@ export class HttpAuthRepository implements IAuthRepository {
     async login(credentials: LoginCredentials): Promise<User> {
         try {
             const response = await this.httpClient.post('/auth/login', credentials);
-            const data = response.data as { ok: boolean; message?: string; data?: { token: string; user: Record<string, unknown> } };
+            const raw = response.data as Record<string, unknown>;
 
-            if (!data.ok || !data.data?.token) {
-                throw new InvalidCredentialsError(
-                    data.message || 'Error de autenticación: No se recibió un token válido'
-                );
+            let token: string | undefined;
+            let userDTO: Record<string, unknown> | undefined;
+
+            if (isWrappedResponse(raw)) {
+                if (!raw.ok || !(raw.data as Record<string, unknown>)?.token) {
+                    throw new InvalidCredentialsError(
+                        (raw.message as string) || 'Error de autenticación: No se recibió un token válido'
+                    );
+                }
+                const wrapped = raw.data as { token: string; user: Record<string, unknown> };
+                token = wrapped.token;
+                userDTO = wrapped.user;
+            } else {
+                // Direct response: { token, user } or { token, ... }
+                token = raw.token as string | undefined;
+                userDTO = (raw.user as Record<string, unknown>) || raw;
+                if (!token) {
+                    throw new InvalidCredentialsError(
+                        'Error de autenticación: No se recibió un token válido'
+                    );
+                }
             }
 
-            const { token, user: userDTO } = data.data;
             this.storageService.set('token', token);
             const user = UserMapper.toDomain(userDTO as unknown as Parameters<typeof UserMapper.toDomain>[0]);
             if (!user) throw new AuthenticationError('Error mapping user data');
@@ -45,22 +66,39 @@ export class HttpAuthRepository implements IAuthRepository {
     async register(userData: RegisterData): Promise<User> {
         try {
             const response = await this.httpClient.post('/auth/register', userData);
-            const data = response.data as { ok: boolean; message?: string; data?: { token?: string; user?: Record<string, unknown> } & Record<string, unknown> };
+            const raw = response.data as Record<string, unknown>;
 
-            if (!data.ok) {
-                throw new RegistrationError(data.message || 'Error en el registro');
+            if (isWrappedResponse(raw)) {
+                if (!raw.ok) {
+                    throw new RegistrationError((raw.message as string) || 'Error en el registro');
+                }
+
+                const wrappedData = raw.data as Record<string, unknown> | undefined;
+                if (wrappedData?.token) {
+                    const { token, user: wrappedUser } = wrappedData as { token: string; user: Record<string, unknown> };
+                    this.storageService.set('token', token);
+                    const user = UserMapper.toDomain(wrappedUser as unknown as Parameters<typeof UserMapper.toDomain>[0]);
+                    if (!user) throw new RegistrationError('Error mapping user data');
+                    this.storageService.setJSON('user', user.toJSON());
+                    return user;
+                }
+
+                const user = UserMapper.toDomain(wrappedData as unknown as Parameters<typeof UserMapper.toDomain>[0]);
+                if (!user) throw new RegistrationError('Error mapping user data');
+                return user;
             }
 
-            if (data.data?.token) {
-                const { token, user: userDTO } = data.data as { token: string; user: Record<string, unknown> };
-                this.storageService.set('token', token);
+            // Direct response (unwrapped)
+            if (raw.token) {
+                this.storageService.set('token', raw.token as string);
+                const userDTO = (raw.user as Record<string, unknown>) || raw;
                 const user = UserMapper.toDomain(userDTO as unknown as Parameters<typeof UserMapper.toDomain>[0]);
                 if (!user) throw new RegistrationError('Error mapping user data');
                 this.storageService.setJSON('user', user.toJSON());
                 return user;
             }
 
-            const user = UserMapper.toDomain(data.data as unknown as Parameters<typeof UserMapper.toDomain>[0]);
+            const user = UserMapper.toDomain(raw as unknown as Parameters<typeof UserMapper.toDomain>[0]);
             if (!user) throw new RegistrationError('Error mapping user data');
             return user;
         } catch (error) {
@@ -77,11 +115,19 @@ export class HttpAuthRepository implements IAuthRepository {
     async getCurrentUser(): Promise<User> {
         try {
             const response = await this.httpClient.get('/auth/me');
-            const data = response.data as { ok: boolean; data?: Record<string, unknown> };
+            const raw = response.data as Record<string, unknown>;
 
-            if (!data.ok) throw new UnauthorizedError();
+            let userDTO: Record<string, unknown>;
 
-            const user = UserMapper.toDomain(data.data as unknown as Parameters<typeof UserMapper.toDomain>[0]);
+            if (isWrappedResponse(raw)) {
+                if (!raw.ok) throw new UnauthorizedError();
+                userDTO = raw.data as Record<string, unknown>;
+            } else {
+                // Direct user object response
+                userDTO = raw;
+            }
+
+            const user = UserMapper.toDomain(userDTO as unknown as Parameters<typeof UserMapper.toDomain>[0]);
             if (!user) throw new UnauthorizedError();
             this.storageService.setJSON('user', user.toJSON());
             return user;

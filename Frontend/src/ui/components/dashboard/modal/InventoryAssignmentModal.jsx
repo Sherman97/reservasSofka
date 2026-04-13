@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { FaMapMarkerAlt, FaTrash } from 'react-icons/fa';
+import { MdClose } from 'react-icons/md';
 import { useDependencies } from '../../../../core/adapters/hooks/useDependencies';
 import '../../../styles/dashboard/InventoryAssignmentModal.css';
 
@@ -95,11 +97,16 @@ export const InventoryAssignmentModal = ({ isOpen, location, onClose, onSuccess 
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content inventory-modal" onClick={(e) => e.stopPropagation()}>
-                <button className="modal-close" onClick={onClose}>✕</button>
+                <button className="modal-close" onClick={onClose} aria-label="Cerrar">
+                    <MdClose size={20} />
+                </button>
 
                 <div className="modal-header">
                     <h2>Gestionar Inventario - {location.name}</h2>
-                    <p className="modal-subtitle">📍 {location.subtitle || 'Sede Central'}</p>
+                    <p className="modal-subtitle">
+                        <FaMapMarkerAlt size={14} style={{ marginRight: '4px' }} />
+                        {location.subtitle || 'Sede Central'}
+                    </p>
                 </div>
 
                 <div className="modal-body">
@@ -121,7 +128,8 @@ export const InventoryAssignmentModal = ({ isOpen, location, onClose, onSuccess 
                                             onClick={() => handleRemove(item.id)}
                                             disabled={loading}
                                         >
-                                            🗑️ Remover
+                                            <FaTrash size={14} style={{ marginRight: '4px' }} />
+                                            Remover
                                         </button>
                                     </div>
                                 ))}

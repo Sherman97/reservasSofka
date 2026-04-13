@@ -3,13 +3,14 @@ package com.reservas.sk.locations_service.adapters.out.persistence;
 import com.reservas.sk.locations_service.application.port.out.LocationsPersistencePort;
 import com.reservas.sk.locations_service.domain.model.City;
 import com.reservas.sk.locations_service.domain.model.Space;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -19,28 +20,36 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
+@SuppressFBWarnings(
+        value = "EI_EXPOSE_REP2",
+        justification = "Spring-managed dependency is injected and not copied."
+)
 public class JdbcLocationsPersistenceAdapter implements LocationsPersistencePort {
+    private static final int SPACES_QUERY_CAPACITY = 192;
+    private static final String COLUMN_NAME = "name";
+
     private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert cityInsert;
+    private final SimpleJdbcInsert spaceInsert;
 
     public JdbcLocationsPersistenceAdapter(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        this.cityInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("cities")
+                .usingGeneratedKeyColumns("id");
+        this.spaceInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("spaces")
+                .usingGeneratedKeyColumns("id");
     }
 
     @Override
     public long insertCity(String name, String country) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO cities (name, country) VALUES (?, ?)",
-                    Statement.RETURN_GENERATED_KEYS
-            );
-            ps.setString(1, name);
-            ps.setString(2, country);
-            return ps;
-        }, keyHolder);
-
-        Number key = keyHolder.getKey();
-        return key == null ? 0L : key.longValue();
+        Number key = cityInsert.executeAndReturnKey(
+                new MapSqlParameterSource()
+                        .addValue(COLUMN_NAME, name)
+                        .addValue("country", country)
+        );
+        return key.longValue();
     }
 
     @Override
@@ -106,37 +115,24 @@ public class JdbcLocationsPersistenceAdapter implements LocationsPersistencePort
                             String description,
                             String imageUrl,
                             boolean isActive) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(
-                    """
-                    INSERT INTO spaces (city_id, name, capacity, floor, description, image_url, is_active)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    Statement.RETURN_GENERATED_KEYS
-            );
-            ps.setLong(1, cityId);
-            ps.setString(2, name);
-            if (capacity == null) {
-                ps.setNull(3, java.sql.Types.INTEGER);
-            } else {
-                ps.setInt(3, capacity);
-            }
-            ps.setString(4, floor);
-            ps.setString(5, description);
-            ps.setString(6, imageUrl);
-            ps.setBoolean(7, isActive);
-            return ps;
-        }, keyHolder);
-
-        Number key = keyHolder.getKey();
-        return key == null ? 0L : key.longValue();
+        Number key = spaceInsert.executeAndReturnKey(
+                new MapSqlParameterSource()
+                .addValue("city_id", cityId)
+                .addValue(COLUMN_NAME, name)
+                .addValue("capacity", capacity)
+                .addValue("floor", floor)
+                .addValue("description", description)
+                        .addValue("image_url", imageUrl)
+                        .addValue("is_active", isActive)
+        );
+        return key.longValue();
     }
 
     @Override
     public List<Space> listSpaces(Long cityId, Boolean activeOnly) {
-        StringBuilder sql = new StringBuilder(
-                "SELECT id, city_id, name, capacity, floor, description, image_url, is_active, created_at, updated_at FROM spaces"
+        StringBuilder sql = new StringBuilder(SPACES_QUERY_CAPACITY);
+        sql.append(
+                "SELECT id, city_id, name, capacity, floor, description, image_url, is_active, created_at, updated_at, qr_code, qr_token, qr_etag FROM spaces"
         );
 
         List<String> where = new ArrayList<>();
@@ -163,7 +159,7 @@ public class JdbcLocationsPersistenceAdapter implements LocationsPersistencePort
     public Optional<Space> findSpaceById(long id) {
         List<Space> rows = jdbcTemplate.query(
                 """
-                SELECT id, city_id, name, capacity, floor, description, image_url, is_active, created_at, updated_at
+                SELECT id, city_id, name, capacity, floor, description, image_url, is_active, created_at, updated_at, qr_code, qr_token, qr_etag
                 FROM spaces
                 WHERE id = ?
                 LIMIT 1
@@ -220,6 +216,17 @@ public class JdbcLocationsPersistenceAdapter implements LocationsPersistencePort
     }
 
     @Override
+    public void updateSpaceQrData(long id, byte[] qrCode, String qrToken, String qrETag) {
+        jdbcTemplate.update(
+                "UPDATE spaces SET qr_code = ?, qr_token = ?, qr_etag = ?, updated_at = NOW() WHERE id = ?",
+                qrCode,
+                qrToken,
+                qrETag,
+                id
+        );
+    }
+
+    @Override
     public int deleteSpace(long id) {
         return jdbcTemplate.update("DELETE FROM spaces WHERE id = ?", id);
     }
@@ -227,7 +234,7 @@ public class JdbcLocationsPersistenceAdapter implements LocationsPersistencePort
     private City toCity(java.sql.ResultSet rs) throws java.sql.SQLException {
         return new City(
                 rs.getLong("id"),
-                rs.getString("name"),
+                rs.getString(COLUMN_NAME),
                 rs.getString("country"),
                 toInstant(rs.getTimestamp("created_at")),
                 toInstant(rs.getTimestamp("updated_at"))
@@ -238,14 +245,17 @@ public class JdbcLocationsPersistenceAdapter implements LocationsPersistencePort
         return new Space(
                 rs.getLong("id"),
                 rs.getLong("city_id"),
-                rs.getString("name"),
+                rs.getString(COLUMN_NAME),
                 rs.getObject("capacity") == null ? null : rs.getInt("capacity"),
                 rs.getString("floor"),
                 rs.getString("description"),
                 rs.getString("image_url"),
                 rs.getBoolean("is_active"),
                 toInstant(rs.getTimestamp("created_at")),
-                toInstant(rs.getTimestamp("updated_at"))
+                toInstant(rs.getTimestamp("updated_at")),
+                rs.getBytes("qr_code"),
+                rs.getString("qr_token"),
+                rs.getString("qr_etag")
         );
     }
 

@@ -1,6 +1,10 @@
 package com.reservas.sk.locations_service.application.port.in;
 
-import com.reservas.sk.locations_service.application.usecase.*;
+import com.reservas.sk.locations_service.application.usecase.CreateCityCommand;
+import com.reservas.sk.locations_service.application.usecase.CreateSpaceCommand;
+import com.reservas.sk.locations_service.application.usecase.ListSpacesQuery;
+import com.reservas.sk.locations_service.application.usecase.UpdateCityCommand;
+import com.reservas.sk.locations_service.application.usecase.UpdateSpaceCommand;
 import com.reservas.sk.locations_service.domain.model.City;
 import com.reservas.sk.locations_service.domain.model.Space;
 
@@ -26,6 +30,14 @@ public interface LocationsUseCase {
     Space updateSpace(Long id, UpdateSpaceCommand command);
 
     void deleteSpace(Long id);
+
+    Space getSpaceWithQrCode(Long id);
+
+    /**
+     * Regenera códigos QR para todos los espacios sin QR o con QR inválido.
+     * @return Cantidad de códigos QR generados exitosamente
+     */
+    int regenerateAllSpaceQrCodes();
 }
 
 

@@ -5,6 +5,7 @@ import type { IAuthRepository } from '../../../core/ports/repositories/IAuthRepo
 import type { IReservationRepository } from '../../../core/ports/repositories/IReservationRepository';
 import type { ILocationRepository } from '../../../core/ports/repositories/ILocationRepository';
 import type { IInventoryRepository } from '../../../core/ports/repositories/IInventoryRepository';
+import type { IDeliveryRepository } from '../../../core/ports/repositories/IDeliveryRepository';
 
 import { LocalStorageService } from '../../../infrastructure/storage/LocalStorageService';
 import { HttpClientFactory } from '../../../infrastructure/http/clients/HttpClientFactory';
@@ -12,6 +13,7 @@ import { HttpAuthRepository } from '../../../infrastructure/repositories/HttpAut
 import { HttpLocationRepository } from '../../../infrastructure/repositories/HttpLocationRepository';
 import { HttpInventoryRepository } from '../../../infrastructure/repositories/HttpInventoryRepository';
 import { HttpReservationRepository } from '../../../infrastructure/repositories/HttpReservationRepository';
+import { HttpDeliveryRepository } from '../../../infrastructure/repositories/HttpDeliveryRepository';
 import { LoginUseCase } from '../../../application/use-cases/auth/LoginUseCase';
 import { LogoutUseCase } from '../../../application/use-cases/auth/LogoutUseCase';
 import { RegisterUseCase } from '../../../application/use-cases/auth/RegisterUseCase';
@@ -22,8 +24,12 @@ import { AssignInventoryUseCase } from '../../../application/use-cases/dashboard
 import { RemoveInventoryUseCase } from '../../../application/use-cases/dashboard/RemoveInventoryUseCase';
 import { GetUserReservationsUseCase } from '../../../application/use-cases/reservations/GetUserReservationsUseCase';
 import { CancelReservationUseCase } from '../../../application/use-cases/reservations/CancelReservationUseCase';
+import { UpdateReservationUseCase } from '../../../application/use-cases/reservations/UpdateReservationUseCase';
 import { GetCurrentUserUseCase } from '../../../application/use-cases/auth/GetCurrentUserUseCase';
 import { GetSpaceAvailabilityUseCase } from '../../../application/use-cases/dashboard/GetSpaceAvailabilityUseCase';
+import { SubmitDeliveryUseCase } from '../../../application/use-cases/delivery/SubmitDeliveryUseCase';
+import { DeliverReservationUseCase } from '../../../application/use-cases/reservations/DeliverReservationUseCase';
+import { ReturnReservationUseCase } from '../../../application/use-cases/reservations/ReturnReservationUseCase';
 import { StompWebSocketService } from '../../../infrastructure/websocket/StompWebSocketService';
 
 export interface DependencyMap {
@@ -37,6 +43,7 @@ export interface DependencyMap {
     locationRepository: ILocationRepository;
     inventoryRepository: IInventoryRepository;
     reservationRepository: IReservationRepository;
+    deliveryRepository: IDeliveryRepository;
     loginUseCase: LoginUseCase;
     logoutUseCase: LogoutUseCase;
     registerUseCase: RegisterUseCase;
@@ -48,7 +55,11 @@ export interface DependencyMap {
     removeInventoryUseCase: RemoveInventoryUseCase;
     getUserReservationsUseCase: GetUserReservationsUseCase;
     cancelReservationUseCase: CancelReservationUseCase;
+    updateReservationUseCase: UpdateReservationUseCase;
     getSpaceAvailabilityUseCase: GetSpaceAvailabilityUseCase;
+    submitDeliveryUseCase: SubmitDeliveryUseCase;
+    deliverReservationUseCase: DeliverReservationUseCase;
+    returnReservationUseCase: ReturnReservationUseCase;
 }
 
 class DIContainer {
@@ -90,6 +101,8 @@ class DIContainer {
 
         this.dependencies.locationRepository = locationRepository;
         this.dependencies.inventoryRepository = inventoryRepository;
+        const deliveryRepository = new HttpDeliveryRepository(bookingsClient);
+        this.dependencies.deliveryRepository = deliveryRepository;
         this.dependencies.reservationRepository = reservationRepository;
 
         this.dependencies.loginUseCase = new LoginUseCase(authRepository);
@@ -104,7 +117,11 @@ class DIContainer {
         this.dependencies.removeInventoryUseCase = new RemoveInventoryUseCase(locationRepository);
         this.dependencies.getUserReservationsUseCase = new GetUserReservationsUseCase(reservationRepository);
         this.dependencies.cancelReservationUseCase = new CancelReservationUseCase(reservationRepository);
+        this.dependencies.updateReservationUseCase = new UpdateReservationUseCase(reservationRepository);
         this.dependencies.getSpaceAvailabilityUseCase = new GetSpaceAvailabilityUseCase(reservationRepository);
+        this.dependencies.submitDeliveryUseCase = new SubmitDeliveryUseCase(deliveryRepository);
+        this.dependencies.deliverReservationUseCase = new DeliverReservationUseCase(reservationRepository);
+        this.dependencies.returnReservationUseCase = new ReturnReservationUseCase(reservationRepository);
     }
 
     get<K extends keyof DependencyMap>(name: K): DependencyMap[K] {

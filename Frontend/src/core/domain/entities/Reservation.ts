@@ -8,7 +8,21 @@ export interface ReservationProps {
     equipment?: string[];
     status?: string;
     createdAt?: string | Date;
+    attendeesCount?: number;
+    notes?: string;
+    checkedInAt?: string | Date | null;
 }
+
+// Reservation status constants
+export const ReservationStatus = {
+    PENDING: 'pending',
+    CHECKED_IN: 'checked_in',
+    NO_SHOW: 'no_show',
+    CANCELED: 'canceled',
+    COMPLETED: 'completed',
+    ACTIVE: 'active',
+    CONFIRMED: 'confirmed'
+} as const;
 
 export class Reservation {
     public readonly id: string;
@@ -20,10 +34,17 @@ export class Reservation {
     public readonly equipment: string[];
     public readonly status: string;
     public readonly createdAt: Date;
+    public readonly attendeesCount: number;
+    public readonly notes: string;
+    public readonly checkedInAt: Date | null;
+
+    // Grace period for check-in (5 minutes after start time)
+    private static readonly CHECK_IN_GRACE_PERIOD_MINUTES = 5;
 
     constructor({
         id, userId, locationId, locationName, startAt, endAt,
-        equipment = [], status = 'active', createdAt
+        equipment = [], status = 'active', createdAt,
+        attendeesCount = 1, notes = '', checkedInAt = null
     }: ReservationProps) {
         this.id = id;
         this.userId = userId;
@@ -34,11 +55,39 @@ export class Reservation {
         this.equipment = equipment;
         this.status = status;
         this.createdAt = createdAt ? new Date(createdAt) : new Date();
+        this.attendeesCount = attendeesCount ?? 1;
+        this.notes = notes ?? '';
+        this.checkedInAt = checkedInAt ? new Date(checkedInAt) : null;
     }
 
     isActive(): boolean {
         const s = (this.status || '').toLowerCase();
-        return ['active', 'confirmed', 'pending', 'created'].includes(s);
+        return ['active', 'confirmed', 'pending', 'created', 'in_progress', 'checked_in'].includes(s);
+    }
+
+    isConfirmed(): boolean {
+        const s = (this.status || '').toLowerCase();
+        return ['confirmed', 'active', 'pending', 'created', 'checked_in'].includes(s);
+    }
+
+    isPending(): boolean {
+        return (this.status || '').toLowerCase() === 'pending';
+    }
+
+    isCheckedIn(): boolean {
+        return (this.status || '').toLowerCase() === 'checked_in';
+    }
+
+    isNoShow(): boolean {
+        return (this.status || '').toLowerCase() === 'no_show';
+    }
+
+    isInProgress(): boolean {
+        return (this.status || '').toLowerCase() === 'in_progress';
+    }
+
+    isCompleted(): boolean {
+        return (this.status || '').toLowerCase() === 'completed';
     }
 
     isCancelled(): boolean {
@@ -70,6 +119,80 @@ export class Reservation {
         return `${start} - ${end}`;
     }
 
+    getRemainingMinutes(): number {
+        const now = new Date();
+        if (this.endAt <= now) return 0;
+        const diffMs = this.endAt.getTime() - now.getTime();
+        return Math.ceil(diffMs / (1000 * 60));
+    }
+
+    // Lead time for check-in (can check in 5 minutes before start time)
+    public static readonly CHECK_IN_LEAD_TIME_MINUTES = 5;
+
+    /**
+     * Checks if the reservation can be checked in with QR code.
+     * Conditions:
+     * - Status must be PENDING
+     * - Current time must be within lead time before start time (5 minutes)
+     * - Current time must be within grace period after start time (5 minutes)
+     */
+    canCheckIn(
+        gracePeriodMinutes: number = Reservation.CHECK_IN_GRACE_PERIOD_MINUTES,
+        leadTimeMinutes: number = Reservation.CHECK_IN_LEAD_TIME_MINUTES
+    ): boolean {
+        if (!this.isPending()) {
+            return false;
+        }
+
+        const now = new Date();
+        const earliestStart = new Date(this.startAt.getTime() - leadTimeMinutes * 60 * 1000);
+        const graceDeadline = new Date(this.startAt.getTime() + gracePeriodMinutes * 60 * 1000);
+        
+        // Must be after earliest start and before grace deadline
+        return now >= earliestStart && now <= graceDeadline;
+    }
+
+    /**,
+            checkedInAt: this.checkedInAt?.toISOString() || null
+     * Checks if the check-in period has expired.
+     */
+    isExpired(gracePeriodMinutes: number = Reservation.CHECK_IN_GRACE_PERIOD_MINUTES): boolean {
+        if (!this.isPending()) {
+            return false;
+        }
+
+        const now = new Date();
+        const graceDeadline = new Date(this.startAt.getTime() + gracePeriodMinutes * 60 * 1000);
+        
+        return now > graceDeadline;
+    }
+
+    /**
+     * Gets the remaining time for check-in in minutes.
+     * Returns 0 if expired or not pending.
+     */
+    getCheckInRemainingMinutes(gracePeriodMinutes: number = Reservation.CHECK_IN_GRACE_PERIOD_MINUTES): number {
+        if (!this.isPending()) {
+            return 0;
+        }
+
+        const now = new Date();
+        const graceDeadline = new Date(this.startAt.getTime() + gracePeriodMinutes * 60 * 1000);
+        
+        if (now > graceDeadline) {
+            return 0;
+        }
+
+        const diffMs = graceDeadline.getTime() - now.getTime();
+        return Math.ceil(diffMs / (1000 * 60));
+    }
+
+    isAboutToExpire(thresholdMinutes: number = 2): boolean {
+        if (this.isCancelled() || this.isPast()) return false;
+        const remaining = this.getRemainingMinutes();
+        return remaining > 0 && remaining <= thresholdMinutes;
+    }
+
     overlaps(startAt: string | Date, endAt: string | Date): boolean {
         const start = new Date(startAt);
         const end = new Date(endAt);
@@ -81,7 +204,8 @@ export class Reservation {
             id: this.id, userId: this.userId, locationId: this.locationId,
             locationName: this.locationName, startAt: this.startAt.toISOString(),
             endAt: this.endAt.toISOString(), equipment: this.equipment,
-            status: this.status, createdAt: this.createdAt.toISOString()
+            status: this.status, createdAt: this.createdAt.toISOString(),
+            attendeesCount: this.attendeesCount, notes: this.notes
         };
     }
 

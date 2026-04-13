@@ -23,12 +23,28 @@ describe('ReservationFilterBar', () => {
         expect(screen.getByText('Próximas').className).not.toContain('active');
     });
 
-    it('should call onTabChange when clicking a tab', () => {
+    it('should call onTabChange when clicking Canceladas', () => {
         const onTabChange = vi.fn();
         render(<ReservationFilterBar {...defaultProps} onTabChange={onTabChange} />);
 
         fireEvent.click(screen.getByText('Canceladas'));
         expect(onTabChange).toHaveBeenCalledWith('cancelled');
+    });
+
+    it('should call onTabChange when clicking Próximas', () => {
+        const onTabChange = vi.fn();
+        render(<ReservationFilterBar {...defaultProps} activeTab="past" onTabChange={onTabChange} />);
+
+        fireEvent.click(screen.getByText('Próximas'));
+        expect(onTabChange).toHaveBeenCalledWith('upcoming');
+    });
+
+    it('should call onTabChange when clicking Pasadas', () => {
+        const onTabChange = vi.fn();
+        render(<ReservationFilterBar {...defaultProps} onTabChange={onTabChange} />);
+
+        fireEvent.click(screen.getByText('Pasadas'));
+        expect(onTabChange).toHaveBeenCalledWith('past');
     });
 
     it('should render search input', () => {

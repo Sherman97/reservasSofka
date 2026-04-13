@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaBuilding, FaHeadphones, FaMapMarkerAlt, FaCalendarAlt, FaInfoCircle } from 'react-icons/fa';
 import { useReservation } from '../../../core/adapters/hooks/useReservation';
 import { ReservationModal } from './modal/ReservationModal';
 
@@ -25,10 +26,17 @@ export const ItemCard = ({ item }) => {
                     <div className="item-header">
                         <h3>{item.title}</h3>
                         <span className="item-category">
-                            {isLocation ? '🏢 Sala' : `🎧 ${item.category || 'Equipo'}`}
+                            {isLocation ? (
+                                <><FaBuilding size={14} style={{ marginRight: '4px' }} /> Sala</>
+                            ) : (
+                                <><FaHeadphones size={14} style={{ marginRight: '4px' }} /> {item.category || 'Equipo'}</>
+                            )}
                         </span>
                     </div>
-                    <div className="item-location">📍 {item.subtitle}</div>
+                    <div className="item-location">
+                        <FaMapMarkerAlt size={14} style={{ marginRight: '4px' }} />
+                        {item.subtitle}
+                    </div>
                     <div className="item-tags">
                         {item.tags && item.tags.map((tag, index) => (
                             <span key={index} className="tag">{tag}</span>
@@ -38,11 +46,13 @@ export const ItemCard = ({ item }) => {
                     <div className="item-actions">
                         {isLocation ? (
                             <button className="btn-book" onClick={reservation.openModal}>
-                                📅 Reservar
+                                <FaCalendarAlt size={16} style={{ marginRight: '6px' }} />
+                                Reservar
                             </button>
                         ) : (
                             <button className="btn-book secondary" disabled>
-                                ℹ️ Ver Detalles
+                                <FaInfoCircle size={16} style={{ marginRight: '6px' }} />
+                                Ver Detalles
                             </button>
                         )}
                     </div>
@@ -58,6 +68,7 @@ export const ItemCard = ({ item }) => {
                     selectedEquipment={reservation.selectedEquipment}
                     startTime={reservation.startTime}
                     endTime={reservation.endTime}
+                    attendeesCount={reservation.attendeesCount}
                     availability={reservation.availability}
                     loading={reservation.loading}
                     busySlots={reservation.busySlots}
@@ -70,6 +81,7 @@ export const ItemCard = ({ item }) => {
                     onEquipmentToggle={reservation.handleEquipmentToggle}
                     onStartTimeChange={reservation.handleStartTimeChange}
                     onEndTimeChange={reservation.handleEndTimeChange}
+                    onAttendeesCountChange={reservation.setAttendeesCount}
                     onPreviousMonth={reservation.goToPreviousMonth}
                     onNextMonth={reservation.goToNextMonth}
                     onClose={reservation.closeModal}

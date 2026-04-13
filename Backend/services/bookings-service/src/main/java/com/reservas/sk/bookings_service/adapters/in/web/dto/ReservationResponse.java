@@ -13,7 +13,38 @@ public record ReservationResponse(Long id,
                                   String notes,
                                   String cancellationReason,
                                   String createdAt,
-                                  List<ReservationEquipmentResponse> equipments) {
+                                  List<ReservationEquipmentResponse> equipments,
+                                  String qrToken,
+                                  String checkedInAt) {
+    public ReservationResponse(Long id,
+                               Long userId,
+                               Long spaceId,
+                               String startAt,
+                               String endAt,
+                               String status,
+                               String title,
+                               Integer attendeesCount,
+                               String notes,
+                               String cancellationReason,
+                               String createdAt,
+                               List<ReservationEquipmentResponse> equipments,
+                               String qrToken,
+                               String checkedInAt) {
+        this.id = id;
+        this.userId = userId;
+        this.spaceId = spaceId;
+        this.startAt = startAt;
+        this.endAt = endAt;
+        this.status = status;
+        this.title = title;
+        this.attendeesCount = attendeesCount;
+        this.notes = notes;
+        this.cancellationReason = cancellationReason;
+        this.createdAt = createdAt;
+        this.equipments = equipments == null ? List.of() : List.copyOf(equipments);
+        this.qrToken = qrToken;
+        this.checkedInAt = checkedInAt;
+    }
 }
 
 

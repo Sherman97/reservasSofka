@@ -9,9 +9,13 @@ import type { GetInventoryUseCase } from '../../../application/use-cases/dashboa
 import type { CreateReservationUseCase } from '../../../application/use-cases/dashboard/CreateReservationUseCase';
 import type { GetUserReservationsUseCase } from '../../../application/use-cases/reservations/GetUserReservationsUseCase';
 import type { CancelReservationUseCase } from '../../../application/use-cases/reservations/CancelReservationUseCase';
+import type { UpdateReservationUseCase } from '../../../application/use-cases/reservations/UpdateReservationUseCase';
 import type { GetSpaceAvailabilityUseCase } from '../../../application/use-cases/dashboard/GetSpaceAvailabilityUseCase';
 import type { AssignInventoryUseCase } from '../../../application/use-cases/dashboard/AssignInventoryUseCase';
 import type { RemoveInventoryUseCase } from '../../../application/use-cases/dashboard/RemoveInventoryUseCase';
+import type { SubmitDeliveryUseCase } from '../../../application/use-cases/delivery/SubmitDeliveryUseCase';
+import type { DeliverReservationUseCase } from '../../../application/use-cases/reservations/DeliverReservationUseCase';
+import type { ReturnReservationUseCase } from '../../../application/use-cases/reservations/ReturnReservationUseCase';
 import type { IWebSocketService } from '../../../core/ports/services/IWebSocketService';
 
 type ContainerType = typeof container;
@@ -61,7 +65,10 @@ export interface ReservationDependencies {
     createReservationUseCase: CreateReservationUseCase;
     getUserReservationsUseCase: GetUserReservationsUseCase;
     cancelReservationUseCase: CancelReservationUseCase;
+    updateReservationUseCase: UpdateReservationUseCase;
     getSpaceAvailabilityUseCase: GetSpaceAvailabilityUseCase;
+    deliverReservationUseCase: DeliverReservationUseCase;
+    returnReservationUseCase: ReturnReservationUseCase;
     webSocketService: IWebSocketService;
 }
 
@@ -73,7 +80,10 @@ export const useReservationDependencies = (): ReservationDependencies => {
         createReservationUseCase: c.get('createReservationUseCase'),
         getUserReservationsUseCase: c.get('getUserReservationsUseCase'),
         cancelReservationUseCase: c.get('cancelReservationUseCase'),
+        updateReservationUseCase: c.get('updateReservationUseCase'),
         getSpaceAvailabilityUseCase: c.get('getSpaceAvailabilityUseCase'),
+        deliverReservationUseCase: c.get('deliverReservationUseCase'),
+        returnReservationUseCase: c.get('returnReservationUseCase'),
         webSocketService: c.get('webSocketService'),
     };
 };
@@ -92,6 +102,17 @@ export const useDashboardDependencies = (): DashboardDependencies => {
         getInventoryUseCase: c.get('getInventoryUseCase'),
         assignInventoryUseCase: c.get('assignInventoryUseCase'),
         removeInventoryUseCase: c.get('removeInventoryUseCase'),
+    };
+};
+
+export interface DeliveryDependencies {
+    submitDeliveryUseCase: SubmitDeliveryUseCase;
+}
+
+export const useDeliveryDependencies = (): DeliveryDependencies => {
+    const c = useContainer();
+    return {
+        submitDeliveryUseCase: c.get('submitDeliveryUseCase'),
     };
 };
 

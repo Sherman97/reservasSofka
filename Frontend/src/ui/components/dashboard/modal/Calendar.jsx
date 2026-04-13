@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { MdClose } from 'react-icons/md';
 export const Calendar = ({
     currentDate,
     selectedDate,
@@ -75,7 +75,9 @@ export const Calendar = ({
                     <span>SELECCIONADO</span>
                 </div>
                 <div className="legend-item">
-                    <span className="legend-box unavailable">✕</span>
+                    <span className="legend-box unavailable">
+                        <MdClose size={14} />
+                    </span>
                     <span>OCUPADO</span>
                 </div>
             </div>

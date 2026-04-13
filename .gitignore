@@ -3,9 +3,8 @@
 **/.gradle/
 node_modules/
 # Human Check 🛡️: ignorar archivos locales de IDE/Gradle que no deben versionarse.
-.idea/
+**/.idea/
 *.iml
-
 # Gradle cache
 .gradle/
 **/.gradle/
@@ -14,4 +13,33 @@ node_modules/
 .DS_Store
 Thumbs.db
 .vscode/
+
+.github/
+
+# AI tooling local metadata
+.ai/
+**/.ai/
+.codex/
+**/.codex/
+
+Backend/.gradle/
+Backend/.idea/
+Backend/gradle/
+Backend/.ai/
+Backend/.github/
+
+Frontend/node_modules/
+Frontend/dist/
+Frontend/html/
+Frontend/reports/
+.agents/
+.idea/
+
+.idea/
+.idea/
+
+AUTO_API_SCREENPLAY/
+AUTO_FRONT_POM_FACTORY/
+AUTO_FRONT_SCREENPLAY/
+
 

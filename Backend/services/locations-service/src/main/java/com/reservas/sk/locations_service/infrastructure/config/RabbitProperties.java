@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "app.rabbit")
 public class RabbitProperties {
-    private boolean enabled = false;
+    private boolean enabled;
     private String exchange = "reservas.events";
     private String cityCreatedRoutingKey = "locations.city.created";
     private String cityUpdatedRoutingKey = "locations.city.updated";

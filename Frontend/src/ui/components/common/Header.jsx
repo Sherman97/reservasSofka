@@ -5,13 +5,16 @@ import { useAuthDependencies } from '../../../core/adapters/hooks/useDependencie
 import logoLight from '../../../assets/LogoSofka_FondoBlanco_peq.png';
 import logoDark from '../../../assets/LogoSofka_FondoNegro_peq.png';
 import '../../styles/common/Header.css';
+import { FaMoon, FaSun, FaSignOutAlt, FaSearch, FaClipboardList } from 'react-icons/fa';
 
 export const Header = () => {
     const { theme, toggleTheme } = useTheme();
     const { logoutUseCase } = useAuthDependencies();
     const navigate = useNavigate();
     const [showUserMenu, setShowUserMenu] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const menuRef = useRef(null);
+    const mobileMenuRef = useRef(null);
 
     // Get user from localStorage - should eventually be handled by auth context/hook
     const user = JSON.parse(localStorage.getItem('user')) || { name: 'Usuario' };
@@ -36,16 +39,19 @@ export const Header = () => {
             if (menuRef.current && !menuRef.current.contains(event.target)) {
                 setShowUserMenu(false);
             }
+            if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
+                setMobileMenuOpen(false);
+            }
         };
 
-        if (showUserMenu) {
+        if (showUserMenu || mobileMenuOpen) {
             document.addEventListener('mousedown', handleClickOutside);
         }
 
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [showUserMenu]);
+    }, [showUserMenu, mobileMenuOpen]);
 
     return (
         <header className="dashboard-header">
@@ -64,12 +70,11 @@ export const Header = () => {
                         <NavLink to="/my-reservations" className={({ isActive }) => isActive ? "active" : ""}>
                             Mis Reservas
                         </NavLink>
-
                     </nav>
                 </div>
                 <div className="header-right">
                     <button onClick={toggleTheme} className="icon-btn">
-                        {theme === 'light' ? '🌙' : '☀️'}
+                        {theme === 'light' ? <FaMoon size={18} /> : <FaSun size={18} />}
                     </button>
                     <div className="user-profile-wrapper" ref={menuRef}>
                         <div
@@ -84,9 +89,42 @@ export const Header = () => {
                         {showUserMenu && (
                             <div className="user-dropdown">
                                 <button className="dropdown-item logout-btn" onClick={handleLogout}>
-                                    <span className="dropdown-icon">🚪</span>
+                                    <FaSignOutAlt className="dropdown-icon" size={18} />
                                     Cerrar Sesión
                                 </button>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Hamburger button - visible only on mobile */}
+                    <div className="hamburger-wrapper" ref={mobileMenuRef}>
+                        <button
+                            className={`hamburger-btn ${mobileMenuOpen ? 'open' : ''}`}
+                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                            aria-label="Menú de navegación"
+                        >
+                            <span className="hamburger-line"></span>
+                            <span className="hamburger-line"></span>
+                            <span className="hamburger-line"></span>
+                        </button>
+                        {mobileMenuOpen && (
+                            <div className="mobile-dropdown">
+                                <NavLink
+                                    to="/dashboard"
+                                    className={({ isActive }) => `mobile-dropdown-item ${isActive ? 'active' : ''}`}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    <FaSearch className="dropdown-icon" size={18} />
+                                    Explorar
+                                </NavLink>
+                                <NavLink
+                                    to="/my-reservations"
+                                    className={({ isActive }) => `mobile-dropdown-item ${isActive ? 'active' : ''}`}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    <FaClipboardList className="dropdown-icon" size={18} />
+                                    Mis Reservas
+                                </NavLink>
                             </div>
                         )}
                     </div>

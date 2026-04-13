@@ -2,6 +2,7 @@ package com.reservas.sk.bookings_service.application.port.in;
 
 import com.reservas.sk.bookings_service.application.usecase.CheckSpaceAvailabilityQuery;
 import com.reservas.sk.bookings_service.application.usecase.CreateReservationCommand;
+import com.reservas.sk.bookings_service.application.usecase.HandoverReservationCommand;
 import com.reservas.sk.bookings_service.application.usecase.ListReservationsQuery;
 import com.reservas.sk.bookings_service.domain.model.Reservation;
 import com.reservas.sk.bookings_service.domain.model.SpaceAvailability;
@@ -13,11 +14,17 @@ public interface BookingUseCase {
 
     Reservation createReservation(CreateReservationCommand command);
 
+    Reservation updateReservation(com.reservas.sk.bookings_service.application.usecase.UpdateReservationCommand command);
+
     List<Reservation> listReservations(ListReservationsQuery query);
 
     Reservation getReservationById(Long reservationId);
 
     Reservation cancelReservation(Long reservationId, String reason);
+
+    Reservation deliverReservation(HandoverReservationCommand command);
+
+    Reservation returnReservation(HandoverReservationCommand command);
 }
 
 

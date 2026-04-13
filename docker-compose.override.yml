@@ -1,0 +1,53 @@
+# ============================================================
+# Reservas SK — Docker Compose Override (Desarrollo)
+# Aplica automaticamente sobre docker-compose.prod.yml al usar:
+#   docker compose -f docker-compose.prod.yml -f docker-compose.override.yml up --build
+# ============================================================
+
+services:
+
+  # ── Exponer puertos de infraestructura para debugging ──────
+
+  mariadb:
+    ports:
+      - "3307:3306"
+
+  rabbitmq:
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  # ── Exponer puertos individuales de microservicios ─────────
+
+  auth-service:
+    ports:
+      - "3001:3001"
+
+  bookings-service:
+    ports:
+      - "3003:3003"
+
+  locations-service:
+    ports:
+      - "3004:3004"
+
+  inventory-service:
+    ports:
+      - "3005:3005"
+
+  notifications-service:
+    ports:
+      - "3006:3006"
+
+  api-gateway:
+    ports:
+      - "3000:3000"
+
+  frontend:
+    build:
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:3000}
+        VITE_BOOKINGS_URL: ${VITE_BOOKINGS_URL:-http://localhost:3000}
+        VITE_BOOKINGS_WS_URL: ${VITE_BOOKINGS_WS_URL:-ws://localhost:3000/bookings/ws}
+    ports:
+      - "${FRONTEND_PORT:-5173}:8080"

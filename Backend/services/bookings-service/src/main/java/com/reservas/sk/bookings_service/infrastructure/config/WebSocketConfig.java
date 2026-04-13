@@ -1,5 +1,6 @@
 package com.reservas.sk.bookings_service.infrastructure.config;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -8,6 +9,10 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
+@SuppressFBWarnings(
+        value = "EI_EXPOSE_REP2",
+        justification = "Configuration properties bean is injected by Spring container."
+)
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final WebSocketProperties webSocketProperties;
 

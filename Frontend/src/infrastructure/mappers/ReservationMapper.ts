@@ -22,6 +22,9 @@ interface ReservationDTO {
     status?: string;
     createdAt?: string;
     created_at?: string;
+    attendeesCount?: number;
+    attendees_count?: number;
+    notes?: string;
 }
 
 interface ReservationApiPayload {
@@ -58,14 +61,25 @@ export class ReservationMapper {
             endAt: dto.endAt || dto.end_at || '',
             equipment: dto.equipments || dto.items || dto.equipment || [],
             status: ReservationMapper.normalizeStatus(dto.status),
+<<<<<<< HEAD
             createdAt: dto.createdAt || dto.created_at || new Date().toISOString()
+=======
+            createdAt: dto.createdAt || dto.created_at || new Date().toISOString(),
+            attendeesCount: dto.attendeesCount ?? dto.attendees_count ?? 1,
+            notes: dto.notes ?? ''
+>>>>>>> 5e0ceeedf65b3ba2837e044e229fd1b10e18def0
         });
     }
 
     static normalizeStatus(status?: string): string {
         if (!status) return 'active';
         const s = status.toLowerCase();
+<<<<<<< HEAD
         if (['pending', 'confirmed', 'in_progress', 'active', 'created'].includes(s)) {
+=======
+        if (s === 'in_progress') return 'in_progress';
+        if (['confirmed', 'active', 'created'].includes(s)) {
+>>>>>>> 5e0ceeedf65b3ba2837e044e229fd1b10e18def0
             return 'active';
         }
         return s;
@@ -82,6 +96,7 @@ export class ReservationMapper {
         };
     }
 
+<<<<<<< HEAD
     static toApi(reservationData: CreateReservationData): ReservationApiPayload {
         const [year, month, day] = reservationData.date.split('-').map(Number);
         const [startHours, startMinutes] = reservationData.startTime.split(':').map(Number);
@@ -98,6 +113,33 @@ export class ReservationMapper {
         return {
             spaceId: reservationData.locationId,
             startAt, endAt,
+=======
+    static toApi(reservationData: any): ReservationApiPayload {
+        let startAt = reservationData.startAt;
+        let endAt = reservationData.endAt;
+
+        if (!startAt && reservationData.date && reservationData.startTime) {
+            const [year, month, day] = reservationData.date.split('-').map(Number);
+            const [startHours, startMinutes] = reservationData.startTime.split(':').map(Number);
+            startAt = new Date(year, month - 1, day, startHours, startMinutes).toISOString();
+        }
+
+        if (!endAt && reservationData.date && reservationData.endTime) {
+            const [year, month, day] = reservationData.date.split('-').map(Number);
+            const [endHours, endMinutes] = reservationData.endTime.split(':').map(Number);
+            endAt = new Date(year, month - 1, day, endHours, endMinutes).toISOString();
+        }
+
+        const equipmentIds = (reservationData.equipment || []).map((item: any) => {
+            if (typeof item === 'object') return item.itemId || item.id || '';
+            return item;
+        });
+
+        return {
+            spaceId: reservationData.spaceId || reservationData.locationId,
+            startAt, 
+            endAt,
+>>>>>>> 5e0ceeedf65b3ba2837e044e229fd1b10e18def0
             title: reservationData.title || `Reserva de ${reservationData.locationName || 'espacio'}`,
             attendeesCount: reservationData.attendeesCount || 1,
             notes: reservationData.notes || '',

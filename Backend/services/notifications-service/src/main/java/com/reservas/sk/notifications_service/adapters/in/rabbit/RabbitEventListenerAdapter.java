@@ -1,6 +1,7 @@
 package com.reservas.sk.notifications_service.adapters.in.rabbit;
 
 import com.reservas.sk.notifications_service.application.port.in.EventBroadcastUseCase;
+import com.reservas.sk.notifications_service.application.service.ReservationReminderApplicationService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -13,15 +14,19 @@ import java.util.Map;
 @ConditionalOnProperty(prefix = "app.rabbit", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class RabbitEventListenerAdapter {
     private final EventBroadcastUseCase eventBroadcastUseCase;
+    private final ReservationReminderApplicationService reservationReminderApplicationService;
 
-    public RabbitEventListenerAdapter(EventBroadcastUseCase eventBroadcastUseCase) {
+    public RabbitEventListenerAdapter(EventBroadcastUseCase eventBroadcastUseCase,
+                                      ReservationReminderApplicationService reservationReminderApplicationService) {
         this.eventBroadcastUseCase = eventBroadcastUseCase;
+        this.reservationReminderApplicationService = reservationReminderApplicationService;
     }
 
     @RabbitListener(queues = "${app.rabbit.queue}")
     public void onEvent(Map<String, Object> payload,
                         @Header(AmqpHeaders.RECEIVED_ROUTING_KEY) String routingKey) {
         eventBroadcastUseCase.broadcast(routingKey, payload);
+        reservationReminderApplicationService.handleEvent(routingKey, payload);
     }
 }
 

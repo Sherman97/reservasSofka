@@ -1,4 +1,6 @@
 import React from 'react';
+import { BiError, BiInfoCircle } from 'react-icons/bi';
+import { FaSync } from 'react-icons/fa';
 
 /**
  * Generate 1-hour time slot blocks for the timeline (08:00 - 18:00)
@@ -39,7 +41,8 @@ export const DurationSelector = ({
     loadingSlots = false,
     hasTimeConflict = false,
     selectedDate = null,
-    slotsUpdatedFlag = false
+    slotsUpdatedFlag = false,
+    successMessage = null
 }) => {
     const hasBusySlots = busySlots.length > 0;
 
@@ -76,9 +79,9 @@ export const DurationSelector = ({
                 </div>
             </div>
 
-            {hasTimeConflict && (
+            {hasTimeConflict && !successMessage && (
                 <div className="time-conflict-warning">
-                    <span className="conflict-icon">⚠️</span>
+                    <BiError className="conflict-icon" size={20} />
                     <span>El horario seleccionado se solapa con una reserva existente</span>
                 </div>
             )}
@@ -88,7 +91,8 @@ export const DurationSelector = ({
                 <div className={`time-slots-section ${slotsUpdatedFlag ? 'slots-updated' : ''}`}>
                     {slotsUpdatedFlag && (
                         <div className="slots-updated-banner">
-                            <span>🔄 Disponibilidad actualizada en tiempo real</span>
+                            <FaSync size={14} style={{ marginRight: '6px' }} title="Sincronizar" />
+                            <span>Disponibilidad actualizada en tiempo real</span>
                         </div>
                     )}
                     <div className="time-slots-header">
@@ -146,12 +150,13 @@ export const DurationSelector = ({
                             ))}
                         </div>
                     )}
+
                 </div>
             )}
 
             <div className="time-info">
-                <span className="info-icon">ℹ️</span>
-                <span>Horario disponible: 8:00 AM - 6:00 PM</span>
+                <BiInfoCircle className="info-icon" size={18} />
+                <span>solo se puede reservar de: 8:00 AM - 6:00 PM</span>
             </div>
         </div>
     );

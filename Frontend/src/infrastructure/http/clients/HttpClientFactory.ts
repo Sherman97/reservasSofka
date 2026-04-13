@@ -46,7 +46,7 @@ export class HttpClientFactory {
 
     static createAuthClient(storageService: IStorageService): IHttpClient {
         const baseURL = import.meta.env.VITE_API_URL;
-        console.log('API Base URL:', baseURL);
+        // console.log('API Base URL:', baseURL);
         return this.create({ baseURL, requiresAuth: true, storageService });
     }
 

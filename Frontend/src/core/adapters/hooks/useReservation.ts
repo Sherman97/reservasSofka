@@ -34,6 +34,8 @@ interface UseReservationReturn {
     selectedEquipment: SelectedEquipment[];
     startTime: string;
     endTime: string;
+    attendeesCount: number;
+    setAttendeesCount: (count: number) => void;
     availability: Record<number, DayAvailability>;
     loading: boolean;
     error: string | null;
@@ -61,6 +63,7 @@ export const useReservation = (location: LocationInput | null | undefined): UseR
     const [selectedEquipment, setSelectedEquipment] = useState<SelectedEquipment[]>([]);
     const [startTime, setStartTime] = useState('08:00');
     const [endTime, setEndTime] = useState('18:00');
+    const [attendeesCount, setAttendeesCount] = useState<number>(1);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [busySlots, setBusySlots] = useState<BusySlot[]>([]);
@@ -132,12 +135,12 @@ export const useReservation = (location: LocationInput | null | undefined): UseR
     const openModal = (): void => { setIsOpen(true); setError(null); };
     const closeModal = (): void => {
         setIsOpen(false); setSelectedDate(null); setSelectedEquipment([]);
-        setStartTime('08:00'); setEndTime('18:00'); setError(null);
+        setStartTime('08:00'); setEndTime('18:00'); setAttendeesCount(1); setError(null);
         setBusySlots([]); setSuccessMessage(null); setSlotsUpdatedFlag(false);
     };
 
     const handleDateSelect = (day: number): void => {
-        if (availability[day]?.available) { setSelectedDate(day); setError(null); fetchBusySlots(day); }
+        if (availability[day]?.available) { setSelectedDate(day); setError(null); setSuccessMessage(null); fetchBusySlots(day); }
     };
 
     const handleEquipmentToggle = (equipmentId: string, equipmentName: string): void => {
@@ -148,8 +151,8 @@ export const useReservation = (location: LocationInput | null | undefined): UseR
         });
     };
 
-    const handleStartTimeChange = (time: string): void => { setStartTime(time); setError(null); };
-    const handleEndTimeChange = (time: string): void => { setEndTime(time); setError(null); };
+    const handleStartTimeChange = (time: string): void => { setStartTime(time); setError(null); setSuccessMessage(null); };
+    const handleEndTimeChange = (time: string): void => { setEndTime(time); setError(null); setSuccessMessage(null); };
 
     const goToPreviousMonth = (): void => {
         setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
@@ -161,9 +164,10 @@ export const useReservation = (location: LocationInput | null | undefined): UseR
     };
 
     const hasTimeConflict = useMemo((): boolean => {
+        if (successMessage) return false;
         if (!busySlots.length || !startTime || !endTime) return false;
         return busySlots.some(slot => startTime < slot.end && endTime > slot.start);
-    }, [busySlots, startTime, endTime]);
+    }, [busySlots, startTime, endTime, successMessage]);
 
     const handleConfirm = async (onSuccess?: (reservation: Reservation) => void): Promise<void> => {
         if (!selectedDate) { setError('Por favor selecciona una fecha'); return; }
@@ -180,7 +184,7 @@ export const useReservation = (location: LocationInput | null | undefined): UseR
 
             const reservationData = {
                 locationId: location.id, locationName: location.name, date: dateString,
-                startTime, endTime, equipment: selectedEquipment.map(eq => eq.itemId)
+                startTime, endTime, attendeesCount, equipment: selectedEquipment.map(eq => eq.itemId)
             };
 
             const reservation = await createReservationUseCase.execute(reservationData);
@@ -201,7 +205,7 @@ export const useReservation = (location: LocationInput | null | undefined): UseR
 
     return {
         isOpen, openModal, closeModal, currentDate, selectedDate, selectedEquipment,
-        startTime, endTime, availability, loading, error, busySlots, loadingSlots,
+        startTime, endTime, attendeesCount, setAttendeesCount, availability, loading, error, busySlots, loadingSlots,
         hasTimeConflict, successMessage, slotsUpdatedFlag, handleDateSelect,
         handleEquipmentToggle, handleStartTimeChange, handleEndTimeChange,
         goToPreviousMonth, goToNextMonth, handleConfirm, canConfirm

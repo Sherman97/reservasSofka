@@ -1,0 +1,135 @@
+﻿
+> reservationssofka@0.0.0 test
+> vitest CheckInReservationUseCase.test.ts HttpReservationRepository.test.ts --run --coverage --reporter=json
+
+JSON report written to C:/Users/anderson.rodriguez/Documents/ProyectosTrainingAI/reservasSofka/Frontend/reports/test-results.json
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |    8.34 |     9.88 |     5.5 |    9.21 |                   
+ src               |       0 |      100 |       0 |       0 |                   
+  App.jsx          |       0 |      100 |       0 |       0 | 5                 
+ ...use-cases/auth |       0 |        0 |       0 |       0 |                   
+  ...serUseCase.ts |       0 |      100 |       0 |       0 | 5-8               
+  LoginUseCase.ts  |       0 |        0 |       0 |       0 | 6-19              
+  LogoutUseCase.ts |       0 |      100 |       0 |       0 | 4-11              
+  ...terUseCase.ts |       0 |        0 |       0 |       0 | 6-27              
+ ...ases/dashboard |       0 |        0 |       0 |       0 |                   
+  ...oryUseCase.ts |       0 |        0 |       0 |       0 | 10-17             
+  ...ionUseCase.ts |       0 |        0 |       0 |       0 | 13-36             
+  ...oryUseCase.ts |       0 |        0 |       0 |       0 | 9-15              
+  ...onsUseCase.ts |       0 |        0 |       0 |       0 | 5-11              
+  ...ityUseCase.ts |       0 |        0 |       0 |       0 | 8-20              
+  ...oryUseCase.ts |       0 |        0 |       0 |       0 | 9-15              
+ ...cases/delivery |       0 |        0 |       0 |       0 |                   
+  ...eryUseCase.ts |       0 |        0 |       0 |       0 | 13-25             
+ ...s/reservations |      15 |    13.33 |   14.28 |      15 |                   
+  ...ionUseCase.ts |       0 |        0 |       0 |       0 | 4-10              
+  ...ionUseCase.ts |     100 |      100 |     100 |     100 |                   
+  ...ionUseCase.ts |       0 |        0 |       0 |       0 | 5-11              
+  ...onsUseCase.ts |       0 |        0 |       0 |       0 | 5-11              
+  ...ionUseCase.ts |       0 |        0 |       0 |       0 | 5-11              
+  ...imeUseCase.ts |       0 |        0 |       0 |       0 | 5-23              
+  ...ionUseCase.ts |       0 |        0 |       0 |       0 | 5-18              
+ ...re/adapters/di |       0 |        0 |       0 |       0 |                   
+  container.ts     |       0 |        0 |       0 |       0 | 66-145            
+ ...adapters/hooks |       0 |        0 |       0 |       0 |                   
+  ...kingEvents.ts |       0 |        0 |       0 |       0 | 5-31              
+  useDashboard.ts  |       0 |        0 |       0 |       0 | 34-93             
+  useDelivery.ts   |       0 |        0 |       0 |       0 | 22-53             
+  ...pendencies.ts |       0 |        0 |       0 |       0 |                   
+  useLogin.ts      |       0 |        0 |       0 |       0 | 15-39             
+  useLogout.ts     |       0 |      100 |       0 |       0 | 8-22              
+  ...nderAlerts.ts |       0 |        0 |       0 |       0 | 27-110            
+  ...eservation.ts |       0 |        0 |       0 |       0 | 57-206            
+  ...ationAlert.ts |       0 |        0 |       0 |       0 | 4-45              
+  useSignup.ts     |       0 |        0 |       0 |       0 | 21-55             
+  ...servations.ts |       0 |        0 |       0 |       0 | 20-115            
+ ...ters/providers |       0 |        0 |       0 |       0 |                   
+  ...yProvider.tsx |       0 |        0 |       0 |       0 | 23-134            
+  ThemeContext.tsx |       0 |        0 |       0 |       0 | 8-36              
+ ...omain/entities |   12.38 |    14.66 |    4.16 |   12.61 |                   
+  Delivery.ts      |       0 |        0 |       0 |       0 | 19-47             
+  InventoryItem.ts |       0 |        0 |       0 |       0 | 29-69             
+  Location.ts      |       0 |        0 |       0 |       0 | 31-72             
+  Reservation.ts   |   21.21 |    18.96 |    9.09 |   21.87 | 64-205            
+  User.ts          |       0 |        0 |       0 |       0 | 15-42             
+ .../domain/errors |      60 |       40 |   45.45 |      60 |                   
+  ...ationError.ts |       0 |        0 |       0 |       0 | 5-31              
+  QrScanError.ts   |   83.33 |       80 |   83.33 |   83.33 | 39-41             
+ ...s/repositories |       0 |        0 |       0 |       0 |                   
+  ...Repository.ts |       0 |        0 |       0 |       0 |                   
+  ...Repository.ts |       0 |        0 |       0 |       0 |                   
+  ...Repository.ts |       0 |        0 |       0 |       0 |                   
+  ...Repository.ts |       0 |        0 |       0 |       0 |                   
+  ...Repository.ts |       0 |        0 |       0 |       0 |                   
+ ...ports/services |       0 |        0 |       0 |       0 |                   
+  IHttpClient.ts   |       0 |        0 |       0 |       0 |                   
+  ...ageService.ts |       0 |        0 |       0 |       0 |                   
+  ...ketService.ts |       0 |        0 |       0 |       0 |                   
+ ...tions/services |       0 |        0 |       0 |       0 |                   
+  ...imeService.js |       0 |        0 |       0 |       0 | 3-32              
+ ...e/http/clients |       0 |        0 |       0 |       0 |                   
+  ...HttpClient.ts |       0 |        0 |       0 |       0 | 18-98             
+  ...entFactory.ts |       0 |        0 |       0 |       0 | 14-65             
+ ...ucture/mappers |   29.62 |    24.22 |   22.58 |    41.5 |                   
+  ...veryMapper.ts |       0 |        0 |       0 |       0 | 36-61             
+  ...toryMapper.ts |       0 |        0 |       0 |       0 | 22-45             
+  ...tionMapper.ts |       0 |        0 |       0 |       0 | 23-47             
+  ...tionMapper.ts |   70.58 |    54.16 |    87.5 |   84.61 | 81-82,108-109     
+  UserMapper.ts    |       0 |        0 |       0 |       0 | 15-36             
+ ...e/repositories |   26.48 |    23.98 |      25 |   29.41 |                   
+  ...Repository.ts |       0 |        0 |       0 |       0 | 15-149            
+  ...Repository.ts |       0 |        0 |       0 |       0 | 13-34             
+  ...Repository.ts |       0 |        0 |       0 |       0 | 14-97             
+  ...Repository.ts |       0 |        0 |       0 |       0 | 14-112            
+  ...Repository.ts |   61.25 |    53.71 |   69.23 |   68.34 | ...16-117,137-176 
+ ...ucture/storage |       0 |        0 |       0 |       0 |                   
+  ...ageService.ts |       0 |        0 |       0 |       0 | 9-67              
+ ...ture/websocket |       0 |        0 |       0 |       0 |                   
+  ...ketService.ts |       0 |        0 |       0 |       0 | 15-133            
+ src/routes        |       0 |      100 |       0 |       0 |                   
+  AppRouter.jsx    |       0 |      100 |       0 |       0 | 9-10              
+ ...omponents/auth |       0 |        0 |       0 |       0 |                   
+  LoginForm.jsx    |       0 |        0 |       0 |       0 | 6-40              
+ ...ponents/common |       0 |        0 |       0 |       0 |                   
+  Header.jsx       |       0 |        0 |       0 |       0 | 9-122             
+  Pagination.jsx   |       0 |        0 |       0 |       0 | 4-36              
+  ...ctedRoute.jsx |       0 |        0 |       0 |       0 | 9-18              
+ ...ents/dashboard |       0 |        0 |       0 |       0 |                   
+  ItemCard.jsx     |       0 |        0 |       0 |       0 | 5-34              
+  SearchBar.jsx    |       0 |      100 |       0 |       0 | 3-4               
+ ...ashboard/modal |       0 |        0 |       0 |       0 |                   
+  Calendar.jsx     |       0 |        0 |       0 |       0 | 3-46              
+  ...nSelector.jsx |       0 |        0 |       0 |       0 | 6-144             
+  ...tSelector.jsx |       0 |        0 |       0 |       0 | 4-95              
+  ...mentModal.jsx |       0 |        0 |       0 |       0 | 9-161             
+  ...tionModal.jsx |       0 |        0 |       0 |       0 | 7-110             
+ ...s/reservations |       0 |        0 |       0 |       0 |                   
+  ...overModal.jsx |       0 |        0 |       0 |       0 | 8-59              
+  ...ertBanner.jsx |       0 |        0 |       0 |       0 | 9-60              
+  ...ationCard.jsx |       0 |        0 |       0 |       0 | 9-106             
+  ...FilterBar.jsx |       0 |        0 |       0 |       0 | 7-44              
+  ...ationList.jsx |       0 |        0 |       0 |       0 | 8-20              
+  ...tionModal.jsx |       0 |        0 |       0 |       0 | 10-149            
+ ...ponents/signup |       0 |        0 |       0 |       0 |                   
+  SignupForm.jsx   |       0 |        0 |       0 |       0 | 5-8               
+ src/ui/layouts    |       0 |      100 |       0 |       0 |                   
+  MainLayout.jsx   |       0 |      100 |       0 |       0 | 6-7               
+ src/ui/pages/auth |       0 |      100 |       0 |       0 |                   
+  LoginPage.jsx    |       0 |      100 |       0 |       0 | 5-7               
+ ...ages/dashboard |       0 |        0 |       0 |       0 |                   
+  ...boardPage.jsx |       0 |        0 |       0 |       0 | 8-62              
+ ...s/reservations |       0 |        0 |       0 |       0 |                   
+  ...tionsPage.jsx |       0 |        0 |       0 |       0 | 18-176            
+ ...i/pages/signup |       0 |      100 |       0 |       0 |                   
+  SignupPage.jsx   |       0 |      100 |       0 |       0 | 5-6               
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 8.34% ( 157/1881 )
+Branches     : 9.88% ( 123/1244 )
+Functions    : 5.5% ( 25/454 )
+Lines        : 9.21% ( 152/1650 )
+================================================================================

@@ -9,16 +9,27 @@ interface ApiResponse<T = unknown> {
     data?: T;
 }
 
+/** Detect whether the API response uses { ok, data } wrapper or returns data directly */
+function isWrappedResponse(raw: unknown): raw is ApiResponse {
+    return typeof (raw as ApiResponse).ok === 'boolean';
+}
+
 export class HttpLocationRepository implements ILocationRepository {
     constructor(private readonly httpClient: IHttpClient) {}
 
     async getAll(): Promise<Location[]> {
         try {
             const response = await this.httpClient.get('/locations/spaces');
-            const data = response.data as ApiResponse<unknown[]>;
+            const raw = response.data as ApiResponse<unknown[]> & Record<string, unknown>;
 
-            if (!data.ok) throw new Error(data.message || 'Error fetching locations');
-            return LocationMapper.toDomainList((data.data || []) as Parameters<typeof LocationMapper.toDomainList>[0]);
+            if (isWrappedResponse(raw)) {
+                if (!raw.ok) throw new Error(raw.message || 'Error fetching locations');
+                return LocationMapper.toDomainList((raw.data || []) as Parameters<typeof LocationMapper.toDomainList>[0]);
+            }
+
+            // Direct array response
+            const items = Array.isArray(raw) ? raw : [];
+            return LocationMapper.toDomainList(items as Parameters<typeof LocationMapper.toDomainList>[0]);
         } catch (error) {
             console.error('Error in HttpLocationRepository.getAll:', error);
             throw error;
@@ -28,10 +39,17 @@ export class HttpLocationRepository implements ILocationRepository {
     async getById(id: string): Promise<Location> {
         try {
             const response = await this.httpClient.get(`/locations/spaces/${id}`);
-            const data = response.data as ApiResponse;
+            const raw = response.data as ApiResponse & Record<string, unknown>;
 
-            if (!data.ok) throw new Error(data.message || 'Error fetching location');
-            const location = LocationMapper.toDomain(data.data as Parameters<typeof LocationMapper.toDomain>[0]);
+            if (isWrappedResponse(raw)) {
+                if (!raw.ok) throw new Error(raw.message || 'Error fetching location');
+                const location = LocationMapper.toDomain(raw.data as Parameters<typeof LocationMapper.toDomain>[0]);
+                if (!location) throw new Error('Error mapping location data');
+                return location;
+            }
+
+            // Direct object response
+            const location = LocationMapper.toDomain(raw as Parameters<typeof LocationMapper.toDomain>[0]);
             if (!location) throw new Error('Error mapping location data');
             return location;
         } catch (error) {
@@ -43,10 +61,16 @@ export class HttpLocationRepository implements ILocationRepository {
     async search(criteria: LocationSearchCriteria): Promise<Location[]> {
         try {
             const response = await this.httpClient.get('/locations/spaces', { params: criteria });
-            const data = response.data as ApiResponse<unknown[]>;
+            const raw = response.data as ApiResponse<unknown[]> & Record<string, unknown>;
 
-            if (!data.ok) throw new Error(data.message || 'Error searching locations');
-            return LocationMapper.toDomainList((data.data || []) as Parameters<typeof LocationMapper.toDomainList>[0]);
+            if (isWrappedResponse(raw)) {
+                if (!raw.ok) throw new Error(raw.message || 'Error searching locations');
+                return LocationMapper.toDomainList((raw.data || []) as Parameters<typeof LocationMapper.toDomainList>[0]);
+            }
+
+            // Direct array response
+            const items = Array.isArray(raw) ? raw : [];
+            return LocationMapper.toDomainList(items as Parameters<typeof LocationMapper.toDomainList>[0]);
         } catch (error) {
             console.error('Error in HttpLocationRepository.search:', error);
             throw error;
@@ -58,10 +82,14 @@ export class HttpLocationRepository implements ILocationRepository {
             const response = await this.httpClient.post(`/locations/${locationId}/inventory`, {
                 inventoryId, qty
             });
-            const data = response.data as ApiResponse;
+            const raw = response.data as ApiResponse & Record<string, unknown>;
 
-            if (!data.ok) throw new Error(data.message || 'Error assigning inventory');
-            return data.data;
+            if (isWrappedResponse(raw)) {
+                if (!raw.ok) throw new Error(raw.message || 'Error assigning inventory');
+                return raw.data;
+            }
+
+            return raw;
         } catch (error) {
             console.error('Error in HttpLocationRepository.assignInventory:', error);
             throw error;
@@ -71,10 +99,14 @@ export class HttpLocationRepository implements ILocationRepository {
     async removeInventory(locationId: string, inventoryId: string): Promise<unknown> {
         try {
             const response = await this.httpClient.delete(`/locations/${locationId}/inventory/${inventoryId}`);
-            const data = response.data as ApiResponse;
+            const raw = response.data as ApiResponse & Record<string, unknown>;
 
-            if (!data.ok) throw new Error(data.message || 'Error removing inventory');
-            return data.data;
+            if (isWrappedResponse(raw)) {
+                if (!raw.ok) throw new Error(raw.message || 'Error removing inventory');
+                return raw.data;
+            }
+
+            return raw;
         } catch (error) {
             console.error('Error in HttpLocationRepository.removeInventory:', error);
             throw error;

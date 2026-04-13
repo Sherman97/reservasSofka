@@ -2,6 +2,8 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.1'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'jacoco'
+    id 'com.github.spotbugs' version '6.0.18' apply false
 }
 
 group = 'com.reservas.sk'
@@ -31,9 +33,138 @@ tasks.named('test') {
 }
 
 subprojects {
+    apply plugin: 'jacoco'
+    apply plugin: 'checkstyle'
+    apply plugin: 'pmd'
+    apply plugin: 'com.github.spotbugs'
+
+    checkstyle {
+        toolVersion = '10.21.4'
+        configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+        ignoreFailures = true
+    }
+
+    tasks.withType(Checkstyle).configureEach {
+        reports {
+            xml.required = true
+            html.required = true
+        }
+    }
+
+    pmd {
+        toolVersion = '7.11.0'
+        consoleOutput = true
+        ignoreFailures = true
+        ruleSets = []
+        ruleSetFiles = files(rootProject.file('config/pmd/ruleset.xml'))
+    }
+
+    tasks.withType(Pmd).configureEach {
+        reports {
+            xml.required = true
+            html.required = true
+        }
+    }
+
+    spotbugs {
+        ignoreFailures = true
+    }
+
+    tasks.withType(com.github.spotbugs.snom.SpotBugsTask).configureEach {
+        reports {
+            html.required.set(true)
+            xml.required.set(false)
+        }
+    }
+
+    tasks.withType(Test).configureEach {
+        useJUnitPlatform()
+        finalizedBy tasks.named('jacocoTestReport')
+    }
+
+    if (tasks.findByName('componentTest') == null) {
+        tasks.register('componentTest', Test) {
+            description = 'Runs component tests (excludes integration)'
+            group = 'verification'
+            useJUnitPlatform {
+                excludeTags 'integration'
+            }
+        }
+    }
+
+    if (tasks.findByName('integrationTest') == null) {
+        tasks.register('integrationTest', Test) {
+            description = 'Runs integration tests only'
+            group = 'verification'
+            useJUnitPlatform {
+                includeTags 'integration'
+            }
+        }
+    }
+
+    tasks.withType(JacocoReport).configureEach {
+        reports {
+            xml.required = true
+            html.required = true
+        }
+    }
+}
+
+tasks.register('jacocoRootReport', JacocoReport) {
+    dependsOn subprojects.collect { it.tasks.named('test') }
+
+    additionalSourceDirs.from(files(subprojects.collect { it.sourceSets.main.allSource.srcDirs }))
+    sourceDirectories.from(files(subprojects.collect { it.sourceSets.main.allSource.srcDirs }))
+    classDirectories.from(files(subprojects.collect { it.sourceSets.main.output }))
+    executionData.from(fileTree(project.rootDir) {
+        include 'services/*/build/jacoco/test.exec'
+        include 'services/*/build/jacoco/*.exec'
+    })
+
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+tasks.register('jacocoRootCoverageVerification', JacocoCoverageVerification) {
+    dependsOn tasks.named('jacocoRootReport')
+
+    additionalSourceDirs.from(files(subprojects.collect { it.sourceSets.main.allSource.srcDirs }))
+    sourceDirectories.from(files(subprojects.collect { it.sourceSets.main.allSource.srcDirs }))
+    classDirectories.from(files(subprojects.collect { it.sourceSets.main.output }))
+    executionData.from(fileTree(project.rootDir) {
+        include 'services/*/build/jacoco/test.exec'
+        include 'services/*/build/jacoco/*.exec'
+    })
+
+    violationRules {
+        rule {
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.25
+            }
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.15
+            }
+        }
+    }
+}
+
+tasks.named('check') {
+    dependsOn tasks.named('jacocoRootCoverageVerification')
+}
+subprojects {
     plugins.withId('java') {
         dependencies {
             add('testRuntimeOnly', 'org.junit.platform:junit-platform-launcher')
+        }
+
+        tasks.named('check') {
+            dependsOn tasks.named('spotbugsMain')
         }
     }
 }
