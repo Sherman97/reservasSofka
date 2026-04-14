@@ -15,6 +15,7 @@ import com.reservas.sk.bookings_service.application.usecase.HandoverReservationC
 import com.reservas.sk.bookings_service.domain.model.Reservation;
 import com.reservas.sk.bookings_service.domain.model.ReservationEquipment;
 import com.reservas.sk.bookings_service.domain.model.SpaceAvailability;
+import com.reservas.sk.bookings_service.exception.ApiException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -22,9 +23,11 @@ import org.springframework.http.HttpStatus;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -91,6 +94,83 @@ class BookingControllerUnitTest {
     }
 
     @Test
+    void createReservation_adminCanCreateForTargetUser() {
+        Reservation reservation = reservation(33L, STATUS_CONFIRMED);
+        when(bookingUseCase.createReservation(any())).thenReturn(reservation);
+
+        CreateReservationRequest request = new CreateReservationRequest(
+                10L,
+                "2026-03-01T10:00:00Z",
+                "2026-03-01T11:00:00Z",
+                "Titulo",
+                4,
+                "nota",
+                List.of(1L),
+                500L
+        );
+        var response = controller.createReservation(
+                request,
+                new AuthenticatedUser(88L, "admin@test.com", Set.of("ADMIN"))
+        );
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode(), ASSERT_MSG);
+
+        ArgumentCaptor<CreateReservationCommand> captor =
+                ArgumentCaptor.forClass(CreateReservationCommand.class);
+        verify(bookingUseCase).createReservation(captor.capture());
+        assertEquals(500L, captor.getValue().userId(), ASSERT_MSG);
+    }
+
+    @Test
+    void createReservation_nonAdminCannotCreateForOtherUser() {
+        CreateReservationRequest request = new CreateReservationRequest(
+                10L,
+                "2026-03-01T10:00:00Z",
+                "2026-03-01T11:00:00Z",
+                "Titulo",
+                4,
+                "nota",
+                List.of(1L),
+                500L
+        );
+
+        ApiException ex = assertThrows(ApiException.class, () -> controller.createReservation(
+                request,
+                new AuthenticatedUser(88L, "user@test.com", Set.of("USER"))
+        ));
+
+        assertEquals(HttpStatus.FORBIDDEN, ex.getStatus(), ASSERT_MSG);
+        assertEquals("FORBIDDEN_TARGET_USER", ex.getErrorCode(), ASSERT_MSG);
+    }
+
+    @Test
+    void createReservation_nonAdminCanCreateForSelfTargetUser() {
+        Reservation reservation = reservation(44L, STATUS_CONFIRMED);
+        when(bookingUseCase.createReservation(any())).thenReturn(reservation);
+
+        CreateReservationRequest request = new CreateReservationRequest(
+                10L,
+                "2026-03-01T10:00:00Z",
+                "2026-03-01T11:00:00Z",
+                "Titulo",
+                4,
+                "nota",
+                List.of(1L),
+                88L
+        );
+        var response = controller.createReservation(
+                request,
+                new AuthenticatedUser(88L, "user@test.com", Set.of("USER"))
+        );
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode(), ASSERT_MSG);
+        ArgumentCaptor<CreateReservationCommand> captor =
+                ArgumentCaptor.forClass(CreateReservationCommand.class);
+        verify(bookingUseCase).createReservation(captor.capture());
+        assertEquals(88L, captor.getValue().userId(), ASSERT_MSG);
+    }
+
+    @Test
     void listAndGetById_returnMappedPayloads() {
         when(bookingUseCase.listReservations(any())).thenReturn(
                 List.of(
@@ -139,6 +219,19 @@ class BookingControllerUnitTest {
     }
 
     @Test
+    void deliver_usesNullNoveltyWhenRequestMissing() {
+        when(bookingUseCase.deliverReservation(any())).thenReturn(reservation(9L, "in_progress"));
+
+        var delivered = controller.deliver(9L, null, new AuthenticatedUser(99L, "staff@test.com"));
+
+        assertEquals("in_progress", delivered.data().status(), ASSERT_MSG);
+        ArgumentCaptor<HandoverReservationCommand> captor =
+                ArgumentCaptor.forClass(HandoverReservationCommand.class);
+        verify(bookingUseCase).deliverReservation(captor.capture());
+        assertNull(captor.getValue().novelty(), ASSERT_MSG);
+    }
+
+    @Test
     void return_usesAuthenticatedStaffAndNullNoveltyWhenRequestMissing() {
         when(bookingUseCase.returnReservation(any())).thenReturn(reservation(9L, "completed"));
 
@@ -151,6 +244,85 @@ class BookingControllerUnitTest {
         verify(bookingUseCase).returnReservation(captorReturn.capture());
         assertEquals(99L, captorReturn.getValue().staffId(), ASSERT_MSG);
         assertNull(captorReturn.getValue().novelty(), ASSERT_MSG);
+    }
+
+    @Test
+    void return_usesNoveltyWhenRequestProvided() {
+        when(bookingUseCase.returnReservation(any())).thenReturn(reservation(9L, "completed"));
+
+        var returned = controller.markReturned(
+                9L,
+                new HandoverReservationRequest("sin novedades"),
+                new AuthenticatedUser(99L, "staff@test.com")
+        );
+
+        assertEquals("completed", returned.data().status(), ASSERT_MSG);
+        ArgumentCaptor<HandoverReservationCommand> captorReturn =
+                ArgumentCaptor.forClass(HandoverReservationCommand.class);
+        verify(bookingUseCase).returnReservation(captorReturn.capture());
+        assertEquals("sin novedades", captorReturn.getValue().novelty(), ASSERT_MSG);
+    }
+
+    @Test
+    void listAdminReservations_usesSafeDefaultsWhenPageAndSizeAreInvalid() {
+        when(bookingUseCase.listAdminReservations(any())).thenReturn(List.of(reservation(50L, STATUS_CONFIRMED)));
+        when(bookingUseCase.countAdminReservations(any())).thenReturn(0L);
+
+        var response = controller.listAdminReservations(
+                null,
+                null,
+                null,
+                null,
+                null,
+                -1,
+                0
+        );
+
+        assertTrue(response.ok(), ASSERT_MSG);
+        assertEquals(0, response.data().page(), ASSERT_MSG);
+        assertEquals(20, response.data().size(), ASSERT_MSG);
+        assertEquals(0, response.data().totalPages(), ASSERT_MSG);
+    }
+
+    @Test
+    void listAdminReservations_calculatesTotalPagesWhenThereAreResults() {
+        when(bookingUseCase.listAdminReservations(any())).thenReturn(List.of(reservation(51L, STATUS_CONFIRMED)));
+        when(bookingUseCase.countAdminReservations(any())).thenReturn(41L);
+
+        var response = controller.listAdminReservations(
+                "2026-03-01T00:00:00Z",
+                "2026-03-31T23:59:59Z",
+                "Confirmada",
+                1L,
+                2L,
+                1,
+                20
+        );
+
+        assertEquals(1, response.data().page(), ASSERT_MSG);
+        assertEquals(20, response.data().size(), ASSERT_MSG);
+        assertEquals(41L, response.data().totalItems(), ASSERT_MSG);
+        assertEquals(3, response.data().totalPages(), ASSERT_MSG);
+    }
+
+    @Test
+    void listAdminReservations_usesDefaultsWhenPageAndSizeAreNull() {
+        when(bookingUseCase.listAdminReservations(any())).thenReturn(List.of());
+        when(bookingUseCase.countAdminReservations(any())).thenReturn(1L);
+
+        var response = controller.listAdminReservations(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        assertEquals(0, response.data().page(), ASSERT_MSG);
+        assertEquals(20, response.data().size(), ASSERT_MSG);
+        assertEquals(1, response.data().totalPages(), ASSERT_MSG);
     }
 
     private Reservation reservation(long id, String status) {

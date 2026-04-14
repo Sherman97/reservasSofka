@@ -21,6 +21,7 @@ describe('User Entity', () => {
         it('debe asignar role "user" por defecto', () => {
             const user = new User({ id: 'u2', email: 'a@b.com', name: 'A' });
             expect(user.role).toBe('user');
+            expect(user.roles).toContain('user');
         });
     });
 
@@ -45,6 +46,11 @@ describe('User Entity', () => {
         it('debe retornar false si role es admin', () => {
             const admin = new User({ ...defaultProps, role: 'admin' });
             expect(admin.isRegularUser()).toBe(false);
+        });
+
+        it('debe retornar false si tiene rol admin en roles[]', () => {
+            const user = new User({ ...defaultProps, role: 'user', roles: ['user', 'admin'] });
+            expect(user.isRegularUser()).toBe(false);
         });
     });
 
@@ -85,7 +91,7 @@ describe('User Entity', () => {
     describe('toJSON()', () => {
         it('debe serializar correctamente', () => {
             const user = new User(defaultProps);
-            expect(user.toJSON()).toEqual(defaultProps);
+            expect(user.toJSON()).toEqual({ ...defaultProps, roles: ['user'] });
         });
     });
 

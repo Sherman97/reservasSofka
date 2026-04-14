@@ -17,7 +17,8 @@ public class AuthHttpMapper {
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
-                user.getCreatedAt()
+                user.getCreatedAt(),
+                user.getRoles()
         );
     }
 }

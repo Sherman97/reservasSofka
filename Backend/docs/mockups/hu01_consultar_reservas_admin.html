@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gestión de Reservas - sofka_</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .headline { font-family: 'Manrope', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "on-error-container": "#ffdad6",
+                "background": "#131313",
+                "surface-dim": "#131313",
+                "on-error": "#690005",
+                "on-secondary": "#4d2600",
+                "secondary-fixed": "#ffdcc3",
+                "surface-container-low": "#1b1c1c",
+                "surface-bright": "#393939",
+                "on-surface": "#e5e2e1",
+                "tertiary-fixed-dim": "#85cfff",
+                "outline": "#a48c7b",
+                "on-primary-fixed": "#2f1500",
+                "error": "#ffb4ab",
+                "error-container": "#93000a",
+                "primary-fixed-dim": "#ffb77d",
+                "on-surface-variant": "#ddc1ae",
+                "surface": "#131313",
+                "on-secondary-container": "#e9a772",
+                "on-tertiary-fixed-variant": "#004c6c",
+                "on-tertiary": "#00344c",
+                "surface-container-highest": "#353535",
+                "on-primary-fixed-variant": "#6e3900",
+                "on-primary-container": "#623200",
+                "secondary": "#fcb881",
+                "secondary-container": "#6a3b0f",
+                "tertiary": "#85cfff",
+                "inverse-on-surface": "#303030",
+                "surface-tint": "#ffb77d",
+                "inverse-surface": "#e5e2e1",
+                "on-tertiary-fixed": "#001e2e",
+                "tertiary-container": "#00b5fc",
+                "inverse-primary": "#914d00",
+                "on-background": "#e5e2e1",
+                "tertiary-fixed": "#c7e7ff",
+                "on-tertiary-container": "#004360",
+                "on-secondary-fixed-variant": "#6a3b0f",
+                "primary-container": "#ff8c03",
+                "secondary-fixed-dim": "#fcb881",
+                "on-secondary-fixed": "#2f1500",
+                "surface-container": "#202020",
+                "primary": "#ffb77d",
+                "on-primary": "#4d2600",
+                "surface-container-lowest": "#0e0e0e",
+                "surface-variant": "#353535",
+                "surface-container-high": "#2a2a2a",
+                "primary-fixed": "#ffdcc3",
+                "outline-variant": "#564334"
+              },
+              fontFamily: {
+                "headline": ["Manrope"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+              },
+              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary/30">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-zinc-950/80 backdrop-blur-xl flex justify-between items-center px-10 h-20 w-full">
+<div class="flex items-center gap-12">
+<span class="text-2xl font-black tracking-tighter text-orange-600 dark:text-orange-500">sofka_</span>
+<div class="hidden md:flex items-center gap-8 uppercase tracking-wider text-xs font-semibold font-label">
+<a class="text-zinc-600 dark:text-zinc-400 hover:text-orange-500 transition-colors duration-300" href="#">Explorar</a>
+<a class="text-orange-600 dark:text-orange-400 font-bold border-b-2 border-orange-500 pb-1" href="#">Gestión de Reservas</a>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="p-2 rounded-full hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors duration-300">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+<button class="p-2 rounded-full hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors duration-300">
+<span class="material-symbols-outlined text-on-surface-variant">settings</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant/20">
+<img alt="German Gonzalo Rojas Perdomo" class="w-full h-full object-cover" data-alt="close-up portrait of a professional man with a friendly expression in a modern office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxmHGii3Ni3xzZ7lw6KZlJxloJIlbABSBPYadiiGb-rQnM2uurouujF2-6hpQYZ8lMWsmxPMwBeruYbOpAOd0PA9Lq4Gq7pTXJJDqbaA2f-ghC9YYIf_dh0OJqIva4lXquiZKi6GPnmBRPUsGk5U3z2dxUk18p1poe3PZVYcGMQQZRNY9dOQhH4FbJtR-58uTueKudL8EQDokMSW5Ia4E_NjViQTxixuSuMYi_0bJXVA9polsAF8mRByDUyqjpKy0ZqjSIzR9n24Ms"/>
+</div>
+</div>
+</nav>
+<div class="flex pt-20 h-screen overflow-hidden">
+<!-- SideNavBar -->
+<aside class="hidden lg:flex flex-col p-6 space-y-4 h-full w-72 bg-zinc-50 dark:bg-zinc-900 shadow-2xl shadow-zinc-950/5 overflow-y-auto">
+<div class="px-2 mb-4">
+<h2 class="text-lg font-bold text-zinc-900 dark:text-zinc-100 font-headline">Admin Panel</h2>
+<p class="text-xs font-medium text-zinc-500 font-label">Editorial Archive</p>
+</div>
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-xs font-semibold font-label">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-zinc-200 dark:bg-zinc-800 text-orange-600 dark:text-orange-400 rounded-lg opacity-80" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="text-xs font-semibold font-label">Reservas</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-xs font-semibold font-label">Usuarios</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">location_on</span>
+<span class="text-xs font-semibold font-label">Sedes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-xs font-semibold font-label">Reportes</span>
+</a>
+</div>
+<div class="pt-4 px-2">
+<button class="w-full py-3 bg-gradient-to-b from-primary-container to-secondary-container text-on-primary font-bold rounded-full shadow-lg shadow-primary-container/20 flex items-center justify-center gap-2 text-sm hover:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined text-sm">add</span>
+                    Nueva reserva
+                </button>
+</div>
+<div class="mt-auto space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="text-xs font-semibold font-label">Ayuda</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="text-xs font-semibold font-label">Cerrar Sesión</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto p-10 bg-surface">
+<!-- Header Section -->
+<header class="mb-10 flex justify-between items-end">
+<div>
+<h1 class="text-4xl font-extrabold tracking-tight font-headline text-on-surface">Gestión de Reservas</h1>
+<p class="text-on-surface-variant/70 mt-2 font-body">Administra las reservas activas y el historial de uso de sedes.</p>
+</div>
+<div class="flex gap-4">
+<button class="flex items-center gap-2 px-6 py-2 rounded-full bg-surface-container-high text-zinc-600 cursor-not-allowed text-sm font-semibold border border-outline-variant/10" disabled="">
+<span class="material-symbols-outlined text-sm">cancel</span>
+                        Cancelar seleccionadas
+                    </button>
+<button class="flex items-center gap-2 px-8 py-2 rounded-full bg-primary-container text-on-primary font-bold shadow-xl shadow-primary-container/10 hover:brightness-110 transition-all text-sm">
+<span class="material-symbols-outlined text-sm">add_circle</span>
+                        Nueva reserva
+                    </button>
+</div>
+</header>
+<!-- Filters Bar -->
+<section class="bg-surface-container-low p-6 rounded-xl mb-8 flex flex-wrap items-end gap-6 border border-outline-variant/5">
+<div class="space-y-2 flex-1 min-w-[180px]">
+<label class="text-[10px] font-bold uppercase tracking-[0.15em] text-on-surface-variant font-label">Fecha</label>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border-none rounded-lg text-sm px-4 py-2.5 text-on-surface focus:ring-1 focus:ring-primary-container/40" type="date"/>
+</div>
+</div>
+<div class="space-y-2 flex-1 min-w-[180px]">
+<label class="text-[10px] font-bold uppercase tracking-[0.15em] text-on-surface-variant font-label">Estado</label>
+<select class="w-full bg-surface-container-lowest border-none rounded-lg text-sm px-4 py-2.5 text-on-surface focus:ring-1 focus:ring-primary-container/40">
+<option>Todos los estados</option>
+<option>Pendiente</option>
+<option>Confirmada</option>
+<option>Cancelada</option>
+</select>
+</div>
+<div class="space-y-2 flex-1 min-w-[180px]">
+<label class="text-[10px] font-bold uppercase tracking-[0.15em] text-on-surface-variant font-label">Sede</label>
+<select class="w-full bg-surface-container-lowest border-none rounded-lg text-sm px-4 py-2.5 text-on-surface focus:ring-1 focus:ring-primary-container/40">
+<option>Todas las sedes</option>
+<option>Sede Norte</option>
+<option>Sede Centro</option>
+<option>Sede Medellín</option>
+</select>
+</div>
+<div class="space-y-2 flex-1 min-w-[180px]">
+<label class="text-[10px] font-bold uppercase tracking-[0.15em] text-on-surface-variant font-label">Usuario</label>
+<input class="w-full bg-surface-container-lowest border-none rounded-lg text-sm px-4 py-2.5 text-on-surface focus:ring-1 focus:ring-primary-container/40 placeholder:text-zinc-600" placeholder="Buscar por nombre..." type="text"/>
+</div>
+<div class="flex gap-2">
+<button class="px-6 py-2.5 bg-surface-container-highest text-on-surface font-semibold text-sm rounded-lg hover:bg-surface-variant transition-colors">
+                        Limpiar
+                    </button>
+<button class="px-6 py-2.5 bg-primary-container/20 text-primary font-bold text-sm rounded-lg hover:bg-primary-container/30 transition-colors">
+                        Aplicar filtros
+                    </button>
+</div>
+</section>
+<!-- Data Table Card -->
+<div class="bg-surface-container-highest rounded-xl overflow-hidden shadow-2xl shadow-zinc-950/20 border border-outline-variant/10">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high border-b border-outline-variant/10">
+<th class="p-5 w-12 text-center">
+<input class="rounded border-outline-variant bg-transparent text-primary focus:ring-primary" type="checkbox"/>
+</th>
+<th class="p-5 text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label">Ref ID</th>
+<th class="p-5 text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label">Usuario</th>
+<th class="p-5 text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label">Sede / Locación</th>
+<th class="p-5 text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label">Fecha</th>
+<th class="p-5 text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label">Horario</th>
+<th class="p-5 text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label">Estado</th>
+<th class="p-5 text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label">Actualizado</th>
+<th class="p-5 text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label text-right">Acciones</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/5">
+<!-- Row 1 -->
+<tr class="hover:bg-zinc-800/20 transition-colors">
+<td class="p-5 text-center">
+<input class="rounded border-outline-variant bg-transparent text-primary focus:ring-primary" type="checkbox"/>
+</td>
+<td class="p-5 text-sm font-mono text-primary/80">#SK-9821</td>
+<td class="p-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-orange-950 flex items-center justify-center text-[10px] font-bold text-orange-200">AR</div>
+<span class="text-sm font-medium">Andrés Rodríguez</span>
+</div>
+</td>
+<td class="p-5 text-sm">Sede Medellín - Piso 4</td>
+<td class="p-5 text-sm">Oct 24, 2023</td>
+<td class="p-5 text-sm">08:00 - 12:00</td>
+<td class="p-5">
+<span class="px-2.5 py-1 text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 rounded-full">Confirmada</span>
+</td>
+<td class="p-5 text-xs text-on-surface-variant/60">Hace 2 horas</td>
+<td class="p-5">
+<div class="flex justify-end gap-2">
+<button class="p-2 hover:bg-surface-container-low rounded-lg transition-colors"><span class="material-symbols-outlined text-lg">visibility</span></button>
+<button class="p-2 hover:bg-surface-container-low rounded-lg transition-colors"><span class="material-symbols-outlined text-lg">edit</span></button>
+<button class="p-2 hover:bg-surface-container-low rounded-lg transition-colors text-error/60"><span class="material-symbols-outlined text-lg">cancel</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="bg-surface-container-low/30 hover:bg-zinc-800/20 transition-colors">
+<td class="p-5 text-center">
+<input class="rounded border-outline-variant bg-transparent text-primary focus:ring-primary" type="checkbox"/>
+</td>
+<td class="p-5 text-sm font-mono text-primary/80">#SK-9844</td>
+<td class="p-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-[10px] font-bold text-zinc-300">LC</div>
+<span class="text-sm font-medium">Laura Calle</span>
+</div>
+</td>
+<td class="p-5 text-sm">Sede Bogotá - Zona Zen</td>
+<td class="p-5 text-sm">Oct 24, 2023</td>
+<td class="p-5 text-sm">14:00 - 16:30</td>
+<td class="p-5">
+<span class="px-2.5 py-1 text-[10px] font-bold uppercase bg-orange-500/10 text-orange-400 rounded-full">Pendiente</span>
+</td>
+<td class="p-5 text-xs text-on-surface-variant/60">Hace 5 min</td>
+<td class="p-5">
+<div class="flex justify-end gap-2">
+<button class="p-2 hover:bg-surface-container-low rounded-lg transition-colors"><span class="material-symbols-outlined text-lg">visibility</span></button>
+<button class="p-2 hover:bg-surface-container-low rounded-lg transition-colors"><span class="material-symbols-outlined text-lg">edit</span></button>
+<button class="p-2 hover:bg-surface-container-low rounded-lg transition-colors text-error/60"><span class="material-symbols-outlined text-lg">cancel</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-zinc-800/20 transition-colors">
+<td class="p-5 text-center">
+<input class="rounded border-outline-variant bg-transparent text-primary focus:ring-primary" type="checkbox"/>
+</td>
+<td class="p-5 text-sm font-mono text-primary/80">#SK-9755</td>
+<td class="p-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-[10px] font-bold text-zinc-300">MG</div>
+<span class="text-sm font-medium">Mateo Giraldo</span>
+</div>
+</td>
+<td class="p-5 text-sm">Sede Medellín - Auditorio</td>
+<td class="p-5 text-sm">Oct 23, 2023</td>
+<td class="p-5 text-sm">09:00 - 11:00</td>
+<td class="p-5">
+<span class="px-2.5 py-1 text-[10px] font-bold uppercase bg-error-container/20 text-error rounded-full">Cancelada</span>
+</td>
+<td class="p-5 text-xs text-on-surface-variant/60">Ayer, 16:45</td>
+<td class="p-5">
+<div class="flex justify-end gap-2">
+<button class="p-2 hover:bg-surface-container-low rounded-lg transition-colors"><span class="material-symbols-outlined text-lg">visibility</span></button>
+<button class="p-2 hover:bg-surface-container-low rounded-lg transition-colors opacity-30 cursor-not-allowed"><span class="material-symbols-outlined text-lg">edit</span></button>
+<button class="p-2 hover:bg-surface-container-low rounded-lg transition-colors opacity-30 cursor-not-allowed"><span class="material-symbols-outlined text-lg">cancel</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="bg-surface-container-low/30 hover:bg-zinc-800/20 transition-colors">
+<td class="p-5 text-center">
+<input class="rounded border-outline-variant bg-transparent text-primary focus:ring-primary" type="checkbox"/>
+</td>
+<td class="p-5 text-sm font-mono text-primary/80">#SK-9901</td>
+<td class="p-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-orange-900 flex items-center justify-center text-[10px] font-bold text-orange-200">DP</div>
+<span class="text-sm font-medium">Daniela Pérez</span>
+</div>
+</td>
+<td class="p-5 text-sm">Sede Norte - Coworking B</td>
+<td class="p-5 text-sm">Oct 25, 2023</td>
+<td class="p-5 text-sm">13:00 - 18:00</td>
+<td class="p-5">
+<span class="px-2.5 py-1 text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 rounded-full">Confirmada</span>
+</td>
+<td class="p-5 text-xs text-on-surface-variant/60">Hace 1 día</td>
+<td class="p-5">
+<div class="flex justify-end gap-2">
+<button class="p-2 hover:bg-surface-container-low rounded-lg transition-colors"><span class="material-symbols-outlined text-lg">visibility</span></button>
+<button class="p-2 hover:bg-surface-container-low rounded-lg transition-colors"><span class="material-symbols-outlined text-lg">edit</span></button>
+<button class="p-2 hover:bg-surface-container-low rounded-lg transition-colors text-error/60"><span class="material-symbols-outlined text-lg">cancel</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="p-5 border-t border-outline-variant/10 flex items-center justify-between bg-surface-container-high/50">
+<span class="text-xs text-on-surface-variant/60 font-body">Mostrando 1-10 de 124 resultados</span>
+<div class="flex gap-1">
+<button class="p-2 hover:bg-surface-container-low rounded-lg text-on-surface-variant disabled:opacity-20" disabled="">
+<span class="material-symbols-outlined text-base">chevron_left</span>
+</button>
+<button class="px-3 py-1 bg-primary text-on-primary text-xs font-bold rounded-lg">1</button>
+<button class="px-3 py-1 hover:bg-surface-container-low text-on-surface-variant text-xs font-bold rounded-lg">2</button>
+<button class="px-3 py-1 hover:bg-surface-container-low text-on-surface-variant text-xs font-bold rounded-lg">3</button>
+<button class="p-2 hover:bg-surface-container-low rounded-lg text-on-surface-variant">
+<span class="material-symbols-outlined text-base">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Success Toast Notification -->
+<div class="fixed bottom-10 right-10 z-[100] animate-in fade-in slide-in-from-bottom-5 duration-500">
+<div class="bg-surface-container-highest border-l-4 border-emerald-500 px-6 py-4 rounded-lg shadow-2xl flex items-center gap-4">
+<div class="h-8 w-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-emerald-500 text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Usuario notificado correctamente</p>
+<p class="text-xs text-on-surface-variant/70">La confirmación ha sido enviada vía email.</p>
+</div>
+<button class="ml-4 text-on-surface-variant hover:text-on-surface">
+<span class="material-symbols-outlined text-base">close</span>
+</button>
+</div>
+</div>
+</body></html>

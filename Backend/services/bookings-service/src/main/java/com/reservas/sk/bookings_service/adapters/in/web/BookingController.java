@@ -1,6 +1,8 @@
 package com.reservas.sk.bookings_service.adapters.in.web;
 
 import com.reservas.sk.bookings_service.adapters.in.web.dto.ApiResponse;
+import com.reservas.sk.bookings_service.adapters.in.web.dto.AdminReservationResponse;
+import com.reservas.sk.bookings_service.adapters.in.web.dto.AdminReservationsPageResponse;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.CancelReservationRequest;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.CheckInRequest;
 import com.reservas.sk.bookings_service.adapters.in.web.dto.CreateReservationRequest;
@@ -17,6 +19,8 @@ import com.reservas.sk.bookings_service.application.usecase.CreateReservationCom
 import com.reservas.sk.bookings_service.application.usecase.UpdateReservationCommand;
 import com.reservas.sk.bookings_service.application.usecase.HandoverReservationCommand;
 import com.reservas.sk.bookings_service.application.usecase.ListReservationsQuery;
+import com.reservas.sk.bookings_service.application.usecase.AdminListReservationsQuery;
+import com.reservas.sk.bookings_service.exception.ApiException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +44,7 @@ public class BookingController {
     private final CheckInReservationUseCase checkInUseCase;
     private final BookingHttpMapper mapper;
 
-    public BookingController(BookingUseCase bookingUseCase, 
+    public BookingController(BookingUseCase bookingUseCase,
                             CheckInReservationUseCase checkInUseCase,
                             BookingHttpMapper mapper) {
         this.bookingUseCase = bookingUseCase;
@@ -60,8 +64,9 @@ public class BookingController {
     // Human Check 🛡️: se usa @Valid para activar validaciones de entrada y responder 400 de forma consistente.
     public ResponseEntity<ApiResponse<ReservationResponse>> createReservation(@Valid @RequestBody CreateReservationRequest request,
                                                                               @AuthenticationPrincipal AuthenticatedUser user) {
+        Long effectiveUserId = resolveEffectiveUserId(user, request.targetUserId());
         var reservation = bookingUseCase.createReservation(new CreateReservationCommand(
-                user.userId(),
+                effectiveUserId,
                 request.spaceId(),
                 request.startAt(),
                 request.endAt(),
@@ -80,6 +85,30 @@ public class BookingController {
                                                                    @RequestParam(required = false) String status) {
         var reservations = bookingUseCase.listReservations(new ListReservationsQuery(userId, spaceId, status));
         return ApiResponse.success(reservations.stream().map(mapper::toResponse).toList());
+    }
+
+    @GetMapping("/admin/reservations")
+    public ApiResponse<AdminReservationsPageResponse> listAdminReservations(
+            @RequestParam(required = false) String desde,
+            @RequestParam(required = false) String hasta,
+            @RequestParam(required = false) String estado,
+            @RequestParam(required = false) Long usuario,
+            @RequestParam(required = false) Long sede,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "20") Integer size) {
+        var normalizedQuery = new AdminListReservationsQuery(
+                desde, hasta, estado, usuario, sede, page, size
+        );
+        var reservations = bookingUseCase.listAdminReservations(normalizedQuery);
+        long totalItems = bookingUseCase.countAdminReservations(normalizedQuery);
+        int safeSize = size == null || size <= 0 ? 20 : size;
+        int safePage = page == null || page < 0 ? 0 : page;
+        int totalPages = totalItems == 0 ? 0 : (int) Math.ceil((double) totalItems / safeSize);
+
+        return ApiResponse.success(new AdminReservationsPageResponse(
+                reservations.stream().map(mapper::toAdminResponse).toList(),
+                safePage, safeSize, totalItems, totalPages
+        ));
     }
 
     @PutMapping("/reservations/{id}")
@@ -139,12 +168,27 @@ public class BookingController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(ApiResponse.error("Usuario no autenticado", "UNAUTHORIZED"));
         }
-        
+
         var reservation = checkInUseCase.execute(new CheckInReservationCommand(
                 id,
                 user.userId(),
                 request.qrToken()
         ));
         return ResponseEntity.ok(ApiResponse.success(mapper.toResponse(reservation)));
+    }
+
+    private Long resolveEffectiveUserId(AuthenticatedUser user, Long targetUserId) {
+        if (targetUserId == null) {
+            return user.userId();
+        }
+        if (user.hasRole("ADMIN")) {
+            return targetUserId;
+        }
+        if (!user.userId().equals(targetUserId)) {
+            throw new ApiException(HttpStatus.FORBIDDEN,
+                    "No tiene permisos para crear reservas para otros usuarios",
+                    "FORBIDDEN_TARGET_USER");
+        }
+        return user.userId();
     }
 }

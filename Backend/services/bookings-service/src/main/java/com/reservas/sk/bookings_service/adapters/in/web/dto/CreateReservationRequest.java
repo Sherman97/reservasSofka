@@ -20,7 +20,9 @@ public record CreateReservationRequest(@NotNull(message = "spaceId es obligatori
                                        @Positive(message = "attendeesCount debe ser mayor que cero")
                                        Integer attendeesCount,
                                        String notes,
-                                       List<Long> equipmentIds) {
+                                       List<Long> equipmentIds,
+                                       @Positive(message = "targetUserId es invalido")
+                                       Long targetUserId) {
     public CreateReservationRequest(Long spaceId,
                                     String startAt,
                                     String endAt,
@@ -28,6 +30,17 @@ public record CreateReservationRequest(@NotNull(message = "spaceId es obligatori
                                     Integer attendeesCount,
                                     String notes,
                                     List<Long> equipmentIds) {
+        this(spaceId, startAt, endAt, title, attendeesCount, notes, equipmentIds, null);
+    }
+
+    public CreateReservationRequest(Long spaceId,
+                                    String startAt,
+                                    String endAt,
+                                    String title,
+                                    Integer attendeesCount,
+                                    String notes,
+                                    List<Long> equipmentIds,
+                                    Long targetUserId) {
         this.spaceId = spaceId;
         this.startAt = startAt;
         this.endAt = endAt;
@@ -35,6 +48,7 @@ public record CreateReservationRequest(@NotNull(message = "spaceId es obligatori
         this.attendeesCount = attendeesCount;
         this.notes = notes;
         this.equipmentIds = immutableCopyAllowingNulls(equipmentIds);
+        this.targetUserId = targetUserId;
     }
 
     private static <T> List<T> immutableCopyAllowingNulls(List<T> source) {

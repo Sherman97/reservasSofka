@@ -2,6 +2,7 @@ package com.reservas.sk.auth_service.application.port.out;
 
 import com.reservas.sk.auth_service.domain.model.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserPersistencePort {
@@ -12,6 +13,8 @@ public interface UserPersistencePort {
     Optional<User> findById(Long id);
 
     User save(String name, String email, String passwordHash);
+
+    List<User> listNonAdminUsers(String query);
 }
 
 
